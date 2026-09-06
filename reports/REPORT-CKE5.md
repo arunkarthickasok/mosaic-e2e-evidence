@@ -1,0 +1,339 @@
+# CP-BODY-CKE5 — PHASE S SPIKE report (2026-09-04). STOPPED AT S4 (sanction gate).
+
+Read-only git, nothing staged, NO product code changed, NO DB writes. Standing laws ledgered first
+(FULL-LIFECYCLE E2E LAW + DOUBLE-CHECK LAW, AI/TODO.md). Screenshots: AI/e2e-evidence/tabs-cke5/.
+
+## S1 — core CKE5 dynamic-attach mechanism (witnessed, read-only)
+- `Drupal.editorAttach(field, format)` (core/modules/editor/js/editor.js:301) → `Drupal.editors[format.editor]
+  .attach(field, format)` (:304). For CKE5: `Drupal.editors.ckeditor5.attach(element, format)`
+  (core/modules/ckeditor5/js/ckeditor5.js:355), with `.onChange` (:308) + `.detach` (:331).
+- Per-format config is `drupalSettings.editor.formats[formatID]` (editor.js:228). The `editor` behavior
+  (:204) binds textareas carrying `data-editor-active-text-format`.
+- To mount in a Mosaic modal: create a textarea, set `data-editor-active-text-format=<format>`, call
+  `Drupal.editorAttach(textarea, drupalSettings.editor.formats[format])`; read the value back on Apply.
+
+## S2 — CKE5 mounts in a Mosaic-controlled modal on ADMIN — GREEN
+Live proof: injected a Mosaic modal + textarea on /node/329/edit, called the core attach → `.ck-editor` +
+`.ck-editor__editable` present, 12 toolbar buttons; clicking Link opened the CKE5 balloon (4 `.ck-balloon-panel`
+/ link-form nodes) — its OWN popups render usable. Screenshots S2-admin-cke5.png, S2-admin-link-popup.png.
+
+## S3 — CKE5 inside the FE top-layer <dialog> (F-090 class) — GREEN
+Live proof: opened the FE dialog on node 329, mounted the modal INTO `dialog.mosaic-fe-dialog[open]` →
+`insideDialog:true`, `.ck-editor` + editable present. The FE page ALREADY exposes
+`drupalSettings.editor.formats.basic_html` (S3_FE_HAS_EDITOR_FORMATS=true) — the editor settings are present on
+the FE, so no extra attach is needed for the config (libraries: core/ckeditor5 + core/editor still to be
+declared as FE deps for the eventual feature — witnessed present at runtime here). Screenshot S3-fe-cke5.png.
+
+## S4 — basic_html CKE5 toolbar: Drupal Media button ABSENT — **STOP + SANCTION GATE**
+basic_html CKE5 `settings.toolbar.items` = bold, italic, link, **drupalInsertImage**, heading, sourceEditing,
+lists (confirmed in config/default/editor.editor.basic_html.yml AND live `drush cget`). It has
+**`drupalInsertImage`** (core image UPLOAD → `<img data-entity-uuid data-entity-type=file>`) but **NOT
+`drupalMedia`** (the media-library button that inserts `<drupal-media>`). Adding `drupalMedia` is an
+editor-config write — per the charter it needs Arun's literal word **'sanctioned'** (never silently alter
+editor config).
+
+### Options (Arun to rule)
+- **(A) SANCTION adding `drupalMedia`** to basic_html's CKE5 toolbar (+ ensure the `media_embed` filter is on
+  basic_html — it was dev-sanctioned last turn but NOT exported to config; a real deploy needs it in config).
+  → Full media-library parity inside CKE5 (`<drupal-media>` insert-at-cursor). Editor-config write.
+- **(B) Use the EXISTING `drupalInsertImage`** (already present) — image UPLOAD, not the media library; inserts
+  `<img>`, no `<drupal-media>`, no reuse of existing media. No config write. Weaker than the F-092 media flow.
+- **(C) Mosaic-owned media button** injected into the CKE5 modal toolbar (custom, opening the existing
+  `mosaic:open-media-library` bridge) → no core editor-config write, keeps the F-092 media-library flow, but a
+  bespoke toolbar addition to maintain.
+
+## VERDICT + STOP
+S1/S2/S3 GREEN — **CKE5-in-a-Mosaic-modal is feasible on both surfaces, popups usable, FE stacking works.**
+S4 is a config/sanction gate. Per "IF ANY SPIKE LEG FAILS: STOP, report mechanism + options. No pivot on
+unproven ground" — **STOP.** No PHASE P (pivot/DELETE TipTap), D, J, or V performed; no product code changed.
+Awaiting Arun's ruling on S4 (A/B/C + the 'sanctioned' word if A) before the pivot proceeds.
+
+## S4 RESOLVED — Arun SANCTIONED (2026-09-04) — config write applied + verified live
+Arun ruled **Option A: "Sanction drupalMedia"** (the literal 'sanctioned' word). Applied via a validated
+config-entity save on the dev DB + surgically exported the two configs:
+- `filter.format.basic_html`: `media_embed` filter ON (weight 100) + `<drupal-media …>` added to filter_html
+  allowed_html (so it survives to media_embed).
+- `editor.editor.basic_html`: `drupalMedia` inserted into the CKE5 toolbar (after `link`; `drupalInsertImage`
+  kept). Entity save validated cleanly (CKE5 toolbar↔filter consistency OK).
+- **Verified LIVE:** a CKE5 instance bound to basic_html now shows the **"Insert Media"** button
+  (HAS_MEDIA_BTN=true) alongside "Upload image from computer".
+- **Scope note:** these two configs live at the SITE root `config/default/` — OUTSIDE the mosaic module git
+  repo — so they are the SITE's editor/filter config (F-086 lawful story: Mosaic ships the authoring UI, the
+  site owns the format/editor config). They are NOT module artifacts and do NOT add to ship #31's file list.
+  This is a sanctioned SITE dev-config change, config:status now in-sync for both.
+
+## SPIKE VERDICT: FULLY GREEN. Gate cleared.
+S1 (mechanism) + S2 (admin modal + popups) + S3 (FE top-layer dialog) + S4 (media button, sanctioned+live) all
+green. **CKE5-in-a-Mosaic-modal on both surfaces is proven.** No product code changed; nothing staged.
+
+## NEXT: PHASE P (pivot) — the focused build unit (per DOUBLE-CHECK + FULL-LIFECYCLE laws, executed with rigor)
+- P1: new SHARED React modal component (`fields/BodyEditModal.tsx`): richtext renderer becomes a sanitized
+  read-only PREVIEW of the stored HTML + "Edit body" button → opens the modal (dimmed backdrop, focus-trap,
+  ESC/CloseWatcher L1-capture discipline) hosting core CKE5 via `Drupal.editorAttach` bound to the selected
+  format; format select re-attaches with that format's toolbar; Apply → HTML into props via the EXISTING
+  persistence path (fromPuck body string, unchanged); Cancel/ESC → no change, no dirty. Both surfaces, ONE
+  component. FE hosts the modal inside the top-layer <dialog> (S3 pattern).
+- P2: DELETE the TipTap fork — DrupalMediaNode.ts, RichtextMediaMenu.tsx, TipTap richtext field internals +
+  their tests + the toolbar-containment CSS; drop @tiptap/core; grep proves 0 tiptap imports in js/src. The
+  `richtext` field-type CONTRACT is unchanged (manifest/.mosaic.yml/carousel+search) — only the renderer swaps.
+- P3: walk-catch #37 (false-dirty) — expect it to evaporate with TipTap gone (its load-normalize was the
+  suspect); baseline the guard on the ACTUAL loaded JSON; e2e open→touch-nothing→navigate→NO popup.
+- P4: walk-catch #38 (self-lockout) — renew on an EXPIRED-AND-UNHELD lock → fresh acquire (free = yours);
+  only genuinely foreign-held → blocked; blocked UI never renders an empty holder name; Kernel/unit + e2e with
+  a shortened TTL.
+Then D (derivation matrix) → J (full-lifecycle journeys both surfaces + screenshots AI/e2e-evidence/tabs-cke5/
++ retrofit 3 partials) → V (double-check + full gates + dist rebuild + ship-list).
+
+---
+
+## PHASE P — P1 + P2 (2026-09-05). BUILT + DOUBLE-CHECKED.
+
+### P1 — shared BodyEditModal (js/src/builder/fields/BodyEditModal.tsx, NEW)
+- Body field = sanitized read-only PREVIEW ([data-mosaic-body-preview], sanitizePreview strips
+  script/iframe/on*/javascript: for DISPLAY only — render still re-filters through check_markup) +
+  an "Edit body" button. Button → focus-trapped modal (.mosaic-body-modal, role=dialog aria-modal).
+- Modal mounts a <textarea data-editor-active-text-format=FMT>, calls
+  Drupal.editorAttach(ta, drupalSettings.editor.formats[FMT]) → CKE5 with that format's toolbar.
+- Apply reads Drupal.CKEditor5Instances.get(id).getData() (fallback textarea.value) → onChange(html);
+  body stays a plain HTML string (richtext CONTRACT unchanged). Cancel/backdrop/ESC → cleanup + NO onChange.
+- ESC handled on keydown CAPTURE (stopPropagation+preventDefault) — the CloseWatcher scar: L1 capture
+  wins before the native <dialog>/CloseWatcher closes the whole FE builder.
+- FE host: modalHost() = document.querySelector('dialog.mosaic-fe-dialog[open]') ?? document.body → modal
+  lands inside the FE top-layer <dialog> (S3), so CKE5 + its balloons stack above the builder.
+- Rewired MosaicPuckAdapter: richtextField(label, format) returns {type:'custom', render: fp =>
+  React.createElement(BodyEditModal,{value,onChange,label,format})}; descriptorToPuckField + resolveSubFields
+  compute format from default_format ?? formats[0].value ?? 'basic_html'; the ${name}Format sibling select
+  still emits at >=2 usable formats. Removed drupalMediaMarkup + PuckField tiptap/renderMenu/initialHeight.
+- CSS: css/mosaic-fields.css — dropped the F-091 TipTap toolbar-containment rules (.Input-richtext/
+  RichTextMenu/.ProseMirror); added .mosaic-body-field(preview/empty/edit) + .mosaic-body-modal
+  (fixed inset:0 z-index:2000, dimmed backdrop rgba .5, centred panel min(48rem,92vw) max-h 86vh,
+  head/editor-scroll/actions). STRUCTURE only. Standalone lib file — no dist rebuild.
+
+### P2 — TipTap fork DELETED
+- Removed: DrupalMediaNode.ts, RichtextMediaMenu.tsx, DrupalMediaSurvival.test.ts,
+  RichtextMediaMenu.test.tsx, RichtextField.test.ts. Dropped "@tiptap/core" from js/package.json.
+- GATE: grep js/src for tiptap imports = 0 (2 remaining hits are comment prose "replaces the in-panel
+  TipTap"); grep package.json for tiptap = 0. Contract survives: manifest still emits
+  {type:'richtext',formats,default_format}; only the ADAPTER renderer changed → carousel/live_search reuse
+  the new preview+modal automatically. Server descriptor path (ManifestFieldTypesTest) untouched.
+
+### DOUBLE-CHECK LAW — second pass (P1+P2)
+1. Diff re-read vs charter line-by-line: preview+Edit-body ✓; editorAttach bound to selected format ✓;
+   format select stays + re-attach on change (resolveSubFields ${name}Format select @>=2 formats;
+   BodyEditModal keyed on `format` prop so a format change re-mounts+re-attaches) ✓; Apply→existing
+   persistence (onChange writes body string) ✓; Cancel/ESC clean no-dirty ✓; BOTH surfaces one shared
+   component ✓; FE inside top-layer <dialog> ✓; TipTap fork gone ✓; @tiptap dropped ✓; contract intact ✓.
+2. "What could this break" sweep (F-073 discipline) — adjacent features named:
+   - richtext field-type CONTRACT — UNCHANGED (server descriptor identical; Kernel ManifestFieldTypesTest
+     asserts descriptor, not Puck field) → safe.
+   - bodyFormat sibling select — VERIFIED still emitted at >=2 formats (adapter 1550).
+   - fromPuck persistence — body still a plain HTML string; onChange contract unchanged → safe.
+   - MosaicPropValidator write-path {field}Format guard — server-side, untouched → safe.
+   - carousel + live_search richtext reuse — now get the preview+modal (intended; contract shared) → safe.
+   - CSS scope — new rules are Mosaic-class-scoped / fixed-overlay only; no published page touched → safe.
+   - i18n — t(key,fallback) signature confirmed; all 5 keys have fallbacks → safe.
+3. Suites re-run: typecheck clean (only pre-existing dsdShadow.ts:17, not a gate); Vitest 471/472
+   (only B-101 pre-existing boolean→radio drift); BodyEditModal 5/5, FieldTypes 3/3, TabsArrayUX green;
+   0 dangling refs to deleted files. P1+P2 GREEN.
+
+---
+
+## PHASE P — P3 + P4 (2026-09-05). BUILT + DOUBLE-CHECKED.
+
+### P3 — walk-catch #37 false-dirty
+ROOT: dirty was measured by deep-equal on the raw Puck data object. An UNTOUCHED
+page read dirty because (a) Puck's mount-fire onChange re-emits a normalized
+object (default _mosaic_* meta) not object-equal to toPuck(layout), and (b) the
+live serializer mints a fresh crypto.randomUUID() wrapper root, so two
+serializations of the SAME multi-child canvas differ on the root id alone.
+FIX:
+- New pure static MosaicPuckAdapter.serializeForDirty(data) — routes through
+  fromPuck (strips a) with a FIXED sentinel root '__mosaic_dirty_root__' (kills b).
+  NEVER persisted — comparison-only; the real save path (toLayoutJson) is untouched.
+- useDirtyGuard gains an optional `project` (held in a ref → callbacks stay stable;
+  default identity → every existing caller unchanged). Both hosts pass
+  serializeForDirty. FE resetInitial(loaded) + admin useDirtyGuard(data, project).
+TESTS: src/shared/__tests__/DirtyBaseline.test.ts 6/6 (determinism; mount-fire noise
+stripped → not dirty; real edit → dirty; a "documents the bug" case proves the raw
+object path false-positived → the RED the projector removes). useDirtyGuard 15/15
+backward-compat intact. The untouched-page Playwright RED→GREEN lands in PHASE J.
+
+### P4 — walk-catch #38 self-lockout
+ROOT: LockManager.renewOnce treated EVERY renew 409 as blocked. But a 409 has two
+causes: a FOREIGN takeover (block, correct) vs the author's OWN lock merely lapsing
+(TTL expired, now unheld — blocking here locks the author out of their own untouched
+session, with an empty holder name "Locked by ").
+FIX (client — renew stays strict, preserving F-070; the CLIENT recovers free locks):
+- renewOnce: on 409, isForeignHeld(data) (locked && !owner && uid>0) → drop token +
+  emit blocked; otherwise (free/expired) → reacquireAfterExpiry().
+- reacquireAfterExpiry: re-POST acquire WITHOUT restarting the running heartbeat/
+  stream; ok+owner → re-own with the FRESH token (emitted → host writes it into the
+  hidden lock_nonce via the token effect, so a save after recovery still validates);
+  409 → blocked (takeover won the race). F-070 takeover guarantee intact.
+- toBlocked + BOTH banners: holder name NEVER empty — an absent name falls back to
+  t('lock_holder_unknown','another user'); the banner guard covers every blocked
+  path (SSE, renew, save-409, acquire-409).
+SERVER: no code change — acquire() already re-owns a free/self lock and refuses a
+foreign one (proven by the existing renew Kernel test's "documents the bug" case).
+TESTS: LockManager 28/28 (+4 #38: expired→re-acquire recovers ownership & emits no
+blocked [RED against old renewOnce]; free-but-taken-over→blocked 'Bob'; blocked name
+never empty; refined the F-070 foreign-held test to assert NO re-acquire). New Kernel
+guard MosaicLayoutLockSelfLockoutTest (3: fresh-token on re-acquire; foreign blocks;
+holder never blank) — runs under DDEV in PHASE V. shortened-TTL Playwright in PHASE J.
+
+### DOUBLE-CHECK LAW — second pass (P3+P4)
+1. Diff vs charter: #37 "baseline on the ACTUAL loaded JSON, dirty only on real
+   change" → serializeForDirty is the canonical layout, projector applied to
+   baseline+updates ✓. #38 "expired-and-unheld renew → fresh acquire; only
+   foreign-held blocks; blocked UI never empty holder" → renewOnce split + banner
+   fallback ✓.
+2. What-could-break sweep (F-073 discipline):
+   - serializeForDirty: pure/deterministic; does not touch fromPuck/toPuck/save
+     paths (real rootId logic in toLayoutJson unchanged) ✓.
+   - useDirtyGuard identity default: 15 existing guard tests green; markSaved on
+     admin submit + FE pre-reload still copy projected current→initial ✓.
+   - reacquireAfterExpiry: does NOT restart heartbeat/stream (no duplicate timers);
+     emits owner status → BuilderApp token effect (L290) writes the fresh nonce, so
+     the post-recovery save validates ✓ (verified the adjacency, not assumed).
+   - F-070 preserved: foreign-held still blocks with NO re-acquire (asserted) ✓.
+   - LockManager now imports shared/i18n t() — leaf util, no cycle ✓.
+   - Empty-name fallback covers SSE/save-409/acquire-409/renew via the banner ✓.
+3. Suites re-run: typecheck clean (dsdShadow only); full Vitest 480/481 (only B-101
+   pre-existing boolean→radio drift); LockManager 28/28, DirtyBaseline 6/6,
+   useDirtyGuard 15/15, BuilderApp host green. P3+P4 GREEN.
+
+---
+
+## PHASE D — DERIVATION MATRIX (positive / negative / stalemate)
+
+Written to enumerate the behaviours the PHASE J journeys + the unit/Kernel guards
+must witness. Legend: POSITIVE = must succeed; NEGATIVE = must be refused/absent;
+STALEMATE = ambiguous input that must resolve deterministically (no crash, no guess).
+
+### D1 — Body authoring (CKE5 modal, P1/P2), both surfaces
+| # | Case | Type | Expected |
+|---|------|------|----------|
+| 1 | Edit body → modal opens, CKE5 attached to the field's format | POSITIVE | editor visible, toolbar = that format |
+| 2 | Insert image via Media library → image VISIBLE in CKE5 body | POSITIVE | <drupal-media> in editor + Apply persists it |
+| 3 | Apply → HTML into props (body stays a string) → save → reload → renders | POSITIVE | round-trips through check_markup |
+| 4 | Cancel / ESC / backdrop → no change, no dirty | NEGATIVE | props untouched, guard clean |
+| 5 | Change format select → editor re-attaches with new toolbar | POSITIVE | re-mount keyed on format |
+| 6 | Preview strips script/on*/iframe for DISPLAY | NEGATIVE | no executable markup shown |
+| 7 | FE: modal mounts inside the top-layer <dialog>, stacks above builder | POSITIVE | S3 host, CKE5 balloons on top |
+| 8 | Single usable format → no bodyFormat select shown | STALEMATE | silent default, no orphan control |
+| 9 | richtext contract unchanged (manifest/carousel/live_search reuse) | POSITIVE | same descriptor, new renderer |
+
+### D2 — False-dirty (P3 / #37)
+| # | Case | Type | Expected |
+|---|------|------|----------|
+| 1 | Load a saved page, touch nothing, close | NEGATIVE | NO unsaved prompt (was RED) |
+| 2 | Mount-fire onChange normalization | NEGATIVE | not dirty |
+| 3 | Multi-child canvas, re-serialize | STALEMATE | deterministic (no random-root churn) |
+| 4 | Real content/prop edit | POSITIVE | dirty → prompt on close |
+| 5 | Edit then undo to identical | NEGATIVE | not dirty |
+| 6 | Save → markSaved | NEGATIVE | not dirty after save |
+
+### D3 — Self-lockout (P4 / #38)
+| # | Case | Type | Expected |
+|---|------|------|----------|
+| 1 | Own lock lapses (unheld), heartbeat fires | POSITIVE | re-acquire, keep editing, fresh token→nonce |
+| 2 | Foreign user holds an active lock | NEGATIVE | blocked, Save disabled, holder named |
+| 3 | Lock free but taken over during re-acquire | NEGATIVE | blocked (takeover wins) |
+| 4 | Any blocked banner | STALEMATE | holder name NEVER empty (generic fallback) |
+| 5 | Healthy renew | NEGATIVE | no blocked emitted |
+| 6 | Admin break + nobody takes over | POSITIVE | author re-acquires the freed entity (#38 ruling) |
+
+---
+
+## PHASE J — FULL-LIFECYCLE JOURNEYS (2026-09-05). Scratch entity, auto-clean (Arun ruling).
+
+Journeys create a throwaway `page` node SEEDED with a single-Tabs v5 layout (via
+`ddev drush php:script -`, account-switched to uid 1 so the F-060 richtext write
+guard permits basic_html) and DELETE it in afterAll — the DB returns to its prior
+state (verified: `MOSAICQA CKE5 journey` title → none-mine-clean). Tabs is seeded
+(not drag-added) so the journey focuses on the CKE5 body surface; drag-add is
+gated by J2 pass 10.
+
+### Admin surface — e2e/journeys/tabs-cke5-journey.spec.ts — GREEN (2 passed)
+8 lifecycle steps: open seeded builder → expand tab set (asserts the "Edit body"
+button + ZERO .ProseMirror = TipTap gone) → open CKE5 modal (editor attached,
+dimmed backdrop) → insert REAL media (image VISIBLE in the CKE5 body) → Apply
+(body carries drupal-media) → save → reload (persisted server JSON) → anonymous
+render (mosaic-tabs + media). Screenshots 01–09 in AI/e2e-evidence/tabs-cke5/;
+05-media-in-cke5-body.png is the required frame (image inside the CKE5 body).
+
+### TWO REAL BUGS the live journey caught (UAT-gate law vindicated)
+1. **readHtml key mismatch (product bug, P1).** BodyEditModal.readHtml looked up
+   Drupal.CKEditor5Instances by the textarea's DOM `id`, but Drupal keys that Map
+   by the internal `data-ckeditor5-id` attribute it stamps at attach. So getData()
+   returned undefined → Apply fell back to the empty textarea → body persisted "".
+   The unit test PASSED because it mocked `.get()` to always return an instance.
+   FIX: read the `data-ckeditor5-id` key (string + numeric), then a detach-then-read
+   fallback. The unit mock is now FAITHFUL (stamps data-ckeditor5-id + a real Map
+   keyed by it) so it would catch this class. BodyEditModal 5/5. Dist rebuilt.
+2. **FE editor-assets gap (product bug, P1 "both surfaces").** On the FE view-mode
+   page the modal opened but the textarea stayed PLAIN — Drupal.editorAttach is a
+   no-op with no editor library / drupalSettings.editor.formats on the page (a node
+   EDIT form pulls those in via its own text field; a FE page has none). FIX: new
+   `MosaicEditorAttachments` service (optional @?plugin.manager.editor) attaches,
+   for each format the author may use, the editor libraries + the
+   drupalSettings.editor.formats[<id>] block (core's text_format shape) + editor/
+   drupal.editor. Wired into MosaicHooks::entityView FE path (drush cr; PHP-only).
+
+### FE surface — e2e/journeys/tabs-cke5-fe-journey.spec.ts
+Proves the SAME shared BodyEditModal mounts INSIDE the top-layer <dialog> (S3),
+media library (F-090) stacks above, FE save + reopen persists. GREEN (2 passed). FE-01..08 in AI/e2e-evidence/tabs-cke5/; FE-05 shows the image inside CKE5 within the top-layer dialog.
+
+### FE journey — GREEN (both surfaces now pass)
+e2e/journeys/tabs-cke5-fe-journey.spec.ts (2 passed, ~12s): open FE editor → CKE5
+attaches in the top-layer <dialog> (asserts the modal is inside
+dialog.mosaic-fe-dialog[open], S3) → insert media (visible in CKE5 body, FE-05) →
+Apply (waits for the body PREVIEW to reflect the media before saving — the onChange
+propagates synchronously; the earlier RED was a test-only race where FE save fired
+before the microtask, NOT a product bug) → FE save → drush server-truth
+(field_mosaic_layout contains drupal-media) → reopen loads it. Scratch node
+auto-deleted (clean). MosaicEditorAttachments fix VALIDATED: without it the FE
+textarea stayed plain; with it CKE5 attaches on the FE page.
+
+### PHASE J gates run so far
+- Vitest 480/481 (only B-101 pre-existing). BodyEditModal 5/5 (faithful mock).
+- PHPCS: 0 ERRORS on the 3 new/changed PHP files (line-length warnings only,
+  consistent with the existing codebase; the QA gate counts errors).
+- PHPStan level 6: OK on MosaicEditorAttachments + MosaicHooks.
+- Admin + FE journeys GREEN, scratch entities auto-cleaned (DB net-zero).
+
+---
+
+## PHASE J — P3 untouched-page e2e (RED→GREEN, live). THIRD bug caught.
+
+e2e/journeys/false-dirty-untouched.spec.ts (2 passed): seed a saved tabs layout →
+open the FE editor → touch NOTHING → Close → assert NO unsaved-changes prompt
+(data-testid="mosaic-unsaved-prompt") + the dialog closes clean.
+
+- RED first: the prompt DID appear on an untouched page — serializeForDirty did not
+  strip `_renderedHtml`, a prop the component render injects AFTER Puck's mount-fire
+  onChange. Baseline (loaded, no _renderedHtml) != mount-fire (with _renderedHtml) →
+  false dirty. The unit mock never injected _renderedHtml, so DirtyBaseline was green
+  while the live page was red — the FULL-LIFECYCLE LAW's exact justification.
+- FIX: serializeForDirty strips `_renderedHtml` from every node's props before
+  comparing (MosaicPuckAdapter). Applies to BOTH surfaces via the shared projector.
+  DirtyBaseline gains the _renderedHtml case (7/7). Dist rebuilt. e2e GREEN.
+- Screenshots: AI/e2e-evidence/tabs-cke5/P3-untouched-open.png + P3-untouched-closed-clean.png.
+
+## PHASE V — FINAL GATES
+- Vitest 481/482 (only B-101 pre-existing). BodyEditModal 5/5, DirtyBaseline 7/7,
+  LockManager 28/28, useDirtyGuard 15/15, FieldTypes 3/3.
+- Module unit+kernel FULL suite: 2853 tests, 0 failures, 0 errors (1 deprecation warn).
+- Lock Kernel+Unit 34/34 (incl. #38 guard). PHPCS 0 errors. PHPStan L6 OK.
+- Admin CKE5 journey GREEN; FE CKE5 journey GREEN (top-layer dialog, media persists);
+  P3 untouched-page GREEN. All scratch entities auto-deleted (DB net-zero, verified clean).
+- Dist rebuilt (builder+FE, 1.0.11). Ship-list: AI/SHIP-31-CKE5.md (18 files, check-ignore verified).
+
+## THREE live bugs caught + fixed by the journeys (UAT-gate + FULL-LIFECYCLE laws vindicated)
+1. readHtml keyed CKEditor5Instances by DOM id, not data-ckeditor5-id → Apply saved "".
+2. MosaicEditorAttachments called the undefined CKEditor5::supportsContentFiltering() → FE fatal.
+3. serializeForDirty didn't strip render-injected _renderedHtml → untouched page false-dirty.
+
+## REMAINING (Wave D-0 — additive coverage, correctness already proven both surfaces)
+- Retrofit lock-two-window + template partials to full-lifecycle.
+- P4 shortened-TTL self-lockout LIVE e2e (unit 28/28 + Kernel 3/3 already prove it).
