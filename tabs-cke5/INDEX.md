@@ -1,9 +1,18 @@
-# tabs-cke5 — CP-BODY-CKE5 journey album
+# tabs-cke5 — CP-BODY-CKE5 + CP-EDIT20 journey album (v2)
 
 CKEditor 5 body editor (expand modal) replacing the old in-panel TipTap fork.
 Three green full-lifecycle Playwright journeys, captured under the evidence-quality
 law (fullPage overviews / targeted assertion-region frames, deviceScaleFactor 2).
 Each journey uses a throwaway scratch node, auto-deleted (DB net-zero).
+
+**v2 (CP-EDIT20, editor UX hardening #39–44):** the media-insert steps are now driven
+by REAL pointer interactions (locator.click / page.mouse — never evaluate-click) and
+assert z-order via `document.elementFromPoint` at the target's centre. The `media-library`
+frames prove the library lands **on top and is clickable** — admin (#40, modal z-index
+below Drupal's jQuery-UI dialog) and frontend (#43, the library is moved INTO the
+top-layer `<dialog>`). Other CP-EDIT20 items (fixed-shell modal, panel Body label + 3-line
+clamp preview, panel↔canvas active-tab sync, save-while-open guard) are covered by unit
+tests; see `reports/REPORT-CKE5.md`.
 
 ## Admin surface — `tabs-cke5-journey.spec.ts`
 open seeded Tabs → Edit body (CKE5) → insert media → Apply → save → reload → render.

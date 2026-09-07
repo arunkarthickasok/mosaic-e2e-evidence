@@ -3,11 +3,14 @@
 Reviewer entry point. Evidence + run reports only (no code, DB, or secrets).
 
 ## Albums
-- [`tabs-cke5/`](tabs-cke5/INDEX.md) — **CP-BODY-CKE5**: CKEditor 5 body editor (expand
-  modal) replaces the TipTap fork. 19 frames across 3 green full-lifecycle journeys
-  (admin, frontend, false-dirty untouched-page).
+- [`tabs-cke5/`](tabs-cke5/INDEX.md) — **CP-BODY-CKE5 + CP-EDIT20 (v2)**: CKEditor 5 body
+  editor (expand modal) replaces the TipTap fork, plus editor UX hardening (#39–44). 19
+  frames across 3 green full-lifecycle journeys (admin, frontend, false-dirty untouched).
+  v2 drives the media steps with REAL pointers + `elementFromPoint` z-order oracle.
   - Money frame — image visible inside the CKE5 body (**admin**): [`tabs-cke5/05-media-in-cke5-body.png`](tabs-cke5/05-media-in-cke5-body.png)
   - Money frame — image visible inside the CKE5 body (**frontend**): [`tabs-cke5/FE-05-fe-media-in-cke5.png`](tabs-cke5/FE-05-fe-media-in-cke5.png)
+  - Stacking proof — media library on top (**admin #40**): [`tabs-cke5/04-media-library.png`](tabs-cke5/04-media-library.png)
+  - Stacking proof — media library on top inside the top-layer dialog (**frontend #43**): [`tabs-cke5/FE-04-fe-media-library.png`](tabs-cke5/FE-04-fe-media-library.png)
 
 ## Reports
 - [`reports/REPORT-CKE5.md`](reports/REPORT-CKE5.md) — full CP-BODY-CKE5 phase log:

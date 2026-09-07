@@ -1,16 +1,19 @@
-# SHIP #31 — CONSOLIDATED authoritative ship-list (reconciled 2026-09-05)
+# SHIP #31 — CONSOLIDATED authoritative ship-list (refreshed 2026-09-07, +CP-EDIT20)
 
-Read-only git, NOTHING staged. Arun commits after his re-walk. This SUPERSEDES the
-earlier "18 files" figure (that was the CP-BODY-CKE5 *delta only*) and the spike's
-"44 tracked-M + 12 new" (STALE — it counted js/dist `chunk-*.js` that the
-deterministic rebuild left byte-identical, plus files committed in interim ships).
+Read-only git, NOTHING staged. Arun commits after his re-walk. Refreshed after
+CP-EDIT20 (editor UX hardening, walk-catches #39–44) rode in — totals grew from 45.
 
-## EXACT TOTALS (verified via git, this session)
-- (a) tracked changes  `git status --short | grep -v '^??'`  = **33**  (all ` M`, zero ` D`)
-- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **12**
-- **GRAND TOTAL = 45 files**
-- `git check-ignore` verdict: **45/45 ship-ok (0 ignored)**
-- By origin: cke5 **18** · f087 **13** · stages34 **10** · f089-093 **4**
+## EXACT TOTALS (verified via git, this session — post CP-EDIT20)
+- (a) tracked changes  `git status --short | grep -v '^??'`  = **36**  (all ` M`, zero ` D`)
+- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **14**
+- **GRAND TOTAL = 50 files**  (was 45 at CP-BODY-CKE5; +5 CP-EDIT20)
+- `git check-ignore` verdict: **50/50 ship-ok (0 ignored)**
+- By origin: cke5-edit20 **23** · f087 **13** · stages34 **10** · f089-093 **4**
+  (cke5 18 folded into cke5-edit20; CP-EDIT20 added 5: css/mosaic-frontend-editor.css,
+   js/dist/renderer.js, js/src/renderer/components/mosaic-tabs.ts, js/src/builder/tabsPanelSync.ts,
+   js/src/builder/__tests__/tabsPanelSync.test.ts — and touched BodyEditModal/BuilderApp/
+   FrontendBuilderDialog/mosaic-fields.css/builder.js/frontend-editor.js/mosaic.libraries.yml
+   which were already in the cke5 set.)
 - deleted-tiptap-no-longer-appears: 5 files (DrupalMediaNode.ts, RichtextMediaMenu.tsx,
   DrupalMediaSurvival.test.ts, RichtextMediaMenu.test.tsx, RichtextField.test.ts) were
   UNTRACKED, so their deletion leaves **0** entries in git status — correctly absent.
@@ -85,12 +88,14 @@ cd web/modules/custom/mosaic
 # 1) all 33 tracked modifications (updates tracked files only — never adds untracked noise)
 git add -u
 
-# 2) the 12 new (untracked) ship files — explicit, so no dev noise is swept in
+# 2) the 14 new (untracked) ship files — explicit, so no dev noise is swept in
 git add \
   js/src/builder/__tests__/BodyEditModal.test.tsx \
   js/src/builder/__tests__/TabsArrayUX.test.ts \
   js/src/builder/__tests__/TabsPersistence.test.ts \
+  js/src/builder/__tests__/tabsPanelSync.test.ts \
   js/src/builder/fields/BodyEditModal.tsx \
+  js/src/builder/tabsPanelSync.ts \
   js/src/shared/__tests__/DirtyBaseline.test.ts \
   modules/mosaic_media/css/mosaic-media-fe.css \
   src/Service/MosaicEditorAttachments.php \
@@ -100,10 +105,14 @@ git add \
   tests/src/Kernel/Service/MosaicLayoutLockSelfLockoutTest.php \
   tests/src/Kernel/Service/MosaicTextFormatGuardTest.php
 
-# 3) verify EXACTLY 45 staged, and that no noise slipped in
-git diff --cached --name-only | wc -l          # must print 45
+# 3) verify EXACTLY 50 staged, and that no noise slipped in
+git diff --cached --name-only | wc -l          # must print 50
 git diff --cached --name-only | grep -E '\.log$|^AI/|^assets/|\.zip$|esc-probe' || echo "clean — no noise staged"
 ```
+CP-EDIT20 tracked-M additions (already covered by `git add -u`): css/mosaic-frontend-editor.css,
+js/dist/renderer.js, js/src/renderer/components/mosaic-tabs.ts, plus re-touched
+BodyEditModal.tsx/BuilderApp.tsx/FrontendBuilderDialog.tsx/mosaic-fields.css/builder.js/
+frontend-editor.js/mosaic.libraries.yml (1.0.12).
 
 ## Ship #31 scope recap (what the 45 deliver)
 - stages34 (CP-TABS-REDESIGN Stages 3+4): Tabs `sets` repeatable authoring, richtext

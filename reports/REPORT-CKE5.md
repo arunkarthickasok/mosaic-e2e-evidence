@@ -337,3 +337,54 @@ open the FE editor → touch NOTHING → Close → assert NO unsaved-changes pro
 ## REMAINING (Wave D-0 — additive coverage, correctness already proven both surfaces)
 - Retrofit lock-two-window + template partials to full-lifecycle.
 - P4 shortened-TTL self-lockout LIVE e2e (unit 28/28 + Kernel 3/3 already prove it).
+
+---
+
+## CP-EDIT20 — EDITOR UX HARDENING (walk-catches #39–44). 2026-09-07.
+
+NEW STANDING LAW ledgered (AI/TODO.md): any stacking/visibility assertion uses REAL
+pointer interactions (page.mouse / locator.click, never evaluate-click) + a z-order
+oracle via document.elementFromPoint at the target centre. The evaluate-click bypass
+masked #40.
+
+- **U1 #39 modal shell** — BodyEditModal reworked: fixed size min(1100px,92vw)×min(85vh),
+  flex column; sticky header ("Body"); the CKE5 region fills and is the ONLY scroller
+  (`.ck-editor__top` sticky, `.ck-editor__editable` scrolls); sticky footer. Background
+  scroll-locked (body + FE dialog overflow) while open, restored on close. modalHost now
+  mounts into whichever top-layer <dialog> is open (FE editor OR admin fullscreen).
+- **U2 #40 admin stacking** — `.mosaic-body-modal` z-index = calc(var(--jui-dialog-z-index,
+  1260) − 5) = 1255: below Drupal's jQuery-UI dialog (media library, 1260) but above the
+  admin toolbar (1250) + Puck chrome. VALIDATED LIVE: real-pointer media click →
+  elementFromPoint over the library's Insert button = 'media-library' (on top, clickable).
+- **U3 #43 FE stacking** — FrontendBuilderDialog installs a MutationObserver that moves
+  any Drupal `.ui-dialog`/`.ui-widget-overlay` appended to <body> INTO the top-layer FE
+  <dialog> (same stacking context) so it lands on top; orphans closed on FE-editor
+  close/save; editor-gated chrome CSS. VALIDATED LIVE: the media library renders ON TOP
+  inside the FE dialog (z-order oracle = 'media-library'; before U3 it read 'fe-dialog').
+- **U4 #41 panel group** — visible "Body" label above the group (F-060; Puck renders none
+  for custom fields); preview = sanitized RENDERED snippet clamped to 3 lines with
+  ellipsis, no scrollbars, no textarea; admin-native secondary "Edit body" button with
+  hover/focus. Geometry oracles in BodyEditModal.test.
+- **U5 #42 panel↔canvas active-tab sync** — new tabsPanelSync.ts: a MutationObserver on
+  the panel reads the expanded Tab row (`ArrayFieldItem--isExpanded` + data-index) and
+  activates that tab on the SELECTED canvas component's <mosaic-tabs> (Elementor pattern);
+  collapse → first. Drives via the Lit `active` prop (published/upgraded) with a static-DSD
+  shadow-class fallback (the builder canvas is DSD, not upgraded — attachDeclarativeShadowRoots).
+  Canvas stays click-to-select (`:host([data-mosaic-preview]) button[role=tab]{pointer-events:none}`
+  + Puck's selection overlay). Both surfaces wired. Deep active-state styling = Act-2 boundary
+  (ledgered). Published render UNCHANGED (sentinel: node 329 renders mosaic-tabs, no data-mosaic-preview).
+- **U6 #44 save guard** — while the body modal is open, capture-phase submit/click listeners
+  block the HOST save (node-form / FE "Save"), show 'Apply or cancel the body editor first.',
+  focus the modal; the modal's own buttons + the media-library dialog are exempt (so insertion
+  still works); Apply preserves content. Unit-tested.
+
+### DOUBLE-CHECK second pass (CP-EDIT20)
+- Diff vs charter: all six items match; the real-pointer law is honoured in the journeys
+  (locator.click / page.mouse + elementFromPoint z-order oracle).
+- What-could-break: U3 observer only moves .ui-dialog/.ui-widget-overlay (Mosaic's own React
+  dialogs — save-template/unsaved-prompt — are untouched). U6 exempts the media library so
+  insertion is never blocked. U5 is additive + published-inert. modalHost covers admin
+  fullscreen (a latent gap fixed). Renderer change default (active=-1) = no published change.
+- Suites re-run: Vitest 488/489 (only B-101); module unit+kernel FULL 2853/0-fail; phpcs 0;
+  tabsPanelSync 3/3; BodyEditModal 9/9; admin+FE+P3 journeys GREEN under the real-pointer law;
+  render sentinel green. Dist rebuilt (builder+FE+renderer, libraries 1.0.11→1.0.12).
