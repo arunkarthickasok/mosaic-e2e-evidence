@@ -16,6 +16,14 @@ Reviewer entry point. Evidence + run reports only (no code, DB, or secrets).
   - Stacking proof — media library on top (**admin #40**): [`tabs-cke5/05-media-library.png`](tabs-cke5/05-media-library.png)
   - Stacking proof — media library on top inside the top-layer dialog (**frontend #43**): [`tabs-cke5/FE-04-fe-media-library.png`](tabs-cke5/FE-04-fe-media-library.png)
 
+- [`walk-45-46/`](walk-45-46/INDEX.md) — **walk-catches #45 (F-056) & #46 (node-form Preview)**:
+  #45 CKEditor 5 inline uploads embedded in a Mosaic body now survive cron GC (new
+  `MosaicFileUsage` service — RED red-X → GREEN real image renders for anon); #46 node-form
+  Preview verdict = STOP (the field renders; the save-lock gates the non-mutating Preview op —
+  Arun's call). 5 frames across scratch-entity journeys.
+  - Money frame — uploaded image renders for anon after the fix: [`walk-45-46/45-upload-renders-green.png`](walk-45-46/45-upload-renders-green.png)
+  - RED baseline — GC'd upload red-X: [`walk-45-46/45-upload-redx-red.png`](walk-45-46/45-upload-redx-red.png)
+
 ## Reports
 - [`reports/REPORT-CKE5.md`](reports/REPORT-CKE5.md) — full CP-BODY-CKE5 phase log:
   spike (S1–S4), P1 CKE5 modal, P2 TipTap deletion, P3 false-dirty, P4 self-lockout,

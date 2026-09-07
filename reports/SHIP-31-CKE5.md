@@ -1,13 +1,16 @@
-# SHIP #31 — CONSOLIDATED authoritative ship-list (refreshed 2026-09-07, +CP-EDIT21)
+# SHIP #31 — CONSOLIDATED authoritative ship-list (refreshed 2026-09-07, +walk-45 F-056)
 
 Read-only git, NOTHING staged. Arun commits after his re-walk. Refreshed after
-CP-EDIT21 (editor UX round 2, walk W0–W5) rode in — one new file since CP-EDIT20.
+walk-catch #45 (F-056 file permanence) rode in — 2 new files since CP-EDIT21
+(MosaicHooks.php + mosaic.services.yml were already tracked-M).
 
-## EXACT TOTALS (verified via git, this session — post CP-EDIT21)
-- (a) tracked changes  `git status --short | grep -v '^??'`  = **36**  (all ` M`, zero ` D`)
-- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **15**
-- **GRAND TOTAL = 51 files**  (45 at CP-BODY-CKE5; +5 CP-EDIT20; +1 CP-EDIT21: richtextFormatBridge.ts)
-- `git check-ignore` verdict: **51/51 ship-ok (0 ignored)**
+## EXACT TOTALS (verified via git, this session — post walk-45 F-056)
+- (a) tracked changes  `git status --short | grep -v '^??'`  = **36**  (all ` M`, zero ` D`;
+  F-056 re-touched src/Hook/MosaicHooks.php + mosaic.services.yml — both ALREADY in this list)
+- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **17**
+- **GRAND TOTAL = 53 files**  (45 CP-BODY-CKE5; +5 CP-EDIT20; +1 CP-EDIT21 richtextFormatBridge.ts;
+  +2 walk-45 F-056: src/Service/MosaicFileUsage.php, tests/src/Kernel/Hook/MosaicFileUsageTest.php)
+- `git check-ignore` verdict: **53/53 ship-ok (0 ignored)**
 - CP-EDIT21 also RE-TOUCHED (already tracked-M): css/mosaic-fields.css, js/dist/builder.js,
   js/dist/frontend-editor.js, js/src/builder/MosaicPuckAdapter.ts, js/src/builder/fields/
   BodyEditModal.tsx, js/src/builder/__tests__/BodyEditModal.test.tsx, mosaic.libraries.yml (1.0.13).
@@ -61,7 +64,7 @@ Tracked-M by origin: cke5 13 · f087 11 · stages34 6 · f089-093 3.
 Note: MOSAIC.md is the cumulative changelog doc (touched every wave); tagged f087 by
 its most-recent signature but not exclusive to one wave.
 
-## (b) UNTRACKED KEEP-LIST — 15 files (12 below + 3 CP-EDIT20/21: tabsPanelSync.ts, tabsPanelSync.test.ts, richtextFormatBridge.ts)  [file — origin — check-ignore]
+## (b) UNTRACKED KEEP-LIST — 17 files (12 + 3 CP-EDIT20/21: tabsPanelSync.ts, tabsPanelSync.test.ts, richtextFormatBridge.ts + 2 walk-45 F-056: MosaicFileUsage.php, MosaicFileUsageTest.php)  [file — origin — check-ignore]
 ```
 js/src/builder/__tests__/BodyEditModal.test.tsx                       cke5       ship-ok
 js/src/builder/__tests__/TabsArrayUX.test.ts                          stages34   ship-ok
@@ -70,13 +73,15 @@ js/src/builder/fields/BodyEditModal.tsx                               cke5      
 js/src/shared/__tests__/DirtyBaseline.test.ts                         cke5       ship-ok
 modules/mosaic_media/css/mosaic-media-fe.css                          f089-093   ship-ok
 src/Service/MosaicEditorAttachments.php                               cke5       ship-ok
+src/Service/MosaicFileUsage.php                                       f056       ship-ok
 src/Service/MosaicManifestBuilder.php                                 f087       ship-ok
 src/Service/MosaicTextFormatAccess.php                                stages34   ship-ok
+tests/src/Kernel/Hook/MosaicFileUsageTest.php                         f056       ship-ok
 tests/src/Kernel/Manifest/MosaicManifestParityTest.php                f087       ship-ok
 tests/src/Kernel/Service/MosaicLayoutLockSelfLockoutTest.php          cke5       ship-ok
 tests/src/Kernel/Service/MosaicTextFormatGuardTest.php                stages34   ship-ok
 ```
-Untracked-keep by origin: cke5 5 · stages34 4 · f087 2 · f089-093 1.
+Untracked-keep by origin: cke5 5 · stages34 4 · f087 2 · f056 2 · f089-093 1.
 
 ## EXCLUDED untracked noise (NOT shipped — 172 entries)
 `AI/**` (evidence/ledger, gitignored), `js/**/*.log` (dev logs), `assets/`,
@@ -91,7 +96,7 @@ cd web/modules/custom/mosaic
 # 1) all 33 tracked modifications (updates tracked files only — never adds untracked noise)
 git add -u
 
-# 2) the 15 new (untracked) ship files — explicit, so no dev noise is swept in
+# 2) the 17 new (untracked) ship files — explicit, so no dev noise is swept in
 git add \
   js/src/builder/__tests__/BodyEditModal.test.tsx \
   js/src/builder/__tests__/TabsArrayUX.test.ts \
@@ -103,14 +108,16 @@ git add \
   js/src/shared/__tests__/DirtyBaseline.test.ts \
   modules/mosaic_media/css/mosaic-media-fe.css \
   src/Service/MosaicEditorAttachments.php \
+  src/Service/MosaicFileUsage.php \
   src/Service/MosaicManifestBuilder.php \
   src/Service/MosaicTextFormatAccess.php \
+  tests/src/Kernel/Hook/MosaicFileUsageTest.php \
   tests/src/Kernel/Manifest/MosaicManifestParityTest.php \
   tests/src/Kernel/Service/MosaicLayoutLockSelfLockoutTest.php \
   tests/src/Kernel/Service/MosaicTextFormatGuardTest.php
 
-# 3) verify EXACTLY 50 staged, and that no noise slipped in
-git diff --cached --name-only | wc -l          # must print 51
+# 3) verify EXACTLY 53 staged, and that no noise slipped in
+git diff --cached --name-only | wc -l          # must print 53
 git diff --cached --name-only | grep -E '\.log$|^AI/|^assets/|\.zip$|esc-probe' || echo "clean — no noise staged"
 ```
 CP-EDIT20 tracked-M additions (already covered by `git add -u`): css/mosaic-frontend-editor.css,
@@ -126,6 +133,9 @@ frontend-editor.js/mosaic.libraries.yml (1.0.12).
   (first non-empty type), FE media library chrome.
 - cke5 (CP-BODY-CKE5, this directive): CKEditor 5 expand-modal replaces the TipTap fork
   (deleted), #37 false-dirty + #38 self-lockout fixes, FE editor-asset attachments.
+- f056 (walk-catch #45): MosaicFileUsage keeps CKE5 inline uploads embedded in a Mosaic
+  richtext body permanent + usage-recorded (entity insert/update/delete), so they survive
+  cron GC instead of decaying to the filter's "image removed" red-X.
 
 ## Gates (all green — full detail in AI/REPORT-CKE5.md)
 Vitest 481/482 (only B-101 pre-existing) · module unit+kernel FULL 2853/0-fail ·

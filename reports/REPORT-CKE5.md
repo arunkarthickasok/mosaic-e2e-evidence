@@ -473,3 +473,123 @@ back. Two structural blockers:
   authors get no select (fmtList<2) and BodyEditModal falls back to `format`. body stays a
   string; toPuck/fromPuck + F-089 untouched. Save-guard (#44) + FE dialog-mover (#43) + tab
   sync (#42) from CP-EDIT20 carried unchanged. W4 iframe NOT built (route resists) — U3 kept.
+
+---
+
+## WALK-CATCHES #45/#46 (2026-09-07). Ship #31 frozen; probe-then-fix-if-in-charter.
+
+### Q1 #45 — CKE5 DIRECT IMAGE UPLOAD renders red-X. VERDICT: ONE mechanism = file permanence (F-056 family).
+Witnessed on node 841 (title "FE Splash Test"):
+- (a) SAVED body carries `<img src="/sites/default/files/inline-images/642be6d5….jpg"
+  data-entity-uuid="9fe5e01b-9563-4796-920c-00a6131331c5" data-entity-type="file" …>`
+  (the direct upload) — plus a baked-in error placeholder from a prior render.
+- (b) `check_markup($img,'basic_html')` OUTPUTS the placeholder
+  `<img src="/core/misc/icons/e32700/error.svg" … class="filter-image-invalid"
+  title="This image has been removed. For security reasons, only images from the local
+  domain are allowed.">` — `_filter_html_image_secure_image()` can't resolve the src to a
+  local file, so it swaps in the "image removed" placeholder = the red-X.
+- (c) the file entity for uuid 9fe5e01b is MISSING (not temporary — GARBAGE-COLLECTED).
+- (d) the inline-images file is NOT on disk.
+- ROOT: editor.module `_editor_record_file_usage` scans only `text_with_summary`/`text_long`
+  fields (editor.module:207). Our richtext body lives inside `field_mosaic_layout` (a
+  `mosaic_layout` JSON field), so editor.module NEVER registers file_usage for a
+  CKE5-uploaded image → the file stays TEMPORARY → cron's temporary-file GC deletes it →
+  the image-secure filter renders the placeholder. NOT attribute stripping.
+- IN CHARTER (usage/permanence branch). Fix = a presave that scans the layout JSON for
+  `data-entity-type="file"` uuids, marks those files permanent, and registers/updates
+  `file_usage` (mirroring editor.module's add-new / remove-gone semantics vs $entity->original).
+
+#### Q1 #45 — FIX (shipped into #31). New service `MosaicFileUsage` + `MosaicHooks` wiring.
+- `src/Service/MosaicFileUsage.php` (NEW, DI: `@entity.repository` + optional `@?file.usage`
+  so the module still installs when the non-required file module is absent). `fileUuids()`
+  walks the decoded layout JSON collecting every authored richtext string EXCEPT
+  `_renderedHtml` snapshots (those carry stale uuids — incl. the filter's own placeholder,
+  which keeps `data-entity-uuid` — for files no longer authored) and parses each with
+  DOMXPath `//*[@data-entity-type="file" and @data-entity-uuid]` (mirrors
+  `_editor_parse_file_uuids`). `onInsert/onUpdate/onDelete` mirror EditorHooks: record →
+  `setPermanent()`+`file.usage->add(…, 'mosaic', …)`; update → diff current vs
+  `getOriginal()` (add new, delete removed count=1); delete → release all (count=0).
+- `src/Hook/MosaicHooks.php`: injected `MosaicFileUsage`; added `#[Hook('entity_insert')]`;
+  called `onUpdate`/`onDelete` at the top of the existing `entity_update`/`entity_delete`.
+  `drush cr` run (compiled container caches the ctor arg list — CLAUDE.md rule).
+- Module usage key is `'mosaic'` (editor.module uses `'editor'`) → the two never collide; a
+  file referenced from both a text field and a Mosaic body is counted by each.
+- GATES (all green): FULL Kernel+Unit **2855 / 0 fail** (7227 assertions; +2 vs 2853 = the
+  new test); Vitest **491 pass / 1 fail** = pre-existing B-101 boolean→radio drift only;
+  **phpcs 0/0** on `MosaicFileUsage.php` + `MosaicFileUsageTest.php` (MosaicHooks: only
+  pre-existing line-length warnings, none at added lines); **PHPStan** clean under the
+  module's `phpstan.neon.dist` (level 6). No `js/src` changed → **no dist rebuild**.
+- KERNEL gate `tests/src/Kernel/Hook/MosaicFileUsageTest.php` (2 tests / 22 assertions):
+  (1) `fileUuids()` dedupes + extracts authored refs + SKIPS `_renderedHtml`;
+  (2) full lifecycle — save makes a temporary embedded file permanent + records `mosaic`
+  usage; removing the reference releases it; re-adding re-records; deleting the host releases.
+- LIVE proof: `check_markup($permanentInlineImage,'basic_html')` → real `<img src=/sites/…>`,
+  **NO** `error.svg` placeholder (contrast the node-841 red-X).
+- RED→GREEN journey `e2e/journeys/q1-f056-upload-permanence.spec.ts` (@journey, scratch,
+  DB net-zero): a temporary upload embedded in a tabs body → node save (fix fires) → the
+  file is permanent + usage-recorded → `drush cron` (both files back-dated past max-age) →
+  the referenced upload SURVIVES while an IDENTICAL unreferenced control file is reclaimed →
+  cookieless (anon) curl + a guaranteed-anon page (cookies cleared, no admin toolbar) render
+  the REAL image (`naturalWidth=400`, no red-X). RED companion
+  `e2e/journeys/q1-red-capture.spec.ts`: a body whose uploaded file is already gone renders
+  the red-X placeholder. Frames: `AI/e2e-evidence/q1-green/45-upload-renders-green.png`,
+  `AI/e2e-evidence/q1-red/45-upload-redx-red.png`.
+- DOUBLE-CHECK: dead-uuid refs load to null → `record()`/`delete()` no-op (never resurrect a
+  GC'd file — node 841's already-lost image cannot be recovered; the fix is forward-looking).
+  Entities without a `mosaic_layout` field short-circuit (empty field-name list). onUpdate
+  guards a null/absent original. The `_renderedHtml` skip is asserted by the Kernel test.
+
+### Q2 #46 — NODE-FORM PREVIEW renders the mosaic field broken. VERDICT: **STOP** (out of the formatter/renderer charter). PRE-EXISTING.
+- The mosaic field RENDERS in preview. A clean 2-tab scratch node AND node 841 both reach
+  `/node/preview/{uuid}/full` and render correctly once Preview gets there: tabs upgrade
+  (`.tabs-wrapper`), exactly ONE panel is visible (inactive panels `[hidden]` → `display:none`
+  at ~0 ms). node 841's preview render is BYTE-FAITHFUL to its anon PUBLISHED render (same
+  wrapper, same 1-of-4 visible panel, same `adoptedStyleSheets=0`) — so there is **no
+  preview-specific render defect**. Its busy look is node 841's own duplicated content
+  components (a messy old "FE Splash Test" node), not un-hidden tab panels.
+- ROOT of the "broken" symptom = Mosaic's SAVE-lock validation gating the non-mutating
+  PREVIEW op. `MosaicLayoutWidget::validateJson()` (`#element_validate`, F-050/F-064, the
+  security-ratified path) requires a live self-lock whose token matches the submitted nonce
+  on ANY node-form submit — including Preview. The builder acquires the lock ASYNC after
+  load, so there is a RACE: Preview clicked before the lock settles (or after a mid-edit TTL
+  expiry) is refused with *"Your edit session has expired or the layout is no longer locked
+  to you… your changes were not saved."* and bounces to `/node/N/edit` — the preview never
+  renders. Proven deterministically: lock-NOT-held → bounce (`46-preview-lock-bounce-red.png`);
+  lock-HELD → `/node/preview/…/full` renders the field (`46-preview-lock-held-green.png`,
+  clean node `46-clean-preview-green.png`). All lock KERNEL tests pass in the 2855/0 suite —
+  server-side lock logic is intact; this is purely that Preview should not be lock-gated.
+- CLASSIFICATION: PRE-EXISTING since day one. Neither the lock validation nor the
+  renderer/formatter was touched by the CKE5 arc (CP-BODY-CKE5 / CP-EDIT20 / CP-EDIT21). Not
+  a regression.
+- WHY STOP: the charter's Q2 fix condition is "root in our formatter/renderer, ≤ M". The root
+  is the WIDGET's save-lock validation — a security-ratified path (F-064 closed a stale-POST
+  attack) — NOT the formatter/renderer. Fixing it means exempting the Preview op from a
+  ratified security guard, which is Arun's call, not a silent walk-catch edit.
+- OPTIONS + SIZE (for Arun):
+  - **Opt 1 (recommended, S):** in `validateJson`, when the triggering element is the node
+    Preview button (op = preview), keep the JSON-schema check but SKIP the live-self-lock
+    enforcement — Preview never persists, so a save-conflict guard is irrelevant. Add a lock
+    Kernel test asserting Preview is allowed while Save still requires the lock. Touches the
+    F-050/F-064 path → needs Arun's sign-off.
+  - **Opt 2 (XS):** JS-gate — disable the node-form Preview button until the builder confirms
+    the lock is acquired. Removes the load-race but not a mid-edit TTL expiry, and not the
+    conceptual mis-gating.
+  - **Opt 0 (none):** document that node-form Preview requires the layout lock to be held.
+- Secondary observation (NOT #46, NOT preview-specific): mosaic-tabs render with
+  `adoptedStyleSheets=0` / no shadow `<style>` in BOTH published and preview — the tab-bar
+  chrome is minimally styled everywhere (styling comes from global renderer CSS, not shadow).
+  Identical across contexts → no regression; a candidate backlog probe, out of #46 scope.
+
+### Ledger — walk-catch tally now **46**. W4 ruling recorded.
+- #45 (F-056 file permanence): FIXED in-charter, shipped into #31 (red→green + full gates).
+- #46 (node-form Preview): STOP, out-of-charter (root = ratified save-lock gating Preview);
+  options + size handed to Arun; PRE-EXISTING.
+- W4 (FE-media iframe spike, CP-EDIT21): REJECTED — the preview route resists iframe embed;
+  U3 (self-render fallback) retained; FE chrome polish deferred to Act 2. (No change this
+  round; recorded here for the running ledger.)
+- lock-2b `e2e/lock-2b.spec.ts:104` (foreign-held save refused) fails at
+  `#edit-submit.click()` because the FE lock-overlay JS now HARD-DISABLES Save
+  (`disabled` + `.mosaic-save-blocked`) on a foreign lock — a client-side behavior. This
+  change is PHP-only (`js/src` untouched, dist unchanged) → it cannot cause a JS-behavior
+  failure; PRE-EXISTING test/impl drift (impl is stricter than the test expects). Candidate
+  backlog B-item: update lock-2b to assert the disabled Save button rather than click it.
