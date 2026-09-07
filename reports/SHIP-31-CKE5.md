@@ -1,14 +1,17 @@
-# SHIP #31 — CONSOLIDATED authoritative ship-list (refreshed 2026-09-07, +CP-EDIT20)
+# SHIP #31 — CONSOLIDATED authoritative ship-list (refreshed 2026-09-07, +CP-EDIT21)
 
 Read-only git, NOTHING staged. Arun commits after his re-walk. Refreshed after
-CP-EDIT20 (editor UX hardening, walk-catches #39–44) rode in — totals grew from 45.
+CP-EDIT21 (editor UX round 2, walk W0–W5) rode in — one new file since CP-EDIT20.
 
-## EXACT TOTALS (verified via git, this session — post CP-EDIT20)
+## EXACT TOTALS (verified via git, this session — post CP-EDIT21)
 - (a) tracked changes  `git status --short | grep -v '^??'`  = **36**  (all ` M`, zero ` D`)
-- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **14**
-- **GRAND TOTAL = 50 files**  (was 45 at CP-BODY-CKE5; +5 CP-EDIT20)
-- `git check-ignore` verdict: **50/50 ship-ok (0 ignored)**
-- By origin: cke5-edit20 **23** · f087 **13** · stages34 **10** · f089-093 **4**
+- (b) untracked keep-list (minus AI/, *.log, assets/, *.zip, .DS_Store, esc-probe.config.ts) = **15**
+- **GRAND TOTAL = 51 files**  (45 at CP-BODY-CKE5; +5 CP-EDIT20; +1 CP-EDIT21: richtextFormatBridge.ts)
+- `git check-ignore` verdict: **51/51 ship-ok (0 ignored)**
+- CP-EDIT21 also RE-TOUCHED (already tracked-M): css/mosaic-fields.css, js/dist/builder.js,
+  js/dist/frontend-editor.js, js/src/builder/MosaicPuckAdapter.ts, js/src/builder/fields/
+  BodyEditModal.tsx, js/src/builder/__tests__/BodyEditModal.test.tsx, mosaic.libraries.yml (1.0.13).
+- By origin (loose): cke5+edit20+edit21 **24** · f087 **13** · stages34 **10** · f089-093 **4**
   (cke5 18 folded into cke5-edit20; CP-EDIT20 added 5: css/mosaic-frontend-editor.css,
    js/dist/renderer.js, js/src/renderer/components/mosaic-tabs.ts, js/src/builder/tabsPanelSync.ts,
    js/src/builder/__tests__/tabsPanelSync.test.ts — and touched BodyEditModal/BuilderApp/
@@ -18,7 +21,7 @@ CP-EDIT20 (editor UX hardening, walk-catches #39–44) rode in — totals grew f
   DrupalMediaSurvival.test.ts, RichtextMediaMenu.test.tsx, RichtextField.test.ts) were
   UNTRACKED, so their deletion leaves **0** entries in git status — correctly absent.
 
-## (a) TRACKED-M — 33 files  [file — origin — check-ignore]
+## (a) TRACKED-M — 36 files (33 below + 3 CP-EDIT20/21: mosaic-frontend-editor.css, js/dist/renderer.js, js/src/renderer/components/mosaic-tabs.ts)  [file — origin — check-ignore]
 ```
 MOSAIC.md                                                              f087       ship-ok
 css/mosaic-fields.css                                                  cke5       ship-ok
@@ -58,7 +61,7 @@ Tracked-M by origin: cke5 13 · f087 11 · stages34 6 · f089-093 3.
 Note: MOSAIC.md is the cumulative changelog doc (touched every wave); tagged f087 by
 its most-recent signature but not exclusive to one wave.
 
-## (b) UNTRACKED KEEP-LIST — 12 files  [file — origin — check-ignore]
+## (b) UNTRACKED KEEP-LIST — 15 files (12 below + 3 CP-EDIT20/21: tabsPanelSync.ts, tabsPanelSync.test.ts, richtextFormatBridge.ts)  [file — origin — check-ignore]
 ```
 js/src/builder/__tests__/BodyEditModal.test.tsx                       cke5       ship-ok
 js/src/builder/__tests__/TabsArrayUX.test.ts                          stages34   ship-ok
@@ -81,14 +84,14 @@ Untracked-keep by origin: cke5 5 · stages34 4 · f087 2 · f089-093 1.
 testIgnore'd esc-sequence-probe spec). Only AI/** and js/e2e/** are gitignored; the
 rest are NON-ignored dev noise — which is EXACTLY why `git add -A` must NOT be used.
 
-## EXACT git add commands for Arun (stages precisely the 45, no noise)
+## EXACT git add commands for Arun (stages precisely the 51, no noise)
 ```sh
 cd web/modules/custom/mosaic
 
 # 1) all 33 tracked modifications (updates tracked files only — never adds untracked noise)
 git add -u
 
-# 2) the 14 new (untracked) ship files — explicit, so no dev noise is swept in
+# 2) the 15 new (untracked) ship files — explicit, so no dev noise is swept in
 git add \
   js/src/builder/__tests__/BodyEditModal.test.tsx \
   js/src/builder/__tests__/TabsArrayUX.test.ts \
@@ -96,6 +99,7 @@ git add \
   js/src/builder/__tests__/tabsPanelSync.test.ts \
   js/src/builder/fields/BodyEditModal.tsx \
   js/src/builder/tabsPanelSync.ts \
+  js/src/builder/richtextFormatBridge.ts \
   js/src/shared/__tests__/DirtyBaseline.test.ts \
   modules/mosaic_media/css/mosaic-media-fe.css \
   src/Service/MosaicEditorAttachments.php \
@@ -106,7 +110,7 @@ git add \
   tests/src/Kernel/Service/MosaicTextFormatGuardTest.php
 
 # 3) verify EXACTLY 50 staged, and that no noise slipped in
-git diff --cached --name-only | wc -l          # must print 50
+git diff --cached --name-only | wc -l          # must print 51
 git diff --cached --name-only | grep -E '\.log$|^AI/|^assets/|\.zip$|esc-probe' || echo "clean — no noise staged"
 ```
 CP-EDIT20 tracked-M additions (already covered by `git add -u`): css/mosaic-frontend-editor.css,

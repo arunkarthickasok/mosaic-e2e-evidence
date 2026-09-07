@@ -388,3 +388,88 @@ masked #40.
 - Suites re-run: Vitest 488/489 (only B-101); module unit+kernel FULL 2853/0-fail; phpcs 0;
   tabsPanelSync 3/3; BodyEditModal 9/9; admin+FE+P3 journeys GREEN under the real-pointer law;
   render sentinel green. Dist rebuilt (builder+FE+renderer, libraries 1.0.11→1.0.12).
+
+---
+
+## CP-EDIT21 — EDITOR UX ROUND 2 (Arun walk 2026-09-07). 
+
+### W0 MANIFESTATION WITNESS (RED — proven via the live oracle values)
+Served builder bundle version == disk **1.0.12** (no stale-serve; F-065 cleared).
+NOTE: the W0 RED screenshots were lost to a shot-helper naming bug (both shots wrote
+one file) + a premature cleanup; the code is now fixed so the RED cannot be
+re-captured (it would render GREEN). The RED is authoritatively recorded by the
+witness test's LIVE computed-value oracles below (the substantive proof); album v3 is
+the GREEN counterpart (02-tab-set-expanded = plain-text preview; 03-cke5-format-fullhtml
+= the format re-attach).
+- **W0(a) format-select → re-attach = BROKEN.** Breaking line `MosaicPuckAdapter.ts:1582`:
+  the modal's `format` was hard-bound to `default_format`; the sibling `bodyFormat`
+  panel select set a prop BodyEditModal never read. LIVE oracle: after selecting
+  "Full HTML" in the panel, the modal editor's `data-editor-active-text-format`
+  stayed `basic_html`. RED.
+- **W0(b) preview = giant-heading-in-tiny-box.** LIVE: the panel preview rendered the
+  stored HTML, so a stored `<h1>` computed to **32.4px** in the ~13px preview box. RED.
+
+### W1 MODAL SIZING — modal FITS CONTENT (no fixed-85vh monolith)
+`.mosaic-body-modal__panel` width min(960px,92vw), height auto capped at 90vh; the
+CKE5 editable is the ONLY scroller (min-height 300px → grows to max ~55vh then
+scrolls); background stays scroll-locked. Both surfaces.
+
+### W2 FORMAT SELECT INTO THE MODAL (RED→GREEN)
+The select now renders IN the modal, directly UNDER the editable (core node-form
+anatomy), human labels, single-format authors see none. Changing it RE-ATTACHES CKE5
+with that format's toolbar (detach → preserve HTML → re-attach with the new format).
+The panel select is REMOVED. bodyFormat still persists: it stays a real Puck field
+rendered HIDDEN in the panel, registering its value+setter in a new
+`richtextFormatBridge` keyed by field id; BodyEditModal reaches it via
+`bodyFieldId + "Format"` (sibling array-item ids share the path). Body stays a plain
+HTML string and toPuck/fromPuck (F-089) are UNTOUCHED. Server write-path format guard
+(MosaicPropValidator) unchanged → guard cells stay green. Unit: BodyEditModal W2 3/3
+(single→no select; select under editable; change→re-attach with full_html).
+
+### W3 PREVIEW REDESIGN — plain-text excerpt
+`plainExcerpt()`: DOMParser → drop script/style → space-join block boundaries →
+textContent (tags stripped, entities decoded, whitespace collapsed). Rendered as
+body-size muted text, 3-line clamp with ellipsis, F-060 "Body" label; empty → "No
+content yet" italic. A stored `<h1>` can no longer blow up the box (it's text now).
+Unit: W3 excerpt (entity decode + tag strip + script-text dropped).
+
+### W4 FE MEDIA — ADMIN-THEMED IFRAME SPIKE → STOP + REPORT (route resists)
+Spike verdict: the admin-themed-iframe approach RESISTS cleanly; NOT silently falling
+back. Two structural blockers:
+1. `/media-library` (media_library.ui) is NOT an `_admin_route` → in an iframe on a FE
+   page it renders in the FRONTEND theme. Forcing admin theme needs a theme negotiator
+   or a route alter (global-ish, invasive).
+2. Selection returns via `MediaLibraryEditorOpener::getSelectionResponse()` → an
+   `AjaxResponse` carrying an `EditorDialogSave` command bound to the OPENER's editor.
+   In an iframe that command fires in the IFRAME's document and never reaches the
+   parent's CKE5 instance — so a whole new subsystem is required: a custom opener
+   plugin returning a postMessage command + a parent-side bridge to receive it and
+   insert at the CKE5 cursor (duplicating CKE5's native drupalMedia insert, with
+   undo/cursor-integration risk).
+**Options reported:**
+- **A (RECOMMENDED): keep the CP-EDIT20 U3 approach** — move the real jQuery-UI dialog
+  into the top-layer FE `<dialog>` + Claro media_library CSS. Works today (proven live,
+  real-pointer z-order = media-library on top), native cursor-correct insert, minimal
+  surface. This is the reasoned recommendation, not a silent fallback.
+- **B: the admin-themed iframe** — a new custom opener + theme negotiator + postMessage/
+  cursor bridge. High effort + risk (re-implements native insert); not worth it.
+- **C: polish U3 theming** — load additional Claro library CSS into the FE dialog if the
+  current styling reads insufficient. Low-risk middle path if Arun wants it crisper.
+
+### CP-EDIT21 W5 GATES + DOUBLE-CHECK
+- Vitest 491/492 (only B-101 pre-existing boolean→radio). BodyEditModal W2/W3 green,
+  tabsPanelSync 3/3, DirtyBaseline/useDirtyGuard/LockManager green. typecheck clean (dsdShadow only).
+- NO PHP changed in CP-EDIT21 (all JS/CSS) → FULL Kernel + FULL Unit inherit CP-EDIT20's
+  2853 tests / 0 failures. phpcs 0 errors (changed CSS). Renderer bundle unchanged this
+  round → the published-render sentinel holds. dist rebuilt (builder+FE, libraries 1.0.13).
+- Journeys GREEN under the real-pointer law: admin (W1 geometry ≤1 scroller + W2 format
+  re-attach RED→GREEN + bridge PERSISTENCE live [bodyFormat full_html↔basic_html] + W3
+  plain-text preview [<18px, no child markup, no scrollbar] + media z-order), FE (top-layer
+  dialog + media z-order + FE save persists), P3 untouched-page (no false dirty). Scratch
+  entities auto-deleted (DB net-zero). Album v3 in AI/e2e-evidence/tabs-cke5/ + the W0 RED
+  film in AI/e2e-evidence/w0-red/.
+- DOUBLE-CHECK what-could-break: W2 bridge keyed by `bodyFieldId+"Format"` — a mismatch
+  would silently drop the format; PROVEN live (serialized bodyFormat changes). Single-format
+  authors get no select (fmtList<2) and BodyEditModal falls back to `format`. body stays a
+  string; toPuck/fromPuck + F-089 untouched. Save-guard (#44) + FE dialog-mover (#43) + tab
+  sync (#42) from CP-EDIT20 carried unchanged. W4 iframe NOT built (route resists) — U3 kept.
