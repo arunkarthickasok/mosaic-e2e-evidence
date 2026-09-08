@@ -24,6 +24,13 @@ Reviewer entry point. Evidence + run reports only (no code, DB, or secrets).
   - Money frame — uploaded image renders for anon after the fix: [`walk-45-46/45-upload-renders-green.png`](walk-45-46/45-upload-renders-green.png)
   - RED baseline — GC'd upload red-X: [`walk-45-46/45-upload-redx-red.png`](walk-45-46/45-upload-redx-red.png)
 
+- [`preview-lock/`](preview-lock/INDEX.md) — **CP-PREVIEW-LOCK (walk-catch #46, Opt 1)**:
+  the node-form Preview op is now exempt from the save-lock (Preview never persists), fixing
+  the race where an immediate Preview bounced with "edit session expired". Full-lifecycle
+  journey (edit → immediate Preview renders → back → Save → anon render); Kernel red→green
+  keeps SAVE fully locked.
+  - Money frame — Preview renders before the lock settles: [`preview-lock/01-preview-pre-lock-renders.png`](preview-lock/01-preview-pre-lock-renders.png)
+
 ## Reports
 - [`reports/REPORT-CKE5.md`](reports/REPORT-CKE5.md) — full CP-BODY-CKE5 phase log:
   spike (S1–S4), P1 CKE5 modal, P2 TipTap deletion, P3 false-dirty, P4 self-lockout,

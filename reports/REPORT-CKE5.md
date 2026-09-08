@@ -593,3 +593,64 @@ Witnessed on node 841 (title "FE Splash Test"):
   change is PHP-only (`js/src` untouched, dist unchanged) → it cannot cause a JS-behavior
   failure; PRE-EXISTING test/impl drift (impl is stricter than the test expects). Candidate
   backlog B-item: update lock-2b to assert the disabled Save button rather than click it.
+
+---
+
+## CP-PREVIEW-LOCK (walk-catch #46, Arun-ratified Opt 1). 2026-09-08. Rides ship #31.
+
+Opt 1 from the #46 STOP report is ratified: exempt the non-mutating node-form Preview op
+from the save-lock, keep schema validation + format guard, keep full SAVE lock enforcement.
+
+### V1 — validateJson: Preview op exempt from the live-self-lock.
+- `MosaicLayoutWidget::validateJson()` now returns early — AFTER schema validation, BEFORE
+  the F-050/F-064 lock block — when the submit is the Preview op. New private helper
+  `isPreviewOp(FormStateInterface)` identifies it by the triggering button's `#submit`
+  handlers containing `::preview` (core `NodeForm::actions()` sets
+  `'#submit' => ['::submitForm', '::preview']`) — a stable STRUCTURAL signal, never the
+  translated `#value` label. Any other trigger (Save, a null/programmatic submit, an AJAX
+  button) is treated as NOT-preview → the lock still applies.
+- Schema validation (lines above the exemption) and the write-path format guard (separate —
+  MosaicTextFormatAccess, unchanged) still run for Preview. The exemption is the LAST thing
+  before the lock block, so it skips ONLY the lock, nothing else.
+- Kernel red→green `tests/src/Kernel/Field/MosaicLayoutWidgetPreviewExemptTest.php`
+  (6 tests / green): Preview WITHOUT a settled lock PASSES (today-red → green); Preview under
+  a FOREIGN lock PASSES; Preview STILL refuses schema-invalid JSON; SAVE without a lock is
+  still REFUSED (save trigger AND null trigger); SAVE by the holder with the matching nonce
+  PASSES. The existing MosaicLayoutWidgetLockTest (3 SAVE regression cells) stays green — its
+  helper sets no triggering element → treated as SAVE → lock enforced. phpcs 0/0. PHPStan:
+  my added code clean; the 16 errors reported on the file are all pre-existing (constructor
+  `readonly` properties vs DependencySerializationTrait at lines 81–88), not from this change.
+
+### V2 — lock-2b oracle retrofit (X1 behavior).
+- `e2e/lock-2b.spec.ts` `@2b-block` cell ORACLE CHANGE (recorded inline old→new): was
+  click `#edit-submit` then expect a bounce to `/node/N/edit`; NOW asserts Save is client-
+  side DISABLED under a foreign lock (`disabled` + `.mosaic-save-blocked`) — a STRONGER
+  guarantee (the submit cannot fire), and the old click-and-bounce no longer works because a
+  disabled button is unclickable. The server-side nonce refusal remains the backstop
+  (MosaicLayoutWidgetLockTest::testForeignHeldFormSubmitSetsError). lock + lock-2b suite
+  13/13 green (incl. the previously-flaky aria-status banner and the W18 `@2b-geometry`).
+
+### V3 — MosaicFileUsage coverage VERIFIED for breakpoint_states + slot children (F-077/078).
+- QUOTE: `MosaicFileUsage::collectUuids()` recurses through EVERY decoded array value except
+  keys named `_renderedHtml`, so it naturally traverses `breakpoint_states.{bp}.nodes.{id}.
+  props.*` (each breakpoint state is a full {root, nodes} sub-tree — MosaicLayoutValue) AND
+  slot children (the child node lives in the `nodes` map that the walk already covers).
+- New cell `MosaicFileUsageTest::testFileUuidsCoversBreakpointStatesAndSlotChildren`: a file
+  ref in a breakpoint-override body AND one in a slot-child body are both found (deduped, 2).
+  PASSES with no code change → NO GAP; the F-077/078 lesson is covered. Full MosaicFileUsage
+  test 3 tests / 30 assertions green.
+
+### V4 — full-lifecycle preview journey + album v4.
+- `e2e/journeys/preview-lock-lifecycle.spec.ts` (@journey, scratch node, DB net-zero):
+  edit → click Preview IMMEDIATELY (before the async lock settles — the exact old race) →
+  reaches `/node/preview/…/full` with the field rendered (tabs upgraded, 1 panel visible),
+  NO "edit session expired" → back to edit → lock settles → Save succeeds (redirect to
+  `/node/N`, no lock error) → anonymous render shows the field. Frames:
+  `AI/e2e-evidence/preview-lock/01-preview-pre-lock-renders.png` (money frame — Preview
+  renders pre-lock, no error), `02-saved.png`, `03-anon-render.png`.
+- GATES (all green): FULL Kernel+Unit (see run below) · Vitest 491/1-preexisting-B101 ·
+  phpcs 0/0 (new files; widget only pre-existing warnings) · lock 13/13 · f066 4/4 ·
+  W18 `@2b-geometry` green · sentinels green via Vitest (MosaicEntityRefField/MosaicLinkField).
+  PHP+e2e only, no `js/src` → no dist rebuild.
+- Ship #31 grows by ONE new file: tests/src/Kernel/Field/MosaicLayoutWidgetPreviewExemptTest.php
+  (the widget + lock-2b spec were already tracked-M). New GRAND TOTAL 54.
