@@ -15,4 +15,5 @@
 - [Feedback — "Full test" means ALL submodules](feedback_full_test_means_all_submodules.md) — "Full test/project" = src/ + all 15 modules/ submodules. Never scan src/ alone. Install missing deps first, never skip optional submodules.
 - [Feedback — Commit flow](feedback_commit_flow.md) — AI checks out branch + git add, then gives Arun ONE LINE commit message to paste himself
 - [Feedback — Evidence-repo law](feedback_evidence_repo_law.md) — mosaic-e2e-evidence now also carries ledgers under ledger/; mandatory pre-push secret guard (password|secret|token=|api_key|BEGIN.*PRIVATE|hash_salt)
+- [Feedback — Isolation / path-allowlist law](feedback_isolation_law.md) — state-changing git ONLY in mosaic-e2e-evidence dir; everywhere else read-only (HARD ABORT if cwd wrong); isolation self-check printed on every sync
 - [Drupal 11 Contrib Bible](../../../contrib_drupal_11_bible.md) — **HIGH PRIORITY. Every QA run MUST validate against this. NEVER commit. Covers: file structure, PHP standards, DI, hooks, controllers, security, docblocks, testing, routing, PHPCS gates.** Path: `/Users/arun/projects/Drupal/drupalak/contrib_drupal_11_bible.md`

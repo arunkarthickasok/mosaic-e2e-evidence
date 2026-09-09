@@ -10758,7 +10758,7 @@ post-walk = Arun's call.
   first-walk gap (user could pass access-check but not navigate the admin UI): access administration
   pages, view the administration theme, access toolbar, access content overview, access contextual
   links, create page content. NO break_lock (tests the pure locked-out reject path).
-- **User:** `walktester`, uid=3, mail walktester@example.com, active, password `[REDACTED — dev walk-test account]`.
+- **User:** `walktester`, uid=3, mail walktester@example.com, active, password `[REDACTED — see Arun]`.
 - **Target:** node/826 (bundle=page). Edit path: /node/826/edit. Login uri: https://drupalak.ddev.site:33001
 - **Verified (E5):** mosaic.use_builder=YES, break_lock=NO, update node/826=YES → GO.
 - **Purpose:** manual eye-test of the W33 foreign-held reject UX (admin form error + FE 409).
@@ -11922,3 +11922,17 @@ covered the media library still "passed" because the DOM click ignored z-order).
   carousel canvas DOM first) + S2e build + S2f derivation/journeys both surfaces/albums. Scale =
   the whole Tabs Stage 3/4 redesign. CHECKPOINTED honestly (no superficial work); foundation +
   coupling map + witnesses recorded for a coherent one-landing build. Walk tally 48.
+
+---
+
+## REDACTION RECORD (append-only integrity ledger)
+
+- **2026-09-09 — I3 SOURCE SCRUB (Arun-sanctioned, ISOLATION LAW paste).** Redacted the plaintext
+  dev walk-test password at AI/TODO.md:10761 (`walktester` / uid=3 / node/826 W33 foreign-held UX
+  eye-test fixture). The password VALUE was replaced in place with `[REDACTED — see Arun]`; the
+  username/email/uid/target are retained (test-fixture identity, not credentials). **Why:** the
+  LEDGER-TO-REPO pre-push secret-guard (`password|secret|token=|api_key|BEGIN.*PRIVATE|hash_salt`)
+  caught the value during "ledger sync 1" — it was neutralised in the pushed ledger copy first
+  (evidence commit `8ddafbf`), and this record scrubs the source too so history stays honest without
+  ever having pushed the value. Append-only integrity preserved: only the single credential token was
+  overwritten; no prior line was deleted or rewritten. Guard re-run on the source line: clean.
