@@ -11936,3 +11936,38 @@ covered the media library still "passed" because the DOM click ignored z-order).
   (evidence commit `8ddafbf`), and this record scrubs the source too so history stays honest without
   ever having pushed the value. Append-only integrity preserved: only the single credential token was
   overwritten; no prior line was deleted or rewritten. Guard re-run on the source line: clean.
+
+---
+
+## NORTHSTAR INTAKE + RATIFICATION (2026-09-09)
+
+- **Fresh-read:** AI/MOSAIC-NORTHSTAR.md (authored 2026-09-09; reviewer synthesis of audit b20ba2e +
+  four cold AI reviews + market research) read in full; the chartered append verified line-by-line
+  against §4 gap→solution matrix + §5 road — no discrepancy.
+- **Arun ruling 2026-09-09 — "ratify all as recommended."** The following move from RATIFIED-PENDING
+  to **RATIFIED**:
+  - **§5 is THE working queue:** Ship #33 (carousel+search coupled landing) → **Ship #34
+    "AUTHOR-TRUST SLICE"** (D-1 dataSourceTypes gate + D-2 recipe field-attach + D-3 hide-when-
+    unconfigured + F-095 escape-hatch doc) → Views arc CP-1..3 → **ACT 2** visual campaign (+F-097
+    device indicator) → Wave D (test-desert + F-096 upgrade-rehearsal + retrofits) + Wave F (D-4
+    translation PROMOTED, F-072, F-059, F-069, F-076, B-101, F-086 recipe) → Wave G (R-C7
+    enable-or-demote sheet + commerce fix + walk round 4) → dev push → soak → **tag 1.0.0 + F-098
+    truth pass** → 1.1 (real Lighthouse, headless, Schema.org).
+  - **AI-1..AI-4 registered as F-095..F-098:** F-095 escape-hatch doc (STORAGE-AND-EXPORT.md +
+    `drush mosaic:export` "leaves whole" proof, pre-tag S) · F-096 upgrade-rehearsal suite (fleet →
+    migrate v1→current → byte-faithful render oracle, Wave D) · F-097 device-tree governance note +
+    per-node "variants exist" indicator (Act 2, XS) · F-098 project-page + release-notes truth pass
+    (tag campaign).
+  - **D-4 translation PROMOTED to Wave F** (langcode column on the revision table + $langcode-aware
+    load/render + ADR + per-language Kernel cells) — Canvas 1.8 shipped translation = competitive
+    pressure.
+  - **Audit RATIFICATION SHEET R-C1..R-C8 ratified as recommended:** R-C1/R-C2/R-C3 pre-tag (rides
+    ship #34) · R-C4 hide-when-unconfigured · R-C5 post-tag dangling-root rescue · R-C6 defer
+    Views/translation/tokens · R-C7 Wave-G enable-or-demote (commerce is the lone BROKEN unit) ·
+    R-C8 ongoing Kernel render tests (start carousel+live_search under S2c).
+  - **Ship #33 coupled carousel+search landing: GO — hold released.** Entry point unchanged:
+    S2b discriminator-pin guard → S2c coupled render+author stack (Twig + component.yml + renderer +
+    adapter + sidecar for `slides`: image via bridge, richtext caption, link; getItemSummary;
+    defaultItemProps; DSD+#30) + 33-test v5→v6 fixture sweep + activate CURRENT_SCHEMA_VERSION=6 →
+    S2d sync → S2e F-084 search → S2f derivation/journeys both surfaces/albums. Awaits its own build
+    charter/session (scale = the whole Tabs Stage 3/4 redesign; not a tail-of-sync kickoff).
