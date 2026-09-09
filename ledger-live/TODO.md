@@ -11971,3 +11971,5 @@ covered the media library still "passed" because the DOM click ignored z-order).
     defaultItemProps; DSD+#30) + 33-test v5→v6 fixture sweep + activate CURRENT_SCHEMA_VERSION=6 →
     S2d sync → S2e F-084 search → S2f derivation/journeys both surfaces/albums. Awaits its own build
     charter/session (scale = the whole Tabs Stage 3/4 redesign; not a tail-of-sync kickoff).
+
+- **SMOKE (L5 LEDGER RELOCATION, 2026-09-09):** written to <mosaic>/AI/TODO.md; because AI is now a symlink → ledger-live, it lands in ledger-live/TODO.md. Relocation write-path verified.
