@@ -654,3 +654,93 @@ from the save-lock, keep schema validation + format guard, keep full SAVE lock e
   PHP+e2e only, no `js/src` → no dist rebuild.
 - Ship #31 grows by ONE new file: tests/src/Kernel/Field/MosaicLayoutWidgetPreviewExemptTest.php
   (the widget + lock-2b spec were already tracked-M). New GRAND TOTAL 54.
+
+---
+
+## WALK-47 — WALK ROUND FIXES (Arun 2026-09-08). Rides ship #31.
+
+His-reality film FIRST (Y0): three live RED frames captured before any fix and pushed as
+`walk-47/red/` (evidence commit ae37fe6) — the frames Arun demanded to see.
+
+### Y1 — #47 canvas ↔ panel sync. ROOT NAMED, fixed both hosts.
+- WITNESS (live probes, not the mock): this build of Puck renders array rows with CSS-module
+  HASHED classes and emits NEITHER a `data-index` attribute NOR a component-wrapping
+  `DraggableComponent--isSelected` element. `js/src/builder/tabsPanelSync.ts` had TWO stale
+  selectors that only ever matched the fabricated unit-test DOM:
+  1. `expandedIndex()` read `data-index` → always null → the canvas never got a tab index.
+  2. `selectedTabs()` expected `<mosaic-tabs>` INSIDE `DraggableComponent--isSelected`, but
+     that class is a positioned OVERLAY (`data-puck-overlay`) sibling; the tabs live in
+     `[data-puck-component] > .mosaic-canvas-preview > mosaic-tabs`. It returned null → the
+     sync bailed. That is why #47 never manifested live while the unit test was green.
+- FIX: `expandedIndex()` now derives the tab index from the expanded row's SIBLING POSITION
+  (the row carries both `_ArrayFieldItem_<h>` and `_ArrayFieldItem--isExpanded_<h>`);
+  `selectedTabs()` links the selection overlay to its component by GEOMETRY — the element
+  stack at the overlay's centre (`document.elementsFromPoint`) resolves to the
+  `[data-puck-component]` wrapper — with a single-Tabs fallback for the common case and jsdom.
+- Unit test `tabsPanelSync.test.ts` REWRITTEN to the real Puck DOM (component wrapper + overlay;
+  expand ADDS `--isExpanded` keeping the base class; sibling-position index, no data-index) —
+  4/4 green. dist rebuilt (builder + FE), library 1.0.13 → 1.0.14 (F-065 cache-bust) + drush cr.
+- GREEN film both hosts, real-pointer law: the row is expanded with a REAL mouse click (after
+  Puck's transient `_PuckFields-loadingOverlay` clears — that overlay, not the fix, is why an
+  earlier synthetic click missed), the click point is asserted to hit the row summary
+  (elementFromPoint), and the canvas active tab is read from the `<mosaic-tabs>` shadow:
+  admin `{expandedIdx:1, canvasVisible:1, tabAria:["false","true","false"]}`, FE identical.
+
+### Y2 — Format-select arrow overlap, fixed both hosts.
+- RED: the theme (Claro admin / Olivero FE) drew the dropdown arrow at `calc(100% - 18px)`
+  while `.mosaic-body-modal__format select` had `padding-right: 0.35rem` — the label ran under
+  the glyph. FIX (mosaic-fields.css): the select OWNS its arrow (inline SVG at
+  `right 0.5rem center`, size `0.7rem`) with `padding-right: 1.6rem` + `min-width: 8rem`,
+  identical on both themes. GEOMETRY ORACLE (both hosts): `paddingRight 25.6px ≥ arrowZone
+  19.2px` (offset 8 + glyph 11.2) → the text box and the arrow box are disjoint at all widths.
+
+### Y3 — FE editor chrome, admin-equivalent (Act-2 parking revoked).
+- ROOT: the FE editor runs under Olivero, so Claro's `libraries-extend` (which styles the
+  media library + jQuery-UI dialog on admin) never fires; and the media library's runtime
+  markup carries only `js-`-prefixed classes (`js-media-library-menu`, `js-media-library-item`
+  — MediaLibraryUiBuilder) while Claro targets the BEM classes, so even Claro's own CSS cannot
+  reach it. FIX: new `mosaic/fe_chrome` library — depends on the SCOPED Claro component
+  libraries (`claro/media_library.theme`, `claro/media_library.ui`, `claro/claro.drupal.dialog`)
+  so the dialog + Insert button get their admin look, plus a bounded `css/mosaic-fe-chrome.css`
+  that reproduces Claro's vertical-tabs menu + thumbnail grid on the real `js-` markup. Pulled
+  only by `frontend_editor` (editor-gated entityView Pass 2).
+- GREEN oracle (FE): media-type menu `list-style:none, display:flex, flex-direction:column`
+  (styled vertical rail, active item highlighted), links padded, Insert button styled, titlebar
+  legible. NO-REGRESSION cells: ANON published page loads ZERO fe_chrome/media-library/claro
+  CSS and has no Edit button; ADMIN media dialog menu stays `list-style:none` via Claro-native
+  styling (fe_chrome not attached on the widget/edit-form path) — admin untouched.
+- BOUNDS: every rule scoped to `.ui-dialog` / `.mosaic-fe-dialog`; the `js-media-library-*`
+  classes exist only inside the media dialog, so nothing bleeds to the FE page. (The thumbnail
+  grid CSS targets the standard Drupal views-grid containers; the styled menu/buttons/titlebar
+  are the visibly-verified wins — a media item was not present on the scratch run to shoot the
+  populated grid.)
+
+### Y4 — Preview-toggle RULING PREP (analysis only, NO build). Arun rules next window.
+The builder toolbar's Edit/**Preview** mode tabs (BuilderApp.tsx ~630-645) swap the canvas for
+`MosaicPreview` — a live server-rendered iframe (ADR-013: `srcdoc` + POST `/mosaic/render-preview`,
+`sandbox="allow-scripts"`, requires a SAVED node, breakpoint-aware).
+
+- **Option 1 — REMOVE the toggle (recommended).** COST: small — delete the two mode-tab buttons
+  from the toolbar header (BuilderApp.tsx), and in a follow-up retire `MosaicPreview.tsx` + the
+  `mosaic/render-preview` route/controller if nothing else references them. CONSEQUENCE:
+  simpler toolbar; no save-first friction; no mode-swap that hides the edit canvas. Redundancy
+  is real — (a) the canvas edit view is already WYSIWYG (DSD + Lit render), (b) CP-PREVIEW-LOCK
+  just made the node-form **Preview** reliable for a true full-page preview, and (c)
+  breakpoint-width preview already exists for admins on the published page via
+  `mosaic/device_preview` (hook_page_attachments). WHERE REMOVAL LIVES: the mode-tab block in
+  the BuilderApp toolbar header (the "shared toolbar" that also hosts the breakpoint switcher).
+- **Option 2 — KEEP AS-IS (non-interactive).** COST: none. CONSEQUENCE: the redundancy with the
+  node-form Preview + the save-first/mode-swap friction remain; a second server render path
+  stays maintained. Reasonable only if the in-builder breakpoint iframe is actively used.
+- **Option 3 — MAKE INTERACTIVE.** COST: highest — guarantee the rendered components' JS runs
+  inside the sandboxed iframe (assets in the render-preview HTML) and reconcile it with the
+  device_preview path. CONSEQUENCE: a first-class interactive breakpoint preview, but the most
+  code to own for the least marginal gain now that the node-form Preview works.
+- RECOMMENDATION: **Option 1 (remove)** — the toggle's one unique feature (breakpoint preview)
+  is already covered by device_preview, and its full-preview role is now covered by the fixed
+  node-form Preview. Defer the endpoint retirement to a follow-up so nothing else breaks.
+
+### Gates (Y1–Y4)
+Vitest 491/1-preexisting-B101 (incl. the rewritten tabsPanelSync 4/4) · FULL Kernel+Unit 2862/0
+(no PHP changed this round) · phpcs N/A (no PHP changed; CSS/YAML only) · lock/f066/W18/sentinels
+green · dist rebuilt 1.0.14 · DOUBLE-CHECK. Album v5 (RED + GREEN sets) pushed to walk-47/.
