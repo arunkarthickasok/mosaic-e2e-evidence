@@ -1,0 +1,4 @@
+# Code-ish campaign artifacts: present on disk in ledger-live (reachable via the
+# mosaic AI symlink) but NEVER published (LEDGER RELOCATION ruling 2026-09-09).
+ledger-live/*.patch
+ledger-live/*.php
