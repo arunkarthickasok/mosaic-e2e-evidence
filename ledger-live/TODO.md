@@ -12042,3 +12042,15 @@ covered the media library still "passed" because the DOM click ignored z-order).
   No carousel wiring yet (reusable keystone, like the dormant migration). Files: MediaFieldType.php(new),
   MosaicPropResolver.php, MosaicPuckAdapter.ts, MosaicFieldTypeManagerTest.php, MosaicPropResolverTest.php,
   FieldTypes.test.ts. Tree green.
+- **L-B DONE (green, dual-mode) 2026-09-10:** carousel `slides` render+author stack on L-A, backward-compatible
+  with slide_N (v5 renders byte-identically). Sidecar field_types slides{image:media, caption:richtext,
+  link:text} + summary:caption + item_label 'Slide' + default_item (getItemSummary/defaultItemProps come from
+  the generic adapter — no adapter change). component.yml slides array prop. Dual-mode twig: slides[] branch
+  (image via MosaicRenderer::resolveFieldTypeMedia — a new generic step resolving field_types media sentinels
+  with access + cache, no-op for slide_N; caption via check_markup — |raw ELIMINATED, F-100 autoescape attrs,
+  link) ELSE legacy slide_1..6 unchanged. Lit needs no change (default slot + slide-count already fit). S2b
+  discriminator guard: slide rows serialize as plain field-values, never {type,props}. Gates: FULL Kernel
+  186/1067, FULL Unit 2688 (1 pre-warn), Vitest 487/1-pre-B101, carousel render 6/6 (97), S2b 8/8, phpcs 0-err.
+  Files (+): mosaic_carousel.{twig,component.yml,mosaic.yml}, MosaicRenderer.php, MosaicCarouselRenderTest.php,
+  CarouselSlidesDiscriminator.test.ts. NO js/src render change → dist deferred to L-E (adapter dist is L-A/L-E).
+  Tree green. NEXT: L-C active-slide sync.
