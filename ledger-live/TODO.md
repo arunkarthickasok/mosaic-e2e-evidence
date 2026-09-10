@@ -12033,3 +12033,12 @@ covered the media library still "passed" because the DOM click ignored z-order).
   stack composed on L-A (backward-compat slide_N, S2b guard turns green) → L-C active-slide sync (DOM-witness
   first) → L-D atomic flip (V5→V6 + CURRENT=6 + 33-fixture oracle heal + idempotence + R-C8) → L-E dist +
   both-surface journeys + derivation matrix + album + SHIP-34.md + all gates. NEXT: build L-A.
+
+### SHIP #34 — green-checkpoint accumulation (uncommitted into ONE ship #34; Arun commits at ceremony)
+- **L-A DONE (green, isolation) 2026-09-10:** MediaFieldType plugin (builder_type 'media' + default_image_style)
+  + adapter media case in resolveSubFields/descriptorToPuckField (MosaicMediaField per row, fieldKey=Puck id,
+  basePath threaded) + public `MosaicPropResolver::resolveMediaSentinel` (existence + view-access, F-055/075).
+  Gates: Kernel field-type 5/5, PropResolver 7/7 (86), Vitest FieldTypes 6/6, tsc 0-from-change, phpcs 0-err.
+  No carousel wiring yet (reusable keystone, like the dormant migration). Files: MediaFieldType.php(new),
+  MosaicPropResolver.php, MosaicPuckAdapter.ts, MosaicFieldTypeManagerTest.php, MosaicPropResolverTest.php,
+  FieldTypes.test.ts. Tree green.
