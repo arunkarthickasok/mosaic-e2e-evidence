@@ -11993,4 +11993,23 @@ covered the media library still "passed" because the DOM click ignored z-order).
   **Record:** SHIP-33.md. **Tracked change set (Arun to commit):** mosaic_live_search.mosaic.yml +
   ManifestFieldTypesTest.php (+ pre-existing .gitignore). Journey spec gitignored (js/e2e, F-048).
 - **REMAINING ship #33 = carousel core** (S2b+S2c+activate v6+33-fixture oracle heal+active-slide sync
-  witness-first+S2f) per SHIP-33-PLAN.md — the dedicated coupled green landing. Walk tally 48.
+  witness-first+S2f) per SHIP-33-PLAN.md — the dedicated coupled green landing.
+
+## WALK-CATCH #49 / F-100 — placeholder double-escaping (FIXED 2026-09-09; ship #33 was frozen)
+
+- **Arun live evidence:** node view rendered `placeholder="Search&#x20;this&#x20;site..."` — visitor saw
+  literal escape codes. **Root cause (Q1):** `mosaic_live_search.twig:19` `{% set placeholder = props.
+  placeholder|escape('html_attr') %}` then re-emitted `{{ placeholder }}` in an html context → Twig
+  autoescape RE-ESCAPES (strategy mismatch safe-for-html_attr ≠ output-html) → `&`→`&amp;` → served
+  `&amp;#x20;` (double) → browser shows literal `&#x20;`. Micro-witness: set-then-output=double, inline
+  html_attr=single(browser-ok), autoescape=single+spaces-preserved+XSS-safe.
+- **Q2 FIX (root):** dropped html_attr pre-escape; standard autoescape at each quoted attr. RED→GREEN
+  Kernel MosaicLiveSearchRenderTest (4 cells/29 assertions: literal-space + quotes/apos/amp/unicode
+  round-trip + attribute-breakout neutralised). **Q3 SWEEP:** button/card/image/tabs inline html_attr
+  (single, browser-ok, same smell) → ALSO converted to autoescape → **0 `escape('html_attr')` module-wide**;
+  tabs sweep cell added. Live node 803: `placeholder="Search federal programs…"`, page `&#x20;`=0.
+- **Gates ALL GREEN:** phpcs 0-err · Vitest 482/1-pre · render 11/11 · FULL Kernel 178/178 (952) · FULL
+  Unit 2688/2688 (1 warn) · Functional component render 11/11 (91) · ship33-search journey GREEN (now
+  asserts literal placeholder). No js/src → no dist. **Change set (Arun add):** 5 twigs (live_search,
+  button, card, image, tabs) + MosaicLiveSearchRenderTest.php (new) + MosaicTabsRenderTest.php (+1 cell).
+- **Walk tally 49** (#49/F-100 FIXED). Ship #33 unfrozen; carousel core still pending its dedicated run.

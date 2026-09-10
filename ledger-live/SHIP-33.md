@@ -44,6 +44,45 @@ consumed by the existing built adapter — `MosaicPuckAdapter.fieldTypeFields`).
 Screenshot 01/02 visually confirm the Puck panel "Page › Live Search" with the labelled **Search endpoint**
 (`/search?q=`) + **Minimum characters** (`2`) fields.
 
+## WALK-CATCH #49 / F-100 — placeholder double-escaping (FIXED; ship #33 was frozen on this)
+
+**Arun's live evidence:** node view rendered `placeholder="Search&#x20;this&#x20;site..."` — the
+visitor saw literal escape codes.
+
+**Q1 witness (root cause, quoted):** stored `placeholder = "Search federal programs…"` (literal spaces)
+→ `mosaic_live_search.twig:19` `{% set placeholder = props.placeholder|default('Search…')|escape('html_attr') %}`
+(html_attr encodes space → `&#x20;`) → re-emitted as `{{ placeholder }}` in an html output context, where
+Twig autoescape RE-ESCAPES it (escape-strategy mismatch: safe-for-`html_attr` ≠ output `html`), so `&`→`&amp;`
+→ served bytes `placeholder="Search&amp;#x20;federal&amp;#x20;programs&amp;#x2026;"` (**double-encoded**);
+the browser decodes `&amp;#x20;` → literal text `&#x20;`. Micro-witness proved: set-then-output = double;
+inline `{{ v|escape('html_attr') }}` = single (browser-correct); autoescape = single, spaces preserved, XSS-safe.
+
+**Q2 root fix:** dropped the explicit `html_attr` pre-escape in `mosaic_live_search.twig`; each quoted
+attribute (`endpoint`, `placeholder`, `aria-label`) now relies on standard Twig autoescape (html) — single,
+correct, XSS-safe. **RED→GREEN** Kernel `MosaicLiveSearchRenderTest` (RED: `&amp;#x20;` present → GREEN)
++ payload cells: quotes/apostrophes/ampersand/unicode round-trip via a single decode; a `" onfocus="alert(1)`
+attribute-breakout payload is neutralised (closing quote encoded → stays inside the value). 4 cells, 29 assertions.
+
+**Q3 disease-class sweep (each hit quoted + verdict):**
+- `mosaic_live_search.twig:19` endpoint+placeholder — **double-escape (the bug) → FIXED**.
+- `mosaic_button.twig:28` href · `mosaic_card.twig:42/43/64` src/alt/href · `mosaic_image.twig:44-48,70-74`
+  src/alt/loading/width/height · `mosaic_tabs.twig:24` labels — Pattern B (inline html_attr = **single**,
+  browser-correct, NOT the visible disease) but same over-encoding smell → **also converted to autoescape**
+  (root-correct, "never raw", clears `&#x20;` from source everywhere). Tabs sweep cell added.
+- **Live proof:** node 803 now serves `placeholder="Search federal programs…"` + `labels="Overview,Safety Data,Funding"`;
+  page-wide `&#x20;` count = **0**.
+
+**Gates (F-100) — ALL GREEN:** phpcs 0 errors · Vitest 482/1-preexisting-B101 · live_search+tabs render
+**11/11 (110 assertions)** · **FULL Kernel 178/178 (952 assertions)** · **FULL Unit 2688/2688 (1 pre-existing
+warning)** · Functional component render (button/card/image/tabs) **11/11 (91 assertions)** · ship33-search
+journey GREEN — now asserts the served placeholder holds literal spaces + no `&#x20;`/`&amp;#x20;`; album
+`07-page-render` re-shot. Disease class **0 `escape('html_attr')` module-wide** (incl. disabled submodules).
+**No `js/src` touched → no dist / no version bump.**
+
+**F-100 change set (tracked; Arun to add):** `mosaic_live_search.twig` · `mosaic_button.twig` ·
+`mosaic_card.twig` · `mosaic_image.twig` · `mosaic_tabs.twig` · `tests/.../MosaicLiveSearchRenderTest.php` (new) ·
+`tests/.../MosaicTabsRenderTest.php` (+1 cell).
+
 ## Noise verdict
 Clean. Two intentional tracked source changes + one pre-existing `.gitignore`. The dormant
 `V5ToV6Migration.php` + its test remain untracked by design (carousel HOLD). No stray/unintended edits.
