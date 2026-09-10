@@ -12085,3 +12085,11 @@ covered the media library still "passed" because the DOM click ignored z-order).
   FULL Kernel 187/187 (1086), FULL Unit 2688 (1 pre-warn). Files (+): mosaic.services.yml, MosaicLayoutValue.php,
   schema/mosaic_layout_value.schema.json, V5ToV6Migration.php+test (activated), MosaicTabsRenderTest.php,
   MosaicLayoutMigrationManagerTest.php, Sprint23/41SmokeTest.php, MosaicCarouselRenderTest.php. NEXT: L-E closeout.
+- **L-E DONE — SHIP #34 COMPLETE (green) 2026-09-10.** Final dist rebuilt (builder→renderer→FE), library version
+  1.0.15→1.0.16. FULL gates: Kernel 187/187, Unit 2688 (1 pre-warn), Vitest 491/1-pre-B101, phpcs 0-err on every
+  changed file, f066+lock 13/13, sentinels (manifest carries carousel slides field_types), W18 orthogonal.
+  Both-surface full-lifecycle journeys GREEN: admin sync film (01-03) + admin lifecycle load→panel→save→reload→
+  persist(v6 slides)→anon render (04-09) + FE surface carousel loads in dialog (10-12). Album ship34-carousel/
+  (11 frames + INDEX). AI/SHIP-34.md written (totals + add commands + noise verdict CLEAN). Scratch nodes
+  auto-cleaned. **SHIP #34 = the coupled carousel landing, ONE uncommitted change set (28 tracked code files),
+  all five checkpoints green + live-proven, ready for Arun's ceremony commit.** Walk tally 48 (no new walk-catch).
