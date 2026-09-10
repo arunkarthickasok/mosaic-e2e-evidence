@@ -12054,3 +12054,18 @@ covered the media library still "passed" because the DOM click ignored z-order).
   Files (+): mosaic_carousel.{twig,component.yml,mosaic.yml}, MosaicRenderer.php, MosaicCarouselRenderTest.php,
   CarouselSlidesDiscriminator.test.ts. NO js/src render change → dist deferred to L-E (adapter dist is L-A/L-E).
   Tree green. NEXT: L-C active-slide sync.
+- **L-C DONE (green, live-proven) 2026-09-10 + FORK VERDICT.** Active-slide sync: carousel `active` reactive
+  prop (mosaic-carousel.ts) + generalized tabsPanelSync → installCarouselPanelSync (reuses the live-proven
+  expandedIndex + overlay-geometry selection) + both-host install (BuilderApp + FrontendBuilderDialog). Vitest
+  16/16 (CarouselPanelSync 4 + tabs 4 + FieldTypes 6 + discriminator 2). **LIVE real-pointer film GREEN (admin,
+  node 939):** expand slide row 2 → canvas <mosaic-carousel active="1">; collapse → active="0". Album
+  ship34-carousel/ (3 frames). **FORK VERDICT (reviewer P3 = ARTIFACT, not a bug):** my earlier puck=0 "blocker"
+  was a MALFORMED scratch fixture — region slot named `content` instead of the canonical `items`; the FE renderer
+  iterates slots generically (so it rendered on FE) but the Puck adapter maps region slots to zones by name, so
+  `content` children never loaded. Legit nodes (330, 845, correct-slot 939) all load. No toPuck/config/manifest
+  fault. **Bonus REAL bug fixed en route:** renderSingleComponent (canvas SSR) rendered processed_text/check_markup
+  OUTSIDE a Drupal render context → threw; now wrapped (+@renderer to MosaicRenderer + services.yml; Unit renderer
+  tests updated 23/23). Gates: FULL Kernel 186, FULL Unit 2688, Vitest 491/1-pre, phpcs 0-err. Files (+):
+  mosaic-carousel.ts, tabsPanelSync.ts, BuilderApp.tsx, FrontendBuilderDialog.tsx, MosaicRenderer.php,
+  mosaic.services.yml, CarouselPanelSync.test.ts, ship34-carousel-sync.spec.ts, MosaicRenderer{,Cache}Test.php.
+  dist rebuilt (builder+renderer+FE). NEXT (per P3): L-D atomic flip → re-witness sync on a MIGRATED node.
