@@ -12013,3 +12013,16 @@ covered the media library still "passed" because the DOM click ignored z-order).
   asserts literal placeholder). No js/src → no dist. **Change set (Arun add):** 5 twigs (live_search,
   button, card, image, tabs) + MosaicLiveSearchRenderTest.php (new) + MosaicTabsRenderTest.php (+1 cell).
 - **Walk tally 49** (#49/F-100 FIXED). Ship #33 unfrozen; carousel core still pending its dedicated run.
+
+## SHIP #33 PART 1 — SHIPPED (commit 5f767d6, parent 90a8f8f, == origin) 2026-09-09
+
+- **F-084 CLOSED + F-100 / walk-catch #49 CLOSED-ON-SHIP** in `5f767d6` (Arun committed): live_search
+  structured labelled field_types + the html_attr double-escape disease class killed module-wide. Gates
+  at ship: FULL Kernel 178, FULL Unit 2688, Functional 11, Vitest 482, phpcs clean, no dist. Tally 49.
+- **F-099 REGISTERED → Act 2:** breakpoint-override fields surface raw machine-name labels instead of
+  human labels (authoring-UX polish, same F-060 "labelled fields" family). Not a blocker; slotted to
+  the Act 2 visual campaign. (Registered only — not built this run.)
+- **NEXT (this run): SHIP #34 = the coupled carousel landing** per SHIP-33-PLAN.md — one all-or-nothing
+  green change. Built in green-preserving order (backward-compat slides[] render/author stack first; the
+  v6 activation + 33-fixture heal as the atomic last step; revert-to-dormant-v6 if the heal can't finish
+  in-run so the tree never sits broken).
