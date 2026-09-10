@@ -12022,7 +12022,14 @@ covered the media library still "passed" because the DOM click ignored z-order).
 - **F-099 REGISTERED → Act 2:** breakpoint-override fields surface raw machine-name labels instead of
   human labels (authoring-UX polish, same F-060 "labelled fields" family). Not a blocker; slotted to
   the Act 2 visual campaign. (Registered only — not built this run.)
-- **NEXT (this run): SHIP #34 = the coupled carousel landing** per SHIP-33-PLAN.md — one all-or-nothing
-  green change. Built in green-preserving order (backward-compat slides[] render/author stack first; the
-  v6 activation + 33-fixture heal as the atomic last step; revert-to-dormant-v6 if the heal can't finish
-  in-run so the tree never sits broken).
+- **SHIP #34 carousel — Y2 WITNESS complete (SHIP-34-WITNESS.md).** KEYSTONE FINDING: the `image` slide
+  sub-field is NET-NEW machinery — no `media` field type exists; adapter `resolveSubFields` (1580–1624)
+  handles only text/richtext; media picker is component-prop-level only (SHIP-33-PLAN.md line 1 flagged it).
+  That + ~11 coupled pieces + the 33-fixture v6 heal + active-slide sync + dist + both-surface journeys =
+  a ship-#31-scale multi-session landing; a single turn cannot land it all-or-nothing green (partial = 33
+  red or superficial half-wiring, barred by the laws). No source touched this run — tree green.
+- **RATIFIED-EXECUTION as green sub-landings (SHIP-34-WITNESS.md §sequence):** L-A media-repeatable-sub-field
+  type (reusable keystone, green+tested in isolation like the dormant migration) → L-B slides render+author
+  stack composed on L-A (backward-compat slide_N, S2b guard turns green) → L-C active-slide sync (DOM-witness
+  first) → L-D atomic flip (V5→V6 + CURRENT=6 + 33-fixture oracle heal + idempotence + R-C8) → L-E dist +
+  both-surface journeys + derivation matrix + album + SHIP-34.md + all gates. NEXT: build L-A.
