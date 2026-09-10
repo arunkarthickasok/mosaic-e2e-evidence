@@ -12093,3 +12093,11 @@ covered the media library still "passed" because the DOM click ignored z-order).
   (11 frames + INDEX). AI/SHIP-34.md written (totals + add commands + noise verdict CLEAN). Scratch nodes
   auto-cleaned. **SHIP #34 = the coupled carousel landing, ONE uncommitted change set (28 tracked code files),
   all five checkpoints green + live-proven, ready for Arun's ceremony commit.** Walk tally 48 (no new walk-catch).
+- **F-101 CLOSED (reviewer frame-audit catch, pre-walk, XS) 2026-09-10.** Carousel slide-row summaries echoed raw
+  HTML in the Puck panel ('<p>Legacy migrated one</p>' visible; page render was already clean). Fixed at the
+  SHARED getItemSummary path (MosaicPuckAdapter.ts:1512 — grep-proven the ONE home, so any richtext-summarized
+  repeatable inherits it): new `plainSummary()` strips tags (regex) → decodes entities (detached textarea, inert,
+  XSS-safe) → collapses whitespace → truncates to 48 chars; empty/whitespace → 'Slide N' fallback. Vitest +5 cells
+  (plain/tagged/entities/empty/long-truncation) → FieldTypes 11/11; full Vitest 496/1-pre-B101; tsc 0. Re-filmed
+  frame 05 (panel shows 'Legacy migrated one' CLEAN, no '<p>'). dist rebuilt (builder+FE). Files (part of ship #34
+  set): MosaicPuckAdapter.ts, FieldTypes.test.ts. Reviewer-caught pre-walk → still one uncommitted ship #34.
