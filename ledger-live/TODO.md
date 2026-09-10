@@ -11973,3 +11973,24 @@ covered the media library still "passed" because the DOM click ignored z-order).
     charter/session (scale = the whole Tabs Stage 3/4 redesign; not a tail-of-sync kickoff).
 
 - **SMOKE (L5 LEDGER RELOCATION, 2026-09-09):** written to <mosaic>/AI/TODO.md; because AI is now a symlink → ledger-live, it lands in ledger-live/TODO.md. Relocation write-path verified.
+
+---
+
+## SHIP #33 — F-084 SEARCH LANDED (2026-09-09; part 1 of 2)
+
+- **K0 fresh-read done** (quotes in SHIP-33-PLAN.md). Scope decision: carousel core (S2c) = all-or-nothing
+  coupled (activate v6 → 33-test blast radius; partial = regression) → HELD for its dedicated run.
+  F-084 search = non-coupled/additive → landed green this turn (Arun: "Land F-084 search green now").
+- **F-084 (structured labelled search config) — GREEN.** `mosaic_live_search.mosaic.yml` gains a
+  `field_types` block: endpoint (text 'Search endpoint'), placeholder (text 'Placeholder text'),
+  min_chars (number 'Minimum characters', min 1/max 10). Author gets persistent-labelled fields (F-060),
+  not raw schema-derived boxes. No schema bump, no dist (no js/src; server manifest → existing adapter).
+- **RED→GREEN:** ManifestFieldTypesTest::testLiveSearchExposesLabelledFieldTypes (RED null!='text' → GREEN
+  9 assertions). **Gates:** FULL Kernel 173/173 · FULL Unit 2688/2688 (1 pre-existing warning) · Vitest
+  482/1-preexisting-B101 · phpcs clean · live drush manifest proof · full-lifecycle journey GREEN
+  (open→select→labelled panel→edit endpoint→save→reload→server-JSON persist→anon render).
+- **Album** ledger-live/e2e-evidence/ship33-search/ (6 frames; 01/02 visually confirm the labelled panel).
+  **Record:** SHIP-33.md. **Tracked change set (Arun to commit):** mosaic_live_search.mosaic.yml +
+  ManifestFieldTypesTest.php (+ pre-existing .gitignore). Journey spec gitignored (js/e2e, F-048).
+- **REMAINING ship #33 = carousel core** (S2b+S2c+activate v6+33-fixture oracle heal+active-slide sync
+  witness-first+S2f) per SHIP-33-PLAN.md — the dedicated coupled green landing. Walk tally 48.
