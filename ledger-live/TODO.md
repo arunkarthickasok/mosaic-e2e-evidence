@@ -12069,3 +12069,19 @@ covered the media library still "passed" because the DOM click ignored z-order).
   mosaic-carousel.ts, tabsPanelSync.ts, BuilderApp.tsx, FrontendBuilderDialog.tsx, MosaicRenderer.php,
   mosaic.services.yml, CarouselPanelSync.test.ts, ship34-carousel-sync.spec.ts, MosaicRenderer{,Cache}Test.php.
   dist rebuilt (builder+renderer+FE). NEXT (per P3): L-D atomic flip → re-witness sync on a MIGRATED node.
+- **L-D DONE (green, atomic flip) 2026-09-10.** Activated: services.yml wires `5: @mosaic.migration.v5_to_v6`;
+  MosaicLayoutValue CURRENT_SCHEMA_VERSION 5→6; schema enum [1..5]→[1..6]; V5ToV6Migration.php + its 7-cell test
+  now ACTIVE (idempotence + breakpoint trees + slots covered). Migration verified live: v5 slide_N carousel →
+  v6 `slides[]` (slide_1 removed, HTML preserved as caption). **P1 DROP-POINT (for the record):** the earlier
+  puck=0 was NOT a product fault — the malformed scratch fixture used region slot `content`; the Puck adapter
+  maps a region's slot to a canvas ZONE by the canonical name `items`, so `content` children were never mounted
+  (the FE renderer iterates slots generically, hence it rendered on FE — the exact discrepancy). **HEAL CLASS =
+  6 version-pinned oracles** (not 33): because L-A/L-B already shipped the render+author stack (dual-mode twig +
+  slides field_types + adapter), the v6 flip only tripped schema-version pins — MosaicTabsRenderTest (migrate→6),
+  MosaicLayoutMigrationManagerTest (v1→6), Sprint23/Sprint41 smoke (CURRENT=6 + enum+6). The 33→6 delta is the
+  dual-mode dividend. **R-C8** carousel Kernel render 7/7 (added testV5SlideNMigratesToV6AndRendersAsSlides — full
+  migrate→render path). **P3 RE-WITNESS (node 940, v5 slide_N saved → auto-migrated to v6):** builder canvas
+  shows the carousel (puck=1) + the panel has 2 slides rows with the legacy HTML preserved as captions. Gates:
+  FULL Kernel 187/187 (1086), FULL Unit 2688 (1 pre-warn). Files (+): mosaic.services.yml, MosaicLayoutValue.php,
+  schema/mosaic_layout_value.schema.json, V5ToV6Migration.php+test (activated), MosaicTabsRenderTest.php,
+  MosaicLayoutMigrationManagerTest.php, Sprint23/41SmokeTest.php, MosaicCarouselRenderTest.php. NEXT: L-E closeout.
