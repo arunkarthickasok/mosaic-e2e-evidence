@@ -171,3 +171,54 @@ with a working pager) is NOT yet filmed. Every one of those behaviours is Kernel
 (EmbedRenderTest: page render js-view-dom-id, canvas placeholder, canvas red card; MatrixTest:
 access/cache/degradation) + Vitest (panel fields). The film is supplementary VISUAL evidence for
 Arun's walk, not part of the evidence gate above. Recommend filming it at walk-prep.
+
+---
+
+## WALK-PREP FILM (2026-09-13) — R0/R1/R2/R3 (probe-then-report, film only)
+
+**R0:** HEAD 108fa41; ship #36 set intact (V0-V7 files M/??); dead session touched nothing. The
+prior session died mid zero-rows investigation (API error). Interruption ledgered.
+
+**R1/R2 — zero-rows probe → VERDICT: FIXTURE (resolved).** The film page showed the view wrapper
++ mini pager but 0 "CPVE1 Article" rows. Witness: the view returns 2 rows (executable), and
+**Views' OWN native render also showed 0 "CPVE1 Article"** — it printed other nodes
+(`NYS ITS…`, `Pfizer…`). Cause: `nid ASC` over 20+ published pages put the new nodes on a later
+page. The Mosaic embed rendered the IDENTICAL rows Views-native did (`NYS ITS`:1, `Pfizer`:1,
+views-row:2) — no row-drop; V0's capture keeps child #markup. Fixture fixed (title filter +
+sort) → page 1 now shows Article 1|2 + pager; the AJAX "Next" swaps to Article 3|4.
+
+**F1 FILM — 7/8 frames GREEN** (album cp-ve1/): 01 admin placeholder card, 03 FE placeholder
+(parity), 04a/04b page + AJAX pager (rows change), 05a/05b degradation (red card + empty page),
+06 anon parity. All real-pointer.
+
+### NEW DEFECT — F-104 (mechanism quoted; NO fix; reviewer + Arun rule)
+Frame 02 (admin panel) FAILED: the picker + argument rows are absent; the panel renders RAW schema
+fields (machine names view_display/view/display/arguments/hide_when_empty leak — label-law
+violation).
+
+Witnessed hop-by-hop:
+- Served manifest (`ManifestController`): `mosaic_view` **field_types = EMPTY**; propDefinitions =
+  view_display,view,display,arguments,hide_when_empty.
+- Component definition: `getDefinition('mosaic_view')` has **NO `field_types` key** (class =
+  `MosaicViewComponent`, a PHP-class component). By contrast `getDefinition('mosaic_carousel')`
+  (class `SdcComponentPlugin`, SDC-only) HAS `field_types: [image_style, slides]`.
+- Field-type plugins ARE registered (views_display, views_arguments) and the .mosaic.yml sidecar
+  DOES declare them — but they never reach the definition.
+
+**Mechanism:** `MosaicComponentManager::getDefinitions()` merges the SDC/.mosaic.yml sidecar data
+into a PHP-class component's definition for canvas_class / style_tokens / requires_ssr_preview /
+icon / level / category / description / tags — but **NOT `field_types`**. So any component that
+has BOTH a PHP class (`#[MosaicComponent]`) AND a `.mosaic.yml` `field_types` block loses its
+field_types from the manifest; the builder then falls back to the raw schema propDefinitions.
+mosaic_view is the first such component (it needs a PHP class for the Views executable in
+resolveProps AND field_types for the panel), so it is the first to expose this gap.
+
+**Scope:** AUTHORING-PANEL ONLY. The render path is unaffected — `resolveProps` reads props
+directly; all 16 Kernel + the page/pager/degradation frames are GREEN. The picker just can't be
+authored via the panel (a developer can still set view_display in JSON, as the fixtures do).
+
+**Proposed RED cell (not written — reviewer rules):** a Kernel assertion that
+`getDefinition('mosaic_view')['field_types']` contains `view_display` + `arguments` (currently RED
+— absent), mirrored by a served-manifest assertion. Fix candidate (for the ruling): the
+PHP-class/SDC merge in MosaicComponentManager must UNION the sidecar `field_types` into the
+PHP-class definition. NO fix applied this leg (film-only charter + witnessed-mechanism rule).

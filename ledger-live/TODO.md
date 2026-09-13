@@ -12392,3 +12392,21 @@ Kernel + 4 Vitest cells, per-dimension table in report. V7 dist builder+FE rebui
 untouched). Gates: mosaic_views Kernel 16/95, main 2887/0, Vitest 511/1 (B-101), PHPCS ERRORS_0.
 EVIDENCE GATE satisfied — raw D2×2 + V5 REDs + V6 table in REPORT-CP-VE1.md. DEFERRED: album
 cp-ve1 e2e film (Kernel/Vitest-proven; film at walk-prep). Uncommitted ship #36 set on 108fa41.
+
+### CP-VE1 WALK-PREP FILM 2026-09-13 — 7/8 frames + F-104 DEFECT found (report: reports/REPORT-CP-VE1.md)
+R0 HEAD 108fa41, ship #36 intact (dead session touched nothing). R1/R2 zero-rows = FIXTURE
+(Views-native also 0 "CPVE1 Article"; nid ASC + 20 pages; Mosaic embed == native rows; fixture
+fixed). F1 film 7/8 GREEN (placeholder both surfaces, page+AJAX pager rows-change, degradation red
+card + empty page, anon parity). **F-104 DEFECT (NO fix — reviewer+Arun rule):** MosaicComponentManager
+merges .mosaic.yml sidecar into PHP-class component definitions but DROPS field_types →
+mosaic_view manifest field_types EMPTY → panel renders raw schema props (machine-name leak), no
+picker/argument rows. Render path UNAFFECTED (16 Kernel green; resolveProps reads props directly).
+Mechanism quoted + RED cell proposed in report. Album cp-ve1/ (8 frames incl. 02 defect evidence).
+
+## F-104 REGISTERED — field_types dropped for PHP-class components
+MosaicComponentManager's PHP-class/SDC merge omits `field_types` (carries canvas_class/style_tokens/
+level/etc). Any component with a PHP class + a .mosaic.yml field_types block loses its field_types
+from the manifest → the builder panel falls back to raw schema propDefinitions. First hit:
+mosaic_view (needs PHP class for Views render + field_types for the panel). Authoring-panel only;
+render path fine. Fix candidate: union the sidecar field_types into the PHP-class definition.
+Blocks the mosaic_view panel picker — CP-VE1 walk gate. Reviewer + Arun rule on the fix.
