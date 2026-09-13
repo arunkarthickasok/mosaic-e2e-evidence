@@ -275,3 +275,35 @@ general pre-existing UI, unrelated to the mosaic_view authoring picker.
 (MosaicComponentManager core change — no regression); PHPCS ERRORS_0. **No JS changed** → no dist
 rebuild (renderer/builder/FE bundles untouched; the adapter already handles views_display/
 views_arguments from the prior leg).
+
+---
+
+## F-105 FIX (2026-09-13) — argument-row resolved-value semantics (rides ship #36)
+
+**Y2 wrong plumb:** `MosaicViewsArgumentsField.tsx:58-70` rendered ONE `resolvedLabel` (from
+`payload.resolved.title`, the DISPLAY title) for EVERY argument row — the wrong value class.
+
+**Y3 fix (server-side):** `ViewsArgumentsController` now emits a per-argument
+`default_behavior_label`, derived from the argument's `default_action` (+ `default_argument_type`
+when 'default'): ignore→"show all", not found→"hide view", empty→"empty text", summary→"summary",
+access denied→"access denied", default→the plugin label (fixed→"fixed value", node→"content ID
+from URL", current_user→"current user", query_parameter→"URL query parameter", raw→"raw value from
+URL", user→"user ID from URL", taxonomy_tid→"term ID from URL"). The client renders it verbatim as
+"View default (@default_behavior_label)" PER ROW (the single display-title label is removed).
+
+**RED (before fix) — raw excerpt:**
+```
+1) Drupal\Tests\mosaic_views\Kernel\ViewsArgumentsApiTest::testArgumentDefaultBehaviorLabel
+Failed asserting that null is identical to 'show all'.
+Tests: 1, Assertions: 4, Failures: 1, Warnings: 1.
+```
+**GREEN:** the ignore fixture → `default_behavior_label` = "show all" (never the display title);
+Vitest label cell updated → row reads "View default (show all)".
+
+**Y4 refilm — frame 02 GREEN:** the argument row now reads **"View default (show all)"** (the
+node-ID argument's own default behavior), not "(CPVE1 recent articles)". `02-admin-panel-label-law.png`
+re-captured; album INDEX updated.
+
+**Gates:** mosaic_views Kernel 20 tests / 107 assertions GREEN; Vitest 511/1 (pre-existing B-101);
+PHPCS ERRORS_0. **dist:** builder + frontend-editor rebuilt (MosaicViewsArgumentsField changed);
+renderer.js untouched. Main Unit+Kernel unaffected (no main-module change this leg).

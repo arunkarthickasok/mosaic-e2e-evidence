@@ -12428,3 +12428,17 @@ view/display from getPropDefinitions (raw machine-name fields gone). RED→GREEN
 (CPVE1 recent articles)"; no machine view id). Album 8/8. Gates: mosaic_views 19/102, main 2887/0,
 PHPCS ERRORS_0, no JS/dist. Pre-existing note: breakpoint-override panel lists prop keys for all
 components (not F-104). CP-VE1 panel now shippable.
+
+## F-105 — argument-row resolved-value semantics (reviewer frame-audit, rides ship #36)
+Frame 02's argument row shows the DISPLAY title as the "View default (...)" parenthetical — wrong
+value class. The parenthetical for an ARGUMENT must describe THAT argument's own default behavior:
+default_action=ignore → "(show all)"; default_action=default → the default-argument plugin's label
+(e.g. "(content ID from URL)"); not-available=hide → "(hide view)". Fix server-side: per-argument
+default_behavior_label in the introspection API; client renders it verbatim. RED first.
+
+### F-105 FIXED 2026-09-13 (rides ship #36) — report: reports/REPORT-CP-VE1.md
+Argument-row parenthetical fixed: server-side per-argument default_behavior_label (from
+default_action + default plugin) — ignore→"show all", default→plugin label, not-found→"hide view".
+Client renders verbatim per row (single display-title label removed). RED→GREEN ViewsArgumentsApiTest
+(raw excerpt in report) + Vitest updated. Frame 02 refilmed → "View default (show all)". Gates:
+mosaic_views 20/107, Vitest 511/1 (B-101), PHPCS ERRORS_0; builder+FE dist rebuilt (renderer untouched).

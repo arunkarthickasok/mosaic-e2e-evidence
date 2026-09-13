@@ -205,3 +205,16 @@ git add modules/mosaic_views/components/mosaic_view/mosaic_view.mosaic.yml
 git add modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php
 git add modules/mosaic_views/tests/src/Kernel/MosaicViewFieldTypesTest.php
 ```
+
+---
+
+## F-105 FIXED (2026-09-13) — rides ship #36
+Argument-row parenthetical now describes THE ARGUMENT's own default behavior (server-derived
+default_behavior_label from default_action + default plugin), not the display title. RED→GREEN
+ViewsArgumentsApiTest (ignore→"show all") + Vitest updated. Frame 02 refilmed → "View default
+(show all)". Gates: mosaic_views 20/107, Vitest 511/1 (B-101), PHPCS ERRORS_0; builder+FE dist
+rebuilt, renderer untouched.
+Add: git add modules/mosaic_views/src/Controller/ViewsArgumentsController.php
+     git add modules/mosaic_views/tests/src/Kernel/ViewsArgumentsApiTest.php
+     git add js/src/builder/fields/MosaicViewsArgumentsField.tsx
+     git add js/src/builder/fields/__tests__/viewsFields.test.tsx js/dist/builder.js js/dist/frontend-editor.js
