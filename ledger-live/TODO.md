@@ -12266,3 +12266,29 @@ mosaic git — AI did not stage it.)
 one carousel-level image style + remove per-slide style from authoring, sentinel image_style
 still honored, no migration) → CP-VIEWS-EMBED-1..3 (witnessed #attached blocker FIRST) →
 ACT 2 → Wave D-0 (F-102 tabs/live_search DSD style-adoption) → Wave D/F → Wave G → Arun soak → tag 1.0.x.
+
+---
+
+## SHIP #34 RIDER LANDED = commit 0c3e5b2 (parent 3873685, == origin)
+The held #50 manifest guard cell is now committed: "ship #34 rider: manifest guard cell for #50
+(carousel manifest exposes no legacy slide props)" — ManifestFieldTypesTest.php +25/-0 in HEAD.
+The ship #34 gap is closed; only noise (js/*.log, tests/*.log, assets/) remains unstaged.
+
+## CP-CAROUSEL-GEOMETRY — OPEN (SHIP #35 candidate; ruling R-56, first after ceremony)
+Carousel-level frame + style. Scope: (a) carousel-level `aspect_ratio` prop
+(16:9|4:3|1:1|21:9|auto=default → CSS aspect-ratio + object-fit:cover on visitor, admin canvas,
+FE canvas); (b) carousel-level `image_style` select (file weight); RESOLVER PRECEDENCE CONTRACT =
+per-slide sentinel image_style (legacy) wins → else carousel-level style → else original; new
+authoring never writes per-slide; (c) REMOVE per-slide image style select from the slides
+authoring surface (saved sentinels untouched, NO migration; per-slide guard cells stay GREEN).
+
+### CP-CAROUSEL-GEOMETRY BUILT 2026-09-13 (SHIP #35, uncommitted) — report: reports/REPORT-CP-GEO.md
+R-56 delivered: (a) carousel-level aspect_ratio (auto|16:9|4:3|1:1|21:9) → inline
+aspect-ratio+object-fit:cover on the light-DOM image (visitor+admin canvas+FE canvas all obey;
+Lit/renderer untouched — slotted content is beyond shadow reach); (b) carousel-level image_style
+(new ImageStyleFieldType plugin + MosaicImageStyleField); resolver precedence legacy per-slide →
+carousel-level → original (MosaicRenderer::withDefaultImageStyle); (c) per-slide style select
+removed via mosaic.yml image_style_select:false → MosaicMediaField showImageStyle=false (sentinels
+untouched, no migration). Gates: PHPCS 0/0, Unit+Kernel 2884/0, Vitest 507/1 (B-101), e2e 10/10
+(cp-geo 16:9 uniform frames both surfaces 788×443/616×347 + auto natural shapes; F-103 inert holds).
+Ship #34 rider 0c3e5b2 verified pre-flight. NEXT in queue: CP-VIEWS-EMBED-1..3 (witnessed #attached blocker first).
