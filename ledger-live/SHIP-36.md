@@ -70,3 +70,38 @@ git add tests/src/Kernel/Service/MosaicRendererAttachedTest.php
 git add tests/src/Unit/Service/MosaicRendererTest.php tests/src/Unit/Service/MosaicRendererCacheTest.php
 git add tests/src/Unit/Smoke/Sprint76SmokeTest.php
 ```
+
+---
+
+## CONTINUATION (2026-09-13) — L1/L2 ledgered + V1 witnessed + V2 SERVER landed
+
+**L1/L2:** REVIEWER-RESEARCH standing law + the CP-VIEWS-EMBED scan recorded in TODO.md; A1
+ratified (introspection API returns resolved values; PANEL LABEL LAW — never a bare "default");
+A2/A3 candidates + A4 backlog recorded.
+
+**V1 witness:** mosaic_views = ViewsResultDataSource (the CP-2/R-V6 data-source sibling) +
+ViewsBrowserController::list (all views+displays, unfiltered) + routing. CP-1 is purely additive.
+
+**V2 SERVER — DONE + TESTED:**
+- Arguments introspection API `GET /api/mosaic/views/{view}/{display}/arguments`
+  (`ViewsArgumentsController`): per-argument metadata (id, human title, validator, entity_type,
+  default_argument, not_available, multiple) + **A1 `resolved` block** (title, items_per_page,
+  read inheritance-aware from the display's pager option). 404 on missing view/display (F-058).
+- `ViewsBrowserController::list` now filters to ENABLED views with >=1 EMBEDDABLE display
+  (block/embed only, R-V2); page/disabled excluded.
+- `views_display` + `views_arguments` MosaicFieldType plugins (mosaic_views) — client-fetch
+  pattern (mirrors ImageStyleFieldType), for the panel React fields (V2 client, next).
+- **Tests:** ViewsBrowserFilterTest (R-V2 filter) + ViewsArgumentsApiTest (arguments + A1 +
+  404) = 3 Kernel tests, 23 assertions, GREEN. PHPCS ERRORS_0 on the whole submodule.
+
+**STILL PENDING (next session):** V2 client (ViewsDisplayField + ViewsArgumentsField React
+fields + adapter cases + Vitest, label law in panel strings) · V3 (mosaic_view component +
+placeholder card both surfaces, F-087, red "view no longer exists") · V4 (Views-executable page
+render, design §3.3, View-default args, bubbled through the V0-fixed renderer) · V5 (validator +
+degradation) · V6 (derived matrix) · V7 (dist builder + album cp-ve1 + gates).
+
+**Files this checkpoint (all mosaic_views, read-only git — Arun commits):**
+New: `src/Controller/ViewsArgumentsController.php`, `src/Plugin/MosaicFieldType/ViewsDisplayFieldType.php`,
+`src/Plugin/MosaicFieldType/ViewsArgumentsFieldType.php`, `tests/src/Kernel/ViewsArgumentsApiTest.php`,
+`tests/src/Kernel/ViewsBrowserFilterTest.php`. Modified: `src/Controller/ViewsBrowserController.php`,
+`mosaic_views.routing.yml`.

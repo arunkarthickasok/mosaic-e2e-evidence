@@ -12345,3 +12345,32 @@ updated. Gates: PHPCS 0 errors (project gate errors-only), full Unit+Kernel 2887
 API, mosaic_view placeholder component, Views-executable page render, validator+degradation, test
 matrix, dist+album) — genuinely multi-session; scoped in SHIP-36.md; NEXT SESSION. Honest checkpoint
 per the ratified oversized-wave pattern (land+prove the gate, don't rush the rest).
+
+---
+
+## STANDING LAW — REVIEWER-RESEARCH (Arun's ruling, 2026-09-13)
+Every CP audit includes a market/competitive scan by the reviewer (how rivals do it, pros/cons,
+foreseen gaps); findings are ledgered; product decisions from them are ratified by Arun.
+
+## RESEARCH OUTCOMES — CP-VIEWS-EMBED scan (2026-09-13, sources in reviewer window)
+- Layout Builder / Drupal Canvas context-model defects are CURRENT (core 3196319, 3255977,
+  3318434, 2886116) — Mosaic's entity-object argument-resolution design dodges the whole class.
+- Gutenberg lesson: placeholder-card (R-V1) validated; drives the PANEL LABEL LAW below.
+- Webflow lesson: the data-source sibling is the crown jewel — R-V6 priority affirmed (CP-2).
+- **RATIFIED A1 (CP-1):** the arguments introspection API returns the display's CURRENT resolved
+  values (title, items-per-page, etc.) so every "View default" label shows the resolved value in
+  parentheses. **PANEL LABEL LAW: never a bare "default" anywhere in mosaic_view** — always
+  "View default (Recent articles)" / "View default (10 per page)" etc.
+- **CANDIDATE A2 (CP-2, witness-first):** "Exclude this page" toggle via Views' own query path only.
+- **CANDIDATE A3 (CP-3 doc):** global-template presets of configured View components — zero code,
+  document as a headline capability.
+- **BACKLOG A4:** per-placement empty-state content override (Webflow parity).
+
+### CP-VE1 CONTINUATION 2026-09-13 — V2 SERVER landed (checkpoint) — report append: reports/REPORT-CP-VE1.md
+L1 REVIEWER-RESEARCH law + L2 scan (A1 ratified) ledgered above. V1 witnessed mosaic_views
+(additive). V2 SERVER done+tested: arguments introspection API (A1 resolved values, PANEL LABEL
+LAW) + route; browser R-V2 embeddable filter; views_display + views_arguments field-type plugins.
+Kernel ViewsBrowserFilterTest + ViewsArgumentsApiTest = 3 tests/23 assertions GREEN; PHPCS ERRORS_0.
+Uncommitted on 108fa41 (adds to the ship #36 set). PENDING next session: V2 client (React fields +
+adapter + Vitest), V3 placeholder component (both surfaces), V4 Views-executable render, V5
+validator/degradation, V6 matrix, V7 dist/album/gates. Honest checkpoint per oversized-wave law.

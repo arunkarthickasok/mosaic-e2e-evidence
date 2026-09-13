@@ -52,3 +52,26 @@ Pre-fix, the cold + warm cells fail (CacheableMetadata carries no #attached).
 mosaic_views witness; views_display + views_arguments field types + arguments introspection API;
 mosaic_view placeholder component; Views-executable page render (View-default args); validator +
 degradation; the derived test matrix; dist (builder) + album + gates. NEXT SESSION.
+
+---
+
+## APPEND (2026-09-13) — L1/L2 + V1 + V2 SERVER
+
+**L1/L2:** REVIEWER-RESEARCH standing law ledgered; scan outcomes recorded — A1 ratified
+(resolved-value labels; PANEL LABEL LAW), A2/A3 candidates, A4 backlog. See TODO.md.
+
+**V1:** mosaic_views witnessed (data-source binder + browser controller). CP-1 additive only.
+
+**V2 SERVER — done + tested:**
+- `ViewsArgumentsController::arguments` — argument metadata + A1 resolved block (title +
+  items_per_page, inheritance-aware); 404 degradation. Route added.
+- `ViewsBrowserController::list` — R-V2 embeddable filter (enabled views, block/embed displays).
+- `views_display` + `views_arguments` field-type plugins (client-fetch pattern).
+- Kernel: ViewsBrowserFilterTest + ViewsArgumentsApiTest = 3 tests / 23 assertions GREEN;
+  PHPCS ERRORS_0 (submodule). A1 proven: resolved title "Recent users" + items_per_page 7 in the
+  payload; argument row carries the human admin_label ("The User ID"), entity:user validator,
+  break_phrase → multiple.
+
+**Pending (next session):** V2 client (React fields + adapter + Vitest), V3 (placeholder
+component both surfaces), V4 (Views-executable render), V5 (validator/degradation), V6 (matrix),
+V7 (dist/album/gates). Honest checkpoint — server foundation tested; UI + render next.
