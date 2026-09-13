@@ -187,3 +187,21 @@ git add js/src/builder/fields/MosaicViewsDisplayField.tsx js/src/builder/fields/
 git add js/src/builder/fields/__tests__/viewsFields.test.tsx
 git add js/dist/builder.js js/dist/frontend-editor.js js/dist/chunk-*.js
 ```
+
+---
+
+## F-104 FIXED (2026-09-13) — rides ship #36
+MosaicComponentManager::findDefinitions() now unions .mosaic.yml field_types into PHP-class
+component definitions (only dropped key; blast radius = mosaic_view only). Plus two panel-consistency
+fixes: mosaic.yml field_type key views_display→view_display (match the component prop); removed
+view/display from getPropDefinitions (raw machine-name fields → gone; still accepted at render).
+RED→GREEN MosaicViewFieldTypesTest 3/3; refilm frame 02 (picker + label law, machine names absent);
+album 8/8. Gates: mosaic_views 19/102, main Unit+Kernel 2887/0, PHPCS ERRORS_0. NO JS/dist change.
+
+## ADD BLOCK — F-104 fix (append to the SHIP #36 add block)
+```
+git add src/Plugin/MosaicComponentManager.php
+git add modules/mosaic_views/components/mosaic_view/mosaic_view.mosaic.yml
+git add modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php
+git add modules/mosaic_views/tests/src/Kernel/MosaicViewFieldTypesTest.php
+```

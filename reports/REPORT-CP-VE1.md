@@ -222,3 +222,56 @@ authored via the panel (a developer can still set view_display in JSON, as the f
 — absent), mirrored by a served-manifest assertion. Fix candidate (for the ruling): the
 PHP-class/SDC merge in MosaicComponentManager must UNION the sidecar `field_types` into the
 PHP-class definition. NO fix applied this leg (film-only charter + witnessed-mechanism rule).
+
+---
+
+## F-104 FIX (2026-09-13) — rides ship #36 (X1–X5)
+
+**X2 blast radius:** scan of PHP-class components (`#[MosaicComponent]`) with a `.mosaic.yml`
+field_types block → **mosaic_view ONLY**. X2b merge carried-vs-dropped: `MosaicComponentManager::
+findDefinitions()` preserves prop_types + slots (explicit) + `ComponentDefinition::SIDECAR_KEYS`
+[canvas_class, canvas_tag, tag_prop, tag_map, canvas_text_prop, canvas_class_modifiers,
+inline_editable_prop, style_tokens, requires_ssr_preview, level] — **field_types is the ONLY
+dropped key** (no other candidates; ledgered).
+
+**X3 fix:** `MosaicComponentManager::findDefinitions()` now unions the sidecar `field_types` into a
+PHP-class definition (mirrors the prop_types/slots preserve):
+```php
+if (!isset($phpDef['field_types']) && !empty($sdcDef['field_types'])) {
+  $phpDef['field_types'] = $sdcDef['field_types'];
+}
+```
+
+**RED (before fix) — raw excerpt:**
+```
+1) Drupal\Tests\mosaic_views\Kernel\MosaicViewFieldTypesTest::testDefinitionHasFieldTypes
+Failed asserting that an array has the key 'field_types'.
+2) Drupal\Tests\mosaic_views\Kernel\MosaicViewFieldTypesTest::testManifestExposesFieldTypes
+Failed asserting that null is identical to 'views_display'.
+Tests: 3, Assertions: 4, Failures: 2.
+```
+**GREEN (after fix):** MosaicViewFieldTypesTest 3/3 — getDefinition('mosaic_view')['field_types']
+has view_display + arguments; served manifest field_types[view_display].type === 'views_display' +
+[arguments].type === 'views_arguments'; SDC-only carousel field_types [slides] unchanged (regression).
+
+**Two additional panel-consistency fixes (witnessed, within the "reachable picker" ratification —
+reported, not silent):** (1) the field_type key was `views_display` but the component reads prop
+`view_display` (mismatch → picker value lost) → renamed the mosaic.yml key to `view_display`;
+(2) getPropDefinitions declared `view`/`display` as schema props → raw machine-name fields → removed
+them (the picker's `view_display` object drives it; separate view/display are still ACCEPTED at
+render via extractViewDisplay for the developer API + Kernel fixtures). Without both, F-104's merge
+alone would surface a broken/dirty panel.
+
+**X4 refilm — frame 02 GREEN:** the panel shows the cascading picker (human labels "CPVE1 recent
+articles" / "Embed: list"), the argument row "The node ID", and the PANEL-LABEL-LAW string
+**"View default (CPVE1 recent articles)"**; the machine view id (cpve1_list) never appears.
+Album now 8/8 (`02-admin-panel-label-law.png` replaces the defect frame).
+
+**Pre-existing observation (NOT F-104, not fixed):** the responsive/breakpoint-override panel
+section lists prop machine names (view_display/arguments/hide_when_empty) for ALL components — a
+general pre-existing UI, unrelated to the mosaic_view authoring picker.
+
+**Gates:** mosaic_views Kernel 19 tests / 102 assertions GREEN; full Unit+Kernel (main) **2887/0**
+(MosaicComponentManager core change — no regression); PHPCS ERRORS_0. **No JS changed** → no dist
+rebuild (renderer/builder/FE bundles untouched; the adapter already handles views_display/
+views_arguments from the prior leg).

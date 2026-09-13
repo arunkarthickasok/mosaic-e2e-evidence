@@ -12410,3 +12410,21 @@ from the manifest → the builder panel falls back to raw schema propDefinitions
 mosaic_view (needs PHP class for Views render + field_types for the panel). Authoring-panel only;
 render path fine. Fix candidate: union the sidecar field_types into the PHP-class definition.
 Blocks the mosaic_view panel picker — CP-VE1 walk gate. Reviewer + Arun rule on the fix.
+
+### F-104 RULING RATIFIED 2026-09-13 — fix RIDES ship #36 (panel is the ship headline)
+X2 blast radius: ONLY mosaic_view has a PHP class (#[MosaicComponent]) + a .mosaic.yml field_types
+block (scan quoted in report). X2b merge carried-vs-dropped: MosaicComponentManager::findDefinitions
+preserves prop_types + slots (explicit) + ComponentDefinition::SIDECAR_KEYS [canvas_class, canvas_tag,
+tag_prop, tag_map, canvas_text_prop, canvas_class_modifiers, inline_editable_prop, style_tokens,
+requires_ssr_preview, level] — **field_types is the ONLY dropped key** (no other candidates). Fix
+this charter: union field_types into PHP-class defs (like prop_types/slots). RED→GREEN Kernel +
+served-manifest + carousel regression. Refilm frame 02.
+
+### F-104 FIXED 2026-09-13 (rides ship #36) — report: reports/REPORT-CP-VE1.md
+MosaicComponentManager unions .mosaic.yml field_types into PHP-class defs (only dropped key; blast
+radius mosaic_view only). + panel-consistency: field_type key views_display→view_display; removed
+view/display from getPropDefinitions (raw machine-name fields gone). RED→GREEN MosaicViewFieldTypesTest
+3/3 (raw RED excerpt in report). Frame 02 refilmed GREEN (picker + PANEL-LABEL-LAW "View default
+(CPVE1 recent articles)"; no machine view id). Album 8/8. Gates: mosaic_views 19/102, main 2887/0,
+PHPCS ERRORS_0, no JS/dist. Pre-existing note: breakpoint-override panel lists prop keys for all
+components (not F-104). CP-VE1 panel now shippable.
