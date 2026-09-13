@@ -12329,3 +12329,19 @@ Per P-VIEWS-EMBED-DESIGN.md, CP-VIEWS-EMBED-1 MUST open by addressing the witnes
 MosaicRenderer #attached-drop blocker: BubbleableMetadata store/replay (a Views embed's
 #attached libraries/cache metadata are dropped by the current render path and must be captured +
 replayed). Then CP-VIEWS-EMBED-2..3 → ACT 2 → Wave D-0 (F-102) → D/F → G → soak → tag.
+
+---
+
+## CP-VIEWS-EMBED-1 (SHIP #36) — V0 GATE LANDED 2026-09-13 (checkpoint) — report: reports/REPORT-CP-VE1.md
+HEAD 108fa41 == origin verified. **V0 (the #attached-drop blocker, "gate for everything after")
+DONE + PROVEN, uncommitted.** MosaicRenderer now uses BubbleableMetadata end-to-end: captures a
+component's #attached (attach_library + printed render arrays like $view->buildRenderable()) via
+executeInRenderContext, stores it in the per-component render cache, and REPLAYS it on cache HIT
+(the warm-hit crux); BubbleableMetadata::applyTo sets #attached + #cache on the build. Kernel
+MosaicRendererAttachedTest 3/3 (cold + warm + no-tag-regression, RED→GREEN). Blast radius: 8
+renderer Unit tests' RendererInterface mock now invokes executeInRenderContext; Sprint76 oracle
+updated. Gates: PHPCS 0 errors (project gate errors-only), full Unit+Kernel 2887/0. No JS/dist/e2e.
+**V1–V7 NOT started** (mosaic_views witness, views_display/views_arguments field types + arguments
+API, mosaic_view placeholder component, Views-executable page render, validator+degradation, test
+matrix, dist+album) — genuinely multi-session; scoped in SHIP-36.md; NEXT SESSION. Honest checkpoint
+per the ratified oversized-wave pattern (land+prove the gate, don't rush the rest).
