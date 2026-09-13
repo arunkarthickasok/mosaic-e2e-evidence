@@ -12203,3 +12203,32 @@ media image resolves, FE panel↔canvas sync) ALL PASSED — WALK-CATCHES #50–
   lack the data-mosaic-preview handling mosaic-tabs has (mosaic-tabs.ts:57). Options A (per-component
   inert contract; smallest/safest, sibling of F-102), B (isolated FE frame; largest/riskiest),
   C (suppress upgrade in canvas subtree; medium). NO recommendation ships — Arun/reviewer rule on scope.
+
+---
+
+## RULINGS RATIFIED BY ARUN 2026-09-13 (verbatim)
+**R-55:** F-103 fix = OPTION A (per-component edit-mode inert contract), rides frozen ship #34.
+Options B/C rejected — B breaks witnessed same-document assumptions (media bridge, CKE5 modal,
+panel sync); C forecloses live-preview for equal outcome with more churn.
+**R-56:** #56 CLOSED as non-defect (cache; guards hold). Per-slide image_style ruled WRONG
+GRANULARITY by product ruling → registered as CP-CAROUSEL-GEOMETRY, queued FIRST after ship #34
+ceremony, before CP-VIEWS-EMBED-1: carousel-level aspect_ratio prop (16:9, 4:3, 1:1, 21:9, auto →
+CSS aspect-ratio + object-fit:cover) + ONE carousel-level image style for file weight + REMOVE
+per-slide style from the authoring surface (saved sentinel image_style stays honored — no
+migration) + focal-point & tokens-ratio noted as later-wave riders.
+
+## CP-CAROUSEL-GEOMETRY (QUEUED — first after ship #34 ceremony, before CP-VIEWS-EMBED-1)
+Scope per R-56: carousel-level aspect_ratio prop (16:9/4:3/1:1/21:9/auto → CSS aspect-ratio +
+object-fit:cover); ONE carousel-level image style (file weight); REMOVE per-slide image style from
+the authoring surface (stored sentinel image_style still honored by the resolver — NO migration);
+focal-point + tokens-ratio = later-wave riders.
+
+### F-103 RESOLVED 2026-09-13 (charter W8, Option A) — full report: reports/REPORT-W8.md
+Both live renderer components now honor the data-mosaic-preview canvas contract (shared
+editMode.ts). carousel: no auto-advance in canvas (connectedCallback + _startTimer guards +
+updated() stop) + arrows/dots pointer-events:none; panel-sync (active prop + track transform)
+untouched. live_search: input disabled + zero fetches (_onInput/_fetch guards). Vitest
+editModeInert 7/7 (RED→GREEN); live f103-edit-mode-inert 3/3 on node 945 (VISITOR still
+auto-advances 0%→-200%; FE canvas inert 0%→0% + arrows dead + panel-sync drives slide→1).
+Gates: Vitest 503/1 (B-101 pre-existing); carousel journeys + lock + f066 + F-094 7/7;
+renderer rebuilt 39.23kB, builder untouched. Rides frozen ship #34. #55 CLOSED.

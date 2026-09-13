@@ -156,3 +156,56 @@ environmental drift (61 errors) needs a tooling/PHP-version reconcile, separate
 from any feature work. (c) The same DSD style-adoption gap is latent in
 `mosaic-tabs.ts` + `mosaic-live-search.ts` (they survive unstyled because their
 show/hide is attribute-driven, not CSS-driven) — witness + fix when touched.
+
+---
+
+## F-103 OPTION A — canvas edit-mode inert contract (charter W8, rides ship #34)
+
+Ratified R-55 (Option A; B/C rejected). Both live renderer components now honor the
+`data-mosaic-preview` attribute that `renderSingleComponent` already stamps on canvas
+hosts — closing the #55 defect (FE dialog canvas ran live visitor components).
+
+**Root cause recap (from REPORT-W6-W7):** the FE dialog opens on the node-VIEW page,
+which loads `mosaic/renderer` via the formatter for the visitor content, so canvas
+custom elements UPGRADE to live Lit; the admin builder page never loads renderer, so
+its canvas stays inert. Only `mosaic-tabs` had an edit-mode contract; carousel +
+live_search did not.
+
+**Fix (renderer only):**
+- New `js/src/renderer/components/editMode.ts` — shared `CANVAS_PREVIEW_ATTR` +
+  `isCanvasPreview()` (centralises the contract).
+- `mosaic-carousel.ts` — reactive `preview` prop (attr `data-mosaic-preview`);
+  `connectedCallback` + `_startTimer` never start auto-advance when preview;
+  `updated()` stops a running timer if preview is set; CSS
+  `:host([data-mosaic-preview]) .car-btn, .car-dot { pointer-events: none }`
+  (mirrors the tabs precedent). Panel-sync (active prop + `.car-track` transform)
+  untouched.
+- `mosaic-live-search.ts` — reactive `preview` prop; `_onInput` + `_fetch` early-return
+  when preview (zero network); input `?disabled=${this.preview}`.
+
+**Proof:**
+- Vitest `editModeInert.test.ts` **7/7** (RED→GREEN: pre-fix the canvas cells fail —
+  timer runs, fetch fires): auto-advance runs when !preview / never when preview /
+  stops on preview set / panel-sync drives `active` in preview / CSS inerts arrows+dots;
+  live_search fetches when !preview / zero fetches when preview.
+- Live e2e `f103-edit-mode-inert.spec.ts` **3/3** on node 945 (auto_advance=ON):
+  VISITOR page auto-scrolls (translateX 0%→−200%, no preview attr); FE dialog canvas
+  inert (preview="canvas", `.car-btn` pointer-events:none, transform 0%→0% over 2.5s)
+  yet panel-sync still drives slide→index 1. Frames f103-01/02/03.
+
+**Gates:** Vitest **503/1** (the 1 = pre-existing B-101 bool→radio drift). Carousel
+journeys (slider-geometry, sync, fe, lifecycle) + lock + f066 + F-094 **7/7** green
+post-rebuild. No PHP changed → PHP suite unaffected (W6 guards remain 10/10).
+
+**dist:** `js/dist/renderer.js` rebuilt (37.25 → 39.23 kB). **Builder bundle untouched**
+— the change is renderer-only (js/src/renderer/components/); the canvas loads
+`mosaic/renderer`, not a builder-bundled copy.
+
+**Add commands (mosaic repo, Arun runs):**
+```
+git add js/src/renderer/components/editMode.ts
+git add js/src/renderer/components/mosaic-carousel.ts js/src/renderer/components/mosaic-live-search.ts
+git add js/dist/renderer.js
+# evidence-only (gitignored): js/src/renderer/components/__tests__/editModeInert.test.ts is TRACKED (unit test)
+git add js/src/renderer/components/__tests__/editModeInert.test.ts
+```
