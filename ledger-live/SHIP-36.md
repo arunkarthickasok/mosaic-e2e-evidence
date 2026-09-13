@@ -105,3 +105,42 @@ New: `src/Controller/ViewsArgumentsController.php`, `src/Plugin/MosaicFieldType/
 `src/Plugin/MosaicFieldType/ViewsArgumentsFieldType.php`, `tests/src/Kernel/ViewsArgumentsApiTest.php`,
 `tests/src/Kernel/ViewsBrowserFilterTest.php`. Modified: `src/Controller/ViewsBrowserController.php`,
 `mosaic_views.routing.yml`.
+
+---
+
+## CONTINUATION (2026-09-13, cont.) — DEBT + V3 + V4 + V5-degradation landed
+
+**DEBT (reviewer conditional-accept):**
+- D1: mosaic_views witnessed with file:line — info.yml deps (mosaic:mosaic, drupal:views);
+  routes views_browser (/api/mosaic/views/list) + views_arguments; ViewsResultDataSource
+  (data-source sibling, CP-2); no .services.yml (controllers static create()). In REPORT-CP-VE1.md.
+- D2 smoke-alarm: mutated the R-V2 embeddable filter (ViewsBrowserController) → RED, restored →
+  GREEN; mutated the A1 resolved items_per_page (ViewsArgumentsController) → RED, restored → GREEN.
+  Both tests bite.
+
+**V3 (component) + V4 (page render) + V5 (degradation) — DONE + TESTED:**
+- `mosaic_view` SDC component (mosaic_views/components/mosaic_view): component.yml + mosaic.yml
+  (field_types views_display + views_arguments) + twig (placeholder card / red missing card / view
+  render). PHP plugin `MosaicViewComponent` (#[MosaicComponent], DI) — resolveProps: canvas
+  (base RenderContext) → placeholder data (view label · display label · arg summary · "Renders on
+  the published page"), R-V1 no live render; page (MosaicRenderContext) → runs the Views executable
+  per §3.3 (access($display, viewer) → setDisplay → setArguments([]) → preExecute/execute →
+  R-V3 hide-when-empty default OFF → buildRenderable), returned as `_view_render` and bubbled
+  through the V0 renderer. getCacheMetadata adds config:views.view.{id}.
+- Degradation (F-058): missing/disabled view/display → page renders nothing + ONE watchdog
+  warning; canvas shows the red "View no longer exists" card.
+- **Kernel (MosaicViewEmbedRenderTest, 5 cells): the V4 crux — an AJAX view's `views/views.ajax`
+  library is in #attached COLD and WARM** (the V0 payoff); the view renders on the page
+  (js-view-dom-id); missing view → page nothing; missing → canvas red card; valid → canvas
+  placeholder (no live render, R-V1). All mosaic_views Kernel = 8 tests / 55 assertions GREEN,
+  PHPCS ERRORS_0.
+
+**STILL PENDING (next session):** V2c client (MosaicViewsDisplayField + MosaicViewsArgumentsField
+React fields + adapter cases + Vitest, label law in strings) · V5 save-time validator (typed JSON,
+MosaicPropValidator) · V6 derived matrix (display × row × access × cache × surface × abuse +
+permission-parity + geometry on both canvases) · V7 dist (builder — the new field types) + album
+cp-ve1 (placeholder both canvases) + full gates.
+
+**Files added this checkpoint (mosaic_views, read-only git — Arun commits):**
+`src/Plugin/MosaicComponent/MosaicViewComponent.php`, `components/mosaic_view/{mosaic_view.component.yml,
+mosaic_view.mosaic.yml, mosaic_view.twig}`, `tests/src/Kernel/MosaicViewEmbedRenderTest.php`.

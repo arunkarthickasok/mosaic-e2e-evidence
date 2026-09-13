@@ -12374,3 +12374,12 @@ Kernel ViewsBrowserFilterTest + ViewsArgumentsApiTest = 3 tests/23 assertions GR
 Uncommitted on 108fa41 (adds to the ship #36 set). PENDING next session: V2 client (React fields +
 adapter + Vitest), V3 placeholder component (both surfaces), V4 Views-executable render, V5
 validator/degradation, V6 matrix, V7 dist/album/gates. Honest checkpoint per oversized-wave law.
+
+### CP-VE1 CONTINUATION 2026-09-13 (cont.) — DEBT + V3 + V4 + V5-degradation (checkpoint)
+DEBT D1 (file:line witness) + D2 (smoke-alarm: R-V2 filter + A1 items_per_page mutations each
+RED→restore→GREEN) done. V3 mosaic_view component (SDC + MosaicViewComponent plugin) + V4 Views-
+executable page render (§3.3, View-default args, bubbled through V0) + V5 degradation (missing →
+page nothing+watchdog / canvas red card). Kernel MosaicViewEmbedRenderTest 5 cells incl. THE CRUX
+(AJAX view #attached COLD+WARM = V0 payoff); mosaic_views Kernel 8 tests/55 assertions GREEN, PHPCS
+ERRORS_0. Uncommitted on 108fa41 (ship #36 set). PENDING next: V2c client (React fields+adapter+
+Vitest), V5 save-time validator, V6 matrix, V7 dist/album/gates. Report append: reports/REPORT-CP-VE1.md.

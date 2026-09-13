@@ -75,3 +75,23 @@ degradation; the derived test matrix; dist (builder) + album + gates. NEXT SESSI
 **Pending (next session):** V2 client (React fields + adapter + Vitest), V3 (placeholder
 component both surfaces), V4 (Views-executable render), V5 (validator/degradation), V6 (matrix),
 V7 (dist/album/gates). Honest checkpoint — server foundation tested; UI + render next.
+
+---
+
+## APPEND (2026-09-13, cont.) — DEBT + V3 + V4 + V5-degradation
+
+**DEBT:** D1 mosaic_views witnessed with file:line (info deps, routes, ViewsResultDataSource,
+controllers). D2 smoke-alarm PROOF — R-V2 filter mutation → RED→restore→GREEN; A1 items_per_page
+mutation → RED→restore→GREEN. Both tests bite.
+
+**V3+V4+V5-degradation — done + tested:** `mosaic_view` component (SDC + MosaicViewComponent PHP
+plugin). Canvas → placeholder card (R-V1, no live render); page (MosaicRenderContext) → Views
+executable per §3.3 (viewer access, View-default args, hide-when-empty default OFF, buildRenderable)
+bubbled through the V0 renderer. F-058 degradation: missing → page nothing + 1 watchdog + canvas
+red card. Kernel MosaicViewEmbedRenderTest 5 cells — **the V4 crux: AJAX view `views/views.ajax`
+in #attached COLD + WARM** (V0 payoff); page render; degradation both surfaces; canvas placeholder.
+mosaic_views Kernel = 8 tests / 55 assertions GREEN; PHPCS ERRORS_0.
+
+**Pending next session:** V2c client (React fields + adapter + Vitest), V5 save-time validator,
+V6 matrix, V7 dist/album/gates. Honest checkpoint — the render path (V0's payoff + the cell that
+matters) is landed + proven; the panel UI + validator + full matrix + ship packaging remain.
