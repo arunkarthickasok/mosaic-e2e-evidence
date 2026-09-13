@@ -12101,3 +12101,42 @@ covered the media library still "passed" because the DOM click ignored z-order).
   (plain/tagged/entities/empty/long-truncation) → FieldTypes 11/11; full Vitest 496/1-pre-B101; tsc 0. Re-filmed
   frame 05 (panel shows 'Legacy migrated one' CLEAN, no '<p>'). dist rebuilt (builder+FE). Files (part of ship #34
   set): MosaicPuckAdapter.ts, FieldTypes.test.ts. Reviewer-caught pre-walk → still one uncommitted ship #34.
+
+## WALK-CATCHES #50–#54 — Arun's walk 2026-09-10 (tally → 54; ship #34 FROZEN, fixes accumulate)
+**L-C "both hosts" claim VOIDED — to be re-proven from zero (real-pointer film BOTH hosts).**
+- **#50** panel still shows legacy 'Slide 1 HTML'..6 prop fields beside the new Slides rows (3 with data like
+  '<p>Slide 3 UAT</p>') — legacy fields must vanish from the v6 authoring surface and migration should strip
+  slide_N from stored props.
+- **#51** canvas preview shows captions but NOT the selected media image.
+- **#52** deleting ALL slides makes the canvas resurrect old 'Slide 1 HTML' data — dual-mode fallback firing on
+  empty slides; must key on version/key-absence, never emptiness.
+- **#53** PAGE slider broken: all images render as a list; arrow-click slides the whole set off-screen (Lit
+  mosaic-carousel vs new slides markup) — needs real slider red→green with geometry e2e.
+- **#54** FE dialog canvas ≠ admin: arrows shown, ALL captions stacked, panel↔canvas sync FAILS on FE; admin works.
+- Also open: #25/F-072 (Wave 3.2), #29/F-081 (parked).
+- **PASSED same walk:** authoring flow (+, image via library, CKE5 caption modal, link), reorder, admin sync,
+  clean summaries, save→page data, Tabs regression, 826 sanity.
+
+### RESOLUTION 2026-09-12 — all five FIXED (into the frozen ship #34 change set); tally 54, all closed-pending-ship.
+**Shared root cause (#53/#54 + FE half of #51/#52):** `<mosaic-carousel>` Lit override reused the hydrated
+declarative-shadow-DOM root but never adopted `static styles` (skipped `ReactiveElement.createRenderRoot()`), so the
+shadow had zero CSS → `.car-track` `display:block`, `.car` `overflow:visible` → slides stacked as a list, the sync
+transform slid the whole unclipped list off-screen. Admin "worked" only when `shadowRoot` was null (fresh attachShadow
+→ super adopted styles). Fix: `mosaic-carousel.ts` adopts `elementStyles` into the (possibly hydrated) shadow.
+- **#50 FIXED** — `mosaic_carousel.component.yml` drops `slide_1..6` props (manifest exposes only `slides`); migration
+  idempotence strips stray `slide_N`. Kernel `testCarouselManifestHasNoLegacySlideProps` + Unit
+  `testIdempotenceStripsStrayLegacyKeys` + live panel witness (labels = auto_advance/interval/loop/slides only).
+- **#51 FIXED** — `MosaicRenderer::renderSingleComponent` now runs `resolveFieldTypeMedia` (canvas SSR). Kernel
+  `testCanvasPreviewResolvesSlideImage`; FE frame 11.
+- **#52 FIXED** — `mosaic_carousel.twig` keys the new branch on `props.slides is defined` (KEY presence, not empty).
+  Kernel `testEmptySlidesRendersNoLegacyGhost`.
+- **#53 FIXED** — style-adoption. Geometry e2e `carousel-slider-geometry.spec.ts` (anon node 942): one slide visible,
+  arrow 0→1→2, loop wraps, prev wraps, dots track.
+- **#54 FIXED** — same fix; sync code was always correct. **VOIDED "both hosts" claim RE-PROVEN FROM ZERO** with a
+  geometry oracle (viewport-centre slide, not `active` attr) on BOTH hosts: `ship34-carousel-sync.spec.ts` (admin) +
+  `ship34-carousel-fe.spec.ts` (FE).
+- **Gates:** PHPCS 0/0 · Unit+Kernel 2878/0 · Vitest 496/1 (pre-existing B-101 bool→radio oracle drift) · e2e
+  lock+f066+F-094 15/15 · 5 carousel journeys green. PHPStan delta clean (61 pre-existing environmental errors on
+  src/ tests/ from PHP-version/tooling drift — ledgered, not this charter). Album v2 re-filmed (e2e-evidence/ship34-carousel/).
+- **Follow-ups ledgered (SHIP-34.md):** broken `npm run build` (missing vite.bundles.config.ts); PHPStan env drift;
+  latent same-pattern style-adoption gap in `mosaic-tabs.ts` + `mosaic-live-search.ts`.
