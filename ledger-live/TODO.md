@@ -12232,3 +12232,37 @@ editModeInert 7/7 (RED→GREEN); live f103-edit-mode-inert 3/3 on node 945 (VISI
 auto-advances 0%→-200%; FE canvas inert 0%→0% + arrows dead + panel-sync drives slide→1).
 Gates: Vitest 503/1 (B-101 pre-existing); carousel journeys + lock + f066 + F-094 7/7;
 renderer rebuilt 39.23kB, builder untouched. Rides frozen ship #34. #55 CLOSED.
+
+---
+
+## SHIP #34 SHIPPED 2026-09-13 = commit 3873685 (parent 5f767d6, == origin)
+**35 files changed, +2058 / −144.** Branch fix/finding-016-validator == origin/…; noise
+(js/*.log, tests/*.log, assets/) still unstaged as designed.
+
+**F-083 PROMISE FULFILLED** — the carousel author `slides` model (v6) landed as one coherent
+coupled wave: L-A media-repeatable sub-field keystone, L-B slides stack (image+caption+link),
+L-C active-slide panel↔canvas sync, L-D atomic v5→v6 flip (migration), L-E closeout — plus
+the W3 Lit style-adoption fix and the F-103 edit-mode inert contract.
+
+**CLOSED ON SHIP (tally 56):** walk-catches #50, #51, #52, #53, #54 + F-101 (summary tag-strip)
++ F-103 (canvas edit-mode inert: carousel + live_search honor data-mosaic-preview).
+**#56 CLOSED as non-defect** (R-56 — cache; per-slide guards hold) → re-scoped to CP-CAROUSEL-GEOMETRY.
+**OPEN:** #25/F-072 (columns, Wave 3.2), #29/F-081 (FE deselect, parked).
+
+**Guards shipped in 3873685:** MosaicCarouselRenderTest (#51 canvas media, #52 no-ghost, #56
+per-slide style + canvas style), V5ToV6MigrationTest (#50 idempotence strip), editModeInert
+(F-103 7 cells), CarouselPanelSync. Source: editMode.ts, mosaic-carousel.ts,
+mosaic-live-search.ts, V5ToV6Migration.php, MosaicRenderer.php, mosaic_carousel.{component.yml,twig},
+mosaic_carousel.mosaic.yml, dist/renderer.js.
+
+**⚠ HELD (not in the ceremony commit):** `tests/src/Kernel/Controller/ManifestFieldTypesTest.php`
+— the #50 manifest guard cell `testCarouselManifestHasNoLegacySlideProps` (+25 lines) is left
+UNSTAGED (`M` in status). The #50 PRODUCTION fix (component.yml drops slide_1..6) IS shipped and
+is covered by the V5ToV6 idempotence guard + was witnessed live (panel shows no legacy fields);
+only this manifest-assert cell is held. RECOMMEND: fold into the next mosaic commit. (Read-only
+mosaic git — AI did not stage it.)
+
+**OPEN QUEUE (confirmed order):** CP-CAROUSEL-GEOMETRY (R-56: carousel-level aspect_ratio +
+one carousel-level image style + remove per-slide style from authoring, sentinel image_style
+still honored, no migration) → CP-VIEWS-EMBED-1..3 (witnessed #attached blocker FIRST) →
+ACT 2 → Wave D-0 (F-102 tabs/live_search DSD style-adoption) → Wave D/F → Wave G → Arun soak → tag 1.0.x.
