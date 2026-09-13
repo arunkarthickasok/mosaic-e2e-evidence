@@ -12170,3 +12170,36 @@ only a CSS-driven layout (like the carousel slider) breaks visibly. Fix = the sa
 `_adoptStaticStyles(sr)` step now in `mosaic-carousel.ts`.
 **Slot: Wave D-0 retrofits.** Regression oracle when done: assert the hydrated
 shadow's `adoptedStyleSheets.length > 0` on both components, both hosts.
+
+---
+
+## WALK-CATCHES #55–#56 — Arun's re-walk 2026-09-12 (tally → 56; ship #34 FROZEN)
+**Re-walk HOLD confirmation:** steps 1-6 + step-7 core (carousel clipped to one slide,
+media image resolves, FE panel↔canvas sync) ALL PASSED — WALK-CATCHES #50–#54 hold.
+
+- **#55** FE Edit Layout dialog canvas runs the LIVE carousel (arrows + dots interactive;
+  with auto-advance ON it auto-scrolls like the node view) INSIDE the editing canvas.
+  Arun's diagnosis: the FE dialog does not load the same editing frame as node edit —
+  the node-view (visitor) component library is live in the edit context. Needs deep
+  debugging/research/redesign ruling. [W7 — PROBE ONLY, zero code this charter.]
+- **#56** per-slide "Image style" selection does NOT apply — all three slides set to the
+  same non-original style still render the ORIGINAL image on the page. [W6 — FIX.]
+
+### RESOLUTION 2026-09-13 (charter W6-W7) — full report: reports/REPORT-W6-W7.md
+- **#56 DID NOT REPRODUCE.** Every hop witnessed intact (MosaicMediaField.tsx:93 persists →
+  live Puck state → DB → resolveFieldTypeMedia → MosaicPropResolver.php:181-186 buildUrl →
+  page). End-to-end: 3 slides set → save → anon /node/942 renders 3× /styles/large/, 0
+  original; real Media-Library re-pick preserves image_style. No fix shipped (never-fabricate);
+  added GREEN regression guard cells testPerSlideImageStyleApplied +
+  testCanvasPreviewAppliesPerSlideImageStyle (MosaicCarouselRenderTest 10/10, phpcs 0/0).
+  Leading hypothesis: stale render/page cache during the walk. Needs Arun's exact node/steps.
+- **#55 ROOT-CAUSED (probe only, zero code).** Admin builder page attaches mosaic/builder only
+  (NOT mosaic/renderer) → canvas custom elements never upgrade → inert. FE dialog opens on the
+  node-VIEW page where the formatter (MosaicLayoutFormatter.php:150) already loaded
+  mosaic/renderer for the visitor content → the SAME canvas SSR markup UPGRADES to live Lit →
+  carousel auto-advance setInterval runs in the editor (witnessed node 945: node-view
+  upgraded+autoscroll, admin defined=false/inert, FE upgraded+autoscroll -100%→-200%).
+- **F-103 REGISTERED** — canvas edit-mode inert contract gap: mosaic-carousel + mosaic-live-search
+  lack the data-mosaic-preview handling mosaic-tabs has (mosaic-tabs.ts:57). Options A (per-component
+  inert contract; smallest/safest, sibling of F-102), B (isolated FE frame; largest/riskiest),
+  C (suppress upgrade in canvas subtree; medium). NO recommendation ships — Arun/reviewer rule on scope.
