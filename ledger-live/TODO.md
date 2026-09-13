@@ -12292,3 +12292,40 @@ removed via mosaic.yml image_style_select:false → MosaicMediaField showImageSt
 untouched, no migration). Gates: PHPCS 0/0, Unit+Kernel 2884/0, Vitest 507/1 (B-101), e2e 10/10
 (cp-geo 16:9 uniform frames both surfaces 788×443/616×347 + auto natural shapes; F-103 inert holds).
 Ship #34 rider 0c3e5b2 verified pre-flight. NEXT in queue: CP-VIEWS-EMBED-1..3 (witnessed #attached blocker first).
+
+---
+
+## SHIP #35 SHIPPED 2026-09-13 = commit 108fa41 (parent 0c3e5b2, == origin)
+**12 files changed, no held files** (clean ceremony — unlike #34's rider). renderer.js is NOT in
+the commit → confirms the witnessed "renderer untouched" (aspect-ratio is inline on light-DOM
+slotted images; the Lit renderer needed no change). Only noise (js/*.log, e2e.zip, esc-probe*,
+assets/) unstaged.
+
+**CP-CAROUSEL-GEOMETRY (R-56) CLOSED ON SHIP:** carousel-level aspect_ratio (auto|16:9|4:3|1:1|21:9
+→ uniform cover frames on visitor + admin canvas + FE canvas); carousel-level image_style (new
+ImageStyleFieldType + MosaicImageStyleField); resolver precedence legacy per-slide → carousel-level
+→ original (MosaicRenderer::withDefaultImageStyle); per-slide style select removed (image_style_select
+:false → MosaicMediaField showImageStyle=false; sentinels untouched, NO migration). Files: 3×
+mosaic_carousel (component.yml/mosaic.yml/twig), ImageStyleFieldType.php, MosaicRenderer.php,
+MosaicPuckAdapter.ts, MosaicMediaField.tsx, MosaicImageStyleField.tsx, carouselGeometry.test.tsx,
+MosaicCarouselRenderTest.php, dist/{builder,frontend-editor}.js. Gates at ship: PHPCS 0/0,
+Unit+Kernel 2884/0, Vitest 507/1 (B-101), e2e 10/10.
+
+**REVIEWER-ACCEPTED DESIGN DEVIATION (G2a):** the charter asked for aspect-ratio in "DSD AND Lit
+styles"; delivered as INLINE SSR styles on the light-DOM image instead. Witness basis: the slides
+are light-DOM slotted content (shadow ::slotted cannot reach a slide's <img> descendant) AND the
+admin builder canvas does not load the renderer CSS — inline SSR styles are the ONE mechanism all
+three surfaces obey. Accepted by reviewer + Arun (ship #35 shipped).
+
+## WAVE G SHEET NOTE (non-gating) — inline style attrs + CSP
+CP-GEO emits inline `style="..."` on carousel slide images (aspect-ratio/object-fit). If a strict
+`style-src` CSP without `'unsafe-inline'` is ever adopted, these attrs would be blocked. Future
+option (non-gating, deferred to Wave G): move the frame CSS to a utility class + a light-DOM
+carousel stylesheet attached to a library that the admin builder canvas ALSO loads (the current
+blocker for the stylesheet route). No action now — recorded so Wave G weighs it.
+
+## QUEUE NEXT: CP-VIEWS-EMBED-1 (MUST open with the witnessed blocker)
+Per P-VIEWS-EMBED-DESIGN.md, CP-VIEWS-EMBED-1 MUST open by addressing the witnessed
+MosaicRenderer #attached-drop blocker: BubbleableMetadata store/replay (a Views embed's
+#attached libraries/cache metadata are dropped by the current render path and must be captured +
+replayed). Then CP-VIEWS-EMBED-2..3 → ACT 2 → Wave D-0 (F-102) → D/F → G → soak → tag.
