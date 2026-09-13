@@ -12383,3 +12383,12 @@ page nothing+watchdog / canvas red card). Kernel MosaicViewEmbedRenderTest 5 cel
 (AJAX view #attached COLD+WARM = V0 payoff); mosaic_views Kernel 8 tests/55 assertions GREEN, PHPCS
 ERRORS_0. Uncommitted on 108fa41 (ship #36 set). PENDING next: V2c client (React fields+adapter+
 Vitest), V5 save-time validator, V6 matrix, V7 dist/album/gates. Report append: reports/REPORT-CP-VE1.md.
+
+### CP-VE1 FINAL LEG 2026-09-13 — V2c + V5 + V6 + V7 (near-complete) — report: reports/REPORT-CP-VE1.md
+V2c client (MosaicViewsDisplayField + MosaicViewsArgumentsField + usePuck panel + adapter; Vitest
+4/4). V5 save-time validator (MosaicViewComponent::validateProps via a decoupled generic hook in
+MosaicPropValidator; RED captured). V6 matrix (MosaicViewMatrixTest access/cache/degradation) — 16
+Kernel + 4 Vitest cells, per-dimension table in report. V7 dist builder+FE rebuilt (renderer
+untouched). Gates: mosaic_views Kernel 16/95, main 2887/0, Vitest 511/1 (B-101), PHPCS ERRORS_0.
+EVIDENCE GATE satisfied — raw D2×2 + V5 REDs + V6 table in REPORT-CP-VE1.md. DEFERRED: album
+cp-ve1 e2e film (Kernel/Vitest-proven; film at walk-prep). Uncommitted ship #36 set on 108fa41.

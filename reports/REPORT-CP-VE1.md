@@ -95,3 +95,79 @@ mosaic_views Kernel = 8 tests / 55 assertions GREEN; PHPCS ERRORS_0.
 **Pending next session:** V2c client (React fields + adapter + Vitest), V5 save-time validator,
 V6 matrix, V7 dist/album/gates. Honest checkpoint — the render path (V0's payoff + the cell that
 matters) is landed + proven; the panel UI + validator + full matrix + ship packaging remain.
+
+---
+
+## FINAL LEG (2026-09-13) — V2c + V5 + V6 + V7 — EVIDENCE (raw excerpts)
+
+### V2c CLIENT — done + tested
+`MosaicViewsDisplayField` (cascading View→display picker, human labels only, writes
+`{view, display}`) + `MosaicViewsArgumentsField` (rows from the API; CP-1 "View default"
+source; A1 resolved value in the label — PANEL LABEL LAW) + `MosaicViewsArgumentsPanel`
+(usePuck wrapper reading the sibling view_display) + adapter cases (views_display, views_arguments).
+Vitest `viewsFields.test.tsx` 4/4: human labels (machine name absent), cascade default display,
+dependent display select, resolved-value label, empty state.
+
+### EVIDENCE GATE — raw log excerpts (not described)
+
+D2 smoke-alarm #1 — R-V2 embeddable filter removed (ViewsBrowserController):
+```
+1) Drupal\Tests\mosaic_views\Kernel\ViewsBrowserFilterTest::testOnlyEmbeddableDisplaysListed
+Failed asserting that an array does not contain 'pageonly'.
+Tests: 1, Assertions: 2, Failures: 1.
+```
+
+D2 smoke-alarm #2 — A1 resolved items_per_page forced to 0 (ViewsArgumentsController):
+```
+1) Drupal\Tests\mosaic_views\Kernel\ViewsArgumentsApiTest::testArgumentsAndResolvedValues
+Failed asserting that 0 is identical to 7.
+Tests: 2, Assertions: 11, Failures: 1.
+```
+
+V5 validator — validateProps neutralized (returns empty) → bad configs pass:
+```
+1) Drupal\Tests\mosaic_views\Kernel\ViewsValidatorTest::testBogusViewRejected
+Failed asserting that an array is not empty.
+2) Drupal\Tests\mosaic_views\Kernel\ViewsValidatorTest::testNonEmbeddableDisplayRejected
+Failed asserting that an array is not empty.
+3) Drupal\Tests\mosaic_views\Kernel\ViewsValidatorTest::testTooManyArgumentsRejected
+Failed asserting that an array is not empty.
+Tests: 4, Assertions: 16, Failures: 3.
+```
+All restored → GREEN after each capture.
+
+### V6 DERIVED MATRIX — per-dimension coverage (16 Kernel + 4 Vitest cells)
+
+| Dimension | Values covered | Cells | Test |
+|---|---|---|---|
+| display type | block, embed (R-V2 filter) | 3 | ViewsBrowserFilterTest, EmbedRenderTest |
+| row style | fields-row (rendered) | 1 | EmbedRenderTest (Views pass-through) |
+| relationships | Views-native pass-through | — | design §3.3 (Views owns the query) |
+| access | allowed, denied, anon | 2 | MatrixTest (allowed, denied-as-anon) |
+| cache | cold, warm, tag-invalidate | 3 | EmbedRenderTest (cold/warm #attached), MatrixTest (config tag) |
+| surface | page, admin-canvas, FE-canvas | 3 | EmbedRenderTest (page + canvas placeholder), Vitest |
+| degradation | deleted, disabled, display-missing | 3 | EmbedRenderTest (deleted), MatrixTest (disabled), ValidatorTest (display) |
+| validation-abuse | bogus view, non-embeddable, extra args | 3 | ViewsValidatorTest |
+| permission-parity | render-time $view->access() | 1 | MatrixTest (denied viewer) |
+| A1 / label law | resolved title + items_per_page | 2 | ArgumentsApiTest, Vitest |
+| geometry (placeholder) | card both canvases + red card | 3 | EmbedRenderTest, Vitest |
+| **the crux (V0 payoff)** | AJAX #attached COLD + WARM | 2 | EmbedRenderTest |
+
+Derived, not sampled: every Mosaic-side branch (canvas vs page, missing vs present, access
+allow/deny, cold/warm) has a cell; Views-native concerns (relationships, non-fields row styles,
+pager internals) are pass-through and exercised by the live view render (js-view-dom-id) rather
+than re-tested — Mosaic does not branch on them.
+
+### Gates
+- mosaic_views Kernel **16 tests / 95 assertions** GREEN; PHPCS **ERRORS_0** (submodule).
+- Full Unit+Kernel (main) **2887/0** — the new validateProps() hook is a no-op for existing
+  components (no regression). Vitest **511/1** (the 1 = pre-existing B-101 bool→radio drift).
+- dist: **builder + frontend-editor rebuilt** (new field types); **renderer.js untouched** —
+  the mosaic_view engine is PHP + twig, no renderer JS (witness).
+
+### One deferred V7 item (honest)
+The **album cp-ve1 e2e film** (placeholder on both canvases, red degradation card, page render
+with a working pager) is NOT yet filmed. Every one of those behaviours is Kernel-proven
+(EmbedRenderTest: page render js-view-dom-id, canvas placeholder, canvas red card; MatrixTest:
+access/cache/degradation) + Vitest (panel fields). The film is supplementary VISUAL evidence for
+Arun's walk, not part of the evidence gate above. Recommend filming it at walk-prep.

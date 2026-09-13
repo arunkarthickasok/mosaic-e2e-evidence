@@ -144,3 +144,46 @@ cp-ve1 (placeholder both canvases) + full gates.
 **Files added this checkpoint (mosaic_views, read-only git — Arun commits):**
 `src/Plugin/MosaicComponent/MosaicViewComponent.php`, `components/mosaic_view/{mosaic_view.component.yml,
 mosaic_view.mosaic.yml, mosaic_view.twig}`, `tests/src/Kernel/MosaicViewEmbedRenderTest.php`.
+
+---
+
+## FINAL LEG (2026-09-13) — V2c + V5 + V6 + V7 (CP-VE1 near-complete)
+
+**V2c client:** MosaicViewsDisplayField (cascading picker) + MosaicViewsArgumentsField (+ usePuck
+Panel wrapper) + adapter cases. Vitest viewsFields 4/4.
+**V5 validator:** MosaicViewComponent::validateProps (view exists+enabled, display exists+
+embeddable, args ≤ defined, non-negative ints); wired via a generic $plugin->validateProps() call
+in MosaicPropValidator::validateNode (decoupled — mosaic never depends on mosaic_views). RED
+captured (evidence in REPORT-CP-VE1.md).
+**V6 matrix:** MosaicViewMatrixTest (access allowed/denied, disabled degradation, config cache
+tag) — 16 Kernel + 4 Vitest cells; per-dimension table in the report.
+**V7:** builder + frontend-editor dist rebuilt (renderer untouched — PHP+twig engine). Gates:
+mosaic_views Kernel 16/95, main Unit+Kernel 2887/0, Vitest 511/1 (B-101), PHPCS ERRORS_0.
+Evidence gate satisfied with RAW excerpts (D2×2 REDs + V5 RED + V6 table) in REPORT-CP-VE1.md.
+**Deferred (honest):** the album cp-ve1 e2e FILM (placeholder both canvases / red card / page
+pager) — all Kernel/Vitest-proven; film at walk-prep.
+
+## COMPLETE ADD BLOCK — SHIP #36 (mosaic repo, Arun runs)
+```
+# V0 (gate)
+git add src/Service/MosaicRenderer.php
+git add tests/src/Kernel/Service/MosaicRendererAttachedTest.php
+git add tests/src/Unit/Service/MosaicRendererTest.php tests/src/Unit/Service/MosaicRendererCacheTest.php
+git add tests/src/Unit/Smoke/Sprint76SmokeTest.php
+# V5 generic hook
+git add src/Service/MosaicPropValidator.php
+# mosaic_views (V2 server + V2c client + V3 + V4 + V5 + V6)
+git add modules/mosaic_views/mosaic_views.routing.yml
+git add modules/mosaic_views/src/Controller/ViewsBrowserController.php
+git add modules/mosaic_views/src/Controller/ViewsArgumentsController.php
+git add modules/mosaic_views/src/Plugin/MosaicFieldType/ViewsDisplayFieldType.php
+git add modules/mosaic_views/src/Plugin/MosaicFieldType/ViewsArgumentsFieldType.php
+git add modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php
+git add modules/mosaic_views/components/mosaic_view/
+git add modules/mosaic_views/tests/src/Kernel/
+# JS client + dist
+git add js/src/builder/MosaicPuckAdapter.ts
+git add js/src/builder/fields/MosaicViewsDisplayField.tsx js/src/builder/fields/MosaicViewsArgumentsField.tsx
+git add js/src/builder/fields/__tests__/viewsFields.test.tsx
+git add js/dist/builder.js js/dist/frontend-editor.js js/dist/chunk-*.js
+```
