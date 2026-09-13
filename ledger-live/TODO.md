@@ -12140,3 +12140,33 @@ transform slid the whole unclipped list off-screen. Admin "worked" only when `sh
   src/ tests/ from PHP-version/tooling drift — ledgered, not this charter). Album v2 re-filmed (e2e-evidence/ship34-carousel/).
 - **Follow-ups ledgered (SHIP-34.md):** broken `npm run build` (missing vite.bundles.config.ts); PHPStan env drift;
   latent same-pattern style-adoption gap in `mosaic-tabs.ts` + `mosaic-live-search.ts`.
+
+---
+
+## STANDING LAW — REPORT-TO-REPO (charter GOV-REPORT-TO-REPO, 2026-09-12)
+Ratified via reviewer delegation, recorded as Arun's ruling. Append-only.
+
+**From this point, every charter's FULL detailed report is written to
+`reports/REPORT-<charter-id>.md` in the evidence repo and pushed BEFORE stopping.**
+The report carries the complete audit trail: witnesses with file:line citations,
+RED logs, GREEN logs, gate outputs, and the exact file lists (modified + new).
+The evidence-quality law applies to the repo report identically (no code/DB/secrets;
+secret guard + isolation self-check before every push).
+
+**The chat paste is reduced to four lines:** charter id · one-line status ·
+report path · commit hash. The reviewer fetches and audits the report from the repo
+directly rather than from chat scrollback.
+
+Home: top-level `reports/` dir (tracked) — alongside REPORT-SHIP32/33.md etc.
+
+## F-102 — DSD style-adoption gap in mosaic-tabs + mosaic-live-search (REGISTERED)
+`mosaic-tabs.ts` and `mosaic-live-search.ts` share the exact carousel defect fixed
+under WALK-CATCH #53/#54: their `createRenderRoot()` override reuses a hydrated
+declarative-shadow-DOM root but never adopts `elementStyles` (Lit's `adoptStyles`
+is skipped because `ReactiveElement.createRenderRoot()` is never reached). Currently
+**symptom-free by accident** — both are attribute-driven (tabs show/hide via
+`hidden`, live-search via its own state), so a style-less shadow still functions;
+only a CSS-driven layout (like the carousel slider) breaks visibly. Fix = the same
+`_adoptStaticStyles(sr)` step now in `mosaic-carousel.ts`.
+**Slot: Wave D-0 retrofits.** Regression oracle when done: assert the hydrated
+shadow's `adoptedStyleSheets.length > 0` on both components, both hosts.
