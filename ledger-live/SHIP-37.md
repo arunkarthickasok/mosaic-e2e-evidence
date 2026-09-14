@@ -60,8 +60,52 @@ Open audit questions in REPORT-CP-VE2.md: (1) grid sampling vs full Cartesian pr
 a per-cell access dimension belongs in Phase H or Phase M's §3.4 cacheability leg; (3) whether a
 two-container same-seed fingerprint diff cell is wanted for determinism.
 
-## PHASE M (not started)
-M1 ArgumentResolver service (R-V6 shared embed + data-source; witness ViewsResultDataSource first) ·
-M2 panel per-row source dropdown · M3 §3.4 cacheability derived cells (RED first) · M4 A2 "exclude
-this page" WITNESS-FIRST · M5 validator extensions + degradation · M6 e2e film album cp-ve2 ·
-M7 gates + dist + SHIP-37 final + ledger + report push.
+## PHASE H4 — MATRIX EXPANSION (reviewer rulings Q1–Q3) — DONE + GREEN
+
+Reviewer accepted the H checkpoint with a remediation. All three landed:
+- **Q1 full derived product**: 48 cells (argument{nid,term,term+depth,uid} × exposed{none,type,term}
+  × display{block,embed} × pager{mini,full}) enumerated by nested loops, not hand-picked; per-
+  dimension coverage asserted (`[12,12,12,12]`, `48 ran`).
+- **Q2 access axis**: 16 cells (argument × principal{root,auth,restricted,anon}) on perm-gated views;
+  access ⊥ pager/display reasoning stated → 16 not 192.
+- **Q3 oracle upgrade**: every cell asserts result nids == set DERIVED from the universe (counts AND
+  nid sets); term+depth cells assert child AND grandchild inclusion. "is array" gone.
+- Universe built ONCE (single test method). A throwaway probe confirmed the derivation mirrors real
+  Views semantics (depth-0=exact, depth-2 from root=subtree, unsubmitted exposed=no filter, perm gate
+  root/auth-in restricted/anon-out) before finalising.
+- Gates: harness suite **1 test, 46 assertions, 2.9s** (≤90s MET); full mosaic_views **no regression**;
+  PHPStan L6 clean; PHPCS errors-only clean. Determinism two-container fingerprint ledgered optional
+  Wave-G. Budget met + zero reds → CONTINUE to Phase M.
+
+## PHASE M — M1: shared ArgumentResolver (R-V6) — DONE + GREEN
+
+- **Witness (before)**: embed hardcoded `setArguments([])`; data source took only literal
+  `config['arguments']`. No per-slot source resolution, no shared path.
+- **Build**: `src/Service/ViewsArgumentResolver.php` (new, FQCN service id, injects request_stack +
+  current_user). `resolve(sources, ?host)` maps per-slot specs → positional args: view_default→null,
+  fixed→literal, url_param→request, current_user→uid, this_page→host id, page_field→host field.
+  All-null collapses to [] (CP-1 backward compatible).
+- **RED→GREEN**: `ViewsArgumentResolverTest` — RED `ServiceNotFoundException` (4 errors) → GREEN 4/4,
+  78 assertions (each source proven against the universe).
+- **Wiring (after)**: BOTH call-sites now use the one resolver — embed adds an `argument_sources`
+  prop + resolves with the host entity; data source prefers source specs, literal `arguments` kept as
+  fallback. Backward compatible (absent sources → []).
+- **Fixed in passing**: `MosaicViewComponent::create()` missing the project's `// @phpstan-ignore
+  new.static` idiom (base carries it) — applied.
+- Gates: resolver 4/4; full mosaic_views **25/25, 231 assertions** (no regression); PHPStan L6 clean;
+  PHPCS errors-only clean.
+
+### M1 files (uncommitted)
+- `modules/mosaic_views/src/Service/ViewsArgumentResolver.php` (new)
+- `modules/mosaic_views/mosaic_views.services.yml` (new)
+- `modules/mosaic_views/tests/src/Kernel/ViewsArgumentResolverTest.php` (new)
+- `modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php` (wired)
+- `modules/mosaic_views/src/Plugin/MosaicDataSource/ViewsResultDataSource.php` (wired)
+
+## CHECKPOINT — STOP for reviewer audit before the M2+ frontend/e2e/ship wave
+
+## PHASE M2–M7 (not started — the next wave, needs dist + film)
+M2 panel per-row source dropdown + source-specific inputs (fixed=entity autocomplete, url_param=name,
+page_field=host-bundle field select) · M3 §3.4 cacheability derived cells PER SOURCE (RED first) ·
+M4 A2 "exclude this page" WITNESS-FIRST · M5 validator + degradation extensions · M6 e2e film album
+cp-ve2 · M7 gates + dist + SHIP-37 final + ledger + report push.

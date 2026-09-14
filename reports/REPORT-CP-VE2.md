@@ -166,3 +166,204 @@ Time: 00:17.763, Memory: 6.00 MB
 M1 ArgumentResolver service (R-V6, shared embed + data-source) · M2 panel per-row source dropdown ·
 M3 §3.4 cacheability derived cells (RED first) · M4 A2 "exclude this page" WITNESS-FIRST ·
 M5 validator extensions + degradation · M6 e2e film album cp-ve2 · M7 gates + dist + SHIP-37 final.
+
+---
+
+# APPEND (2026-09-14) — H4 MATRIX EXPANSION (reviewer rulings Q1–Q3)
+
+The reviewer accepted the H checkpoint with a remediation: expand the matrix to the FULL derived
+product, add an access axis, and upgrade the oracle from "is an array" to derived result
+composition. All three landed; budget met; the harness now continues to Phase M.
+
+## Q1 — full derived product (no hand-picked cells)
+`ScenarioMatrixTest::runProduct()` enumerates the FULL product by nested loops (not a hand-authored
+provider array): argument {nid, term, term+depth, uid} × exposed {none, type, term} × display
+{block, embed} × pager {mini, full} = **48 cells**, run-as root. Per-dimension coverage is asserted
+in-test: `assertSame([12,12,12,12], array_values($dimCounts))` and `assertSame(48, $ran)`.
+
+| argument | exposed | display | pager | cells |
+|---|---|---|---|---|
+| nid / term / term+depth / uid (4) | none / type / term (3) | block / embed (2) | mini / full (2) | **48** |
+
+## Q2 — access axis (access ⊥ pager/display)
+`runAccessAxis()`: argument {nid, term, term+depth, uid} × principal {root, auth, restricted, anon}
+= **16 cells**, on perm-gated ('access content') views. Access outcome is a function of the display
+gate + node grants, which do NOT vary by pager or display — so the axis is run once per (argument,
+principal), not across the full 48 (16, not 192). root/auth are allowed; restricted/anon are denied.
+
+## Q3 — oracle upgrade: derived result composition (no "is array")
+Every cell asserts the real result `nids` equal the set DERIVED from the universe via public
+accessors (`allPublishedNids`, `publishedPlainNidsForTermExact`, `publishedPlainNidsForTerms`,
+`publishedNidsOwnedBy`, `rootSubtreeTids`) — expected counts AND expected nid sets. The term+depth
+cells additionally assert child-level AND grandchild-level node inclusion.
+
+### RAW — probe establishing ground-truth semantics (the derivation mirrors reality)
+A throwaway probe (`ScenarioProbeTest`, since deleted) confirmed every derived expectation equals the
+real Views result before the oracle was finalised:
+```
+taxonomy_index rows: 6
+root uid=1 auth uid=2 restricted uid=3 anon uid=0
+allPublishedNids=1,2,3,4,7,8,9,10
+depth_child nid=7 term=2; depth_gc nid=8 term=3
+aChildTid(0)=2 aRootTid(0)=1 subtree(root0)=1,2,3,4,5
+nid arg=plain_pub_0 (root): nids=1
+term(d0) arg=child0 (root): nids=1,7 | expectExact=1,7
+term(d2) arg=root0 (root): nids=1,4,7,8 | expectSubtree=1,4,7,8
+  depth_child in? YES depth_gc in? YES          ← child AND grandchild inclusion proven
+exposed=none/type/term nid ignore (root): count=8,8,8 (identical) ← unsubmitted exposed = no effect
+uid arg=auth (root): nids=1,2 | expectOwnedBy(auth)=1,2
+access[perm] nid ignore: root=true/8, auth=true/8, restricted=false/0, anon=false/0
+access[perm] uid default(current_user): root=3,4,7,8,9,10 (own), auth=1,2 (own)
+```
+Semantics locked in the derivation: depth-0 = exact term; depth-2 from a root = root+children+
+grandchildren; unsubmitted exposed filters do not filter; perm 'access content' gates the display
+(root/auth in, restricted/anon out); the default node grant lets any 'access content' holder see all
+published (so the access axis differentiates allowed-vs-denied at the gate, and the uid argument
+provides the current-user composition delta among allowed principals).
+
+### RAW — the green run (single method, one universe build)
+```
+Scenario Matrix (Drupal\Tests\mosaic_views\Kernel\ScenarioMatrix)
+ ✔ Scenario universe matrix
+OK (1 test, 46 assertions)
+
+Time: 00:02.900, Memory: 6.00 MB
+```
+Structure + determinism + 48 product + 16 access all run on ONE `setUp` universe build (requirement
+d). The 46 assertions include the two `assertSame([], $failures)` set-equality gates that carry all
+64 cells' composition checks, the per-dimension count asserts, and the structure/determinism cells.
+
+## Gates (H4)
+| Gate | Result |
+|---|---|
+| PHPUnit — harness suite | **1 test, 46 assertions, 2.9s** (budget ≤90s MET) |
+| PHPUnit — full mosaic_views suite | **21/21, 153 assertions** (no regression) |
+| PHPStan (L6) | **[OK] No errors** |
+| PHPCS (Drupal, errors-only) | **exit 0** |
+| Production `src/` changed | **none** (test support only) |
+
+## Determinism follow-up (Q3 optional)
+The two-container same-seed fingerprint-diff cell is ledgered as **optional Wave-G hardening** per the
+ruling — not built here (the seededIndex recomputation + prediction-match in `assertDeterminism`
+already proves purity).
+
+## Budget gate outcome
+Full suite ≤90s (2.9s) with zero reds → per the charter, the harness CONTINUES to Phase M.
+
+---
+
+# PHASE M — M1: the shared ArgumentResolver (R-V6)
+
+M1 is landed as the coherent PHP-only unit of Phase M. M2–M7 (the panel TSX, §3.4 cacheability
+cells, A2 exclude-this-page, validator/degradation, e2e film, dist + ship) are the next wave — they
+need a dist rebuild + browser film and are scoped below. This is the natural seam: M1 is the backend
+resolver, Kernel-proven; M2+ is the frontend/e2e/ship wave.
+
+## M1 — WITNESS FIRST (before): two divergent, dynamic-blind paths
+Neither call-site resolved dynamic argument sources; there was no shared resolver.
+
+**Embed** — `MosaicViewComponent::renderView()` hardcoded empty args (CP-1 "View default"):
+```php
+$view->setDisplay($displayId);
+// CP-1: View-default argument plugins run (no author-supplied arguments).
+$view->setArguments([]);
+```
+**Data source** — `ViewsResultDataSource::resolve()` took only literal pre-resolved values:
+```php
+if (!empty($binding->config['arguments']) && is_array($binding->config['arguments'])) {
+  $view->setArguments(array_values($binding->config['arguments']));
+}
+```
+The R-V6 gap: no per-slot SOURCE spec (this_page / fixed / url_param / current_user / page_field /
+view_default) → concrete value, and no single place the mapping lives.
+
+## M1 — the ONE shared resolver (`src/Service/ViewsArgumentResolver.php`, new)
+A registered service (FQCN service id, per contrib rules) injecting `request_stack` + `current_user`.
+`resolve(array $sources, ?EntityInterface $host): array` maps per-slot source specs to a positional
+argument array for `ViewExecutable::setArguments()`:
+
+| source | resolves to |
+|---|---|
+| `view_default` | `null` (the View's own default plugin runs for that slot) |
+| `fixed` | the literal `value` |
+| `url_param` | the request query value (then a scalar route attribute) for `param` |
+| `current_user` | the viewer's uid |
+| `this_page` | the host entity's id |
+| `page_field` | the host entity's `field` value (entity-ref target id or main property) |
+
+A null in a slot means "View default"; when EVERY slot is null the whole thing collapses to `[]` —
+exactly the CP-1 behaviour, so an absent/empty spec is fully backward compatible.
+
+### RED → GREEN (`tests/src/Kernel/ViewsArgumentResolverTest.php`, new)
+RED (before the service existed):
+```
+ServiceNotFoundException: You have requested a non-existent service
+  "Drupal\mosaic_views\Service\ViewsArgumentResolver".
+Tests: 4, Assertions: 72, Errors: 4.
+```
+GREEN (after service + registration), each source proven against the deterministic universe:
+```
+Views Argument Resolver (Drupal\Tests\mosaic_views\Kernel\ViewsArgumentResolver)
+ ✔ Service is registered
+ ✔ Each source resolves       → ['42','77',authUid,hostId,termTid]
+ ✔ View default and collapse  → [['view_default']]→[]; []→[]; [default,fixed]→[null,'9']
+ ✔ Unresolvable sources are null → no host / missing param → []
+OK (4 tests, 78 assertions)
+```
+
+## M1 — WIRING (after): both call-sites use the ONE resolver
+**Embed** — `MosaicViewComponent` injects the resolver, adds an `argument_sources` prop (M2 panel
+emits it; absent → []), resolves with the host entity, and passes the result to `renderView()`:
+```php
+$host = $context instanceof MosaicRenderContext ? $context->entity : NULL;
+$sources = is_array($props['argument_sources'] ?? NULL) ? $props['argument_sources'] : [];
+$args = $this->argResolver->resolve($sources, $host);
+$render = $this->renderView($viewId, $displayId, (bool) ($props['hide_when_empty'] ?? FALSE), $args);
+...
+// renderView():
+// R-V6: resolved contextual arguments ([] = View-default plugins run).
+$view->setArguments($arguments);
+```
+**Data source** — `ViewsResultDataSource` injects the resolver (new constructor + create()) and
+prefers source specs, keeping the literal `arguments` as a backward-compatible fallback:
+```php
+if (!empty($binding->config['argument_sources']) && is_array($binding->config['argument_sources'])) {
+  $host = $context instanceof MosaicRenderContext ? $context->entity : NULL;
+  $view->setArguments($this->argResolver->resolve($binding->config['argument_sources'], $host));
+}
+elseif (!empty($binding->config['arguments']) && is_array($binding->config['arguments'])) {
+  $view->setArguments(array_values($binding->config['arguments']));
+}
+```
+
+## M1 — a pre-existing PHPStan gap fixed in passing
+`MosaicViewComponent::create()` used `new static()` WITHOUT the project's established
+`// @phpstan-ignore new.static` idiom (the base `MosaicComponentPluginBase::create()` carries it).
+PHPStan L6 flagged it once the file was touched; the idiom was applied to match the codebase.
+
+## Gates (M1)
+| Gate | Result |
+|---|---|
+| PHPUnit — resolver | **4/4, 78 assertions** (RED→GREEN) |
+| PHPUnit — full mosaic_views suite | **25/25, 231 assertions** (no regression; embed wiring backward compatible) |
+| PHPStan (L6, whole submodule) | **[OK] No errors** |
+| PHPCS (Drupal, errors-only) | **exit 0** |
+
+## Files (M1 set — uncommitted, read-only mosaic git)
+- `modules/mosaic_views/src/Service/ViewsArgumentResolver.php` (new)
+- `modules/mosaic_views/mosaic_views.services.yml` (new)
+- `modules/mosaic_views/tests/src/Kernel/ViewsArgumentResolverTest.php` (new)
+- `modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php` (wired + new.static idiom)
+- `modules/mosaic_views/src/Plugin/MosaicDataSource/ViewsResultDataSource.php` (wired)
+
+## Not done (M2–M7 — the next wave, needs dist + film)
+M2 panel per-row source dropdown + source-specific inputs (fixed=entity autocomplete, url_param=name,
+page_field=host-bundle field select), PANEL LABEL LAW · M3 §3.4 cacheability derived cells PER SOURCE
+(RED first: current_user → user context, url_param → url context, this_page → route/entity tags) ·
+M4 A2 exclude-this-page WITNESS-FIRST · M5 validator + degradation (deleted term/user/field), RED
+first · M6 e2e + album cp-ve2 + geometry + proposed walk list · M7 full gates + dist + SHIP-37 add
+block + ledger + report push.
+
+## Checkpoint
+H4 + M1 landed this wave (backend, PHP-only, fully gated). STOP for reviewer audit before the M2+
+frontend/e2e/ship wave.

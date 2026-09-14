@@ -12496,3 +12496,22 @@ factory reusable as F-086 demo-recipe seed. **CHECKPOINT — STOP for reviewer a
 Audit qs: (1) 5 representative cells vs full Cartesian product; (2) per-cell access dimension in H or
 Phase M §3.4; (3) two-container same-seed fingerprint diff cell wanted? Uncommitted on ship #36
 (44a09c8), read-only mosaic git. SHIP-37.md updated.
+
+### CP-VE2 H4 + M1 DONE + GREEN 2026-09-14 (checkpoint) — report: reports/REPORT-CP-VE2.md
+Reviewer rulings Q1–Q3 remediated + Phase M1 landed (backend, PHP-only). H4: matrix expanded to FULL
+48-cell derived product + 16-cell access axis (root/auth/restricted/anon on perm views) + oracle
+upgraded to derived result composition (counts + nid sets; term+depth proves child AND grandchild
+inclusion; "is array" gone); universe built ONCE per method; a throwaway probe confirmed the
+derivation mirrors real Views semantics. Gates: harness 46 assertions **2.9s** (≤90s MET), PHPStan L6
+clean, PHPCS errors-only clean, full mosaic_views no regression. Determinism 2-container fingerprint
+ledgered OPTIONAL Wave-G. M1 (R-V6 shared ArgumentResolver): witness (embed setArguments([]) vs data
+source literal args) → built src/Service/ViewsArgumentResolver.php (FQCN service id, request_stack +
+current_user; sources view_default/fixed/url_param/current_user/this_page/page_field; all-null→[]
+CP-1 back-compat) → RED (ServiceNotFoundException 4 errors) → GREEN 4/4 78 assertions each source
+proven → wired BOTH call-sites (embed argument_sources prop + host resolve; data source prefers
+source specs, literal fallback) → fixed pre-existing MosaicViewComponent::create() missing
+`// @phpstan-ignore new.static` idiom. Gates: full mosaic_views **25/25 231 assertions** no
+regression, PHPStan L6 clean, PHPCS 0. **CHECKPOINT — STOP for reviewer audit before the M2+
+frontend/e2e/ship wave** (M2 panel TSX + M3 §3.4 cacheability RED-first + M4 A2 witness-first + M5
+validator/degradation + M6 e2e film + M7 dist/ship — needs dist rebuild + browser film). Uncommitted
+on ship #36 (44a09c8), read-only mosaic git.
