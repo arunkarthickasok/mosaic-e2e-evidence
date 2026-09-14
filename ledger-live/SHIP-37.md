@@ -1,7 +1,81 @@
 # SHIP #37 — CP-VE2 (scenario-universe harness + argument matrix) — IN PROGRESS
 
 Uncommitted change set on top of ship #36 (44a09c8). Mosaic git read-only here.
-REPORT-TO-REPO: reports/REPORT-CP-VE2.md. **This checkpoint lands PHASE H (the harness) only.**
+REPORT-TO-REPO: reports/REPORT-CP-VE2.md.
+
+---
+
+## SHIP #37 — CONSOLIDATED CEREMONY `git add` (run from `web/modules/custom/mosaic`)
+
+Read-only law: the AI does NOT stage the mosaic repo — this is the command for the human commit
+at ceremony time. Verified against `git status --porcelain` at HEAD **44a09c8**. Expected staged
+count: **33** (21 modified + 12 new). Grouped by phase; run all five (or concatenate).
+
+```bash
+# H1–H3 — the scenario-universe harness (new)
+git add \
+  modules/mosaic_views/tests/src/Support/ScenarioUniverse.php \
+  modules/mosaic_views/tests/src/Support/ViewFactory.php \
+  modules/mosaic_views/tests/src/Kernel/ScenarioMatrixTest.php
+
+# M1 — the shared ArgumentResolver (R-V6) + both wired call-sites
+git add \
+  modules/mosaic_views/src/Service/ViewsArgumentResolver.php \
+  modules/mosaic_views/mosaic_views.services.yml \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentResolverTest.php \
+  modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php \
+  modules/mosaic_views/src/Plugin/MosaicDataSource/ViewsResultDataSource.php
+
+# M2–M5 — panel + endpoints + cacheability/exclude/validator (rebind + widget + libs)
+git add \
+  modules/mosaic_views/src/Controller/ViewsArgumentSourcesController.php \
+  modules/mosaic_views/mosaic_views.routing.yml \
+  modules/mosaic_views/components/mosaic_view/mosaic_view.mosaic.yml \
+  modules/mosaic_views/components/mosaic_view/mosaic_view.component.yml \
+  js/src/builder/MosaicPuckAdapter.ts \
+  js/src/builder/index.tsx \
+  js/src/builder/fields/MosaicViewsArgumentsField.tsx \
+  js/src/builder/fields/__tests__/viewsFields.test.tsx \
+  js/src/shared/types/schema.ts \
+  src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php \
+  mosaic.libraries.yml \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentSourcesControllerTest.php \
+  modules/mosaic_views/tests/src/Kernel/MosaicViewFieldTypesTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentCacheabilityTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsExcludeThisPageTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentDegradationTest.php
+
+# N1 — native-exclude help  +  N2 BUG 1 (buildRenderable args) & BUG 2 (render-cache CID contexts) + guard
+git add \
+  modules/mosaic_views/src/Controller/ViewsArgumentsController.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentsApiTest.php \
+  src/Service/MosaicRenderer.php \
+  mosaic.services.yml \
+  tests/src/Unit/Service/MosaicRendererTest.php \
+  tests/src/Unit/Service/MosaicRendererCacheTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsEmbedRenderTest.php
+
+# dist — builder-first, FE-last (already rebuilt; libs 1.0.17)
+git add js/dist/builder.js js/dist/frontend-editor.js
+```
+
+**Verify:** `git status --porcelain | grep -c '^[MA]'` → **33**  ·  `git status --porcelain | grep '^??'`
+should then show ONLY the excluded noise below (nothing ship-relevant).
+
+**EXCLUSIONS — never staged (verified against `git status --porcelain`):**
+- `web/cpve2_content.php` — DOCROOT film content-builder scratch (outside this repo; already deleted).
+  The scratch nodes 972–981 + views live only on the dev site for Arun's walk.
+- `js/e2e/journeys/cp-ve2-film.spec.ts` — gitignored (`.gitignore:15 js/e2e/`).
+- `AI/` — gitignored symlink to the evidence repo (`.gitignore:12 AI`).
+- `assets/`, `js/*.log`, `tests/*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `js/esc-probe.log` —
+  untracked noise, not ship files (pre-existing / probe leftovers).
+
+Per-phase counts: H1–H3 = 3 · M1 = 5 · M2–M5 = 16 · N1–N2 = 7 · dist = 2  →  **33**.
+
+---
+
+**This checkpoint lands PHASE H (the harness) only.** *(historical — the file grew across the whole
+ship #37 arc below; the add block above is the consolidated final set.)*
 
 ## Charter
 Ratified from the S3 harness-FIRST walk ruling (2026-09-13) + design §3.2/§3.4/§5 + R-V6 + A2.
