@@ -12472,3 +12472,27 @@ CP-VE2 OPENS with the harness (before the argument matrix proper):
 THEN CP-VE2 proper: the argument-source matrix + R-V6 shared ArgumentResolver (data-source
 sibling) + A2 "exclude this page" WITNESS-FIRST + §3.4 cacheability derivation.
 Slot: CP-VE2 (next in the views-embed arc). The CP-VE2 charter comes from the reviewer after audit.
+
+---
+
+## CP-VE2 OPEN 2026-09-13 (SHIP #37) — SCENARIO-UNIVERSE HARNESS + ARGUMENT MATRIX
+Ratified: S3 harness-FIRST ruling + design §3.2/§3.4/§5 + R-V6 + A2. HEAD 44a09c8 == origin verified.
+PHASE H (this leg, checkpoint after): H1 deterministic fixture factory (content universe) + H2 view
+generator + H3 Kernel matrix runner (≤~90s, determinism cell, per-dimension table). PHASE M (after H
+accepted): ArgumentResolver (R-V6 shared) + panel source dropdown + §3.4 cacheability + A2 witness-first
++ validator/degradation + e2e film. paragraphs + taxonomy available.
+
+### CP-VE2 PHASE H DONE + GREEN 2026-09-13 (checkpoint) — report: reports/REPORT-CP-VE2.md
+Deterministic scenario-universe harness landed (test support only; no src/ change). 3 new files,
+696 lines: H1 ScenarioUniverse (seeded fixture factory — 2 vocabs × 3-level term trees × plain+host
+content types × 2-level nested paragraphs × 5 entity-ref field storages × 8 nodes × publish states ×
+anon/auth/restricted principals; assignments from pure seededIndex, no rand/time/uniqid), H2
+ViewFactory (programmatic Views across argument×depth×exposed×display×pager grid), H3
+ScenarioMatrixTest (universe-structure + determinism + 5 derived grid cells via DataProvider,
+real Views executable path). Gates: PHPUnit 7/7 160 assertions **17.8s** (≤90s MET), PHPStan L6 [OK]
+No errors, PHPCS errors-only exit 0. REDs hit+fixed during build: taxonomy_index (D11 taxonomy_install
+not hook_schema → created in setUp) + TaxonomyIndexTid vid-null on save (→ bound VOCAB_A). SYNERGY:
+factory reusable as F-086 demo-recipe seed. **CHECKPOINT — STOP for reviewer audit before Phase M.**
+Audit qs: (1) 5 representative cells vs full Cartesian product; (2) per-cell access dimension in H or
+Phase M §3.4; (3) two-container same-seed fingerprint diff cell wanted? Uncommitted on ship #36
+(44a09c8), read-only mosaic git. SHIP-37.md updated.
