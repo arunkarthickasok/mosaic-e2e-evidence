@@ -12442,3 +12442,33 @@ default_action + default plugin) — ignore→"show all", default→plugin label
 Client renders verbatim per row (single display-title label removed). RED→GREEN ViewsArgumentsApiTest
 (raw excerpt in report) + Vitest updated. Frame 02 refilmed → "View default (show all)". Gates:
 mosaic_views 20/107, Vitest 511/1 (B-101), PHPCS ERRORS_0; builder+FE dist rebuilt (renderer untouched).
+
+---
+
+## SHIP #36 SHIPPED 2026-09-13 = commit 44a09c8 (parent 108fa41, == origin)
+**28 files changed, +2133 / −20.** Branch fix/finding-016-validator == origin; only noise
+(js/*.log, tests/*.log, assets/, js/e2e.zip, esc-probe) unstaged.
+
+**CP-VIEWS-EMBED-1 CLOSED.** The mosaic_view component embeds real Views displays:
+- **V0 gate** — MosaicRenderer BubbleableMetadata: captures a component's #attached, stores it in
+  the per-component render cache, REPLAYS it on the WARM cache hit (an AJAX view's views/ajax +
+  exposed-form + pager libraries reach the build cold AND warm).
+- views_display + views_arguments field types (client-fetch picker + argument rows); A1
+  resolved-value PANEL LABEL LAW; placeholder card BOTH surfaces (F-087); Views-executable page
+  render (§3.3, View-default args); save-time validator; F-058 graceful degradation.
+- **F-104** (PHP-class components keep .mosaic.yml field_types) + **F-105** (argument-row
+  default-behavior semantics) both FIXED ON SHIP.
+- **Arun walk 7/7 PASS 2026-09-13.** Walk tally stands 56.
+Reports: reports/REPORT-CP-VE1.md (full), REPORT-W6-W7/W8 (prior legs). Album cp-ve1/ 8/8.
+
+## RATIFIED — SCENARIO-UNIVERSE HARNESS is a MUST (Arun walk ruling Step 2, 2026-09-13)
+CP-VE2 OPENS with the harness (before the argument matrix proper):
+(a) FIXTURE FACTORY generating the content universe — content types × paragraph types (incl.
+    NESTED) × taxonomy vocabularies (2–3 hierarchy levels) × entity refs × publish/access states.
+(b) GENERATED VIEWS across the argument/filter grid — page-id, page-field, fixed-value, url-param,
+    current-user × taxonomy-depth × exposed filters.
+(c) AUTOMATED DERIVED ASSERTION MATRIX over the whole grid — regression-permanent; Arun walks
+    representative cells only.
+THEN CP-VE2 proper: the argument-source matrix + R-V6 shared ArgumentResolver (data-source
+sibling) + A2 "exclude this page" WITNESS-FIRST + §3.4 cacheability derivation.
+Slot: CP-VE2 (next in the views-embed arc). The CP-VE2 charter comes from the reviewer after audit.
