@@ -252,6 +252,79 @@ Full suite ≤90s (2.9s) with zero reds → per the charter, the harness CONTINU
 
 ---
 
+# PHASE N — FILM LEG (SHIP #37 final before walk) — ROAD CORRECTED, A2 NATIVE, 2 BUGS CAUGHT
+
+## LEDGER FIRST — the road after ship #37 (supersedes "walk → tag")
+The earlier report's "Arun's walk → tag 1.0.0" is WRONG. Ship #37 is NOT followed by a tag.
+The ratified road is **CP-VE3 → ACT 2 → Wave D-0 + D/F → Wave G → dev push → Arun soak → tag**
+(bible §P4 + ratified queue). Arun's representative walk is a REVIEW GATE within ship #37.
+
+## N1 — the chartered help-string affordance (A2 = NATIVE accepted)
+The introspection API now reports `supports_exclude` per argument (read from the initialised
+handler's `->options` — numeric args carry `not`, UI label "Exclude"). The panel shows, on a
+**This page** source row whose argument supports it, the note *"To exclude this page, enable
+'Exclude' on the View's contextual filter."* PANEL LABEL LAW tone. Kernel
+`ViewsArgumentsApiTest::testSupportsExclude` (numeric → TRUE); Vitest cell (viewsFields 9/9).
+
+## N2 — the film + TWO real bugs it caught (the whole point of filming)
+Deterministic content (`web/cpve2_content.php`): hosts 977–981 over a Fruit→Citrus/Berry→
+Lemon/Straw tree. The film asserts geometry oracles on the published pages. Building it
+surfaced two defects the unit/kernel layer had missed:
+
+**BUG 1 — the embed ignored the resolved argument.** `renderView()` set the resolved args via
+`setArguments()` (honoured by the immediate execute + hide-when-empty), then called
+`buildRenderable($display, [])`. The 2nd param of `buildRenderable()` IS the render-time
+contextual arguments; passing `[]` made the RENDERED embed show the whole unfiltered View.
+Witnessed live: /node/977 rendered 50 rows instead of the 2 Citrus pages.
+- Fix: `buildRenderable($display, $arguments)`.
+- Guard: `ViewsEmbedRenderTest::testEmbedAppliesResolvedArgument` (RED before the fix — 50 rows,
+  no match; GREEN after — only the matched node).
+```
+977 Fixed(Citrus d0)  →  CPVE2 Navel, CPVE2 Orange
+979 Depth(Fruit d2)   →  Navel, Orange, Meyer, Blueberry, Wild Straw   (child + grandchild)
+```
+
+**BUG 2 — the per-component render cache didn't vary by cache CONTEXT.** The CID keyed on
+static props only ("dynamic values covered by cache TAGS"). A `url_param` / `current_user`
+source has identical props for every value, so the render cache served a stale hit —
+/node/978?tid=2 and ?tid=3 returned the SAME rows. `getCacheMetadata` correctly reported
+`url.query_args:tid`, but the CID never used it.
+- Fix (MosaicRenderer): fold the component's cache contexts into the CID
+  (`convertTokensToKeys(...)->getKeys()`). This relaxes the V0 warm-cache invariant — a warm
+  hit now instantiates the plugin to read its contexts (a cheap factory call) — but **twig
+  still never re-runs on a warm hit** (the invariant that matters). New DI:
+  `@cache_contexts_manager`.
+- Guard: `ViewsEmbedRenderTest::testRenderCacheVariesByUrlParamContext` (?nid=A then ?nid=B →
+  different node; A's render is not served for B).
+- Blast radius: 2 renderer Unit tests re-oracled (warm hit now allows createInstance, still
+  asserts twig=0); both green.
+```
+978 ?tid=2 → Navel, Orange     978 ?tid=3 → Blueberry     978 ?tid=2 → Navel, Orange  (varies)
+```
+
+### Album cp-ve2 (frames + oracles)
+`ledger-live/e2e-evidence/cp-ve2/` + INDEX.md. Published-page frames (03 fixed-term · 04a/04b
+param-swap · 06 depth · 07 exclude) carry PASSING geometry oracles; 05a/05b current-user delta
+(admin rows vs anon empty); builder frames 01 source-dropdown · 02 autocomplete · 08 N1 help
+(visual evidence; behaviour proven by Vitest 9/9).
+
+## N3 — proposed representative WALK LIST for Arun
+`reports/WALK-CP-VE2.md` — 10 steps with exact nodes + exact expects (5 runtime geometry steps
+on hosts 977–981, 5 authoring-panel steps), each backed by a film frame.
+
+## Gates (N leg)
+| Gate | Result |
+|---|---|
+| Vitest — panel | **9/9** (added the N1 help cell) |
+| PHPUnit — ViewsArgumentsApiTest | **4/4** (supports_exclude) |
+| PHPUnit — ViewsEmbedRenderTest (new) | **2/2** (both bug guards) |
+| PHPUnit — renderer Unit (MosaicRendererTest + Cache) | **23/23** (re-oracled) |
+| PHPUnit — full mosaic_views | **40/40** |
+| PHPStan (my new code) / PHPCS | clean / exit 0 |
+| dist | rebuilt (builder + FE), libs 1.0.17 |
+
+---
+
 # PHASE M — M1: the shared ArgumentResolver (R-V6)
 
 M1 is landed as the coherent PHP-only unit of Phase M. M2–M7 (the panel TSX, §3.4 cacheability
@@ -477,4 +550,9 @@ threading) · `MosaicLayoutWidget.php` (bundle) · `mosaic.libraries.yml` (1.0.1
 ## Not done (the final ceremony leg)
 M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
 depth cell) + GEOMETRY + proposed representative walk list · full Unit+Kernel ceremony gate · Arun's
-representative walk · tag. The functionality is unit/kernel/Vitest-proven; M6 is the browser evidence.
+representative walk. The functionality is unit/kernel/Vitest-proven; M6 is the browser evidence.
+
+**ROAD CORRECTION (supersedes any earlier "walk → tag"):** ship #37 is NOT followed by a tag. The
+ratified road after ship #37 is **CP-VE3 → ACT 2 → Wave D-0 + D/F → Wave G → dev push → Arun soak →
+tag** (bible §P4 + the ratified queue). Arun's walk of the CP-VE2 representatives is a review gate
+within ship #37, NOT a release trigger. No tag before the full queue + soak.

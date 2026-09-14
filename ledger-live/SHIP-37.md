@@ -136,7 +136,33 @@ New: `Controller/ViewsArgumentSourcesController.php`, 4 Kernel tests. Modified:
 `js/src/shared/types/schema.ts`, `src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php`,
 `mosaic.libraries.yml`, `js/dist/builder.js`, `js/dist/frontend-editor.js`.
 
+## PHASE N — FILM LEG (final before walk) — ROAD CORRECTED, A2 NATIVE, 2 BUGS CAUGHT
+
+- **LEDGER:** "walk → tag" corrected — road is CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push
+  → Arun soak → tag (bible §P4). Walk = review gate, not a tag trigger.
+- **N1 (A2 native):** introspection API reports `supports_exclude` per argument (from the handler
+  `->options`); the panel's "This page" row shows a native-Exclude help note when supported.
+  ViewsArgumentsApiTest 4/4; Vitest 9/9.
+- **N2 film (cp-ve2 album):** deterministic content (web/cpve2_content.php, hosts 977–981). Frames
+  with geometry oracles. Building it caught **two real bugs**:
+  - **BUG 1**: `renderView()` called `buildRenderable($display, [])` — the 2nd param IS the render
+    arguments — so the embed showed the unfiltered View (977 rendered 50 rows, not 2). Fix: pass
+    resolved args. Guard: ViewsEmbedRenderTest::testEmbedAppliesResolvedArgument.
+  - **BUG 2**: per-component render CID keyed on static props only → a url_param/current_user source
+    served a stale render (?tid=2 == ?tid=3). Fix: fold the component's cache contexts into the CID
+    (MosaicRenderer + @cache_contexts_manager); warm hit now instantiates the plugin for contexts
+    but twig still never re-runs. Guard: testRenderCacheVariesByUrlParamContext. Blast radius: 2
+    renderer Unit tests re-oracled (23/23).
+- **N3 walk list:** reports/WALK-CP-VE2.md — 10 steps, exact nodes + expects, each backed by a frame.
+- Gates: Vitest 9/9, ViewsEmbedRenderTest 2/2, renderer Unit 23/23, full mosaic_views 40/40, PHPStan
+  (new code) clean, PHPCS 0. dist current (N1 help string in builder; libs 1.0.17).
+
 ## CHECKPOINT — the final ceremony leg remains
 M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
 depth cell) + GEOMETRY + proposed representative walk list · full Unit+Kernel ceremony gate · Arun's
-representative walk · tag. Functionality is unit/kernel/Vitest-proven; M6 is browser-level evidence.
+representative walk. Functionality is unit/kernel/Vitest-proven; M6 is browser-level evidence.
+
+**ROAD CORRECTION (supersedes any earlier "walk → tag"):** ship #37 is NOT followed by a tag. The
+ratified road after ship #37 is **CP-VE3 → ACT 2 → Wave D-0 + D/F → Wave G → dev push → Arun soak →
+tag** (bible §P4 + ratified queue). Arun's walk is a review gate within ship #37, not a release
+trigger.

@@ -12532,5 +12532,35 @@ stale-id empty View): RED→GREEN 4/4. dist rebuilt builder-first FE-last (FE im
 libraries 1.0.16→1.0.17; routes live. Gates: Vitest 8/8 (full 515/1 pre-existing B-101), full
 mosaic_views 38/38, PHPStan L6 clean, PHPCS 0, tsc clean (mine). **REMAINING (final ceremony leg):**
 M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
-depth cell) + GEOMETRY + walk list · full Unit+Kernel ceremony gate · Arun walk · tag. Uncommitted on
+depth cell) + GEOMETRY + walk list · full Unit+Kernel ceremony gate · Arun walk. Uncommitted on
 ship #36 (44a09c8), read-only mosaic git.
+
+### ROAD CORRECTION 2026-09-14 (supersedes "walk → tag")
+The prior report's "Arun's walk → tag 1.0.0" is WRONG and superseded. Ship #37 is NOT followed by a
+tag. The ratified road after ship #37 is **CP-VE3 → ACT 2 → Wave D-0 + D/F → Wave G → dev push → Arun
+soak → tag** (bible §P4 + ratified queue). Arun's representative walk of CP-VE2 is a REVIEW GATE within
+ship #37, not a release trigger. No tag before the full queue + soak.
+
+### CP-VE2 A2 RULING 2026-09-14 — NATIVE accepted
+A2 "exclude this page" = the native Views `not` (UI "Exclude") option, ratified. Build ONLY N1 (the
+chartered help-string affordance on the "This page" source row noting the native Exclude toggle when
+the argument supports it) — nothing more. N2 film + N3 walk list + N4 ceremony gate follow.
+
+### CP-VE2 N-LEG (FILM) DONE 2026-09-14 — report: reports/REPORT-CP-VE2.md, WALK-CP-VE2.md, album cp-ve2
+N1: introspection `supports_exclude` (from handler ->options) + panel native-Exclude help on the
+This-page row; ViewsArgumentsApiTest 4/4, Vitest 9/9; dist rebuilt (builder 1.0.17). N2 film (album
+ledger-live/e2e-evidence/cp-ve2, 9 frames + INDEX): deterministic content web/cpve2_content.php (hosts
+977–981, Fruit→Citrus/Berry→Lemon/Straw). Published-page geometry oracles GREEN (03 fixed-term
+977→Navel,Orange · 04a/b param-swap 978 ?tid=2/3 · 06 depth 979→5 subtree · 07 exclude 981 self-absent
+· 05a/b current-user 980 admin-50/anon-0 via clearCookies) + builder 01 source-dropdown + 08 N1 help
+(02 autocomplete Vitest-proven, not filmed). **TWO REAL BUGS the film caught + fixed + guarded:**
+(1) renderView buildRenderable($d,[]) ignored resolved args → embed showed unfiltered View (977=50
+rows) → pass $arguments; guard ViewsEmbedRenderTest::testEmbedAppliesResolvedArgument. (2) per-component
+render CID keyed on static props only → url_param/current_user served stale render (?tid=2==?tid=3) →
+fold component cache contexts into CID (MosaicRenderer + @cache_contexts_manager; warm hit now
+instantiates for contexts but twig still never re-runs); guard testRenderCacheVariesByUrlParamContext;
+blast radius 2 renderer Unit tests re-oracled. N3 walk list reports/WALK-CP-VE2.md (10 steps). N4 gates:
+**full main-module Unit+Kernel 2887/0** (7625 assertions, 1 pre-existing warn), full mosaic_views 40/40,
+Vitest 516/1-preexisting-B101, film 8/8 green, PHPStan (new) clean, PHPCS 0. **STOP — reviewer audits
+frames, Arun walks representatives (WALK-CP-VE2), ceremony. NOT a tag** (road: CP-VE3 → ACT 2 → Wave
+D-0+D/F → Wave G → dev push → Arun soak → tag). Uncommitted on ship #36 (44a09c8), read-only mosaic git.
