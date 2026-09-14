@@ -12515,3 +12515,22 @@ regression, PHPStan L6 clean, PHPCS 0. **CHECKPOINT — STOP for reviewer audit 
 frontend/e2e/ship wave** (M2 panel TSX + M3 §3.4 cacheability RED-first + M4 A2 witness-first + M5
 validator/degradation + M6 e2e film + M7 dist/ship — needs dist rebuild + browser film). Uncommitted
 on ship #36 (44a09c8), read-only mosaic git.
+
+### CP-VE2 M2–M5 + dist DONE + GATED 2026-09-14 (checkpoint) — report: reports/REPORT-CP-VE2.md
+Phase M frontend + backend landed (code-complete, unit/kernel/Vitest proven). M2 panel
+(MosaicViewsArgumentsField.tsx): per-row SOURCE dropdown (view_default/fixed/url_param/current_user/
+this_page/page_field) writing positional argument_sources; fixed→entity autocomplete + url_param→name
++ page_field→host-bundle field select (2 new endpoints in ViewsArgumentSourcesController, gated);
+PANEL LABEL LAW (F-105 resolved parenthetical); field type rebound arguments→argument_sources; host
+entity_type+bundle threaded toConfig→panel; widget attaches bundle. Vitest 8/8 + endpoints Kernel 2/2.
+M3 cacheability (resolver getCacheability wired into embed+data-source getCacheMetadata: current_user→
+user ctx, url_param→url.query_args:<name>, this_page/page_field→host tags, fixed→referenced-entity tag,
+max-age untouched): RED→GREEN 6/6 incl. wiring proof. M4 exclude-this-page WITNESS: native Views
+numeric `not` option (UI "Exclude") + this_page source — build nothing; ViewsExcludeThisPageTest 1/1.
+M5 validator flags deleted fixed-entity ref + graceful degradation (missing field→null, deleted fixed→
+stale-id empty View): RED→GREEN 4/4. dist rebuilt builder-first FE-last (FE imports toConfig+schema);
+libraries 1.0.16→1.0.17; routes live. Gates: Vitest 8/8 (full 515/1 pre-existing B-101), full
+mosaic_views 38/38, PHPStan L6 clean, PHPCS 0, tsc clean (mine). **REMAINING (final ceremony leg):**
+M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
+depth cell) + GEOMETRY + walk list · full Unit+Kernel ceremony gate · Arun walk · tag. Uncommitted on
+ship #36 (44a09c8), read-only mosaic git.

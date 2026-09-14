@@ -367,3 +367,114 @@ block + ledger + report push.
 ## Checkpoint
 H4 + M1 landed this wave (backend, PHP-only, fully gated). STOP for reviewer audit before the M2+
 frontend/e2e/ship wave.
+
+---
+
+# PHASE M — M2–M5 + dist (M7 part) — CODE COMPLETE + GATED
+
+This leg lands the panel (M2), cacheability (M3), exclude-this-page witness (M4), validator/
+degradation (M5), and the dist rebuild + library bump (M7 part). Every piece is unit/kernel/Vitest
+proven. The e2e FILM (M6) + full-suite ceremony + Arun's representative walk are the remaining leg —
+the functionality is proven at the unit/kernel/component level; M6 adds the browser-level evidence.
+
+## M2 — the per-row source panel + source-specific inputs
+`js/src/builder/fields/MosaicViewsArgumentsField.tsx` — one row per contextual filter, each with a
+SOURCE dropdown (View default, Fixed value, URL query parameter, Current user, This page, Field on
+this page) writing a positional `argument_sources` (the ArgSourceSpec[] the M1 resolver consumes).
+Source-specific inputs: **fixed → entity autocomplete** (when the argument targets an entity type)
+via a new endpoint, else a plain value; **url_param → the parameter name**; **page_field →
+host-bundle field select** via a new endpoint. PANEL LABEL LAW: the View-default option shows the A1
+resolved behaviour in parentheses (F-105), never a bare "default".
+
+**Endpoints** (`src/Controller/ViewsArgumentSourcesController.php`, new; `final` +
+ContainerInjectionInterface + StringTranslationTrait):
+- `GET /api/mosaic/views/entity-autocomplete/{entity_type}?q=` → label-matched `{id,label}`.
+- `GET /api/mosaic/views/page-fields/{entity_type}/{bundle}` → the host bundle's `{name,label}`.
+Both permission-gated (`mosaic.use_builder`), private + max-age 0.
+
+**Wiring**: the `views_arguments` field type rebound from the legacy `arguments` prop to
+`argument_sources` (mosaic_view.mosaic.yml + component.yml); host entity type + bundle threaded
+through `toConfig → fieldTypeFields → descriptorToPuckField → MosaicViewsArgumentsPanel`; the widget
+now attaches `bundle` to drupalSettings (backs the page_field select).
+
+**Vitest** (`viewsFields.test.tsx`, 8/8): the source dropdown renders with the F-105 resolved label;
+switching to URL parameter writes a `url_param` source; the param-name input writes the name; a fixed
+source on an entity argument shows the autocomplete (and a suggestion resolves from the endpoint); a
+page_field source shows the host-bundle field select; the empty state holds.
+```
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+```
+**Endpoints Kernel** (`ViewsArgumentSourcesControllerTest`, 2/2): label-matched terms + host fields.
+
+## M3 — §3.4 cacheability derivation PER source (RED → GREEN)
+`ViewsArgumentResolver::getCacheability(sources, host)` derives the cache metadata each source
+implies; wired into BOTH the embed's and the data source's `getCacheMetadata`. RED (undefined method,
+5 errors) → GREEN 6/6, 118 assertions:
+```
+ ✔ Current user context        → 'user'; max-age untouched (Cache::PERMANENT)
+ ✔ Url param context           → 'url.query_args:tid'
+ ✔ Host tags                   → 'node:<id>' (this_page / page_field)
+ ✔ Fixed referenced entity tag → 'taxonomy_term:<tid>'
+ ✔ No dynamic keeps max age    → [] contexts, Cache::PERMANENT
+ ✔ Embed get cache metadata wires source cacheability  ← the wiring proof
+```
+
+## M4 — A2 "exclude this page" WITNESS (native path; build nothing)
+Witnessed native mechanism: a Views numeric contextual filter has its OWN `not` option (UI label
+"Exclude") that inverts the argument. So "exclude this page" needs NO new Mosaic argument logic — the
+View author ticks Exclude on the nid argument, and Mosaic's existing `this_page` source (M1) feeds it.
+`ViewsExcludeThisPageTest` (1/1, 21 assertions) proves the end-to-end path: `this_page` resolves to
+the host id, the View's `not` flag drops the host and keeps every other published node.
+```
+this_page → [hostId]; result = allPublished \ {host}; host NOT in result.
+```
+Ruling-ready: build nothing beyond a panel affordance that documents the native "Exclude" toggle.
+
+## M5 — validator + graceful degradation (RED → GREEN)
+`MosaicViewComponent::validateProps` now flags a `fixed` argument source that references a DELETED
+entity (a stale term/user/node id silently empties the View — caught at save). Degradation is already
+graceful via the resolver: a missing `page_field` → null (View default); a deleted `fixed` id → the
+stale id (the View returns empty, no crash). `ViewsArgumentDegradationTest` 4/4:
+```
+ ✔ Validator flags deleted fixed entity   (RED before the extension: 0 violations)
+ ✔ Validator allows existing fixed entity
+ ✔ Missing page field degrades to default → []
+ ✔ Deleted fixed still resolves to stale id → ['999999']
+```
+
+## dist (M7 part) — builder-first, FE-last (per witness)
+The builder bundle (MosaicPuckAdapter + the panel + index.tsx) AND the FE bundle (FrontendBuilderDialog
+imports `toConfig` + the shared schema) both changed → both rebuilt, builder FIRST then FE LAST:
+```
+dist/builder.js          1,224.77 kB   (was 1,217 kB — the panel)
+dist/frontend-editor.js    755.03 kB
+```
+Library versions bumped 1.0.16 → **1.0.17** (3 libraries). Routes registered (verified live):
+arg_entity_autocomplete, arg_page_fields, views_arguments = OK.
+
+## Gates (M2–M5 + dist)
+| Gate | Result |
+|---|---|
+| Vitest — panel | **8/8** (viewsFields) |
+| Vitest — full suite | **515 / 1** (the 1 is the pre-existing B-101 boolean→radio drift) |
+| PHPUnit — full mosaic_views suite | **38/38, 512 assertions** (config rebind + widget, no regression) |
+| PHPUnit — full main-module Unit+Kernel | **2887/2887, 7625 assertions, 0 failures** (1 pre-existing warning) — the widget `bundle` + shared-schema change regress nothing |
+| PHPUnit — M3/M4/M5/endpoints (new) | cacheability 6/6 · exclude 1/1 · degradation 4/4 · endpoints 2/2 |
+| PHPStan (L6, my new code) | **[OK] No errors** |
+| PHPCS (Drupal, errors-only) | **exit 0** |
+| tsc (my files) | clean (1 remaining error is pre-existing `dsdShadow.ts`, unchanged at HEAD) |
+
+## Files (M2–M5 + dist)
+New: `Controller/ViewsArgumentSourcesController.php` · 4 Kernel tests (cacheability, degradation,
+exclude, sources-controller) · `fields/MosaicViewsArgumentsField.tsx` (rewritten). Modified:
+`Service/ViewsArgumentResolver.php` (getCacheability) · `Plugin/MosaicComponent/MosaicViewComponent.php`
+(cacheability + validator) · `Plugin/MosaicDataSource/ViewsResultDataSource.php` (cacheability) ·
+`Support/ViewFactory.php` (exclude/not) · `mosaic_views.routing.yml` · `mosaic_view.mosaic.yml` +
+`.component.yml` (rebind) · `MosaicPuckAdapter.ts` + `index.tsx` + `shared/types/schema.ts` (host
+threading) · `MosaicLayoutWidget.php` (bundle) · `mosaic.libraries.yml` (1.0.17) · `js/dist/*`.
+
+## Not done (the final ceremony leg)
+M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
+depth cell) + GEOMETRY + proposed representative walk list · full Unit+Kernel ceremony gate · Arun's
+representative walk · tag. The functionality is unit/kernel/Vitest-proven; M6 is the browser evidence.
