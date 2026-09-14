@@ -12564,3 +12564,40 @@ blast radius 2 renderer Unit tests re-oracled. N3 walk list reports/WALK-CP-VE2.
 Vitest 516/1-preexisting-B101, film 8/8 green, PHPStan (new) clean, PHPCS 0. **STOP — reviewer audits
 frames, Arun walks representatives (WALK-CP-VE2), ceremony. NOT a tag** (road: CP-VE3 → ACT 2 → Wave
 D-0+D/F → Wave G → dev push → Arun soak → tag). Uncommitted on ship #36 (44a09c8), read-only mosaic git.
+
+### ARUN WALK (2026-09-14) — CP-VE2 representatives (verbatim)
+Steps 1-6 + 8 PASS. Step 6 = PASS (argument label is Views' own handler title) — POLISH CANDIDATE
+ledgered for ACT 2: friendlier fallback when no custom admin label. Step 4 linked CPVE2-prefixed rows
+ruled EXPECTED. Steps 9-10 NOT RUN (walk-step clarity — reviewer re-issuing rewritten 9-10).
+**WALK-CATCH #57 FAIL (tally → 57):** fixed-value entity autocomplete DROPS KEYSTROKES ("cit" typed
+fast → "ct"), right panel FREEZES, one key at a time — the whole mosaic frame appears to re-render per
+keystroke. Ship #37 FROZEN; fix accumulates in the uncommitted set. Charter W1 witness → W2 isolation-
+contract fix (local state + debounced abortable fetch + Puck commit only on pick + zero re-render while
+typing) → W3 RED→GREEN (Vitest fast-typing + e2e real-pointer, film frame 02) → W4 gates + dist + album
++ add-block delta + push. STOP after push.
+
+### ACT 2 POLISH CANDIDATE (ledgered, not this charter) — argument label fallback
+Step-6 ruling: the argument-source row label falls back to Views' own handler admin title when no
+custom admin label is set. Friendlier fallback (e.g. humanized field name) is an ACT 2 polish item.
+
+### WALK-CATCH #57 FIXED 2026-09-14 — report: reports/REPORT-CP-VE2.md (WC57 section), album cp-ve2 frame 02
+W1 WITNESS (live, render-count): MosaicViewsArgumentsPanel (usePuck) re-rendered **24×** on a single
+load+select (render storm) + page froze on interaction; EntityAutocomplete fetched per-keystroke (no
+debounce). W2 FIX (js/src/builder/fields/MosaicViewsArgumentsField.tsx): EntityAutocomplete typing =
+LOCAL term state only (no Puck commit while typing → no panel re-render; commit on pick), lookup
+DEBOUNCED ~280ms + ABORTABLE (AbortController aborts stale). W3 RED→GREEN: Vitest viewsFields 10/10
+(fast type → full "cit" + 0 fetches while typing [RED pre-fix=3] + 1 debounced + no commit until pick);
+e2e real-pointer pressSequentially('Citrus',50ms) → inputValue=='Citrus', panel interactive, frame 02
+captured. dist rebuilt (builder). WITNESS-SCAN LEDGERED (fix only autocomplete family this charter):
+(a) url_param text input commits to Puck per-keystroke (value bound to spec.param → onPatch) — same
+freeze class, LEDGER; (b) usePuck panel render-storm (24 renders/load) — Panel perf, LEDGER; (c)
+page_field is a <select> (commit on choose) — fine.
+
+### GOTCHA (film content safety) — the builder PERSISTS panel edits
+Filming builder interactions on a GEOMETRY host corrupts it: the film's selectOption/typing on 977's
+source dropdown left node 977 argument_sources=[{view_default}] (→ 50 unfiltered rows, broke frame 03).
+Fix: film the autocomplete on a DEDICATED THROWAWAY host (982) whose argument_sources mutation is
+harmless; never type into hosts 977–981 (the geometry/walk hosts). Also: an entity:taxonomy_term
+validator on the taxonomy_index_tid_depth argument enables the panel autocomplete (introspection reads
+entity_type from the validator) — kept on cpve2_termd2 (979 depth + 982 autocomplete), NOT on
+cpve2_termd0 (977, exact depth-0).

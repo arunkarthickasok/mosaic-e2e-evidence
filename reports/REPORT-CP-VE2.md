@@ -312,6 +312,66 @@ param-swap · 06 depth · 07 exclude) carry PASSING geometry oracles; 05a/05b cu
 `reports/WALK-CP-VE2.md` — 10 steps with exact nodes + exact expects (5 runtime geometry steps
 on hosts 977–981, 5 authoring-panel steps), each backed by a film frame.
 
+---
+
+# WALK-CATCH #57 — fixed-value autocomplete drops keystrokes (PROBE → FIX)
+
+Arun's walk: steps 1–6 + 8 PASS (step 6 label = Views' own handler title, ACT-2 polish ledgered;
+step 4 CPVE2-linked rows EXPECTED); steps 9–10 NOT RUN (reviewer re-issuing). **#57 (tally → 57):**
+the fixed-value entity autocomplete drops keystrokes ("cit" fast → "ct"), the right panel freezes,
+one key at a time. Ship #37 FROZEN; the fix accumulates in the uncommitted set.
+
+## W1 — WITNESS (live, render-count evidence — not theory)
+Instrumented `EntityAutocomplete` (render/mount/unmount/fetch) + `MosaicViewsArgumentsPanel` (render),
+rebuilt the builder, drove host 977's builder e2e:
+```
+» [WC57][Panel render]   ×24     (just LOAD + selecting the source — no typing yet)
+WC57 evaluate err: page.evaluate: Target page ... has been closed   (0 keystrokes landed)
+EA renders=0 mounts=0 fetches=0   (page froze before the autocomplete could be typed into)
+```
+Mechanism (witnessed): `MosaicViewsArgumentsPanel` calls `usePuck()`, which subscribes to the FULL
+Puck state, so the panel re-renders **24×** across a single load+select — a render storm — and the
+frame freezes on interaction. Compounding it, `EntityAutocomplete`'s lookup fired a network fetch on
+EVERY keystroke (code-confirmed: `useEffect([term])` with no debounce/abort). Under fast typing the
+per-key fetch + re-render load makes the controlled input drop characters.
+
+## W2 — FIX (isolation contract, autocomplete family)
+`EntityAutocomplete` (`js/src/builder/fields/MosaicViewsArgumentsField.tsx`): typing updates ONLY
+local `term` state (no Puck commit → no panel/canvas re-render while typing; commit happens on pick).
+The lookup is now **debounced** (~280 ms after typing pauses) and **abortable** (`AbortController` —
+each keystroke aborts the in-flight request), so fast typing fires ONE fetch, not one per key, and the
+input never drops characters.
+
+### Witness-scan of sibling per-key-commit inputs (LEDGERED, not fixed this charter)
+- `url_param` text input — `value={spec.param}` + `onChange → onPatch → Puck commit` on EVERY
+  keystroke (a controlled-input-bound-to-Puck anti-pattern; same freeze class). → ledgered.
+- `MosaicViewsArgumentsPanel` `usePuck()` render storm (24 renders/load) — a Panel-level perf issue
+  independent of the autocomplete. → ledgered.
+- `page_field` is a `<select>` (commit on choose, not per-key) — fine.
+
+## W3 — RED → GREEN
+**Vitest** (`viewsFields.test.tsx`, 10/10): fast per-key typing "c"→"ci"→"cit" → the input reads the
+FULL "cit"; `expect(entityAutocompleteFetches).toBe(0)` immediately (debounce pending — the RED
+assertion; pre-fix fired 3 per-key fetches) → exactly **1** debounced fetch after the pause; **no Puck
+commit** while typing; picking a suggestion commits exactly once.
+**e2e** (cp-ve2 film, frame 02): real-pointer `pressSequentially('Citrus', {delay:50})` on the live
+builder → `inputValue === 'Citrus'` (no dropped keys), suggestion appears, panel stays interactive —
+frame `02-fixed-autocomplete.png` finally earns its place in the album.
+
+## W4 — Gates + add-block delta
+| Gate | Result |
+|---|---|
+| Vitest — panel | **10/10** (WC57 debounce cell added) |
+| Vitest — full suite | **517 / 1** (the 1 is pre-existing B-101) |
+| tsc — my file | clean (only pre-existing `dsdShadow.ts`) |
+| e2e — cp-ve2 film | **8/8** (frame 02 now real-pointer fast-typed; all geometry oracles green) |
+| dist | builder rebuilt (FE unaffected — the fix is builder-only); instrumentation removed |
+
+**SHIP-37 add-block delta: NONE.** The WC57 fix modified only files ALREADY in the consolidated add
+block — `js/src/builder/fields/MosaicViewsArgumentsField.tsx`, `.../__tests__/viewsFields.test.tsx`,
+`js/dist/builder.js`. No new tracked files. The film spec (`js/e2e/`) is gitignored; the scratch
+host 982 + the `cpve2_termd2` entity-validator are dev-site content only. Ship #37 count stays **33**.
+
 ## Gates (N leg)
 | Gate | Result |
 |---|---|

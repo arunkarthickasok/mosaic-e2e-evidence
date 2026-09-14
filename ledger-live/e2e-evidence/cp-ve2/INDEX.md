@@ -14,17 +14,15 @@ Meyer(974)=Lemon, Blueberry(975)=Berry, Wild Straw(976)=Straw. Host pages embed 
 | `07-exclude-this-page.png` | /node/981 — this_page + native `not` (Exclude) | host's own row **absent**; other CPVE2 pages present |
 | `05a-currentuser-admin.png` | /node/980 — current_user source, logged-in | admin (uid 1) sees the authored page rows |
 | `05b-currentuser-anon.png` | /node/980 — current_user source, anonymous | anon (uid 0) sees **empty** (delta by viewer) |
-| `01-panel-source-dropdown.png` | builder /node/977 — the source dropdown | six sources; View-default reads "View default (show all)" (F-105) |
+| `01-panel-source-dropdown.png` | builder — the source dropdown | six sources; View-default reads "View default (show all)" (F-105) |
+| `02-fixed-autocomplete.png` | builder (throwaway host 982) — fixed → entity autocomplete | REAL-POINTER fast-typed "Citrus" (50ms/key) → inputValue=="Citrus" (WC57 fix: no dropped keys) |
 | `08-n1-exclude-help.png` | builder /node/981 — this_page on a nid arg (N1) | help: "To exclude this page, enable 'Exclude' …" |
-
-*(The fixed-value entity autocomplete — a would-be frame 02 — is a flaky live builder
-interaction and is NOT filmed; its behaviour is proven by Vitest: viewsFields "type → Citrus
-suggestion → pick".)*
 
 Spec: `js/e2e/journeys/cp-ve2-film.spec.ts` (project `journeys`, admin storageState).
 The published-page frames (03/04/06/07) carry PASSING geometry oracles; 05 is a viewer
-delta (admin 50 rows vs anon 0 via clearCookies, also confirmed by curl); the builder frames
-(01/08) are visual evidence of behaviour independently proven by Vitest (viewsFields 9/9).
+delta (admin 50 rows vs anon 0 via clearCookies, also confirmed by curl); frame 02 asserts the
+fast-typed input holds the full string (WALK-CATCH #57 fix). Builder frames are filmed on the
+THROWAWAY host 982 (the builder persists panel edits — geometry hosts 977–981 are never typed into).
 
 ## Two real bugs this film caught (both fixed + regression-tested)
 1. **buildRenderable ignored the resolved argument.** `renderView()` set the resolved
