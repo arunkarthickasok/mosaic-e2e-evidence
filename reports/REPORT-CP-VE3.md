@@ -200,3 +200,55 @@ P1b (the React "Preview" button on the mosaic_view card, both surfaces — fetch
 HTML, shimmer loading, PLACEHOLDER-returns-on-any-config-change), P1c (films: admin + FE preview, inertness
 click film, config-change-clears film), and P1d (Vitest + full gates + dist + libs bump + ledger/report
 push) are the next sub-checkpoint. Reviewer audits P1a.
+
+---
+
+## P1b — Preview button — CHECKPOINT (BLOCKED on a pinned-contract conflict) 2026-09-15
+
+The `MosaicViewPreview` React component is **built and unit-tested**, but its charter placement ("button on
+the mosaic_view **card**") **directly conflicts with the PINNED inert-canvas contract** the charter itself
+pins — and the conflict is a hard technical constraint, not a preference. Surfacing it for a ruling.
+
+### Built + GREEN
+`js/src/builder/MosaicViewPreview.tsx` — wraps the Tier-B summary card; a "Preview" button CSRF-POSTs the
+placement to `mosaic_views.preview`, injects the inert snapshot + chrome/labels, shows a shimmer bar (never
+a panel overlay), and — the key contract cells — **returns the placeholder on ANY config change** and
+**aborts an in-flight fetch** when the config changes mid-flight. Vitest **5/5**:
+```
+CP-VE3 P1b — MosaicViewPreview
+  ✓ renders the Preview button and the summary card by default
+  ✓ Preview POSTs to the route with the CSRF header and injects the inert snapshot
+  ✓ a config change clears the snapshot (placeholder returns)
+  ✓ a config change WHILE loading aborts the fetch — no stale inject
+  ✓ the Preview button is disabled when no view is selected
+```
+Wired: `getCsrfToken` exported (shared); `toConfig` gained `hostEntityId`; `buildViewPreviewRenderer`
+(mosaic_view card renderer) added; both surfaces thread the host context (index.tsx + FE dialog).
+
+### The BLOCKER — witnessed live
+Placing the button on the card puts it **behind Puck's click-to-select overlay** (the inert-canvas
+convention, F-103 lineage): canvas component content is non-interactive by design — a click selects the
+component, it does not reach the content. Live witness on admin host 982:
+```
+[P1-SMOKE] previewHost=true previewBtn=true      (the button renders on the card)
+[P1] btnClicked=false                            (click times out — overlay intercepts; same result
+                                                  whether or not the component is selected first)
+```
+So the charter contradicts itself: **"inert canvas" (pinned) vs "button on the card"**. The inert-canvas
+contract is the one explicitly pinned, so it must win — which means the button cannot live on the canvas.
+
+### Recommendation (reviewer ruling requested)
+Move the "Preview" button to the **interactive property panel** (the surface Mosaic already uses for
+canvas-adjacent interaction — cf. tabsPanelSync/carouselPanelSync, which moved slide/tab interaction to the
+panel for exactly this reason). The **inert snapshot still renders IN the card** via a small panel↔card
+store keyed by instance id. This honors the pinned contract, keeps the result per-placement on the card,
+and reuses the already-tested `MosaicViewPreview` fetch/inject/clear/abort logic.
+
+### State handed to the reviewer
+The card gate was **reverted to the plain Tier-B summary card** so the live canvas is clean (no
+non-functional button). `MosaicViewPreview` + `buildViewPreviewRenderer` + the `hostEntityId` threading
+remain in place, ready for the panel-driven wiring once the placement is ruled. tsc clean; Vitest 5/5;
+`getCsrfToken` refactor keeps the WC60 SSR path green (full Vitest **533/1**). libs **1.0.24 → 1.0.25**.
+
+### STOP — reviewer RULES on the Preview-button placement (recommend: panel-driven) before P1b completes
+live + P1c films + P1d gates.

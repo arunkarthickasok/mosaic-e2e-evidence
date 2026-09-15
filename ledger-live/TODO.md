@@ -12962,4 +12962,21 @@ regression 7/7, phpstan OK, phpcs 0 errors. No JS/dist change (backend only). Re
 HTML + shimmer + placeholder-on-config-change) + P1c (films admin/FE/inertness/config-clear) + P1d (Vitest +
 full gates + dist + libs + push) NEXT.** STOP — reviewer audits P1a.
 
-### OPEN QUEUE: CP-VE3 P1a GREEN (reviewer) → P1b UI + P1c films + P1d gates → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P1b — Preview button — CHECKPOINT (BLOCKED, ruling requested) 2026-09-15
+On ship #38 (d915ee7), read-only mosaic git. Accumulating ship #39 set now 18 files (P0.5+P1a+P1b). BUILT +
+Vitest 5/5: `MosaicViewPreview.tsx` — Preview button CSRF-POSTs mosaic_views.preview, injects inert snapshot
++ labels, shimmer (never panel overlay), PLACEHOLDER-returns-on-any-config-change, aborts in-flight on config
+change, disabled when no view. Wired: getCsrfToken exported (shared, WC60 path still green); toConfig gained
+hostEntityId; buildViewPreviewRenderer + both-surface host-context threading (index.tsx + FE dialog).
+**BLOCKER (witnessed live, host 982): the button-on-CARD placement conflicts with the PINNED inert-canvas
+contract.** Puck's click-to-select overlay intercepts card clicks — `previewHost=true previewBtn=true` but
+`btnClicked=false` (click times out; same with/without selecting first). The charter contradicts itself
+(inert-canvas pinned vs button-on-card); inert-canvas is the pinned one → the button cannot live on the
+canvas. **RECOMMEND (reviewer rules): panel-driven Preview button** (interactive property panel, cf.
+tabsPanelSync/carouselPanelSync which moved interaction to the panel for this exact reason) + inert snapshot
+IN the card via a panel↔card store keyed by instance id, reusing the tested MosaicViewPreview logic. Card
+gate REVERTED to the plain Tier-B summary (live canvas clean, no dead button); component + renderer +
+threading remain ready. tsc clean, full Vitest 533/1 (B-101), libs 1.0.24→1.0.25. Report: reports/
+REPORT-CP-VE3.md (P1b). **STOP — reviewer RULES on placement before P1b completes live + P1c films + P1d.**
+
+### OPEN QUEUE: CP-VE3 P1b BLOCKED (placement ruling) → P1b-complete + P1c films + P1d gates → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
