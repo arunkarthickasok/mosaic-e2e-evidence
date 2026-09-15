@@ -15,7 +15,7 @@ Meyer(974)=Lemon, Blueberry(975)=Berry, Wild Straw(976)=Straw. Host pages embed 
 | `05a-currentuser-admin.png` | /node/980 — current_user source, logged-in | admin (uid 1) sees the authored page rows |
 | `05b-currentuser-anon.png` | /node/980 — current_user source, anonymous | anon (uid 0) sees **empty** (delta by viewer) |
 | `01-panel-source-dropdown.png` | builder — the source dropdown | six sources; View-default reads "View default (show all)" (F-105) |
-| `02-fixed-autocomplete.png` | builder (throwaway host 982) — fixed → entity autocomplete | REAL-POINTER fast-typed "Citrus" (50ms/key) → inputValue=="Citrus" (WC57 fix: no dropped keys) |
+| `02-fixed-autocomplete.png` | builder (throwaway host 982) — fixed → SINGLE-FIELD entity combobox | REAL-POINTER fast-typed "Citrus" (50ms/key) → inputValue=="Citrus", no dropped keys (WC57); native single field, no separate "Selected:" line (CP-VE2-R1 / WC59) |
 | `10-pick-save-filtered.png` | /node/982 after pick "Citrus" → SAVE (step 10.1) | the FULL loop: save succeeds, page filters to the Citrus subtree (Navel, Orange, Meyer), NOT Wild Straw |
 | `08-n1-exclude-help.png` | builder /node/981 — this_page on a nid arg (N1) | help: "To exclude this page, enable 'Exclude' …" |
 

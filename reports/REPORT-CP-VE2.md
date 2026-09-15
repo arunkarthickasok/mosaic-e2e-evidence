@@ -675,3 +675,33 @@ tree, re-tagged nodes 972–976, re-wired the host fixed sources to the new tids
 | PHPCS / PHPStan (controller) | exit 0 / No errors |
 | dist + libs | builder + FE rebuilt, libs **1.0.18** (cache-bust) |
 | SHIP-37 add-block delta | **NONE** — only already-tracked files changed; count stays 33 |
+
+---
+
+# CP-VE2-R1 (WALK-CATCH #59 rider) — native single-field autocomplete
+
+Rider on shipped ship #37 (62a1c05). Presentation-only; no stored-data shape change.
+
+## #59 fix
+`EntityAutocomplete` reworked from a "Selected: <label>" line + a separate persistent search input to
+the Drupal-native SINGLE-FIELD combobox: one input that DISPLAYS the label when a value is stored;
+focus + type searches in place (WC57 debounce/local-state/abort UNCHANGED); pick writes the entity ID
+(WC58 value-commit UNCHANGED) and shows the label in the field; clearing empties the source.
+
+## ORACLE-CHANGE (presentation cells only)
+- Reopen: OLD asserted a separate `Selected: Alpha term` line → NEW asserts the single field's VALUE
+  === `Alpha term` (label in-field) and NO `Selected:` line. + new cell: clearing commits `value:''`.
+- The pick value-commit oracle (`toHaveBeenCalledWith([{source:'fixed', value:'5', …}])`) is UNCHANGED.
+
+## RED→GREEN
+- Vitest **12/12** (519/1 full; pre-existing B-101) — reopen-shows-label-in-field, clear-empties.
+- e2e film re-shot: the full loop (frame 10) — fast-type "Citrus" → pick → the FIELD shows "Citrus"
+  (no "Selected:" line) → SAVE succeeds → `/node/982` filters to the Citrus subtree.
+  (A settle wait after pick was needed before SAVE: Puck's onChange→textarea propagation lagged behind
+  the now-faster in-field label assertion; without it the id committed to Puck but not yet to the form.)
+
+## Gates + delivery
+Vitest 12/12, tsc clean, film 8/8, builder+FE rebuilt, libs **1.0.18 → 1.0.19** (BUMP-LIBS law).
+SHIP-37R add block = **5 files** (MosaicViewsArgumentsField.tsx, viewsFields.test.tsx,
+mosaic.libraries.yml, js/dist/builder.js, js/dist/frontend-editor.js). STOP — reviewer audits, Arun
+one-step re-check, rider ceremony. Queue: CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → soak → tag.

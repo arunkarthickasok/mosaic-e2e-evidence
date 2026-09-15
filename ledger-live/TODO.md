@@ -12664,4 +12664,17 @@ result, no crash (ViewsArgumentDegradationTest: missing→null / deleted-fixed�
 (local-state contract) → ledgered; argument-label fallback (friendlier than Views handler title) → ACT
 2; B-101 Vitest boolean→radio drift → open.
 
-### OPEN QUEUE after ship #37: CP-VE2-R1 → CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+### CP-VE2-R1 (WC#59 rider) DONE 2026-09-14 — report: reports/REPORT-CP-VE2.md (CP-VE2-R1), SHIP-37R.md
+Reworked EntityAutocomplete to the Drupal-native SINGLE-FIELD combobox: one input DISPLAYS the label
+when a value is stored; focus+type searches in place (WC57 debounce/abort UNCHANGED); pick writes the
+id (WC58 value-commit UNCHANGED) + shows the label in-field; clear empties the source. NO stored-data
+shape change. ORACLE-CHANGE (presentation cells): reopen asserts the field VALUE == label (not a
+"Selected:" line) + a clear-empties cell; value-commit oracle untouched. Gates: Vitest 12/12 (519/1
+pre-existing B-101), tsc clean, e2e film 8/8 (frame 10 full loop: fast-type → pick → field shows
+"Citrus" → SAVE succeeds → 982 filters to Citrus subtree). GOTCHA: a settle wait after pick before SAVE
+is needed — Puck onChange→textarea propagation lags the (now faster) in-field label assertion. libs
+1.0.18→1.0.19 (BUMP-LIBS law); builder+FE rebuilt. SHIP-37R add block = **5 files** (MosaicViewsArgumentsField.tsx,
+viewsFields.test.tsx, mosaic.libraries.yml, js/dist/builder.js, js/dist/frontend-editor.js). **STOP —
+reviewer audits, Arun one-step re-check, rider ceremony.** Rides on ship #37 (62a1c05), read-only mosaic git.
+
+### OPEN QUEUE after CP-VE2-R1: CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
