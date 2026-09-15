@@ -252,3 +252,42 @@ remain in place, ready for the panel-driven wiring once the placement is ruled. 
 
 ### STOP — reviewer RULES on the Preview-button placement (recommend: panel-driven) before P1b completes
 live + P1c films + P1d gates.
+
+---
+
+## P1b-complete + P1c + P1d — SSR Preview button (PANEL-DRIVEN) — CHECKPOINT (GREEN) 2026-09-15
+
+Ruling ratified: **panel-driven**. The panel owns the interaction; the card displays the inert snapshot.
+
+### Built (P1b)
+| File | What |
+|---|---|
+| `js/src/builder/viewPreviewStore.ts` (NEW) | The panel↔card store keyed by instance id: `runPreview` (CSRF POST → publish inert snapshot + labels, abortable), `clearPreview` (reset + abort), `subscribePreview`. |
+| `js/src/builder/MosaicViewPreview.tsx` (rewritten) | The CARD **display**: subscribes to the store, renders the inert snapshot + chrome/labels (or the summary), shimmer while loading, and fires `clearPreview` on ANY of the four config fields changing. |
+| `js/src/builder/fields/MosaicViewsArgumentsField.tsx` | `ViewPreviewButton` at the top of the panel — "Preview in canvas" runs the preview into the store; a "Clear preview" appears with a snapshot; disabled with no view. Host context (`hostEntityId`) threaded from `toConfig` → field chain → panel; both surfaces. |
+| adapter + index.tsx + FE dialog | `toConfig` gained `hostEntityId`; `buildViewPreviewRenderer` renders the display-only card; both surfaces pass the host context. |
+
+### Vitest — RED → GREEN (panel wiring)
+```
+viewPreviewStore: runPreview CSRF-POSTs + publishes snapshot+labels · clearPreview resets+aborts · newer run aborts prior
+MosaicViewPreview card: summary by default · renders snapshot+labels from store · config change clears (placeholder)
+ViewPreviewButton (panel): "Preview in canvas" runs it · disabled with no view · "Clear preview" resets
+9/9 · full Vitest 537/1 (pre-existing B-101)
+```
+
+### Films (P1c) — e2e `cp-ve3-p1-preview.spec.ts`, 4/4
+- **admin preview**: panel Preview → the card shows the REAL inert filtered rows (Berry subtree: Blueberry,
+  Wild Straw; Navel filtered out) + "Preview — static snapshot" chrome.
+- **inertness (F-103, both directions)**: the snapshot wrapper is `pointer-events:none` (computed); a row-link
+  click inside it navigates NOWHERE (stays on `/node/982/edit`); the SAME node's PUBLIC page is fully LIVE
+  (a real navigable anchor).
+- **config-change-clears**: after a preview, changing the source dropdown clears the snapshot (count → 0).
+- **FE preview**: the FE dialog's panel Preview renders the inert snapshot in the FE card.
+
+### Gates (P1d)
+Vitest **537/1** · tsc clean · Kernel ViewsPreviewControllerTest **4/4** + embed regression **7/7** · phpstan
+OK · phpcs 0 errors · films **4/4** · regression (wc60-spike + f106-flush) **8/8** (panel + Preview button
+coexist; race green) · dist clean · libs **1.0.23 → 1.0.26**. **20-file ship #39 set** on `d915ee7` (12 M +
+8 new). SHIP-39.md carries the consolidated add block.
+
+### STOP — reviewer audits P1, then P2 (exposed filters + pager depth).

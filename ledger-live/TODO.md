@@ -12979,4 +12979,26 @@ gate REVERTED to the plain Tier-B summary (live canvas clean, no dead button); c
 threading remain ready. tsc clean, full Vitest 533/1 (B-101), libs 1.0.24→1.0.25. Report: reports/
 REPORT-CP-VE3.md (P1b). **STOP — reviewer RULES on placement before P1b completes live + P1c films + P1d.**
 
-### OPEN QUEUE: CP-VE3 P1b BLOCKED (placement ruling) → P1b-complete + P1c films + P1d gates → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P1b RULING (ratified as Arun's, 2026-09-15): Preview button = PANEL-DRIVEN.
+The pinned inert-canvas contract (F-103) takes precedence over the charter's "button on the card" line —
+the CARD DISPLAYS the inert snapshot; the PANEL OWNS the interaction (tabsPanelSync/carouselPanelSync
+precedent). Witnessed contradiction: btnClicked=false on the card (Puck select overlay intercepts).
+**ACT-2 CANDIDATE (filed, NOT P1):** a Puck selection-toolbar (actionBar) "Preview" action — an unwitnessed
+Puck API; spike it later, out of scope for P1. Building P1b-complete on the panel-driven design now.
+
+### CP-VE3 P1b-complete + P1c + P1d — SSR Preview button PANEL-DRIVEN — CHECKPOINT (GREEN) 2026-09-15 — STOP before P2
+On ship #38 (d915ee7), read-only mosaic git. **20-file ship #39 set** (P0.5+P1a+P1b: 12 M + 8 new).
+BUILT (panel-driven): `viewPreviewStore.ts` (NEW panel↔card store keyed by instance id — runPreview CSRF-POST
+→ publish inert snapshot+labels, abortable; clearPreview reset+abort; subscribePreview); `MosaicViewPreview.tsx`
+rewritten = CARD display (subscribes, renders snapshot+chrome/labels or summary, shimmer, clearPreview on ANY
+of 4 config fields); `MosaicViewsArgumentsField` gained `ViewPreviewButton` (panel top: "Preview in canvas"
+→ runPreview, "Clear preview" with snapshot, disabled w/o view); hostEntityId threaded toConfig→field chain→
+panel; both surfaces. VITEST 9/9 (store CSRF-POST/reset/abort; card snapshot+config-clear; button run/disabled/
+clear), full 537/1(B-101). FILMS cp-ve3-p1-preview 4/4: admin preview (real inert Berry rows Blueberry/Wild
+Straw, Navel filtered, chrome), INERTNESS F-103 both-directions (snapshot pointer-events:none + link click
+navigates nowhere stays /edit; public page live navigable anchor), config-change-clears (source change → count
+0), FE preview. GATES: Kernel preview 4/4 + embed regression 7/7, phpstan OK, phpcs 0 err, regression wc60-spike
++f106 8/8 (panel+button coexist, race green), dist clean, libs 1.0.23→1.0.26. SHIP-39.md add block (20 files).
+Report: reports/REPORT-CP-VE3.md (P1b-d). **STOP — reviewer audits P1; P2 (exposed filters + pager depth) next.**
+
+### OPEN QUEUE: CP-VE3 P1 GREEN (reviewer) → P2 exposed-filters+pager → P3 data-source parity → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
