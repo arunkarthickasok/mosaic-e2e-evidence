@@ -13087,4 +13087,21 @@ walkable today (WALK §E), filmed witness rides the P2-B pass. **ALL CP-VE3 CODE
 FULL-GREEN.** **STOP — reviewer audits the package; Arun walks; ship #39 human-commit closes CP-VE3 once
 P2-B/P4 films land.**
 
-### OPEN QUEUE: CP-VE3 P5 GREEN (reviewer) → P2-B films + P4 filmed-witness (live-content pass, closes CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P2-B + P4 — LIVE-CONTENT PASS (provisioned + FILMED) — CHECKPOINT (GREEN) 2026-09-15
+Ship #39 code set UNCHANGED (re-verified 16 M + 11 new = 27, HEAD d915ee7; content+films only, no code).
+Provisioner web/cpve3_content.php (docroot scratch, NEVER staged) → view cpve3_ep (exposed Type filter+AJAX;
+embed_1 full pager / embed_mini mini / page_1 at /cpve3-list; nid ASC, 2/page) + hosts 983 single / 984 dual
+/ 985 mini. **D1–D6 FILMED GREEN (cpve3-live.spec.ts, 7 passed):** D1 full pager 1,2→3,4 by-id · D2 mini
+numbered=0, 1,2→3,4 · D3 AJAX exposed Type=skill 1,2→4,5, window-marker=alive (no reload) · D4 cache-fix-live
+filter4,5→clear1,2→refilter4,5 (no stale) · D5 dual INDEPENDENT under AJAX (e1 1,2→3,4, e2 stays 1,2) — NUANCE:
+no-JS ?page=1 = 3,4,3,4 both advance (shared pager id:0), MOSAIC.md author-note drafted in WALK §D · D6 embed
+3,4 + own-page /cpve3-list 1,2 coexist. **P4 WITNESSED GREEN (cpve3-preset.spec.ts + data-layer):** real
+MosaicGlobalTemplate cpve3_preset ← configured mosaic_view (cpve2_termd0:embed_1 + argument_sources[fixed,6,
+taxonomy_term] + hide_when_empty:true) → insert node 986 → view_display+argument_sources+hide_when_empty ALL
+INTACT = "CONFIG ROUND-TRIPS INTACT"; 986 renders 2 rows; frame p4-preset-instance.png. 14 new frames auto-
+landed in album (mosaic AI→evidence symlink) + INDEX updated. NO DEFECTS (charter: defect⇒STOP, none found).
+Report reports/REPORT-CP-VE3.md §P2-B+P4 (raw console). WALK-CP-VE3.md D/E filled with real node ids + verdicts.
+**CP-VE3 NOW FULLY EVIDENCED: all code green + full static gates + all D/E frames filmed.** **STOP — reviewer
+audits ALL frames; Arun walks WALK-CP-VE3.md; ship #39 human-commit closes CP-VE3 + the Views act.**
+
+### OPEN QUEUE: CP-VE3 P2-B+P4 GREEN (reviewer) → Arun walk → ship #39 human-commit (closes CP-VE3 + Views act) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

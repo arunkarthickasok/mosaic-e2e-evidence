@@ -512,3 +512,59 @@ honest-checkpointed for a fresh pass rather than rushed at the tail of this very
 ### STOP — reviewer audits the package (gates + walk + album + ship block); Arun walks per WALK-CP-VE3.md.
 Ship #39 ceremony (the human commit of the 27-file block) closes CP-VE3 once the P2-B/P4 films land. Road
 after: ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0 (NOT this ship).
+
+---
+
+## P2-B + P4 — LIVE-CONTENT PASS (provisioned + filmed) — 2026-09-15
+
+Ship #39 code set UNCHANGED (re-verified: 16 modified + 11 new = 27; HEAD `d915ee7`). This pass is
+content + films only. Provisioner `web/cpve3_content.php` (docroot scratch, NEVER staged) built view
+`cpve3_ep` (exposed Type filter + AJAX; `embed_1` full pager, `embed_mini` mini pager, `page_1` at
+`/cpve3-list`) + scratch hosts 983 (single), 984 (dual), 985 (mini). View sorts by nid ASC, 2 rows/page.
+
+### D1–D6 films — raw console (all GREEN, `cpve3-live.spec.ts`, 7 passed)
+```
+[D1] full pager  p0=1,2  p1=3,4
+[D2] mini pager  numbered-links=0  p0=1,2  p1=3,4
+[D3] exposed  before=1,2  after=4,5  window-marker=alive
+[D4] cache  filter1=4,5  clear=1,2  refilter=4,5
+[D5] dual  e1 1,2->3,4  e2 1,2->1,2  VERDICT=INDEPENDENT
+[D6] embed(after paging)=3,4  own-page(page0)=1,2
+  7 passed (11.6s)
+```
+- **D1** full pager advances rows BY ID (`1,2`→`3,4`, no overlap). Frames `p2b-a-pager-full-p0/p1.png`.
+- **D2** mini pager: `numbered-links=0` (prev/next only), advances `1,2`→`3,4`. Frames `...mini-p0/p1.png`.
+- **D3** AJAX exposed filter (Type=Skill) narrows `1,2`→`4,5`; the `window.__cpve3` marker set before submit
+  still reads `alive` after = **no full reload** (AJAX). Frames `p2b-b-exposed-before/after.png`.
+- **D4** the cache fix LIVE: `filter 4,5 → clear 1,2 → refilter 4,5` — refilter EQUALS filter, **no stale
+  serve**. Frames `p2b-e-cache-1filter/2clear/3refilter.png`. (Also Kernel-proven: `ViewsEmbedExposedPagerTest`.)
+- **D5** dual embed: paging embed-1 (`1,2`→`3,4`) leaves embed-2 at `1,2` → **INDEPENDENT** under AJAX.
+  Frames `p2b-c-dual-before/after.png`. **NUANCE (both true):** no-JS `curl /node/984?page=1` returns
+  `3 4 3 4` — BOTH advance, because the two embeds share pager element `id:0` (one `?page` key). MOSAIC.md
+  author-note drafted in `WALK-CP-VE3.md` §D (give each embed a distinct pager Element id for no-JS robustness).
+- **D6** embed paged to `3,4`; the view's own page `/cpve3-list` stays at its own page-0 `1,2` → coexist
+  independently. Frames `p2b-d-embed-paged.png` + `p2b-d-ownpage.png`.
+
+### P4 — preset round-trip — raw verdict (`cpve3-preset.spec.ts` + data-layer)
+Witnessed through the REAL `MosaicGlobalTemplate` config entity (what the builder's "Save as template"
+writes). A genuinely-configured mosaic_view — `cpve2_termd0:embed_1` + `argument_sources:[{fixed,6,
+taxonomy_term}]` + `hide_when_empty:true` — saved as template `cpve3_preset`, inserted onto fresh node 986:
+```
+template saved: cpve3_preset (version 1)
+[P4] view_display intact: YES ({"view":"cpve2_termd0","display":"embed_1"})
+[P4] argument_sources intact: YES ([{"source":"fixed","value":"6","entity_type":"taxonomy_term"}])
+[P4] hide_when_empty intact: YES
+[P4] VERDICT: CONFIG ROUND-TRIPS INTACT
+listed: CPVE3 Preset (configured view) | layout bytes=374
+[P4] node 986 renders the round-tripped cpve2_termd0:embed_1 view   (2 rows)
+```
+Frame `p4-preset-instance.png`. Zero new code — a witness. The interactive builder save/insert UI is
+separately covered by `templates.spec.ts` + `MosaicTemplateWorkflowTest`; this pass witnesses that a
+mosaic_view's Views config survives the template round-trip.
+
+### No defects found
+Per the charter (defect ⇒ STOP + report, never a silent fix): none. Every D/E walk matched its expected
+render; the one nuance (D5 AJAX-vs-no-JS) is documented behaviour, not a defect. Ship #39 code set untouched.
+
+### STOP — reviewer audits ALL frames (P1 stills + 14 new P2-B/P4 frames), Arun walks WALK-CP-VE3.md,
+then the ship #39 human-commit closes CP-VE3 and the Views act.

@@ -1,29 +1,43 @@
 # CP-VE3 — album INDEX
 
-Films for the Views-embed depth arc (CP-VE3: P0.5 → G0). Ship #39.
+Films for the Views-embed depth arc (CP-VE3: P0.5 → G0 + the P2-B/P4 live pass). Ship #39.
+Content provisioned by the scratch `web/cpve3_content.php` (view `cpve3_ep` + hosts 983/984/985);
+never staged into ship #39.
 
-## Frames present (P1c — SSR preview, panel-driven)
-| # | Frame | What it shows |
+## P1 — SSR preview, panel-driven
+| # | Frame | Shows |
 |---|---|---|
-| 01 | `01-admin-preview.png` | Admin node form: panel "Preview in canvas" run → the mosaic_view CARD shows the inert SSR snapshot (real rows, controls disabled). F-103 inert-canvas contract holds. |
-| 02 | `02-fe-preview.png` | Front-end builder dialog: the same panel-driven preview on the FE surface — parity with admin. |
+| 01 | `01-admin-preview.png` | Admin: panel "Preview in canvas" → inert SSR snapshot in the view card (F-103). |
+| 02 | `02-fe-preview.png` | Front-end builder: same panel-driven preview (parity). |
 
-The full P1 film set (4/4: admin preview · inertness F-103 both-directions · config-clears · FE preview) ran
-green from the gitignored e2e spec `js/e2e/journeys/cp-ve3-p1-preview.spec.ts`; frames 01–02 are the two
-representative stills pushed here.
+## P2-B — exposed filters + pager depth (live, 6 walks, all GREEN)
+Row ids are the embedded view's `/node/N` links, in DOM order (view sorts by nid ASC, 2/page).
 
-## Frames PENDING (P2-B + P4 — honest-checkpointed, next pass)
-These need provisioned live dev content (an exposed-filter + paged view, single & dual host embeds) and are
-walked step-by-step in `WALK-CP-VE3.md`. Reviewer/Arun can film them from that recipe; they are NOT yet in
-this album:
-- `p2b-a-pager-*` — `?page=N` advance, rows-change-by-id, full + mini pager.
-- `p2b-b-exposed-*` — AJAX exposed-form filtering (no full reload, rows narrowed by id).
-- `p2b-c-dual-*` — two embeds of the same view on one page (independence verdict).
-- `p2b-d-embed-plus-page-*` — one embed + the view's own page display coexisting.
-- `p2b-e-cache-*` — the exposed-filter cache fix LIVE (filter → unfiltered → filtered, no stale serve).
-- `p4-preset-*` — configured mosaic_view saved as a global template, inserted on another node, config intact.
+| Frame(s) | Walk | Witnessed |
+|---|---|---|
+| `p2b-a-pager-full-p0.png` / `-p1.png` | **D1** full pager | p0 = `1,2` → p1 = `3,4` (rows change by id, no overlap) |
+| `p2b-a-pager-mini-p0.png` / `-p1.png` | **D2** mini pager | numbered-links = `0` (prev/next only); `1,2` → `3,4` |
+| `p2b-b-exposed-before.png` / `-after.png` | **D3** AJAX exposed | Type=skill: `1,2` → `4,5`; **window marker survived = no full reload (AJAX)** |
+| `p2b-e-cache-1filter.png` / `-2clear.png` / `-3refilter.png` | **D4** cache fix live | filter `4,5` → clear `1,2` → **refilter `4,5` (equals filter — no stale serve)** |
+| `p2b-c-dual-before.png` / `-after.png` | **D5** dual embed | e1 `1,2`→`3,4`, e2 `1,2`→`1,2` → **INDEPENDENT (AJAX)**; see nuance below |
+| `p2b-d-embed-paged.png` / `p2b-d-ownpage.png` | **D6** embed + own page | embed paged to `3,4`; `/cpve3-list` own page still `1,2` (coexist) |
+
+**D5 nuance (both true, recorded honestly):** in the browser (JS/AJAX) the two embeds are
+**INDEPENDENT** — Views AJAX replaces only the clicked embed's `js-view-dom-id` container. Under
+**no-JS / a bookmarked `?page=1` URL** the same page shows `3,4,3,4` — both advance, because they
+share pager element `id:0` (one `?page` key). MOSAIC.md author-note in `reports/WALK-CP-VE3.md` §D.
+
+## P4 — preset round-trip (A3)
+| Frame | Shows |
+|---|---|
+| `p4-preset-instance.png` | Node 986 = a `cpve3_preset` global-template instance rendering the round-tripped view. |
+
+Data-layer verdict (real `MosaicGlobalTemplate` config entity): a configured mosaic_view
+(`cpve2_termd0:embed_1` + `argument_sources:[{fixed,6,taxonomy_term}]` + `hide_when_empty:true`)
+saved as template → inserted on a fresh node → **view_display + argument_sources + hide_when_empty
+all INTACT** → "CONFIG ROUND-TRIPS INTACT".
 
 ## Backing gates (P5, 2026-09-15)
-- Kernel — mosaic_views FULL: **53 / 816 / 0**. Vitest **537 / 1** (B-101). phpcs **0 ERRORS**. phpstan **[OK]**.
-- The cache finding (P2) is proven at the Kernel layer in `ViewsEmbedExposedPagerTest`; the P2-B `-e` film is
-  the browser-truth confirmation of the same fix.
+Kernel — mosaic_views FULL **53 / 816 / 0**. Vitest **537 / 1** (B-101). phpcs **0 ERRORS**.
+phpstan **[OK]**. D4's cache fix is also Kernel-proven in `ViewsEmbedExposedPagerTest` (3/3);
+the D4 film is its browser confirmation.
