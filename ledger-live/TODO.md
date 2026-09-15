@@ -12881,9 +12881,8 @@ src/frontend-editor/FrontendBuilderDialog.tsx; tests/src/Unit/Smoke/{Sprint67,Sp
 mosaic.libraries.yml (→1.0.23). (The P0 pendingArgSources.ts/.test.ts were created-then-deleted within the
 set → net zero.) **WC60 CLOSED** (optimistic commit roster-wide, panel freeze cured). **F-106 CLOSED**
 (side-channel retired; race fixed by the synchronous commit reading the live store).
-**ARUN FEEL-WALK: PASSED** — the ship proceeded to ceremony (commit d915ee7). NOTE: no verbatim verdict
-quote was supplied in the post-ceremony sync message; recorded as the implicit pass (shipped), to be back-
-filled if a verbatim quote follows. **Walk tally 60** (WC60 was the last catch; ship #38 opened no new one).
+**ARUN FEEL-WALK verdict (verbatim, back-filled 2026-09-15): "ALL PASS".** Ship #38 proceeded to ceremony
+(commit d915ee7). **Walk tally 60** (WC60 was the last catch; ship #38 opened no new one).
 
 ### LEDGER CANDIDATES (from the sync)
 1. **tabs-full-journey scratch spec — stale TipTap selector → WAVE G sheet (scratch cleanup).** It asserts
@@ -12912,4 +12911,34 @@ this pass; CP-VE3 P1 (SSR preview button, R-V1 opt-in, both surfaces) → P2 (ex
 (film + walk list + gates + dist + libs + SHIP-39) is the next dedicated build, now unblocked. STOP for
 reviewer fetch before opening the P1 build.
 
-### OPEN QUEUE: SHIP #38 SHIPPED (d915ee7) → reviewer fetch → CP-VE3 P1(SSR preview btn)..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+## CP-VE3 P1-P5 — DEDICATED BUILD (SHIP #39) OPEN 2026-09-15 — on ship #38 (d915ee7)
+Standing laws + evidence gate + honest checkpoints + REPORT-TO-REPO (reports/REPORT-CP-VE3.md); read-only
+mosaic git; scratch journeys only. **P0.5** (opening rider): plain-value inputs (MosaicViewsArgumentsField
+:183 url_param name, :216 fixed plain value) get the WC57 contract — local state + ~300ms debounced commit
+→ ONE history entry per typing burst, zero re-renders while typing; Vitest RED→GREEN. **P1** SSR PREVIEW
+BUTTON (R-V1 opt-in): per-placement "Preview" renders the real View server-side into the canvas card on
+demand (editor-only route, access-checked, uncacheable; placeholder returns on any config change; both
+surfaces). **P2** exposed filters + pager depth (derived cells; two embeds of one view on a page — document
+the exposed-form double-instance quirk honestly). **P3** data-source sibling parity (ViewsResultDataSource
+gets the six argument sources via the SHARED resolver + PANEL LABEL LAW). **P4** A3 preset doc (+ one e2e
+round-trip; zero new code expected). **P5** film cp-ve3 + walk list + gates + dist + libs + SHIP-39.md.
+Honest checkpoints (P0.5+P1 = natural first). STOP at each. NOT tag.
+
+### CP-VE3 P0.5 — plain-value debounced commit — CHECKPOINT (GREEN) 2026-09-15 — STOP before P1
+On ship #38 (d915ee7), read-only mosaic git. **6-file set** (5 M: dist×2, MosaicViewsArgumentsField.tsx,
+viewsFields.test.tsx, mosaic.libraries.yml; 1 new: debouncedInput.test.tsx). Closes the WC60 panel-perf
+remainder (a): the url_param name + fixed plain-value inputs (MosaicViewsArgumentsField :183/:216) now use
+the WC57 contract via a new exported `DebouncedTextInput` — local state + ~300ms debounced commit (or blur-
+flush) + adopt-external-value (reopen/undo). A typing burst = ONE Puck history entry + zero mid-type panel
+re-renders / SSR schedules (was one commit per keystroke). RED→GREEN Vitest (4 cells: single-commit-full-
+string / debounce-reset / blur-flush / adopt-external); RED = `not.toHaveBeenCalled()` mid-burst fails on the
+old code. Oracle-change: viewsFields url_param cell → assert debounced (no mid-type commit; blur flushes).
+GATES: Vitest 528/1 (B-101), tsc clean, wc60-spike regression 7/7, dist builder+FE clean, libs 1.0.23→1.0.24.
+Report: reports/REPORT-CP-VE3.md (P0.5 section).
+**HONEST CHECKPOINT after P0.5** (charter allowed "at your judgment"): P1 (SSR preview button, R-V1 opt-in)
+is a REAL feature — the builder canvas shows only a summary card today (MosaicViewComponent "BUILDER canvas
+(R-V1): no live render"); P1 = editor-only access-checked uncacheable route running the real Views executable
+on demand + per-placement Preview button + placeholder-on-config-change + both surfaces + films. Deserves a
+focused build, not a rushed tail-of-session pass. **STOP — reviewer audits P0.5; P1 next.**
+
+### OPEN QUEUE: CP-VE3 P0.5 GREEN (reviewer) → P1(SSR preview btn) → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

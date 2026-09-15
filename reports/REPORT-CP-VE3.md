@@ -106,3 +106,49 @@ filmed — an FE-surface film can be added if the reviewer wants live FE evidenc
   small `pendingProps` map keyed by instanceId+propName) is a reviewer call.
 
 ### STOP — reviewer audits P0, then P1 (SSR preview button) builds on the settled save path.
+
+---
+
+## P0.5 — plain-value inputs adopt the WC57 debounced-commit contract — CHECKPOINT (GREEN) 2026-09-15
+
+Closes the ledgered WC60 panel-perf remainder. The two plain-text argument inputs — `url_param` (parameter
+name) and the `fixed` plain value (non-entity args) — committed to Puck **per keystroke**
+(`onPatch({param: e.target.value})`), so typing a name was N Puck history entries (N undo steps) + N panel
+re-renders + N background SSR schedules. Now they use the same contract as the WC57 entity autocomplete.
+
+### The fix
+New `DebouncedTextInput` (exported): holds its own local state, commits on a **~300 ms debounce** (or
+immediately **on blur**), and adopts an externally-changed committed value (reopen / undo) via a
+`useEffect([value])` — safe because `value` stays stale during a burst until our own debounced commit lands.
+Wired for both `url_param` and the `fixed` plain-value input.
+
+### RED → GREEN
+```
+CP-VE3 P0.5 — DebouncedTextInput
+  ✓ fast typing commits ONCE with the full string, zero mid-type commits
+  ✓ a later keystroke resets the debounce (still one commit, latest value)
+  ✓ blur flushes immediately (no wait)
+  ✓ adopts an externally-changed committed value (reopen / undo)
+```
+The RED is the assertion `expect(onCommit).not.toHaveBeenCalled()` mid-burst — it FAILS on the old
+per-keystroke code and PASSES with the debounce. **Oracle-change:** the existing `viewsFields` url_param
+cell asserted a synchronous per-keystroke commit → updated to assert *debounced* (no commit mid-type; blur
+flushes `param: 'category'`).
+
+### Gates
+| Gate | Result |
+|---|---|
+| Vitest — full | **528 / 1** (1 = pre-existing B-101); +4 debounce cells |
+| tsc | clean | 
+| e2e — wc60-spike regression | **7/7** (panel unaffected) |
+| dist + libs | builder + FE rebuilt (no debug leaks); libs **1.0.23 → 1.0.24** |
+
+**6-file set** on ship #38 (`d915ee7`): 5 M (dist ×2, `MosaicViewsArgumentsField.tsx`, `viewsFields.test.tsx`,
+`mosaic.libraries.yml`) + 1 new (`debouncedInput.test.tsx`). Read-only mosaic git.
+
+### STOP — honest checkpoint after P0.5.
+P1 (SSR preview button, R-V1 opt-in) is a real feature — an editor-only, access-checked, uncacheable route
+that runs the real Views executable on demand (the builder canvas deliberately shows only a summary card
+today: `MosaicViewComponent` "BUILDER canvas (R-V1): no live render"), a per-placement Preview button,
+placeholder-on-config-change, and both surfaces + films. It deserves its own focused build rather than a
+rushed tail-of-session pass. Reviewer audits P0.5; P1 is the next dedicated build.
