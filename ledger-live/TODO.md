@@ -12941,4 +12941,25 @@ is a REAL feature — the builder canvas shows only a summary card today (Mosaic
 on demand + per-placement Preview button + placeholder-on-config-change + both surfaces + films. Deserves a
 focused build, not a rushed tail-of-session pass. **STOP — reviewer audits P0.5; P1 next.**
 
-### OPEN QUEUE: CP-VE3 P0.5 GREEN (reviewer) → P1(SSR preview btn) → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P1a — SSR preview BACKEND — CHECKPOINT (GREEN) 2026-09-15 — STOP before P1b
+On ship #38 (d915ee7), read-only mosaic git. Accumulating ship #39 set now **12 files** (P0.5 6 + P1a 6:
+8 M + 4 new). INERT-SNAPSHOT contract (F-103 lineage) enforced. BUILT: `MosaicViewRenderer` (NEW service) =
+the SHARED Views render path extracted from MosaicViewComponent::renderView → page render + editor preview
+use ONE path (args parity by construction); MosaicViewComponent refactored to inject it (dead renderView +
+unused Views import removed; embed-render regression 7/7). `ViewsPreviewController` (NEW): editor-only
+`access()` (`$entity->access('update')`, frontend-save parity), CSRF, UNCACHEABLE; resolves per-placement
+args via shared ViewsArgumentResolver (this_page/page_field/current_user vs HOST+editor, url_param vs NO
+params — each labeled in `labels`), runs shared renderer, `renderInIsolation` (V0 bubbling contained,
+attachments captured NOT shipped), `makeInert()` (DOMDocument disables input/select/textarea/button + wraps
+pointer-events:none), label "Preview — static snapshot". Route `mosaic_views.preview` POST
+`/api/mosaic/views/preview/{entity_type}/{entity_id}` (_custom_access + _csrf + entity_id:\d+). KERNEL
+RED→GREEN (RED = TypeError error()-string + max-age null; fixed error()→Stringable + Cache-Control max-age=0
++ AnonymousUserSession): ViewsPreviewControllerTest 4/4 (89 assertions) — args-parity/inert(no <script> +
+pointer-events + data-mosaic-inert)/access(anon forbidden, editor allowed, missing host forbidden)/
+uncacheable(max-age0 + no-store + X-Drupal-Cache UNCACHEABLE)/missing-view-error. GATES: Kernel 4/4 + embed
+regression 7/7, phpstan OK, phpcs 0 errors. No JS/dist change (backend only). Report: reports/REPORT-CP-VE3.md
+(P1a). **HONEST SUB-CHECKPOINT: P1b (React Preview button on the card, both surfaces — fetch/inject inert
+HTML + shimmer + placeholder-on-config-change) + P1c (films admin/FE/inertness/config-clear) + P1d (Vitest +
+full gates + dist + libs + push) NEXT.** STOP — reviewer audits P1a.
+
+### OPEN QUEUE: CP-VE3 P1a GREEN (reviewer) → P1b UI + P1c films + P1d gates → P2..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

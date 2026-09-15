@@ -152,3 +152,51 @@ that runs the real Views executable on demand (the builder canvas deliberately s
 today: `MosaicViewComponent` "BUILDER canvas (R-V1): no live render"), a per-placement Preview button,
 placeholder-on-config-change, and both surfaces + films. It deserves its own focused build rather than a
 rushed tail-of-session pass. Reviewer audits P0.5; P1 is the next dedicated build.
+
+---
+
+## P1a — SSR preview backend (route + shared renderer + inert snapshot) — CHECKPOINT (GREEN) 2026-09-15
+
+The backend of the SSR Preview button. INERT-SNAPSHOT contract (F-103 lineage): the preview is a STATIC
+rendering — no libraries shipped, every form control disabled, the whole snapshot pointer-events:none —
+so it can NEVER re-introduce a live component in the editor (walk-catch #55's disease).
+
+### Built
+| File | What |
+|---|---|
+| `modules/mosaic_views/src/Service/MosaicViewRenderer.php` (NEW) | The SHARED Views render path (extracted from `MosaicViewComponent::renderView`). BOTH the page render and the editor preview call it → **args parity by construction**, no drift. |
+| `modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php` (M) | Refactored to inject + call the shared renderer; dead private `renderView` + now-unused `Views` import removed. Regression: embed-render Kernel **7/7**. |
+| `modules/mosaic_views/src/Controller/ViewsPreviewController.php` (NEW) | `preview()` resolves per-placement args (shared `ViewsArgumentResolver`; page-context sources against the HOST + editing user, url_param against NO params — each surfaced in `labels`), runs the shared renderer, `renderInIsolation` (V0 bubbling contained — attachments captured but NOT shipped), then `makeInert()` (DOMDocument disables every input/select/textarea/button + wraps `pointer-events:none`). `access()` = editor-only (`$entity->access('update')`, frontend-save parity). UNCACHEABLE response. Labelled "Preview — static snapshot". |
+| `modules/mosaic_views/mosaic_views.routing.yml` (M) | `mosaic_views.preview` POST `/api/mosaic/views/preview/{entity_type}/{entity_id}` — `_custom_access` + `_csrf_request_header_token` + `entity_id: \d+`. |
+| `modules/mosaic_views/mosaic_views.services.yml` (M) | Registers `MosaicViewRenderer`. |
+
+### Kernel — RED → GREEN (raw)
+Iterated from RED (initial `TypeError: error() Argument #1 must be of type string, TranslatableMarkup given`
++ `Failed asserting that null is identical to 0` on the max-age) to GREEN by fixing the controller
+(`error()` accepts `Stringable`; Cache-Control carries `max-age=0`) and the test (`AnonymousUserSession`):
+```
+Drupal\Tests\mosaic_views\Kernel\ViewsPreviewControllerTest
+  ✓ testPreviewAppliesResolvedArgumentAndIsInert   (matched node present; non-match filtered;
+      mosaic-views-preview + pointer-events:none + data-mosaic-inert; NO <script>; label correct)
+  ✓ testAccessIsEditorOnly     (anonymous forbidden; editor allowed; missing host forbidden)
+  ✓ testResponseIsUncacheable  (max-age 0; Cache-Control no-store; X-Drupal-Cache: UNCACHEABLE)
+  ✓ testMissingViewReturnsError
+OK (4 tests, 89 assertions)
+```
+
+### Gates (P1a)
+| Gate | Result |
+|---|---|
+| Kernel — ViewsPreviewControllerTest | **4/4 (89 assertions)** |
+| Kernel — embed-render regression (shared-path refactor) | **7/7 (75 assertions)** |
+| phpstan (new PHP) | **OK, no errors** |
+| phpcs (all P1a PHP) | **0 errors** (line-length warnings only, as elsewhere) |
+
+No JS/dist change in P1a (backend only). **12-file accumulating ship #39 set** on `d915ee7` (P0.5 + P1a:
+8 M + 4 new).
+
+### STOP — honest sub-checkpoint after P1a (backend).
+P1b (the React "Preview" button on the mosaic_view card, both surfaces — fetch the route, inject the inert
+HTML, shimmer loading, PLACEHOLDER-returns-on-any-config-change), P1c (films: admin + FE preview, inertness
+click film, config-change-clears film), and P1d (Vitest + full gates + dist + libs bump + ledger/report
+push) are the next sub-checkpoint. Reviewer audits P1a.
