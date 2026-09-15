@@ -12812,4 +12812,42 @@ panel-only leaves the tourniquet + race (symptom fix); (c) hybrid converges on (
 storm render-count cell (16→~2-4), no-panel-overlay cell, background-preview cell, 11-component geometry,
 films (view+carousel+commerce, both surfaces). **STOP — reviewer + Arun RULE on a/b/c; charter follows.**
 
-### OPEN QUEUE: WC60 probe+design (RULING PENDING) → CP-VE3 P1..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+### WC60 RULING RATIFIED (Arun, 2026-09-15): FIX = OPTION (a) OPTIMISTIC COMMIT.
+Implementation rides the ship #38 uncommitted set (on f3787cb). REPORT-TO-REPO + evidence gate + honest
+checkpoints; read-only mosaic git. Plan: **O1 SPIKE** (mosaic_view ONLY — prove the Puck 0.21.3
+background-apply: a targeted HISTORY-EXCLUDED `_renderedHtml` prop update that does NOT re-enter resolveData,
+loop-guard witnessed under fast edits; RED→GREEN cells: race/overlay-never-latches/focus-retained/render-
+count≤2/canvas STALE-PREVIEW-WITH-SHIMMER; background fetch debounced 150-300ms + abortable OFF the commit
+path; undo/redo cell) → CHECKPOINT. **O2 MIGRATE** wave1 carousel+tabs, wave2 remaining 7 Tier-B. **O3
+RETIRE** the F-106 side-channel (pendingArgSources + wiring) with oracle-change records re-pointing its 4
+Vitest guards + the flush e2e at the synchronous-commit contract; FE parity witnessed AND FILMED (owed FE
+film lands here). **O4** perf oracle table + films + full gates + dist builder+FE + libs bump + SHIP-38.md +
+push → STOP (reviewer + Arun feel-walk → CP-VE3 P1-P4 resume on the cured pipeline).
+
+### WC60 O1 — OPTIMISTIC COMMIT SPIKE (mosaic_view) — CHECKPOINT (GREEN) 2026-09-15 — STOP before O2
+On ship #37R (f3787cb), read-only mosaic git. **11 files** (8 tracked-M + 3 new: tierBOptimistic.ts +
+pendingArgSources.ts/.test.ts). **MECHANISM PROVEN from Puck 0.21.3 dist:** field onChange →
+`setDeep`→`yield resolveComponentData`→`dispatch replace` (resolve is PRE-dispatch, only on this path);
+`resolveData(item,{changed,…})`; action honours `recordHistory` over the per-type default for
+`["setData",…,"replace",…]`; **`setData` does NOT re-enter resolveComponentData** (raw reducer action) →
+background apply cannot loop; `componentResolving=componentState[id].loadingCount>0` set by
+`setComponentLoading(id,true,50)` → a <50ms resolveData cancels it (overlay never latches);
+`createUsePuck()(selector)` isolates the panel. **BUILT (mosaic_view only; other 10 Tier-B stay inline
+until O2):** `tierBOptimistic.ts` = optimistic resolveData (commits raw props synchronously) + background
+SSR (debounced 200ms, abortable, OFF commit path) + history-excluded `setData` apply; loop guard =
+per-id authoring-props snapshot (preview-only change ⇒ no refetch); `registerTierBPuckApi` captures live
+dispatch+data from inside <Puck>. Adapter: gate `id==='mosaic_view'`→optimistic; renderer STALE-PREVIEW-
+WITH-SHIMMER (prev HTML under a subtle bar, never blank; skeleton only first insert); dirty-strip covers
+`_renderedHtml/_ssrError/_ssrShimmer`. BuilderApp registers the api (MosaicTestabilityHooks). Panel:
+lazily-created createUsePuck primitive selectors + React.memo (deep-equal value) so background applies
+never re-render it; focus retained post-pick. FE dialog: `FeTierBRegistrar` registers the api inside the
+FE <Puck> so the FE canvas is not regressed. libs 1.0.20→1.0.21. **CELLS before→after:** race value LOST
+`[]`→SURVIVES `[Navel,Orange,Meyer]`; overlay 103→357ms(254ms)→NEVER(-1); focus lost 36ms→RETAINED(-1);
+**panel renders 16→2 dev (1 prod)**; SSR 1/pick, 4 rapid edits→1 (loop guard); canvas sawShimmer=true
+wentBlank=false; undo 2 edits→baseline within bounded presses (preview applies NOT history steps). **GATES:**
+wc60-spike 7/7, f106-flush 2/2, Vitest 523/1(pre-existing B-101), tsc clean, PHP JS-source smoke
+Sprint65/66/67/87 136/136, dist builder+FE clean. **Side-channel still present** (redundant for mosaic_view
+now; O3 retires w/ oracle-change + FE film). Report: reports/REPORT-WC60.md (O1 section). **STOP — reviewer
+audits O1 before O2.**
+
+### OPEN QUEUE: WC60-O1 spike CHECKPOINT (reviewer) → O2 migrate carousel+tabs then 7 more → O3 retire side-channel + FE film → O4 gates → CP-VE3 P1..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.

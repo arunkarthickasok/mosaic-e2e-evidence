@@ -139,3 +139,71 @@ which is exactly why this needs the reviewer + Arun ruling before a build charte
 Findings ledgered (WALK-CATCH #60, tally 60). **STOP — reviewer + Arun RULE on the option (a/b/c); the
 implementation charter follows the ruling.** P0's F-106 side-channel remains the accepted interim
 tourniquet until then; the FE-surface film is owed by CP-VE3 P5.
+
+---
+
+# O1 — OPTIMISTIC COMMIT SPIKE (mosaic_view only) — CHECKPOINT (GREEN) 2026-09-15
+
+Ruling ratified (Arun): fix = Option (a). This spike proves the mechanism on **mosaic_view only** before
+migrating the other 10 Tier-B components (O2). Sits on ship #37R (`f3787cb`); **11 files** (8 tracked-M +
+3 new), read-only mosaic git.
+
+## The background-apply mechanism — proven from Puck 0.21.3 dist (quoted)
+- **Field-onChange path:** `setDeep(props, propPath, value)` → `resolvedData = yield
+  appStore.resolveComponentData(node, …)` → `dispatch({type:"replace", data: resolvedData.node})`. Resolve
+  runs BEFORE the dispatch, only on this path.
+- **Loop guard input:** `resolveComponentData` caches `lastChange[id]`, computes `changed`, and calls
+  `configForItem.resolveData(item, { changed, lastData, trigger, … })`.
+- **History exclusion:** `if (typeof action.recordHistory !== "undefined" ? action.recordHistory :
+  isValidType)` over `["setData",…,"replace",…]` → `recordHistory:false` keeps an apply out of undo/redo.
+- **`setData` does NOT re-enter `resolveComponentData`** (it is a raw reducer action; resolve is the
+  pre-dispatch step) — so a background preview apply cannot loop.
+- **Overlay latch:** `componentResolving = componentState[id].loadingCount>0`, set by
+  `setComponentLoading(id,true,50)` (50 ms delayed) during resolve → a resolveData that resolves in <50 ms
+  cancels it, so the panel's `isLoading` overlay never appears.
+- **Panel isolation:** `createUsePuck()(selector)` subscribes to only the selected primitives.
+
+## What was built (mosaic_view only; the other 10 stay on the inline path until O2)
+| File | Change |
+|---|---|
+| `js/src/builder/tierBOptimistic.ts` (NEW) | The optimistic resolveData + background SSR scheduler (debounced 200 ms, abortable, OFF the commit path) + history-excluded `setData` apply. Loop guard = authoring-props snapshot per id (a preview-only change ⇒ no refetch). `registerTierBPuckApi(dispatch, getData)` captures the live store from inside `<Puck>`. |
+| `js/src/builder/MosaicPuckAdapter.ts` | `id==='mosaic_view'` → `makeOptimisticResolveData`; renderer gains **STALE-PREVIEW-WITH-SHIMMER** (prev HTML stays under a subtle top bar while the new SSR is in flight; never blank; skeleton only first insert); dirty-strip covers all `TIER_B_PREVIEW_KEYS` (`_renderedHtml`/`_ssrError`/`_ssrShimmer`). |
+| `js/src/builder/BuilderApp.tsx` | `MosaicTestabilityHooks` registers the Tier-B Puck api (dispatch + `useGetPuck` data). |
+| `js/src/builder/fields/MosaicViewsArgumentsField.tsx` | Panel isolated via lazily-created `createUsePuck` primitive selectors (view/display/id) + memoised (deep-equal `value`) so a background apply never re-renders it; focus retained after a pick (input keeps focus; focus alone no longer opens the dropdown). |
+| `js/src/frontend-editor/FrontendBuilderDialog.tsx` | `FeTierBRegistrar` registers the api inside the FE `<Puck>` (headerActions) so the FE mosaic_view canvas is not regressed. |
+| `mosaic.libraries.yml`, `js/dist/*` | rebuilt; libs **1.0.20 → 1.0.21**. |
+
+## Cells — before → after (numbers)
+| Cell | Before (WC60 probe) | After (spike) |
+|---|---|---|
+| **race** — pick → INSTANT save (live store, no side-channel read) | value LOST (`titles=[]`) | **survives** (`["Navel","Orange","Meyer"]`), 7/7 cells green |
+| **overlay-never-latches** — `loadingOverlay` in panel DOM | present **~103→357 ms (254 ms)** | **never** (`overlayDomOn=-1`; cell samples 1.2 s) |
+| **focus-retained** — search input focus after pick | lost at **~36 ms** | **retained** (`focusLostAt=-1`; activeElement = the search input) |
+| **render-count** — panel re-renders / pick | **16** (dev) | **2 dev = 1 prod** (memo + isolation) |
+| **loop-guard** — SSR requests | (n/a) | **1** per pick; **4 rapid edits → 1** SSR (debounce collapses; no runaway) |
+| **canvas** — stale-preview-with-shimmer | freeze + skeleton | `sawShimmer=true, wentBlank=false` (never blank on edit) |
+| **undo** — history clean | (n/a) | 2 authoring edits reverted within bounded undos → baseline (`view_default`); preview applies are NOT steps |
+
+Raw (final clean build): `{"overlayDomOn_ms":-1,"searchInputFocusLostAt_ms":-1,"panelRendersAfterPick":2,
+"ssrRequests":[{"dur":33}]}`.
+
+## Gates
+| Gate | Result |
+|---|---|
+| e2e — wc60-spike (7 behavioral cells) | **7/7 GREEN** |
+| e2e — f106-flush (race under optimistic commit) | **2/2 GREEN** |
+| Vitest — full | **523 / 1** (1 = pre-existing B-101) |
+| tsc | clean (only pre-existing `dsdShadow.ts`) |
+| PHP JS-source smoke (Sprint65/66/67/87) | **136/136** (adapter strings intact) |
+| dist + libs | builder + FE rebuilt (no debug leaks); libs **1.0.20 → 1.0.21** |
+
+## Notes for the reviewer
+- **Side-channel still present** (P0 `pendingArgSources`): now redundant for mosaic_view (the optimistic
+  commit puts the pick in the live store synchronously — the race cell proves it). O3 RETIRES it with
+  oracle-change records + the FE film.
+- **FE parity:** the FE registrar is wired so the FE mosaic_view canvas works, but the FE surface is not yet
+  FILMED — that lands in O3 (the owed FE film).
+- **Scope:** only `mosaic_view` is on the optimistic path; the other 10 Tier-B components are unchanged
+  (inline resolveData) — O2 migrates carousel+tabs (wave 1) then the remaining 7.
+
+### STOP — reviewer audits O1 before O2 (migrate carousel + tabs, then the remaining 7 Tier-B).
