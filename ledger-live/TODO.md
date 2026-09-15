@@ -12700,4 +12700,69 @@ builder-save path CP-VE3 extends — fixing it first stops CP-VE3 inheriting the
 infra-focused, this is a widget-level fix that belongs with the builder work). Affects ALL fast
 edit-then-save, not just views. Build NOTHING this pass.
 
-### OPEN QUEUE after CP-VE2-R1: CP-VE3 (open with F-106 flush-on-submit) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+## SHIP #37R SHIPPED 2026-09-15 = commit f3787cb (parent 62a1c05, == origin) — WALK-CATCH #59 CLOSED (tally 59)
+**5 files, +168/−144.** CP-VE2-R1 rider: EntityAutocomplete → Drupal-native single-field combobox
+(label in-field, type-in-place search, id storage unchanged; libs 1.0.19). Branch == origin; only noise
+unstaged. #59 CLOSED on rider.
+
+## CP-VE3 — FINAL VIEWS ACT (SHIP #38) OPEN 2026-09-15 — design §7 CP-3 ratified
+Standing laws + evidence gate + honest checkpoints; read-only mosaic git; scratch journeys only.
+P0 F-106 flush-on-submit (RED first, both save paths) — OPENS the CP, ships evidence at checkpoint
+before P1-P5 build on it. P1 SSR preview button (R-V1 opt-in, both surfaces). P2 exposed filters + pager
+verification depth (derived cells). P3 data-source sibling parity (six sources via shared resolver).
+P4 A3 preset doc (witness, zero new code expected). P5 film cp-ve3 + walk list + gates + dist + libs
+bump + SHIP-38.md + push. Checkpoint after EACH P (reviewer audits, then continue); after P5 → reviewer
+→ Arun walk → ceremony. NOT tag. Uncommitted on ship #37R (f3787cb), read-only mosaic git.
+
+### CP-VE3 P0 — F-106 FLUSH-ON-SUBMIT — CHECKPOINT (GREEN) 2026-09-15 — STOP for reviewer before P1
+Uncommitted on ship #37R (f3787cb), read-only mosaic git. **9 files** (7 tracked-M + 2 new); e2e film
+gitignored. Gates: Vitest **523/1** (1 = pre-existing B-101 boolean→radio drift), tsc clean (only
+pre-existing dsdShadow.ts), e2e f106-flush **2/2 GREEN**, dist rebuilt (builder+FE), **libs 1.0.19→1.0.20**.
+
+**RED first (pre-fix / ship #37R bundle, host 982 baseline = fixed Berry tid 3):** a pick → INSTANT Save
+(no settle wait) lost the value — raw log:
+`[F-106] published titles after instant save: []` → `expect(titles).toContain("Navel")` FAILED (Received `[]`).
+
+**ROOT CAUSE — DEEPER than the A3 assessment (honest correction).** A3 assessed the fix as "index.tsx
+keeps a ref to the latest Puck data + capture-phase submit flush." Built that first; STILL RED. Probed
+with browser-console instrumentation + read Puck 0.21.3 dist. The picked value is NOT in Puck's committed
+store at submit — via a render-lagged mirror OR a live `useGetPuck().getState` read. Witnessed at submit:
+`[F106-flush] live.argsrc=[{"source":"fixed","entity_type":"taxonomy_term"}]` (NO value). **The true gate
+is OUR adapter's Tier-B `resolveData` (MosaicPuckAdapter.buildTierBResolveData): every mosaic_view prop
+change awaits a 300ms debounce + SSR fetch BEFORE Puck dispatches the "replace" that commits it to
+appState.data.** So a Save within that window reads pre-edit props no matter how it reads them. The value
+exists synchronously ONLY at the field's own `onChange` (pre-debounce). Confirmed in Puck dist: the field
+onChange path `yield resolveComponentData(...)` → dispatch replace; the history debounce (DEBOUNCE_MS=100)
+is separate and not the gate.
+
+**FIX (deviates from the ratified "read latestData" design — reviewer please bless).**
+1. `js/src/builder/fields/pendingArgSources.ts` (NEW) — a module-global synchronous side-channel:
+   `recordPendingArgSources(instanceId, value)` / `overlayPendingArgSources(data)` (on a JSON copy, never
+   mutates Puck's store) / `reconcilePendingArgSources(committed)` (drops an entry once the store catches
+   up, so undo/redo stays authoritative).
+2. `MosaicViewsArgumentsField.tsx` (panel) — records the raw argument_sources (keyed by
+   `usePuck().selectedItem.props.id`) BEFORE handing it to Puck's debounced field onChange.
+3. `BuilderApp.tsx` — `MosaicTestabilityHooks` (inside <Puck>) registers a live getter via `useGetPuck`
+   that returns `overlayPendingArgSources(getState().appState.data)`; `handleChange` calls reconcile.
+4. `index.tsx` — the mount's capture-phase `form 'submit'` listener flushes
+   `textarea.value = toLayoutJson(getLiveData())` synchronously before the form serializes.
+5. `FrontendBuilderDialog.tsx` — **BOTH SAVE PATHS WITNESSED.** Admin widget = hidden `[data-mosaic-field-id]`
+   textarea + Drupal form submit; FE dialog = POST `layout_json` from `currentDataRef.current`. The RACE is
+   SHARED (both read Puck's SSR-debounce-lagged data); the save PLUMBING differs. **PARITY FIX** via the same
+   global side-channel: FE `handleSave` reads `toLayoutJson(overlayPendingArgSources(currentDataRef.current))`.
+   (FE live reproduction is code-witnessed, not filmed — an FE-surface film is available if the reviewer wants it.)
+
+**GREEN (fix bundle):** live getter overlays the pick — raw log:
+`[F106-flush] live.argsrc=[{"source":"fixed","entity_type":"taxonomy_term","value":"6"}]` →
+`[F-106] published titles after instant save: ["Navel","Orange","Meyer"]` → **2 passed**.
+
+**Guards:** e2e `js/e2e/journeys/f106-flush.spec.ts` (gitignored film — pick→INSTANT save→published page
+filters); Vitest `pendingArgSources.test.ts` (4 cells: overlay-wins, no-mutation, empty-noop,
+reconcile-then-undo). F-106 CLOSED-pending-ship (opens on the CP-VE3 ceremony).
+
+**Follow-ups ledgered:** the fix scopes to `argument_sources` (the witnessed field); the same 300ms-debounce
+race theoretically affects ANY Tier-B field on a fast edit-then-save — generalizing the side-channel to all
+Tier-B props is a reviewer call (recommend a small general `pendingProps` map keyed by instanceId+propName if
+so). Report: reports/REPORT-CP-VE3.md.
+
+### OPEN QUEUE: CP-VE3 (P0 checkpoint GREEN → reviewer → P1..P5) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
