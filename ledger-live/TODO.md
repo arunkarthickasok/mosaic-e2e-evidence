@@ -12872,4 +12872,44 @@ PERF (before→after): overlay 254ms→never; focus lost 36ms→retained; panel 
 block (13 files) written. Report: reports/REPORT-WC60.md (O2-O4). **STOP — reviewer + Arun FEEL-WALK, then
 CP-VE3 P1-P4 resume on the cured pipeline.**
 
-### OPEN QUEUE: WC60 DONE (reviewer + feel-walk) → CP-VE3 P1(SSR preview btn)..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+## SHIP #38 SHIPPED 2026-09-15 = commit d915ee7 (parent f3787cb, == origin) — WC60 CLOSED + F-106 CLOSED
+**13 files, +941/−294.** Branch fix/finding-016-validator == origin; tracked tree clean (only gitignored
+noise/scratch unstaged). Files: js/dist/builder.js + frontend-editor.js; src/builder/{MosaicPuckAdapter.ts,
+BuilderApp.tsx, index.tsx, fields/MosaicViewsArgumentsField.tsx, tierBOptimistic.ts (NEW),
+__tests__/tierBOptimistic.test.ts (NEW), __tests__/TierBPreviewKeysStripped.test.ts (NEW)};
+src/frontend-editor/FrontendBuilderDialog.tsx; tests/src/Unit/Smoke/{Sprint67,Sprint68}SmokeTest.php;
+mosaic.libraries.yml (→1.0.23). (The P0 pendingArgSources.ts/.test.ts were created-then-deleted within the
+set → net zero.) **WC60 CLOSED** (optimistic commit roster-wide, panel freeze cured). **F-106 CLOSED**
+(side-channel retired; race fixed by the synchronous commit reading the live store).
+**ARUN FEEL-WALK: PASSED** — the ship proceeded to ceremony (commit d915ee7). NOTE: no verbatim verdict
+quote was supplied in the post-ceremony sync message; recorded as the implicit pass (shipped), to be back-
+filled if a verbatim quote follows. **Walk tally 60** (WC60 was the last catch; ship #38 opened no new one).
+
+### LEDGER CANDIDATES (from the sync)
+1. **tabs-full-journey scratch spec — stale TipTap selector → WAVE G sheet (scratch cleanup).** It asserts
+   `.ProseMirror` (TipTap), deleted in ship #31's CKE5 pivot → has failed since then; gitignored `js/e2e/`,
+   NOT a shipped gate, NOT a WC60 regression. Fix: re-point to the CKE5 body-editor selector or retire the
+   spec. Filed for the Wave G walk-4 scratch sweep.
+2. **panel-perf family REMAINDER — usePuck storm status vs the WC60 isolation.**
+   - **CURED:** the views-panel usePuck storm (createUsePuck primitive selectors + React.memo on deep-equal
+     value → the panel is inert to background `_renderedHtml/_ssrShimmer` applies; 16→2 dev renders/pick =
+     1 prod). Overlay-never-latches roster-wide (mechanism: <50ms optimistic resolveData cancels Puck's 50ms
+     loading flag). Focus retained. F-106 race. SSR backgrounded + debounced (4 rapid edits → 1 fetch).
+   - **STILL OPEN (a):** `url_param` (and the `fixed` plain-value) inputs commit to Puck **per keystroke**
+     (`onPatch({param: e.target.value})`, MosaicViewsArgumentsField.tsx:183 / :216) → each keystroke = a Puck
+     history entry (undo step) + a panel re-render (value changes → memo miss) + a background SSR schedule.
+     The 200ms debounce collapses the SSR (no freeze), but the per-key history/re-render churn remains. FIX
+     (future): debounce the param/value commit (commit on blur or after a typing pause), mirroring the WC57
+     entity-autocomplete debounce.
+   - **STILL OPEN (b):** carousel/tabs panel render-count ≤2 not SEPARATELY proven — only mosaic_view got the
+     createUsePuck+memo isolation. Carousel/tabs inherit the mechanism wins (overlay never latches — spot-
+     checked; no freeze; shimmer) but their Puck ArrayField panels aren't memoised. If a walk shows carousel/
+     tabs panel churn on prop-edit, apply the same isolation to those panels.
+
+### CP-VE3 RESUME — P1-P4 (+P5) on the cured pipeline. Honest-checkpoint: the sync is the deliverable of
+this pass; CP-VE3 P1 (SSR preview button, R-V1 opt-in, both surfaces) → P2 (exposed filters + pager depth)
+→ P3 (data-source sibling parity via the shared resolver + PANEL LABEL LAW) → P4 (A3 preset doc) → P5
+(film + walk list + gates + dist + libs + SHIP-39) is the next dedicated build, now unblocked. STOP for
+reviewer fetch before opening the P1 build.
+
+### OPEN QUEUE: SHIP #38 SHIPPED (d915ee7) → reviewer fetch → CP-VE3 P1(SSR preview btn)..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
