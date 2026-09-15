@@ -44,6 +44,7 @@ git add \
   js/src/builder/tierBOptimistic.ts \
   js/src/builder/fields/MosaicViewsArgumentsField.tsx \
   js/src/builder/fields/ViewsDataSourceField.tsx \
+  js/src/builder/fields/MosaicDataSourceField.tsx \
   js/src/builder/fields/__tests__/viewsFields.test.tsx \
   js/src/builder/fields/__tests__/debouncedInput.test.tsx \
   js/src/builder/fields/__tests__/dataSourceViewsPicker.test.tsx \
@@ -68,7 +69,8 @@ git add \
 **Verify:** `git status --porcelain | grep -c '^[MA]'` → **26** (after `git add`). P2 adds
 `ViewsEmbedExposedPagerTest.php`; P3 adds `ViewsResultDataSource.php` + `ViewsResultDataSourceParityTest.php`;
 P3-UI adds `ViewsDataSourceField.tsx` + `dataSourceViewsPicker.test.tsx` + `ViewsDataSourceField.test.tsx`
-(oracle-change). NB: this block is still ACCUMULATING — the P5 pass re-verifies the FINAL count against
+(oracle-change); G0 adds `MosaicDataSourceField.tsx` (host-context thread) + `MosaicPuckAdapter.ts` (folds
+into its line). NB: this block is still ACCUMULATING — the P5 pass re-verifies the FINAL count against
 `git status --porcelain` before the ceremony.
 
 **EXCLUSIONS (never staged):** `js/e2e/journeys/cp-ve3-p1-preview.spec.ts` + the other spec films (gitignored

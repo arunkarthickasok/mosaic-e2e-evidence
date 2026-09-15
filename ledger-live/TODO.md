@@ -13054,4 +13054,19 @@ follow-up). Report: reports/REPORT-CP-VE3.md (P3-UI).
 (Kernel+Unit+Vitest+sentinels+phpcs) + final SHIP-39 add block (re-verified vs porcelain) + ceremony. Landed &
 green so far: P0.5, P1(a-d), P2-Kernel+finding, P3-backend, P3-UI. **STOP — reviewer audits P3-UI.**
 
-### OPEN QUEUE: CP-VE3 P3-UI GREEN (reviewer) → P2-B films + P4 doc + P5 packaging (close CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 G0 — page_field host-context gap FIXED — CHECKPOINT (GREEN) 2026-09-15 — STOP before P2-B/P4/P5
+On ship #38 (d915ee7), read-only mosaic git. Ship #39 set +1 (MosaicDataSourceField.tsx M;
+MosaicPuckAdapter.ts folds into its line; dist×2 + libs) → 27-file block. GAP CLOSED (six working sources,
+no dead dropdown, no hiding): threaded hostEntityType/hostBundle adapter → MosaicDataSourceField →
+BindingEditor → ViewsDataSourceField → MosaicViewsArgumentsField → PageFieldSelect (P1b hostEntityId
+precedent; two internal createElement sites coerce ?? '' for exactOptionalPropertyTypes). VITEST RED→GREEN
+(dataSourceViewsPicker 3/3, stateful harness): page_field source → field select shows the host bundle's field
+('Topic' from /page-fields/node/article); RED w/o threading (empty), GREEN with. Full Vitest 537/1(B-101),
+MosaicDataSourceField regression clean. GATES: tsc clean, dist builder+FE clean, libs 1.0.27→1.0.28. Report:
+reports/REPORT-CP-VE3.md (G0). **ALL CP-VE3 CODE LANDED + GREEN** (P0.5, P1a-d, P2-Kernel+cache-finding,
+P3-backend, P3-UI, G0). **HONEST CHECKPOINT — P2-B + P4 + P5 close the wave (fresh pass):** P2-B browser films
+(live content), P4 A3 preset doc + e2e round-trip witness, P5 album + recipe-grade WALK-CP-VE3.md + FULL gates
+(Kernel+Unit+Vitest+sentinels+phpcs) + final SHIP-39 add block (re-verify vs porcelain) + ceremony.
+**STOP — reviewer audits G0.**
+
+### OPEN QUEUE: CP-VE3 G0 GREEN (reviewer) → P2-B films + P4 doc + P5 packaging (close CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

@@ -411,3 +411,39 @@ cache-fix-live), **P4** A3 preset doc + one e2e round-trip witness, and **P5** t
 P0.5 → P1 → P2-Kernel → P2-finding → P3-backend → P3-UI are all landed and green.
 
 ### STOP — reviewer audits P3-UI; P2-B films + P4 doc + P5 packaging close CP-VE3.
+
+---
+
+## G0 — page_field host-context gap — CHECKPOINT (GREEN) 2026-09-15
+
+The P3-UI known gap is closed: the data-source picker now ships with all SIX sources working, not a dead
+page_field dropdown. Threaded host context per the P1b `hostEntityId` precedent — no hiding needed.
+
+### Threaded end-to-end (both surfaces)
+`hostEntityType`/`hostBundle` now flow adapter → `MosaicDataSourceField` → `BindingEditor` →
+`ViewsDataSourceField` → `MosaicViewsArgumentsField` → `PageFieldSelect`. So the page_field source's field
+list populates from the host bundle in the DATA-SOURCE panel exactly as in the component panel. (Two internal
+`createElement` sites coerce `?? ''` for `exactOptionalPropertyTypes`.)
+
+### Vitest — RED → GREEN (`dataSourceViewsPicker`, 3/3)
+New cell (stateful harness): choosing the **page_field** source renders the field select and it shows the
+host bundle's field (`Topic` from `/page-fields/node/article`). RED without the threading (empty dropdown),
+GREEN with it. Full Vitest **537 / 1** (pre-existing B-101); MosaicDataSourceField regression clean.
+
+### Gates
+Vitest **537/1** · tsc clean · dist builder+FE rebuilt (no debug leaks) · libs **1.0.27 → 1.0.28**.
+
+### Honest checkpoint — P2-B + P4 + P5 remain to close the wave
+This session has run an extraordinary number of large charters back-to-back; the three remaining closing
+pieces are a substantial package best done fresh, not at the tail:
+- **P2-B** browser-truth films (live dev content: exposed/pager views + single & dual embeds) — `?page=N`
+  advance, AJAX exposed form, dual-embed independence + verdict + MOSAIC.md note, embed+own-page, cache-fix-live.
+- **P4** A3 preset doc + one e2e round-trip witness (configured mosaic_view → global template → insert on
+  another node → config intact; zero new code).
+- **P5** the album + recipe-grade `WALK-CP-VE3.md` + FULL gates (Kernel+Unit+Vitest+sentinels+phpcs) + the
+  final SHIP-39 consolidated add block re-verified vs porcelain + ceremony.
+
+**All CODE for CP-VE3 is now landed and green** (P0.5, P1a-d, P2-Kernel+cache-finding, P3-backend, P3-UI, G0).
+What remains is verification films (P2-B), one doc + witness (P4), and the packaging/gates ceremony (P5).
+
+### STOP — reviewer audits G0; P2-B films + P4 doc + P5 packaging close CP-VE3.
