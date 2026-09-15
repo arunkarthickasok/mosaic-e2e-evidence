@@ -12637,3 +12637,31 @@ changed). **CONTENT-RESTORE:** Arun's step-10 deletion removed Citrus(2)+Lemon(4
 site; restored Citrus(now 6)+Lemon(7) + re-tagged 972–976 + re-wired host fixed sources to new tids;
 977–981 never typed into; full-loop films throwaway 982. **STOP — reviewer audits frames, Arun
 re-walks 7 + 10, ceremony.** Uncommitted on ship #36 (44a09c8), read-only mosaic git.
+
+## SHIP #37 SHIPPED 2026-09-14 = commit 62a1c05 (parent 44a09c8, == origin)
+**33 files changed, +3387 / −153.** Branch fix/finding-016-validator == origin; only noise/scratch
+unstaged (logs, assets/, esc-probe, e2e.zip); web/cpve2_content.php NOT shipped (docroot scratch).
+**CP-VE2 (CP-VIEWS-EMBED-2) CLOSED ON SHIP.** Scope: H1-H3 scenario-universe harness (64-cell derived
+matrix) + M1 shared ArgumentResolver (R-V6) + M2-M5 six argument sources (view_default/fixed/url_param/
+current_user/this_page/page_field) with per-source §3.4 cacheability + native exclude-this-page (A2) +
+save-time entity guard + graceful degradation + N1 native-Exclude help + WC57 autocomplete debounce +
+WC58 store-id/show-label + BUG1 buildRenderable-args + BUG2 render-cache context CID + libs 1.0.18.
+**Arun re-walk (2026-09-14):** steps 1-3 functional PASS (typing smooth, save/reopen label, guard
+refusal witnessed LIVE on ZapMe / tid 8). Gates at ship: full Unit+Kernel 2887/0, full mosaic_views
+42/42, Vitest 518/1-preexisting-B101, film 8/8, PHPStan L6 clean, PHPCS 0.
+
+### WALK-CATCH #59 (tally → 59) — autocomplete not Drupal-native (RIDES as CP-VE2-R1)
+The fixed-value autocomplete presents a "Selected: <label>" line ABOVE a separate persistent search
+input; the Drupal-native pattern is ONE field carrying the chosen label with type-in-place to change.
+**RULING (reviewer-delegated, recorded as Arun's):** ship #37 SAILS green-function; #59 rides as
+**CP-VE2-R1** immediately after — presentation-only rework (no stored-data shape change).
+**ANON-DEGRADATION Q+A (ledgered):** Q: what does an anon viewer see when a fixed source references a
+now-deleted/inaccessible entity? A: answered by the existing GREEN cell — a stale id renders an EMPTY
+result, no crash (ViewsArgumentDegradationTest: missing→null / deleted-fixed→stale-id→empty View).
+**BUMP-LIBS LAW = PERMANENT:** bump mosaic.libraries.yml after EVERY dist rebuild (aggregation off ⇒
+?v=<version> is the browser cache-key; content change without a bump serves stale to cached browsers).
+**CARRIED OPEN (panel-perf family + polish):** 24× usePuck render-storm + url_param per-key Puck commit
+(local-state contract) → ledgered; argument-label fallback (friendlier than Views handler title) → ACT
+2; B-101 Vitest boolean→radio drift → open.
+
+### OPEN QUEUE after ship #37: CP-VE2-R1 → CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
