@@ -331,3 +331,46 @@ errors. No JS/dist change (PHP-only). Ship #39 set +2 (`MosaicViewComponent.php`
 `ViewsEmbedExposedPagerTest.php` NEW).
 
 ### STOP — reviewer audits the P2 Kernel + cache finding; the browser-truth e2e films are the next pass.
+
+---
+
+## P3 — data-source sibling parity (backend) — CHECKPOINT (GREEN) 2026-09-15
+
+`ViewsResultDataSource` already resolved per-slot argument SOURCES via the shared `ViewsArgumentResolver`
+(it was wired in R-V6). P3 verifies that parity with derived cells AND applies the P2 finding's lesson to
+the data-source cache path.
+
+### The P2 lesson on the data-source path (RED → GREEN)
+The data-source `getCacheMetadata` added the config tag + the argument-source cacheability but NOT
+`url.query_args` — so a `views_result` binding on an EXPOSED or PAGED view served a stale result to any
+component folding its cacheability (the same staleness P2 fixed for the embed). **Fix:** it now adds
+`url.query_args` when the display reads `?query`. **DRY:** the detection moved to a shared pure static
+`MosaicViewRenderer::displayUsesQuery(array $displays, string $displayId)` — the embed component and the
+data source both call it (the component's private copy is gone).
+
+### Kernel — derived cells (`ViewsResultDataSourceParityTest`, 4/4, 79 assertions)
+- **fixed** source filters the result to the target node (`ids` transform).
+- **url_param** source filters the result by the request query.
+- **current_user** source resolves against the acting account (`count` transform → positive int).
+- **cacheability**: an exposed-filter binding's metadata contains `url.query_args`; a no-query display
+  (pager overridden to `none`, no exposed filter) does NOT over-vary.
+
+### Gates (P3)
+Kernel data-source parity **4/4 (79)** · component regression (shared helper) **3/3** · phpstan OK · phpcs
+0 errors. No JS/dist change (PHP-only).
+
+### Honest checkpoint — two pieces remain, scoped for the next pass
+1. **P2-B browser-truth films** — `?page=N` advance (rows-change-by-id, full + mini), AJAX exposed-form
+   filtering, dual-embed pager independence + the exposed-form double-instance verdict (INDEPENDENT vs
+   QUIRK-WITNESSED, with a MOSAIC.md author note), one-embed + own-page coexist, and the exposed-filter
+   cache fix proven live (filter → unfiltered → filtered, no stale). These need live dev-site content
+   (exposed/pager views + single & dual host embeds).
+2. **P3 PANEL LABEL LAW UI** — the data-source's `ViewsDataSourceField.tsx` panel does not yet expose the
+   per-slot argument-source picker (the backend supports `argument_sources`; the UI is JSON-only today).
+   Adding the picker + the PANEL LABEL LAW strings mirrors the component's `MosaicViewsArgumentsPanel` — a
+   JS build.
+
+The BACKEND of P3 (six sources via the shared resolver + the cacheability fix) is the substantive, tested
+core; the two remaining pieces are a browser-content pass and a JS-panel pass.
+
+### STOP — reviewer audits P3 backend + the shared cache helper; the browser films + data-source panel UI are next.

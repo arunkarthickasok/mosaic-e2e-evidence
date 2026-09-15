@@ -51,8 +51,10 @@ git add \
   modules/mosaic_views/src/Service/MosaicViewRenderer.php \
   modules/mosaic_views/src/Controller/ViewsPreviewController.php \
   modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php \
+  modules/mosaic_views/src/Plugin/MosaicDataSource/ViewsResultDataSource.php \
   modules/mosaic_views/tests/src/Kernel/ViewsPreviewControllerTest.php \
   modules/mosaic_views/tests/src/Kernel/ViewsEmbedExposedPagerTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsResultDataSourceParityTest.php \
   modules/mosaic_views/mosaic_views.routing.yml \
   modules/mosaic_views/mosaic_views.services.yml \
   mosaic.libraries.yml \
@@ -60,8 +62,9 @@ git add \
   js/dist/frontend-editor.js
 ```
 
-**Verify:** `git status --porcelain | grep -c '^[MA]'` → **21** (after `git add`) — P2 adds
-`ViewsEmbedExposedPagerTest.php`; the `MosaicViewComponent.php` cache fix folds into the existing line.
+**Verify:** `git status --porcelain | grep -c '^[MA]'` → **23** (after `git add`) — P2 adds
+`ViewsEmbedExposedPagerTest.php`; P3 adds `ViewsResultDataSource.php` + `ViewsResultDataSourceParityTest.php`
+(the `MosaicViewComponent.php` + `MosaicViewRenderer.php` changes fold into their existing lines).
 
 **EXCLUSIONS (never staged):** `js/e2e/journeys/cp-ve3-p1-preview.spec.ts` + the other spec films (gitignored
 `js/e2e/`); `AI/`; scratch dev-site content (node 982); `assets/`, `js/*.log`, `js/e2e.zip`, `js/esc-probe.*`.

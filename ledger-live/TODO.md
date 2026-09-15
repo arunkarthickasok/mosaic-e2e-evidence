@@ -13019,4 +13019,22 @@ pager independence + exposed-form double-instance quirk, embed+own-page coexist.
 (exposed/pager views + single & dual host embeds); a sub-render Kernel doesn't exercise the pager page-param.
 Report: reports/REPORT-CP-VE3.md (P2). **STOP — reviewer audits P2 Kernel + cache finding; browser-truth e2e + P3 next.**
 
-### OPEN QUEUE: CP-VE3 P2 Kernel+finding GREEN (reviewer) → P2 browser-truth e2e + P3 data-source parity → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P3 — data-source sibling parity (BACKEND) — CHECKPOINT (GREEN) 2026-09-15 — STOP before P4
+On ship #38 (d915ee7), read-only mosaic git. Ship #39 set +2 (ViewsResultDataSource.php M-fold +
+ViewsResultDataSourceParityTest.php NEW; MosaicViewRenderer.php + MosaicViewComponent.php fold into existing
+lines) → 23-file block. ViewsResultDataSource ALREADY resolved the six argument sources via the shared
+ViewsArgumentResolver (R-V6 wiring); P3 VERIFIES + applies the P2 lesson. **RED→GREEN: the data-source
+getCacheMetadata didn't add url.query_args → an exposed/paged views_result binding served a STALE result
+(same as the embed).** FIX: adds url.query_args when the display reads ?query; DRY via a shared pure static
+`MosaicViewRenderer::displayUsesQuery(displays, displayId)` (embed component + data source both call it;
+component's private copy removed). KERNEL ViewsResultDataSourceParityTest 4/4 (79): fixed filters (ids),
+url_param filters, current_user (count>0), cacheability (exposed→url.query_args; pager-none→NOT over-vary).
+GATES: Kernel 4/4 + component regression 3/3, phpstan OK, phpcs 0 err. No JS/dist (PHP-only).
+**HONEST CHECKPOINT — 2 pieces remain (next passes):** (1) P2-B BROWSER FILMS (need live content: exposed/
+pager views + single & dual host embeds) — ?page=N advance, AJAX exposed form, dual-embed pager independence
++ exposed-form double-instance verdict (INDEPENDENT|QUIRK + MOSAIC.md note), embed+own-page coexist, cache-
+fix-live. (2) P3 PANEL LABEL LAW UI — ViewsDataSourceField.tsx lacks the per-slot argument-source picker
+(backend supports argument_sources; UI JSON-only) → a JS build mirroring MosaicViewsArgumentsPanel.
+Report: reports/REPORT-CP-VE3.md (P3). **STOP — reviewer audits P3 backend; browser films + panel UI + P4 next.**
+
+### OPEN QUEUE: CP-VE3 P3-backend GREEN (reviewer) → P2-B browser films + P3 panel-UI → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
