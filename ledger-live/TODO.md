@@ -12677,4 +12677,27 @@ is needed — Puck onChange→textarea propagation lags the (now faster) in-fiel
 viewsFields.test.tsx, mosaic.libraries.yml, js/dist/builder.js, js/dist/frontend-editor.js). **STOP —
 reviewer audits, Arun one-step re-check, rider ceremony.** Rides on ship #37 (62a1c05), read-only mosaic git.
 
-### OPEN QUEUE after CP-VE2-R1: CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+### R1 SETTLE-WAIT AUDIT 2026-09-15 — A1-A3 (no-sleeps law + F-106)
+**A1 WITNESS:** the settle wait was a RAW timeout — `await page.waitForTimeout(1_500)` ("Let Puck's
+onChange propagate the committed id into the form before saving"). Violates no-sleeps.
+**A2 FIX (film spec, gitignored — R1 5-file add block UNCHANGED):** replaced with a CONDITION wait on
+the real contract — `expect.poll` on the widget textarea `[data-mosaic-field-id]`.inputValue() until it
+contains a fixed source with a numeric id (`/"source":"fixed"/ && /"value":"\d/`), then SAVE. Loop
+re-run GREEN 2/2 (8.7s — polls only as long as needed, faster than the sleep).
+**A3 F-106 REGISTERED (witness only — build NOTHING this pass):** Puck onChange → widget textarea
+propagation is ASYNCHRONOUS and a Save racing the flush saves WITHOUT the just-picked value.
+Path: pick → EntityAutocomplete.onChange(id) → mosaic_view argument_sources prop in Puck data → Puck
+fires onChange = BuilderApp.handleChange (BuilderApp.tsx:311) → saveLayoutJson → onLayoutJsonChange(json)
+→ index.tsx `textarea.value = json` (hidden [data-mosaic-field-id]); the Drupal form submits that
+textarea on Save. The chain runs after React commits (Puck onChange timing), so a Save click racing it
+submits the PRE-pick textarea (empirically reproduced in the R1 film — the id committed to Puck but not
+the form). **DURABLE FIX (assessed): synchronous flush-on-submit** — index.tsx (which owns the textarea +
+form + toLayoutJson, and already receives onChange(data)) keeps a ref to the latest Puck data and adds a
+capture-phase `form 'submit'` listener that writes `textarea.value = toLayoutJson(latestData)`
+SYNCHRONOUSLY before submission, making the textarea authoritative at submit time regardless of onChange
+timing. **RECOMMEND SLOT: CP-VE3 opening item** (reasoning: small, correctness-critical, in the SAME
+builder-save path CP-VE3 extends — fixing it first stops CP-VE3 inheriting the race; Wave D-0 is
+infra-focused, this is a widget-level fix that belongs with the builder work). Affects ALL fast
+edit-then-save, not just views. Build NOTHING this pass.
+
+### OPEN QUEUE after CP-VE2-R1: CP-VE3 (open with F-106 flush-on-submit) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.

@@ -705,3 +705,43 @@ Vitest 12/12, tsc clean, film 8/8, builder+FE rebuilt, libs **1.0.18 → 1.0.19*
 SHIP-37R add block = **5 files** (MosaicViewsArgumentsField.tsx, viewsFields.test.tsx,
 mosaic.libraries.yml, js/dist/builder.js, js/dist/frontend-editor.js). STOP — reviewer audits, Arun
 one-step re-check, rider ceremony. Queue: CP-VE3 → ACT 2 → Wave D-0+D/F → Wave G → dev push → soak → tag.
+
+---
+
+# R1 SETTLE-WAIT AUDIT (A1–A3) — no-sleeps + F-106
+
+## A1 — witness (verbatim)
+The R1 settle wait was a RAW timeout:
+```js
+await expect(async () => expect(await search.inputValue()).toBe('Citrus')).toPass({ timeout: 8_000 });
+// Let Puck's onChange propagate the committed id into the form before saving.
+await page.waitForTimeout(1_500);
+```
+
+## A2 — replaced with a condition wait on the REAL contract (no-sleeps)
+```js
+// Wait until Puck's onChange has flushed the picked id into the widget textarea
+// (what SAVE submits) before we submit — not a fixed sleep.
+await expect.poll(async () => {
+  const json = await page.locator('[data-mosaic-field-id]').first().inputValue().catch(() => '');
+  return /"source":"fixed"/.test(json) && /"value":"\d/.test(json);
+}, { timeout: 8_000 }).toBe(true);
+```
+Film loop re-run **GREEN 2/2 (8.7s)** — polls only as long as needed. Film-spec change only
+(`js/e2e/` is gitignored) → the R1 5-file add block is UNCHANGED.
+
+## A3 — F-106 registered (witness only; build NOTHING this pass)
+**Mechanism (async propagation race):** pick → `EntityAutocomplete.onChange(id)` → the mosaic_view
+`argument_sources` prop in Puck's data → Puck fires `onChange` = `BuilderApp.handleChange`
+(BuilderApp.tsx:311) → `saveLayoutJson` → `onLayoutJsonChange(json)` → index.tsx
+`textarea.value = json` (the hidden `[data-mosaic-field-id]` widget textarea). The Drupal form submits
+THAT textarea on Save. The chain runs after React commits (Puck onChange timing), so a Save click
+racing it submits the PRE-pick textarea — empirically reproduced in the R1 film (id committed to Puck,
+not yet the form). Affects ALL fast edit-then-save, not just views.
+**Durable fix (assessed): synchronous flush-on-submit** — index.tsx (owns the textarea + form +
+`toLayoutJson`, already receives `onChange(data)`) keeps a ref to the latest Puck data and adds a
+capture-phase form `submit` listener writing `textarea.value = toLayoutJson(latestData)` synchronously
+before submission → the textarea is authoritative at submit time regardless of onChange timing.
+**Recommended slot: CP-VE3 opening item** — small, correctness-critical, in the same builder-save path
+CP-VE3 extends (fixing it first stops CP-VE3 inheriting the race); Wave D-0 is infra-focused whereas
+this is a widget-level fix. Build NOTHING this pass.
