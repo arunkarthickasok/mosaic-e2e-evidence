@@ -12765,4 +12765,51 @@ race theoretically affects ANY Tier-B field on a fast edit-then-save — general
 Tier-B props is a reviewer call (recommend a small general `pendingProps` map keyed by instanceId+propName if
 so). Report: reports/REPORT-CP-VE3.md.
 
-### OPEN QUEUE: CP-VE3 (P0 checkpoint GREEN → reviewer → P1..P5) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+## WALK-CATCH #60 — PANEL RESPONSIVENESS — PROBE + DESIGN (no build) OPEN 2026-09-15 (tally → 60)
+CP-VE3 P1-P4 PAUSED behind this. REPORT-TO-REPO active; read-only mosaic git; P0 9-file set stays
+uncommitted on f3787cb.
+**Arun's walk (verbatim):** "after selecting a fixed value, the right panel freezes, a loading pass runs,
+and the panel refreshes — not Drupal-native feel." **Product-bar ruling: input must never block or visibly
+reload.** Reviewer accepts P0's design deviation (the F-106 side-channel) as an interim tourniquet; the
+FE-surface film is owed by P5.
+**Scope:** Z1 PROBE the post-pick timeline with instruments (numbers not adjectives). Z2 WITNESS the
+Tier-B-commits-after-resolveData design intent (quote adapter + Puck 0.21.3 contract; what consumes the
+resolved props; enumerate affected Tier-B components). Z3 DESIGN OPTIONS (a optimistic-commit / b isolate-
+panel / c hybrid) with blast radius + law conflicts + undo/redo + save-correctness proof sketch + per-
+component risk + test plan, recommend one. Z4 report + ledger + push, STOP for reviewer + Arun ruling.
+Findings recorded below + reports/REPORT-WC60.md.
+
+**Z1 TIMELINE (instrumented; temp panel render-counter, rebuilt+measured+reverted; P0 dist restored
+byte-identical, md5 match).** One fixed-entity pick on host 982: SSR round-trip `POST /api/mosaic/canvas/ssr`
+= **20–34ms (trivial)**; the **300ms resolveData debounce is the dominant delay**; Puck `loadingOverlay` in
+the panel DOM **~103ms→~357ms (≈254ms)** = the visible "loading pass"; store replace ~324ms; search input
+loses focus ~36ms; **panel re-renders 16× per pick** (StrictMode-doubled → ~8 prod), bursting at t=0/52/324/
+573/**2527ms**, trailing to ~2.5s = the "refresh". LOADING SOURCE (quoted): Puck Fields
+`isLoading = fieldsLoading || componentResolving`; `componentResolving = componentState[id].loadingCount>0`
+set by Puck `resolveComponentData`→`setComponentLoading(id,true,50)` WHILE our resolveData runs → the overlay
+is switched on by the same Tier-B cycle (Puck-owned, structural, not a stray Mosaic spinner). The "refresh" =
+resolve→`dispatch replace`→selectedItem changes→Fields `FieldsChildMemo` + usePuck panel subtree re-render.
+**Z2 INTENT (quoted).** `buildTierBResolveData` (MosaicPuckAdapter 996-1047): `requires_ssr_preview:true` →
+300ms `setTimeout` + SSR fetch, returns `{props,_renderedHtml}`. Puck contract: field onChange →
+`yield resolveComponentData(item,"replace")` → `dispatch replace` — **the raw-value commit is gated behind
+resolveData** (Puck's DEBOUNCE_MS=100 wraps history, not the commit). **`_renderedHtml` is PREVIEW-ONLY —
+PROVEN:** canvas-only (buildTierBRenderer), stripped on save (adapter:1282 `delete props._renderedHtml`),
+skipped by file-usage (MosaicFileUsage.php:143). Panel reads RAW props; save persists RAW props → only the
+canvas needs the SSR result. **Tier-B roster (11): mosaic_tabs, mosaic_carousel, mosaic_html,
+mosaic_live_search, mosaic_image, mosaic_view, product_card, product_list, search_results, webform_embed.**
+F-106 + the panel freeze are two faces of ONE root cause (commit-behind-resolveData coupling).
+**Z3 OPTIONS — RECOMMEND (a) OPTIMISTIC COMMIT:** resolveData returns `{props}` synchronously (raw commit
+instant → panel+save see the pick, overlay never latches); SSR runs in BACKGROUND, applies `_renderedHtml`
+to the canvas via a history-excluded (`recordHistory:false`) update that does NOT re-enter resolveData (loop
+guard); panel memo-isolated so a preview-only change re-renders ZERO panel nodes; loading = subtle canvas
+shimmer; **F-106 side-channel RETIRED** (raw commit synchronous → flush reads live data; guards re-pointed).
+Blast radius LARGE (core Tier-B SSR arch, all 11); save-correctness proof: raw value in store before any
+save reads it → F-106 cannot recur; undo/redo: raw commits record history, preview apply `recordHistory:false`;
+per-component risk: carousel/tabs slot children must not be clobbered by the preview patch. **KEY OPEN RISK
+(prove before build):** Puck 0.21.3 must allow applying a prop update WITHOUT routing back through
+resolveData (candidate: `resolveComponentData` onResolveEnd, or a guarded `setData`/`replace`). (b) isolate-
+panel-only leaves the tourniquet + race (symptom fix); (c) hybrid converges on (a). Test plan: race cell,
+storm render-count cell (16→~2-4), no-panel-overlay cell, background-preview cell, 11-component geometry,
+films (view+carousel+commerce, both surfaces). **STOP — reviewer + Arun RULE on a/b/c; charter follows.**
+
+### OPEN QUEUE: WC60 probe+design (RULING PENDING) → CP-VE3 P1..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
