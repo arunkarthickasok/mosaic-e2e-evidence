@@ -13037,4 +13037,21 @@ fix-live. (2) P3 PANEL LABEL LAW UI — ViewsDataSourceField.tsx lacks the per-s
 (backend supports argument_sources; UI JSON-only) → a JS build mirroring MosaicViewsArgumentsPanel.
 Report: reports/REPORT-CP-VE3.md (P3). **STOP — reviewer audits P3 backend; browser films + panel UI + P4 next.**
 
-### OPEN QUEUE: CP-VE3 P3-backend GREEN (reviewer) → P2-B browser films + P3 panel-UI → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P3-UI — data-source argument-source picker — CHECKPOINT (GREEN) 2026-09-15 — STOP before the P2-B/P4/P5 close
+On ship #38 (d915ee7), read-only mosaic git. Ship #39 set +3 (ViewsDataSourceField.tsx M +
+dataSourceViewsPicker.test.tsx NEW + ViewsDataSourceField.test.tsx M oracle-change; dist×2 + libs) → 26-file
+block. BUILT BY REUSE (not rebuild): ViewsDataSourceField replaces the literal-args textarea with
+MosaicViewsArgumentsField (the pure non-Puck argument panel) → the views_result data source gets the SAME six
+sources + PANEL LABEL LAW ("View default (show all)", never bare "default") + WC57/WC60 input contracts (entity
+autocomplete single-field, debounced plain-value commits), writing config.argument_sources (backend resolved
+it via the shared resolver since R-V6). Vitest dataSourceViewsPicker 2/2 (picker+label-law renders;
+current_user selection writes argument_sources); ORACLE-CHANGE: 3 old literal-args-textarea cells removed.
+GATES: Vitest full 536/1(B-101), tsc clean, dist builder+FE clean, libs 1.0.26→1.0.27. Minor known gap:
+page_field field-options empty in the DATA-SOURCE panel without threaded host context (5 sources work; small
+follow-up). Report: reports/REPORT-CP-VE3.md (P3-UI).
+**HONEST CHECKPOINT — P2-B + P4 + P5 close the wave (next pass, given session length):** P2-B browser films
+(live content), P4 A3 preset doc + e2e round-trip witness, P5 album + recipe-grade WALK-CP-VE3.md + FULL gates
+(Kernel+Unit+Vitest+sentinels+phpcs) + final SHIP-39 add block (re-verified vs porcelain) + ceremony. Landed &
+green so far: P0.5, P1(a-d), P2-Kernel+finding, P3-backend, P3-UI. **STOP — reviewer audits P3-UI.**
+
+### OPEN QUEUE: CP-VE3 P3-UI GREEN (reviewer) → P2-B films + P4 doc + P5 packaging (close CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

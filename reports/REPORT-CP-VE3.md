@@ -374,3 +374,40 @@ The BACKEND of P3 (six sources via the shared resolver + the cacheability fix) i
 core; the two remaining pieces are a browser-content pass and a JS-panel pass.
 
 ### STOP — reviewer audits P3 backend + the shared cache helper; the browser films + data-source panel UI are next.
+
+---
+
+## P3-UI — data-source argument-source picker — CHECKPOINT (GREEN) 2026-09-15
+
+The `views_result` data-source panel now configures contextual filters exactly like the embed — by REUSING
+the mosaic_view argument panel, not re-building it.
+
+### Built (reuse, not rebuild)
+`ViewsDataSourceField.tsx` replaces the old literal-args textarea with `MosaicViewsArgumentsField` (the pure,
+non-Puck argument panel), passing the data-source's `view`/`display` + `config.argument_sources` +
+`onChange`. That brings, for free: the **six sources**, the **PANEL LABEL LAW** (the View-default option
+shows the resolved behaviour — "View default (show all)" — never a bare "default"), and the **WC57/WC60
+input contracts** (single-field entity autocomplete, debounced plain-value commits) — one implementation,
+both the embed and the data source. `argument_sources` added to the config type (the backend resolved it via
+the shared resolver since R-V6; the legacy `arguments` remains a backward-compatible fallback).
+
+### Vitest (`dataSourceViewsPicker.test`, 2/2)
+- renders the argument-source picker with the PANEL LABEL LAW option ("View default (show all)");
+- selecting a source (current_user) writes `argument_sources` to the data-source config.
+- **Oracle-change:** the 3 old `ViewsDataSourceField` literal-args-textarea cells were removed (that UI is
+  gone) — the picker is covered by the new test.
+
+### Gates
+Vitest full **536 / 1** (pre-existing B-101) · tsc clean · dist builder+FE rebuilt (no debug leaks) · libs
+**1.0.26 → 1.0.27**. Minor known gap: without threaded host context the page_field source's field-options are
+empty in the DATA-SOURCE panel (the other five sources work; threading host context to the data-source field
+is a small follow-up).
+
+### Honest checkpoint — P2-B + P4 + P5 close the wave (next pass)
+Given this session's length, the remaining closing pieces are scoped as the next pass: **P2-B** browser films
+(live content — `?page=N` advance, AJAX exposed form, dual-embed independence + verdict, embed+own-page,
+cache-fix-live), **P4** A3 preset doc + one e2e round-trip witness, and **P5** the full album + recipe-grade
+`WALK-CP-VE3.md` + full gates (Kernel+Unit+Vitest+sentinels+phpcs) + the final SHIP-39 consolidated add block.
+P0.5 → P1 → P2-Kernel → P2-finding → P3-backend → P3-UI are all landed and green.
+
+### STOP — reviewer audits P3-UI; P2-B films + P4 doc + P5 packaging close CP-VE3.

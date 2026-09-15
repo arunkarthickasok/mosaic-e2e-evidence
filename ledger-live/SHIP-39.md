@@ -43,8 +43,11 @@ git add \
   js/src/builder/index.tsx \
   js/src/builder/tierBOptimistic.ts \
   js/src/builder/fields/MosaicViewsArgumentsField.tsx \
+  js/src/builder/fields/ViewsDataSourceField.tsx \
   js/src/builder/fields/__tests__/viewsFields.test.tsx \
   js/src/builder/fields/__tests__/debouncedInput.test.tsx \
+  js/src/builder/fields/__tests__/dataSourceViewsPicker.test.tsx \
+  js/src/builder/__tests__/ViewsDataSourceField.test.tsx \
   js/src/builder/__tests__/MosaicViewPreview.test.tsx \
   js/src/builder/__tests__/viewPreviewStore.test.ts \
   js/src/frontend-editor/FrontendBuilderDialog.tsx \
@@ -62,9 +65,11 @@ git add \
   js/dist/frontend-editor.js
 ```
 
-**Verify:** `git status --porcelain | grep -c '^[MA]'` → **23** (after `git add`) — P2 adds
-`ViewsEmbedExposedPagerTest.php`; P3 adds `ViewsResultDataSource.php` + `ViewsResultDataSourceParityTest.php`
-(the `MosaicViewComponent.php` + `MosaicViewRenderer.php` changes fold into their existing lines).
+**Verify:** `git status --porcelain | grep -c '^[MA]'` → **26** (after `git add`). P2 adds
+`ViewsEmbedExposedPagerTest.php`; P3 adds `ViewsResultDataSource.php` + `ViewsResultDataSourceParityTest.php`;
+P3-UI adds `ViewsDataSourceField.tsx` + `dataSourceViewsPicker.test.tsx` + `ViewsDataSourceField.test.tsx`
+(oracle-change). NB: this block is still ACCUMULATING — the P5 pass re-verifies the FINAL count against
+`git status --porcelain` before the ceremony.
 
 **EXCLUSIONS (never staged):** `js/e2e/journeys/cp-ve3-p1-preview.spec.ts` + the other spec films (gitignored
 `js/e2e/`); `AI/`; scratch dev-site content (node 982); `assets/`, `js/*.log`, `js/e2e.zip`, `js/esc-probe.*`.
