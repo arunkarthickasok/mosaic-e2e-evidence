@@ -13069,4 +13069,22 @@ P3-backend, P3-UI, G0). **HONEST CHECKPOINT — P2-B + P4 + P5 close the wave (f
 (Kernel+Unit+Vitest+sentinels+phpcs) + final SHIP-39 add block (re-verify vs porcelain) + ceremony.
 **STOP — reviewer audits G0.**
 
-### OPEN QUEUE: CP-VE3 G0 GREEN (reviewer) → P2-B films + P4 doc + P5 packaging (close CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P5 — CLOSING PACKAGE (gates + walk + album + ship block) — CHECKPOINT (GREEN) 2026-09-15
+Ship #38 d915ee7 (HEAD==origin verified). Ship #39 set re-verified vs porcelain: **16 M + 11 new = 27**
+(matches SHIP-39 add block exactly). **FULL STATIC GATES GREEN:** Kernel mosaic_views FULL **53/816/0**
+(incl. ViewsPreviewController 4/4, ViewsEmbedExposedPager 3/3, ViewsResultDataSourceParity 4/4, embed
+regression 7/7); Vitest **537/1**(B-101); phpcs **0 ERRORS** (7 files); phpstan **[OK]** (level 6, needs
+--memory-limit=512M for MosaicViewComponent); tsc clean; dist builder+FE clean; libs 1.0.28. P5 DELIVERABLES:
+reports/WALK-CP-VE3.md (recipe-grade, A=SSR preview / B=debounced typing / C=picker parity+G0 six sources /
+D=exposed+pager P2-B walks / E=A3 preset P4 walk; every click + STOP lines); e2e-evidence/cp-ve3/INDEX.md
+(2 P1c stills present + P2-B/P4 frames enumerated pending); SHIP-39.md FINAL add block (27, exclusions +
+count). Report reports/REPORT-CP-VE3.md §P5 (raw gate excerpts). **HONEST CHECKPOINT — live-content ceremony
+(next pass, NOT code):** P2-B browser films need a paged/exposed VIEW (cpve3_ep) that doesn't exist on dev yet
++ scratch hosts 983/984 — provision (cpve2_content.php precedent, retired) then film D1–D6 (pager by-id
+full+mini, AJAX exposed, dual-embed verdict+MOSAIC.md note, embed+own-page, cache-fix-live); the plumbing +
+cache fix are already Kernel-proven (ViewsEmbedExposedPager 3/3), D-films are browser confirmation. P4 preset
+walkable today (WALK §E), filmed witness rides the P2-B pass. **ALL CP-VE3 CODE LANDED + GREEN + STATIC GATES
+FULL-GREEN.** **STOP — reviewer audits the package; Arun walks; ship #39 human-commit closes CP-VE3 once
+P2-B/P4 films land.**
+
+### OPEN QUEUE: CP-VE3 P5 GREEN (reviewer) → P2-B films + P4 filmed-witness (live-content pass, closes CP-VE3) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

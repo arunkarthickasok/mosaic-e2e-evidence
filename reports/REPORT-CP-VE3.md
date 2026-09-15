@@ -447,3 +447,68 @@ pieces are a substantial package best done fresh, not at the tail:
 What remains is verification films (P2-B), one doc + witness (P4), and the packaging/gates ceremony (P5).
 
 ### STOP — reviewer audits G0; P2-B films + P4 doc + P5 packaging close CP-VE3.
+
+---
+
+## P5 — CLOSING PACKAGE (gates + walk + album + ship block) — 2026-09-15
+
+Ship #38 = `d915ee7` (verified `HEAD == @{u}`). Ship #39 set re-verified vs `git status --porcelain`:
+**16 modified + 11 new = 27** — matches the SHIP-39.md consolidated add block exactly.
+
+### FULL gates (raw excerpts — evidence gate)
+
+**Kernel — mosaic_views FULL suite:**
+```
+=== mosaic_views FULL Kernel (all CP-VE3 backend) ===
+Time: 02:02.824, Memory: 10.00 MB
+OK (53 tests, 816 assertions)
+```
+Includes the CP-VE3 additions: `ViewsPreviewControllerTest` (4/4, 89), `ViewsEmbedExposedPagerTest` (3/3, 68),
+`ViewsResultDataSourceParityTest` (4/4, 79), plus the shared-path embed-render regression (7/7, 75).
+
+**phpcs — all 7 CP-VE3 PHP files (0 ERRORS; warnings = pre-existing line-length, tolerated):**
+```
+FOUND 0 ERRORS AND 8 WARNINGS AFFECTING 8 LINES     (MosaicViewRenderer.php)
+FOUND 0 ERRORS AND 7 WARNINGS AFFECTING 7 LINES     (ViewsPreviewController.php)
+FOUND 0 ERRORS AND 21 WARNINGS AFFECTING 21 LINES   (MosaicViewComponent.php)
+FOUND 0 ERRORS AND 4 WARNINGS AFFECTING 4 LINES     (ViewsResultDataSource.php)
+FOUND 0 ERRORS AND 5 WARNINGS AFFECTING 5 LINES     (ViewsPreviewControllerTest.php)
+FOUND 0 ERRORS AND 9 WARNINGS AFFECTING 9 LINES     (ViewsEmbedExposedPagerTest.php)
+FOUND 0 ERRORS AND 4 WARNINGS AFFECTING 4 LINES     (ViewsResultDataSourceParityTest.php)
+```
+
+**phpstan — all CP-VE3 PHP, level 6 (needs `--memory-limit=512M` for MosaicViewComponent's graph):**
+```
+ [OK] No errors
+```
+
+**Vitest — full (established at G0; JS unchanged since):** `537 / 1` — the 1 is the pre-existing B-101
+(`MosaicPuckAdapter.test.ts` boolean→radio). tsc clean (only pre-existing `dsdShadow.ts`). dist builder+FE
+rebuilt clean (no debug leaks); libs `1.0.23 → 1.0.28`.
+
+### Walk + album (P5 deliverables)
+- `reports/WALK-CP-VE3.md` — recipe-grade, every click spelled out, one STOP line each: A (SSR preview,
+  panel-driven), B (debounced typing), C (data-source picker parity + G0 six live sources), D (exposed +
+  pager depth — the P2-B live-content walks), E (A3 preset round-trip — the P4 walk).
+- `ledger-live/e2e-evidence/cp-ve3/INDEX.md` — album index: the 2 P1c preview stills present
+  (`01-admin-preview.png`, `02-fe-preview.png`) + the pending P2-B/P4 frames enumerated with their walk refs.
+- `ledger-live/SHIP-39.md` — FINAL consolidated add block (27 files), gates table, exclusions, expected count.
+
+### Honest checkpoint — P2-B films + P4 filmed-witness (the live-content ceremony)
+All CP-VE3 CODE is landed and green (P0.5, P1a-d, P2-Kernel+cache-finding, P3-backend, P3-UI, G0) and the
+static ship-readiness gates are FULL-green above. Two pieces are **live-content ceremony**, not code, and are
+honest-checkpointed for a fresh pass rather than rushed at the tail of this very long session:
+
+- **P2-B** — browser-truth films (D1–D6 in the walk). These need a paged, exposed VIEW that does not exist on
+  the dev site yet + scratch host embeds (983 single, 984 dual). The retired `cpve2_content.php` is the
+  provisioning precedent; the P2-B pass provisions `cpve3_ep` (embed + page displays, exposed Title filter,
+  full pager) then films: pager `?page=N` by-id (full + mini), AJAX exposed filtering, dual-embed
+  independence verdict + MOSAIC.md note, embed+own-page coexist, and the cache fix LIVE. The exposed/pager
+  plumbing + cache fix are already PROVEN at the Kernel layer (`ViewsEmbedExposedPagerTest` 3/3); D1–D6 are
+  the browser confirmation.
+- **P4** — the A3 preset round-trip is walkable TODAY from `WALK-CP-VE3.md` §E (builder "Save as template" →
+  insert on another node → config intact); the FILMED witness rides the P2-B live pass.
+
+### STOP — reviewer audits the package (gates + walk + album + ship block); Arun walks per WALK-CP-VE3.md.
+Ship #39 ceremony (the human commit of the 27-file block) closes CP-VE3 once the P2-B/P4 films land. Road
+after: ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0 (NOT this ship).

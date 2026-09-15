@@ -1,7 +1,7 @@
-# SHIP #39 (accumulating on d915ee7) — CP-VE3 P0.5 + P1
+# SHIP #39 (accumulating on d915ee7) — CP-VE3 (P0.5 → G0) — CLOSING
 
 Running ship doc. Accumulates on ship #38 (`d915ee7`). Mosaic git read-only here — this is the ceremony add
-block for the human commit. NOT tagged. CP-VE3 P2-P5 continue before the ship ceremony.
+block for the human commit. NOT tagged. Closes CP-VE3 and the Views act.
 
 ## What has landed
 - **P0.5** — plain-value argument inputs (url_param name, fixed plain value) adopt the WC57 debounced-commit
@@ -11,7 +11,19 @@ block for the human commit. NOT tagged. CP-VE3 P2-P5 continue before the ship ce
 - **P1b** — SSR preview UI, PANEL-DRIVEN (ratified): the panel "Preview in canvas" button runs the preview via
   the `viewPreviewStore`; the mosaic_view CARD displays the inert snapshot. Placeholder + control reset on ANY
   config change; abortable; both surfaces.
-- **P1c** — films (admin, FE, inertness F-103, config-clears). **P1d** — gates + this doc.
+- **P1c** — films (admin, FE, inertness F-103, config-clears). **P1d** — gates.
+- **P2** — exposed-filter + pager verification depth (`ViewsEmbedExposedPagerTest`) **+ the cache finding**:
+  per-component render CID must add `url.query_args` when the display has an exposed filter or a full/mini
+  pager, else stale serves. Fixed in `MosaicViewComponent::getCacheMetadata` via the shared
+  `MosaicViewRenderer::displayUsesQuery` static.
+- **P3 (backend)** — data-source sibling parity: `ViewsResultDataSource` resolves all six argument sources via
+  the shared `ViewsArgumentResolver`; same `url.query_args` cache fix in `ViewsResultDataSource::getCacheMetadata`
+  (`ViewsResultDataSourceParityTest`).
+- **P3-UI** — the views_result data-source panel reuses `MosaicViewsArgumentsField` (same six sources + PANEL
+  LABEL LAW), writing `argument_sources`; 3 obsolete literal-args-textarea cells retired (oracle-change).
+- **G0** — page_field host-context gap closed: `hostEntityType`/`hostBundle` threaded adapter →
+  `MosaicDataSourceField` → `BindingEditor` → `ViewsDataSourceField` → `MosaicViewsArgumentsField` →
+  `PageFieldSelect`, so the data-source panel ships all six sources live (no dead dropdown).
 
 ## Why panel-driven (ruling)
 The pinned inert-canvas contract (F-103) makes canvas content non-interactive (Puck's select overlay
@@ -19,21 +31,26 @@ intercepts card clicks — witnessed `btnClicked=false`). So the PANEL owns the 
 displays the result (tabsPanelSync/carouselPanelSync precedent). ACT-2 candidate filed: a Puck actionBar
 Preview action (unwitnessed API, spike later).
 
-## Gates
+## Gates (P5 — full sweep, 2026-09-15)
 | Gate | Result |
 |---|---|
-| Vitest — full | **537 / 1** (1 = pre-existing B-101); +P0.5 (4) +P1b store/card/button (9) |
+| **Kernel — mosaic_views FULL suite** | **53 tests / 816 assertions / 0 failures** (02:02) |
+| — incl. ViewsPreviewControllerTest | 4/4 (89 assertions) |
+| — incl. ViewsEmbedExposedPagerTest (P2) | 3/3 (68 assertions) |
+| — incl. ViewsResultDataSourceParityTest (P3) | 4/4 (79 assertions) |
+| — incl. embed-render regression (shared-path refactor) | 7/7 (75 assertions) |
+| **Vitest — full** | **537 / 1** (1 = pre-existing B-101); +P0.5 (4) +P1b store/card/button (9) +G0 (3) |
 | tsc | clean (only pre-existing `dsdShadow.ts`) |
-| Kernel — ViewsPreviewControllerTest | **4/4 (89 assertions)** |
-| Kernel — embed-render regression (shared-path refactor) | **7/7 (75 assertions)** |
-| phpstan (new PHP) | **OK** · phpcs (P1a PHP) **0 errors** |
+| **phpcs** (all 7 CP-VE3 PHP files) | **0 ERRORS** (warnings = pre-existing line-length, tolerated) |
+| **phpstan** (all CP-VE3 PHP, level 6) | **[OK] No errors** (needs `--memory-limit=512M` for MosaicViewComponent) |
 | e2e — cp-ve3-p1-preview films | **4/4** (admin preview · inertness F-103 both-directions · config-clears · FE preview) |
 | e2e — regression (wc60-spike + f106-flush) | **8/8** (panel + Preview button coexist; race green) |
-| dist + libs | builder + FE rebuilt (no debug leaks); libs **1.0.23 → 1.0.26** |
+| dist + libs | builder + FE rebuilt (no debug leaks); libs **1.0.23 → 1.0.28** |
+| **P2-B browser films / P4 preset e2e** | **honest-checkpointed** (see report §Closing) — live-content ceremony, next pass |
 
 ## CONSOLIDATED CEREMONY `git add` (run from `web/modules/custom/mosaic`)
-Read-only law: the AI does not stage the mosaic repo. On top of ship #38 (`d915ee7`). Expected: **12 modified
-+ 8 new = 20**.
+Read-only law: the AI does not stage the mosaic repo. On top of ship #38 (`d915ee7`). Re-verified vs
+`git status --porcelain` on 2026-09-15: **16 modified + 11 new = 27** (matches the block below exactly).
 
 ```bash
 git add \
@@ -66,15 +83,16 @@ git add \
   js/dist/frontend-editor.js
 ```
 
-**Verify:** `git status --porcelain | grep -c '^[MA]'` → **26** (after `git add`). P2 adds
-`ViewsEmbedExposedPagerTest.php`; P3 adds `ViewsResultDataSource.php` + `ViewsResultDataSourceParityTest.php`;
-P3-UI adds `ViewsDataSourceField.tsx` + `dataSourceViewsPicker.test.tsx` + `ViewsDataSourceField.test.tsx`
-(oracle-change); G0 adds `MosaicDataSourceField.tsx` (host-context thread) + `MosaicPuckAdapter.ts` (folds
-into its line). NB: this block is still ACCUMULATING — the P5 pass re-verifies the FINAL count against
-`git status --porcelain` before the ceremony.
+**Verify:** `git status --porcelain | grep -c '^[MA]'` → **27** (after `git add`). Count is FINAL (P5
+re-verified vs porcelain — 16 M + 11 new; the `MosaicViewsArgumentsField.tsx` line in this block covers the
+P0.5 debounce + F-105 label law, the `ViewsDataSourceField.tsx` line the P3-UI picker reuse + G0 host props,
+and `MosaicDataSourceField.tsx` the G0 thread).
 
 **EXCLUSIONS (never staged):** `js/e2e/journeys/cp-ve3-p1-preview.spec.ts` + the other spec films (gitignored
 `js/e2e/`); `AI/`; scratch dev-site content (node 982); `assets/`, `js/*.log`, `js/e2e.zip`, `js/esc-probe.*`.
 
-## STOP — reviewer audits P1 (P0.5 + P1a-d), then P2 (exposed filters + pager depth).
-Queue: CP-VE3 P2 → P3 (data-source parity) → P4 (A3 preset doc) → P5 (film + ship ceremony) → ACT 2 → …
+## STOP — reviewer audits the CP-VE3 package (P0.5 → G0, all code landed + green), then Arun walks.
+All CP-VE3 CODE is landed and green. Two live-content ceremony pieces are honest-checkpointed for the next
+pass (they need provisioned dev content + browser films, not fresh code): **P2-B** browser-truth films and
+**P4** preset round-trip witness. The recipe-grade `WALK-CP-VE3.md` (this repo) spells out both walks for Arun.
+Road after ship #39: ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
