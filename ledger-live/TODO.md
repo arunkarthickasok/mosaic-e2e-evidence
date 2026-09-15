@@ -12850,4 +12850,26 @@ Sprint65/66/67/87 136/136, dist builder+FE clean. **Side-channel still present**
 now; O3 retires w/ oracle-change + FE film). Report: reports/REPORT-WC60.md (O1 section). **STOP — reviewer
 audits O1 before O2.**
 
-### OPEN QUEUE: WC60-O1 spike CHECKPOINT (reviewer) → O2 migrate carousel+tabs then 7 more → O3 retire side-channel + FE film → O4 gates → CP-VE3 P1..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag.
+### WC60 O2-O4 — MIGRATE + RETIRE + GATES — CHECKPOINT (GREEN) 2026-09-15 — STOP for reviewer + Arun feel-walk
+On ship #37R (f3787cb), read-only mosaic git. **13-file set** (10 M + 3 new: tierBOptimistic.ts +
+tierBOptimistic.test.ts + TierBPreviewKeysStripped.test.ts; the P0 pendingArgSources.ts/.test.ts were
+created-then-deleted → net zero). **O2 ROSTER-WIDE:** dropped id==='mosaic_view' gate → all 11 Tier-B use
+makeOptimisticResolveData (ONE path); DELETED dead inline buildTierBResolveData + _ssrAbortMap/_getCsrfToken/
+_csrfTokenCache (moved to tierBOptimistic.ts); fromPuck strips ALL TIER_B_PREVIEW_KEYS on save (guard
+TierBPreviewKeysStripped 2/2); carousel live sync 2/2 + Vitest sync/geometry 19/19 (shimmer wrapper is
+pointer-events:none, closest() sees through it); smoke oracle-change Sprint67/68 re-pointed to
+tierBOptimistic.ts (66/66); carousel prop-edit spot-check overlay-never-latches + shimmer. (tabs-full-journey
+scratch spec fails on a stale .ProseMirror/TipTap selector — pre-existing since ship#31 CKE5 pivot, gitignored,
+NOT my change.) **O3 RETIRE side-channel:** deleted pendingArgSources + all wiring (panel record / BuilderApp
+overlay+reconcile→raw getter / FE handleSave→raw); race fixed WITHOUT side-channel (f106-flush 2/2 reading
+live store); 4 side-channel guards re-pointed → tierBOptimistic.test.ts (3 cells: sync-commit/shimmer/loop-
+guard); FE parity FILMED wc60-fe-film 2/2 (FE pick→instant save→published [Navel,Orange,Meyer] + sawShimmer).
+**O4 GATES:** Vitest 524/1(B-101), tsc clean, PHPUnit full Unit 2689/0, smoke green, phpcs 0 errors (pre-
+existing header warnings only), e2e spike 7/7 + f106 2/2 + FE film 2/2 + sentinels (f094 3/3, f066 4/4, ship34
+carousel 2/2), dist builder+FE clean, libs 1.0.19→1.0.23. Kernel/Functional unaffected (no production PHP).
+PERF (before→after): overlay 254ms→never; focus lost 36ms→retained; panel renders 16→2 dev(1 prod); SSR
+1/edit background (4 rapid→1); canvas freeze→stale-preview-with-shimmer; race lost→survives. SHIP-38.md add
+block (13 files) written. Report: reports/REPORT-WC60.md (O2-O4). **STOP — reviewer + Arun FEEL-WALK, then
+CP-VE3 P1-P4 resume on the cured pipeline.**
+
+### OPEN QUEUE: WC60 DONE (reviewer + feel-walk) → CP-VE3 P1(SSR preview btn)..P5 → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

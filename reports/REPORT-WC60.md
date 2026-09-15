@@ -207,3 +207,35 @@ Raw (final clean build): `{"overlayDomOn_ms":-1,"searchInputFocusLostAt_ms":-1,"
   (inline resolveData) — O2 migrates carousel+tabs (wave 1) then the remaining 7.
 
 ### STOP — reviewer audits O1 before O2 (migrate carousel + tabs, then the remaining 7 Tier-B).
+
+---
+
+# O2-O4 — ROSTER MIGRATION + SIDE-CHANNEL RETIREMENT + GATES 2026-09-15 (O1 accepted)
+
+## O2 — roster-wide migration (all 11 Tier-B on ONE optimistic path)
+Dropped the `id==='mosaic_view'` special-case → every `requires_ssr_preview` component uses
+`makeOptimisticResolveData`. **Deleted** the dead inline `buildTierBResolveData` + its `_ssrAbortMap`/
+`_getCsrfToken`/`_csrfTokenCache` helpers (the SSR/abort/CSRF logic lives in `tierBOptimistic.ts` now).
+**Save strips ALL preview keys:** `fromPuck` now drops `_renderedHtml`/`_ssrError`/`_ssrShimmer` from
+persisted props (guard: `TierBPreviewKeysStripped.test.ts`, 2 cells). **Sync preserved** (the shimmer bar
+is `pointer-events:none`; `closest('[data-puck-component]')` sees through the wrapper): carousel live sync
+2/2, Vitest sync/geometry 19/19. Sentinels green: f094 scroll 3/3, f066 FE lock 4/4. **Smoke oracle-change:**
+Sprint67/68 pinned the old inline SSR internals — re-pointed to `tierBOptimistic.ts` (66/66). Carousel
+prop-edit perf spot-check: overlay never latches + canvas shimmer.
+
+## O3 — F-106 side-channel RETIRED
+`pendingArgSources.ts` + its test deleted; wiring removed from the panel (record), BuilderApp (overlay +
+reconcile → the getter now returns raw live data), and the FE dialog (handleSave reads `currentDataRef`
+directly). The optimistic commit makes the store authoritative synchronously, so the race is fixed WITHOUT
+the side-channel — raw proof: `[F-106] published titles after instant save: ["Navel","Orange","Meyer"]`,
+2/2. **Oracle-change:** the 4 side-channel Vitest guards → `tierBOptimistic.test.ts` (3 cells: synchronous
+commit / shimmer-only-when-stale / preview-only loop guard). **FE parity FILMED** (`wc60-fe-film.spec.ts`):
+FE pick → INSTANT FE save → published page `["Navel","Orange","Meyer"]` + `sawShimmer=true`, 2/2.
+
+## O4 — perf oracle + gates (see SHIP-38.md for the full table + add block)
+Vitest **524/1** (pre-existing B-101) · tsc clean · PHPUnit full Unit **2689/0** · smoke green · phpcs **0
+errors** · e2e spike 7/7 + f106 2/2 + FE film 2/2 + sentinels green · dist builder+FE clean · libs **1.0.23**.
+Kernel/Functional unaffected (no production PHP changed). **13-file set** on `f3787cb` (10 M + 3 new; the
+P0 side-channel files created-then-deleted net to zero).
+
+### STOP — reviewer audits WC60, Arun FEEL-WALK, then CP-VE3 P1-P4 resume on the cured pipeline.
