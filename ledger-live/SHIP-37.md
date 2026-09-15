@@ -231,6 +231,22 @@ New: `Controller/ViewsArgumentSourcesController.php`, 4 Kernel tests. Modified:
 - Gates: Vitest 9/9, ViewsEmbedRenderTest 2/2, renderer Unit 23/23, full mosaic_views 40/40, PHPStan
   (new code) clean, PHPCS 0. dist current (N1 help string in builder; libs 1.0.17).
 
+## WALK-CATCH #57 + #57-REOPENED + #58 (from Arun's walk)
+- **#57** (autocomplete drops keys): EntityAutocomplete → local state + debounced (~280ms) abortable
+  lookup + commit only on pick; witness-scan ledgered (url_param per-key commit, 24× usePuck storm).
+- **#57 REOPENED (delivery):** aggregation OFF + libs NOT bumped after the WC57 rebuild → browsers
+  served the cached pre-fix bundle. FIX: **libs 1.0.17 → 1.0.18** (all 3) + rebuild builder+FE + cr.
+  LAW: bump libs after EVERY dist rebuild. Storm not promoted (typing is smooth once delivered).
+- **#58** (store-id/show-label): pick already commits `r.id`; added `entity-label` endpoint +
+  EntityAutocomplete shows "Selected: <label>" on reopen. ORACLE-CHANGE (accepted): the pick Vitest
+  cell now asserts the ID value committed, not just "called once".
+- Gates: Vitest 11/11 (518/1 full), sources-controller Kernel 3/3, full mosaic_views **42/42**, film
+  **8/8** (frame 10 = full pick→save→filtered loop), PHPCS/PHPStan clean, libs **1.0.18**.
+- **Add-block delta: NONE** — all WC57/#57-reopened/#58 changes touched files ALREADY in the
+  consolidated add block: `MosaicViewsArgumentsField.tsx`, `viewsFields.test.tsx`,
+  `ViewsArgumentSourcesController.php` + its Kernel test, `mosaic_views.routing.yml`,
+  `mosaic.libraries.yml`, `js/dist/*`. No new tracked files. Ship #37 count stays **33**.
+
 ## CHECKPOINT — the final ceremony leg remains
 M6 e2e film album cp-ve2 (autocomplete journey, ?param swap, current-user delta logged-in vs anon,
 depth cell) + GEOMETRY + proposed representative walk list · full Unit+Kernel ceremony gate · Arun's

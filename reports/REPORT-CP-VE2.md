@@ -616,3 +616,62 @@ representative walk. The functionality is unit/kernel/Vitest-proven; M6 is the b
 ratified road after ship #37 is **CP-VE3 → ACT 2 → Wave D-0 + D/F → Wave G → dev push → Arun soak →
 tag** (bible §P4 + the ratified queue). Arun's walk of the CP-VE2 representatives is a review gate
 within ship #37, NOT a release trigger. No tag before the full queue + soak.
+
+---
+
+# WALK-CATCHES #57-REOPENED + #58 (PROBE → FIX) — tally → 58
+
+Arun's walk cont.: step 9 PASS. Step 10 — the save-time guard PASSED TWICE in the wild (refused an
+unknown-string id "Citrus" AND a deleted tid, naming the filter each time) but exposed **#58**, and
+**#57 REOPENED** (still hangs under Arun's hands despite the green film).
+
+## W6 — #57 reopened: WITNESS DELIVERY first (the film ≠ Arun's browser)
+- JS aggregation is **OFF** (`system.performance js.preprocess = false`) → Drupal serves
+  `js/dist/builder.js?v=<version>` with the version as the browser cache-key.
+- The builder library version was **still 1.0.17** — I rebuilt `builder.js` for the WC57 debounce fix
+  but **did not bump the version**. So the `?v=1.0.17` cache-key was unchanged while the file content
+  changed → **Arun's browser served the cached pre-WC57 (no-debounce) bundle** and still hung. The
+  Playwright film uses a fresh browser each run (no cache) → it always loaded the fixed bundle → the
+  film went green while Arun's delivery stayed stale.
+- **FIX:** bumped all three libraries **1.0.17 → 1.0.18** (the F-065 cache-bust mechanism) + rebuilt
+  builder (and FE, which imports the panel) → a fresh `?v=1.0.18` forces the browser to re-fetch.
+  Cache-clear requirement stated: `drush cr` on deploy; a hard-refresh (or new session) client-side.
+- **Storm not promoted:** the debounced bundle types cleanly once DELIVERED (the film's frame 02 +
+  the full loop type "Citrus" at 50ms/key with no dropped keys). The 24× usePuck panel render-storm
+  stays LEDGERED (load-time perf; typing does not commit to Puck, so it does not re-render the panel).
+  The `url_param` per-key-commit sibling stays ledgered too (contract not promoted this charter).
+
+## W5 — #58: store the entity ID, display the label (both directions)
+- **Witness:** the pick handler already commits `r.id` (the entity ID) — verified: host 977's stored
+  `argument_sources[0].value == "2"` (the tid), not the label. The "commits the LABEL" symptom was the
+  stale bundle (W6). The genuine gap: on REOPEN, a stored fixed source showed the **raw id** ("ID 2"),
+  not the label.
+- **Fix:** new endpoint `GET /api/mosaic/views/entity-label/{entity_type}/{id}` resolves a stored id →
+  label. `EntityAutocomplete` resolves the label for the stored value on mount and renders
+  **"Selected: <label>"**; pick stores `r.id` and shows the label. Round-trips both directions.
+- **ORACLE-CHANGE (ledgered, reviewer-accepted law):** the prior WC57 Vitest pick cell asserted only
+  `onChange toHaveBeenCalledTimes(1)` — it would stay green even if the wrong value committed. The
+  cell now also asserts **`toHaveBeenCalledWith([{source:'fixed', value:'5', ...}])`** (the ID, not the
+  label 'Alpha term'). OLD oracle: "commit fires once." NEW oracle: "commit fires once WITH the id."
+- **RED→GREEN:** Vitest **11/11** — pick-commits-ID (new assertion) + a new reopen-shows-label cell
+  (`Selected: Alpha term`, not `Selected: 5`); Kernel `ViewsArgumentSourcesControllerTest::testEntityLabel`
+  (live id → label; deleted id → empty). e2e **full loop (step 10.1)**: fast-type "Citrus" → pick →
+  **"Selected: Citrus"** → SAVE succeeds → `/node/982` filters to the Citrus subtree (Navel, Orange,
+  Meyer), NOT Wild Straw — frame `10-pick-save-filtered.png`.
+
+## Content-restore note (scratch safety)
+Arun's step-10 deletion test removed the Citrus (tid 2) + Lemon (tid 4) terms from the shared dev
+site, breaking the film/walk content. Restored: re-created Citrus (now tid 6) + Lemon (7) under the
+tree, re-tagged nodes 972–976, re-wired the host fixed sources to the new tids (977 fixed=Citrus 6;
+979 fixed=Fruit 1). Geometry hosts 977–981 are never typed into; the full-loop films the throwaway 982.
+
+## Gates (WC57-reopened + #58)
+| Gate | Result |
+|---|---|
+| Vitest — panel | **11/11** (WC58 oracle-change + reopen cell) |
+| Vitest — full suite | **518 / 1** (pre-existing B-101) |
+| Kernel — sources controller | **3/3** (entity-label added) |
+| e2e — cp-ve2 film | **8/8** (incl. the full pick→save→filtered loop; frame 10) |
+| PHPCS / PHPStan (controller) | exit 0 / No errors |
+| dist + libs | builder + FE rebuilt, libs **1.0.18** (cache-bust) |
+| SHIP-37 add-block delta | **NONE** — only already-tracked files changed; count stays 33 |

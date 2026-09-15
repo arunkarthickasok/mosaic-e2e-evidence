@@ -12601,3 +12601,39 @@ harmless; never type into hosts 977–981 (the geometry/walk hosts). Also: an en
 validator on the taxonomy_index_tid_depth argument enables the panel autocomplete (introspection reads
 entity_type from the validator) — kept on cpve2_termd2 (979 depth + 982 autocomplete), NOT on
 cpve2_termd0 (977, exact depth-0).
+
+### ARUN WALK cont. (2026-09-14) — steps 9-10 (verbatim, tally → 58)
+Step 9 PASS. Step 10: the save-time validator guard PASSED TWICE in the wild — refused an unknown
+STRING id "Citrus" AND refused a DELETED tid 2, naming the contextual filter each time. BUT step 10
+exposed **WALK-CATCH #58**: EntityAutocomplete commits the LABEL as the stored value (evidenced by the
+error text "(ID Citrus)" — the stored value is the label, not the entity id); and reopening a stored
+fixed source must display the LABEL for the stored id (currently shows the raw id).
+**WALK-CATCH #57 REOPENED:** the autocomplete still HANGS under Arun's hands despite the film going
+green — film environment ≠ Arun's delivery (suspect stale JS bundle delivery / real render storm).
+Ship #37 FROZEN; both fixes accumulate in the uncommitted set. Charter: W5 (#58 store-id/show-label +
+ORACLE-CHANGE record) · W6 (#57 witness DELIVERY first: libs bump + aggregation; promote usePuck storm
+if still lags) · W7 film full pick→save→filtered loop + gates + push.
+
+### WALK-CATCHES #57-REOPENED + #58 FIXED 2026-09-14 — report: reports/REPORT-CP-VE2.md (WC57-reopened + #58)
+**W6 (#57 reopened) ROOT CAUSE = STALE DELIVERY:** JS aggregation OFF (js.preprocess=false) → Drupal
+serves builder.js?v=<version>; I rebuilt builder.js for WC57 but did NOT bump the version (stayed
+1.0.17) → the ?v=1.0.17 cache-key unchanged while content changed → Arun's browser served the CACHED
+pre-WC57 (no-debounce) bundle → still hung. The Playwright film uses a fresh browser each run → green
+while Arun's delivery stale (film ≠ delivery). **GOTCHA (LAW): after ANY dist rebuild, BUMP the libs
+version** (F-065 cache-bust) — a content change without a version bump is invisible to cached browsers
+with aggregation off. FIX: libs 1.0.17→1.0.18 (all 3) + rebuild builder+FE + drush cr + client
+hard-refresh. Storm NOT promoted (debounced bundle types clean once delivered; typing doesn't commit
+to Puck so no panel re-render). url_param per-key-commit + 24× usePuck storm stay LEDGERED.
+**W5 (#58) store-id/show-label:** witness — pick already commits r.id (977 stored value=tid, not
+label); the "commits label" symptom was the stale bundle. Genuine gap: reopen showed raw id. FIX: new
+endpoint GET /api/mosaic/views/entity-label/{et}/{id} + EntityAutocomplete resolves the label for a
+stored id → renders "Selected: <label>"; pick stores r.id. ORACLE-CHANGE (reviewer-accepted): WC57
+pick cell now asserts toHaveBeenCalledWith the ID value (not just called-once) — OLD "commit fires
+once" → NEW "commit fires once WITH the id". RED→GREEN: Vitest 11/11 (+ reopen-shows-label) + Kernel
+testEntityLabel + e2e full loop (frame 10: pick Citrus → SAVE succeeds → 982 filters to Citrus subtree
+Navel/Orange/Meyer, not Wild Straw). Gates: Vitest 518/1-preexisting, sources-controller 3/3, film
+8/8, PHPCS/PHPStan clean, dist+FE rebuilt libs 1.0.18. Add-block delta NONE (33 — only tracked files
+changed). **CONTENT-RESTORE:** Arun's step-10 deletion removed Citrus(2)+Lemon(4) from the shared dev
+site; restored Citrus(now 6)+Lemon(7) + re-tagged 972–976 + re-wired host fixed sources to new tids;
+977–981 never typed into; full-loop films throwaway 982. **STOP — reviewer audits frames, Arun
+re-walks 7 + 10, ceremony.** Uncommitted on ship #36 (44a09c8), read-only mosaic git.

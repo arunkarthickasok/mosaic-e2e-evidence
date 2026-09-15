@@ -8,7 +8,7 @@ Meyer(974)=Lemon, Blueberry(975)=Berry, Wild Straw(976)=Straw. Host pages embed 
 | Frame | Scenario | Geometry oracle (asserted in the spec) |
 |---|---|---|
 | `03-fixed-term-page.png` | /node/977 — fixed source = Citrus, depth 0 | rows == **Navel, Orange** (exact Citrus) |
-| `04a-urlparam-tid2-citrus.png` | /node/978?tid=2 — url_param source | rows == **Navel, Orange** |
+| `04a-urlparam-tid6-citrus.png` | /node/978?tid=6 — url_param source | rows == **Navel, Orange** |
 | `04b-urlparam-tid3-berry.png` | /node/978?tid=3 — url_param source (SWAP) | rows == **Blueberry** (varies per ?tid) |
 | `06-depth-root.png` | /node/979 — fixed = Fruit root, depth 2 | rows == **Navel, Orange, Meyer, Blueberry, Wild Straw** (child + grandchild) |
 | `07-exclude-this-page.png` | /node/981 — this_page + native `not` (Exclude) | host's own row **absent**; other CPVE2 pages present |
@@ -16,6 +16,7 @@ Meyer(974)=Lemon, Blueberry(975)=Berry, Wild Straw(976)=Straw. Host pages embed 
 | `05b-currentuser-anon.png` | /node/980 — current_user source, anonymous | anon (uid 0) sees **empty** (delta by viewer) |
 | `01-panel-source-dropdown.png` | builder — the source dropdown | six sources; View-default reads "View default (show all)" (F-105) |
 | `02-fixed-autocomplete.png` | builder (throwaway host 982) — fixed → entity autocomplete | REAL-POINTER fast-typed "Citrus" (50ms/key) → inputValue=="Citrus" (WC57 fix: no dropped keys) |
+| `10-pick-save-filtered.png` | /node/982 after pick "Citrus" → SAVE (step 10.1) | the FULL loop: save succeeds, page filters to the Citrus subtree (Navel, Orange, Meyer), NOT Wild Straw |
 | `08-n1-exclude-help.png` | builder /node/981 — this_page on a nid arg (N1) | help: "To exclude this page, enable 'Exclude' …" |
 
 Spec: `js/e2e/journeys/cp-ve2-film.spec.ts` (project `journeys`, admin storageState).
