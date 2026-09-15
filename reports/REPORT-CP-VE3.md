@@ -291,3 +291,43 @@ coexist; race green) · dist clean · libs **1.0.23 → 1.0.26**. **20-file ship
 8 new). SHIP-39.md carries the consolidated add block.
 
 ### STOP — reviewer audits P1, then P2 (exposed filters + pager depth).
+
+---
+
+## P2 — exposed filters + pager depth — CHECKPOINT (Kernel + a real fixed finding) 2026-09-15
+
+Verification phase: Views owns the mechanics; P2 proves the embed never breaks them. The derivable truths
+are Kernel-proven, and probing surfaced + fixed a REAL caching bug.
+
+### RED → GREEN finding — exposed-filter / pager render-cache staleness
+Witnessed: rendering an exposed-filter embed with `?type=cpve2_host` returned the **stale unfiltered**
+render — but rendering the filtered case FIRST (fresh cache) narrowed correctly (`hasPlain0=N hasHost=Y`).
+Root cause: the per-component render cache CID did not vary by `url.query_args`, so a submitted exposed
+filter (or a `?page`) served a cached earlier render — the same class as the url_param cache bug (BUG2),
+for the view's OWN query state. **Fix:** `MosaicViewComponent::getCacheMetadata` now adds the
+`url.query_args` context when the display has an exposed filter or a full/mini pager (a lightweight config
+inspection — `displayUsesQuery`, no view execution). Regression: cacheability + embed **8/8 (161 assertions)**.
+
+### Kernel — derivable truth (`ViewsEmbedExposedPagerTest`, 3/3, 68 assertions)
+- **exposed form renders + filters** — the `<form` + the Type control render in the embed; both bundles'
+  rows show with no input; `?type=cpve2_host` narrows the ROWS to Host (asserted on the numbered row title
+  `CPVE2 Plain 0`, since the "CPVE2 Plain" select OPTION always persists).
+- **pager structure** — full + mini: `items_per_page=2` limits page 0 to 2 `views-row`s and the pager
+  markup renders inside the embed.
+- **hide_when_empty honors an exposed input** — a user-filtered-to-empty view keeps its form (NOT hidden,
+  so the author can un-filter); a genuinely-empty view (contextual arg matching nothing, no input) IS hidden.
+
+### Honest checkpoint — the browser-truth cells are the next pass
+Page NAVIGATION (`?page=N` advance), AJAX exposed-form filtering, dual-embed pager independence + the
+exposed-form double-instance quirk, and one-embed + the view's own page display are BROWSER-TRUTH — a
+sub-render Kernel request does not exercise the pager's page-param detection, and dual-instance is a live
+DOM concern. They require live dev-site content (exposed/pager views + single & dual host embeds) and are
+scoped as the next focused P2 pass. The Kernel proves the embed preserves the mechanics + the cache fix
+makes a submitted filter/page actually vary the render — the derivable core.
+
+### Gates (P2 so far)
+Kernel exposed/pager **3/3 (68)** · regression cacheability + embed **8/8 (161)** · phpstan OK · phpcs 0
+errors. No JS/dist change (PHP-only). Ship #39 set +2 (`MosaicViewComponent.php` gains the cache fix;
+`ViewsEmbedExposedPagerTest.php` NEW).
+
+### STOP — reviewer audits the P2 Kernel + cache finding; the browser-truth e2e films are the next pass.

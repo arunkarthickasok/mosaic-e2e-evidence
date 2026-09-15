@@ -13001,4 +13001,22 @@ navigates nowhere stays /edit; public page live navigable anchor), config-change
 +f106 8/8 (panel+button coexist, race green), dist clean, libs 1.0.23→1.0.26. SHIP-39.md add block (20 files).
 Report: reports/REPORT-CP-VE3.md (P1b-d). **STOP — reviewer audits P1; P2 (exposed filters + pager depth) next.**
 
-### OPEN QUEUE: CP-VE3 P1 GREEN (reviewer) → P2 exposed-filters+pager → P3 data-source parity → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### CP-VE3 P2 — exposed filters + pager depth — CHECKPOINT (Kernel + fixed finding) 2026-09-15 — STOP before P3
+On ship #38 (d915ee7), read-only mosaic git. Ship #39 set +2 (MosaicViewComponent.php cache fix folds into
+its existing line; ViewsEmbedExposedPagerTest.php NEW) → 21-file block. **RED→GREEN FINDING (real bug fixed):
+exposed-filter/pager render-cache staleness.** Witnessed: an exposed embed with ?type=cpve2_host returned the
+STALE unfiltered render; filtered-FIRST (fresh) narrowed correctly (hasPlain0=N hasHost=Y). Root cause: the
+per-component render CID didn't vary by url.query_args → a submitted exposed filter (or ?page) served a
+cached earlier render (same class as url_param BUG2, for the view's own query state). FIX: getCacheMetadata
+adds url.query_args context when the display has an exposed filter or full/mini pager (displayUsesQuery —
+lightweight config inspection, no view exec). Regression cacheability+embed 8/8 (161). **KERNEL derivable
+truth** (ViewsEmbedExposedPagerTest 3/3, 68 assertions): exposed form renders + ?type filters the ROWS
+(numbered-title oracle, option-label persists); pager structure (full+mini items_per_page=2 → 2 views-row +
+pager markup); hide_when_empty honors exposed input (user-filtered-empty keeps the form, genuinely-empty
+hides). GATES: Kernel 3/3 + regression 8/8, phpstan OK, phpcs 0 err. No JS/dist change (PHP-only).
+**HONEST CHECKPOINT: browser-truth cells NEXT PASS** — page ?page=N advance, AJAX exposed form, dual-embed
+pager independence + exposed-form double-instance quirk, embed+own-page coexist. These need live dev content
+(exposed/pager views + single & dual host embeds); a sub-render Kernel doesn't exercise the pager page-param.
+Report: reports/REPORT-CP-VE3.md (P2). **STOP — reviewer audits P2 Kernel + cache finding; browser-truth e2e + P3 next.**
+
+### OPEN QUEUE: CP-VE3 P2 Kernel+finding GREEN (reviewer) → P2 browser-truth e2e + P3 data-source parity → P4 preset doc → P5 film+ship → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
