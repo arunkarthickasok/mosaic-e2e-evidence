@@ -13104,4 +13104,36 @@ Report reports/REPORT-CP-VE3.md §P2-B+P4 (raw console). WALK-CP-VE3.md D/E fill
 **CP-VE3 NOW FULLY EVIDENCED: all code green + full static gates + all D/E frames filmed.** **STOP — reviewer
 audits ALL frames; Arun walks WALK-CP-VE3.md; ship #39 human-commit closes CP-VE3 + the Views act.**
 
-### OPEN QUEUE: CP-VE3 P2-B+P4 GREEN (reviewer) → Arun walk → ship #39 human-commit (closes CP-VE3 + Views act) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
+### WALK-CATCH #61 — Arun walk 2026-09-15 (tally → 61) — fixed-value entity autocomplete REGRESSED
+**Arun walk verbatim:** A1 PASS · A3 PASS (FE preview inherits public theme vs admin theme — font delta
+EXPECTED, ledger note, not a bug) · B1 PASS (url_param is plain text by design) · C1 PASS · D1/D2/D3/D5 PASS ·
+D4 PASS (filter values change rows+count) · D6 PASS (embed pages independently of /cpve3-list) · E PASS.
+**#61 REGRESSION:** the fixed-value / taxonomy argument row ("Has taxonomy term ID (with depth)") now shows
+the RAW ID ("6") with NO entity autocomplete and NO label — the WC58/WC59 single-field autocomplete (store id /
+show label / type-to-search) is GONE on this surface. Suspected cause: P0.5 / P3-UI / G0 refactors of
+MosaicViewsArgumentsField collapsed the fixed-value input to the plain DebouncedTextInput path.
+**PROBE-THEN-FIX, ship #39 FROZEN (fix accumulates into the 27-file set).** W1 witness (quote) → W2 fix
+(restore WC58/WC59 single-field: stores id, shows label, both surfaces) → W3 RED→GREEN Vitest + e2e re-film +
+oracle-change → W4 gates+dist+libs+album+ledger+report. STOP after W4 — reviewer audits film, Arun re-walks
+A2 + rewritten C2/D4/D6.
+
+### WALK-CATCH #61 — FIXED (GREEN) 2026-09-15 — fixed-value taxonomy autocomplete restored
+**W1 witness (quote, not guess) DISPROVED the suspected cause:** the frontend branch is intact + unchanged
+since WC59 (`git log -S spec.entity_type` → no hits; SourceInput gates on `arg.entity_type` from the
+/arguments descriptor). **Real root cause = BACKEND `ViewsArgumentsController` (since ship #36, NOT
+P0.5/P3-UI/G0):** derived entity_type ONLY from an `entity:*` validator. The taxonomy "term ID (with depth)"
+arg (`taxonomy_index_tid_depth`) carries validator "none" → entity_type '' → frontend raw-id branch. The
+existing ViewsArgumentsApiTest only covered `entity:user`, so validator-"none" had NO coverage (invisible
+gap). **W2 FIX (backend only, no JS → no dist/libs):** argumentEntityType() maps taxonomy_index_tid[_depth]
++ taxonomy → taxonomy_term when no entity:* validator. Live: /arguments → entity_type="taxonomy_term";
+entity-label/6 → Citrus; autocomplete ?q=Cit → [{6,Citrus}]. Docblock corrected. **W3 RED→GREEN:** Kernel
+ViewsArgumentEntityTypeTest 2/2 (RED demonstrated: neutered map → "-'taxonomy_term' +''"; GREEN restored) +
+nid-stays-plain guard; Vitest guard cell (entity_type:'' → plain input) → viewsFields 13/13, full 538/1;
+e2e cpve3-wc61 PASS (node 986 reopen field="Citrus" not "6", frame wc61-reopen-shows-label.png). Both
+surfaces share the field+endpoint. **W4:** Kernel mosaic_views FULL 55/850/0, phpcs 0 ERRORS, phpstan [OK].
+Ship #39 set 27→**29** (17 M + 12 new): +ViewsArgumentsController.php [M] +ViewsArgumentEntityTypeTest.php
+[new]; viewsFields.test.tsx guard folds in; NO dist/libs. Album INDEX + WALK §C3 updated. Report
+reports/REPORT-CP-VE3.md §WC61 (raw witnesses). **STOP — reviewer audits the film + oracle; Arun re-walks
+A2 + C3.**
+
+### OPEN QUEUE: WC61 GREEN (reviewer) → Arun re-walk (A2 + C3) → ship #39 human-commit (closes CP-VE3 + Views act) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.

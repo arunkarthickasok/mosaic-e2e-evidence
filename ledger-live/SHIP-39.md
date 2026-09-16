@@ -34,15 +34,17 @@ Preview action (unwitnessed API, spike later).
 ## Gates (P5 — full sweep, 2026-09-15)
 | Gate | Result |
 |---|---|
-| **Kernel — mosaic_views FULL suite** | **53 tests / 816 assertions / 0 failures** (02:02) |
+| **Kernel — mosaic_views FULL suite** | **55 tests / 850 assertions / 0 failures** (WC61 +2/+34) |
 | — incl. ViewsPreviewControllerTest | 4/4 (89 assertions) |
 | — incl. ViewsEmbedExposedPagerTest (P2) | 3/3 (68 assertions) |
 | — incl. ViewsResultDataSourceParityTest (P3) | 4/4 (79 assertions) |
+| — incl. ViewsArgumentEntityTypeTest (WC61, RED→GREEN) | 2/2 (34 assertions) |
 | — incl. embed-render regression (shared-path refactor) | 7/7 (75 assertions) |
-| **Vitest — full** | **537 / 1** (1 = pre-existing B-101); +P0.5 (4) +P1b store/card/button (9) +G0 (3) |
+| **Vitest — full** | **538 / 1** (1 = pre-existing B-101); +P0.5 (4) +P1b (9) +G0 (3) +WC61 guard (1) |
 | tsc | clean (only pre-existing `dsdShadow.ts`) |
 | **phpcs** (all 7 CP-VE3 PHP files) | **0 ERRORS** (warnings = pre-existing line-length, tolerated) |
 | **phpstan** (all CP-VE3 PHP, level 6) | **[OK] No errors** (needs `--memory-limit=512M` for MosaicViewComponent) |
+| e2e — WC61 fixed-taxonomy autocomplete | **PASS** (node 986: reopen field = "Citrus", not raw "6"; frame) |
 | e2e — cp-ve3-p1-preview films | **4/4** (admin preview · inertness F-103 both-directions · config-clears · FE preview) |
 | e2e — regression (wc60-spike + f106-flush) | **8/8** (panel + Preview button coexist; race green) |
 | dist + libs | builder + FE rebuilt (no debug leaks); libs **1.0.23 → 1.0.28** |
@@ -50,7 +52,9 @@ Preview action (unwitnessed API, spike later).
 
 ## CONSOLIDATED CEREMONY `git add` (run from `web/modules/custom/mosaic`)
 Read-only law: the AI does not stage the mosaic repo. On top of ship #38 (`d915ee7`). Re-verified vs
-`git status --porcelain` on 2026-09-15: **16 modified + 11 new = 27** (matches the block below exactly).
+`git status --porcelain` on 2026-09-15: **17 modified + 12 new = 29** (WC61 added
+`ViewsArgumentsController.php` [M] + `ViewsArgumentEntityTypeTest.php` [new]; the WC61 `viewsFields.test.tsx`
+guard cell folds into its existing line; NO dist/libs change — the fix is backend PHP only).
 
 ```bash
 git add \
@@ -71,11 +75,13 @@ git add \
   js/src/frontend-editor/FrontendBuilderDialog.tsx \
   modules/mosaic_views/src/Service/MosaicViewRenderer.php \
   modules/mosaic_views/src/Controller/ViewsPreviewController.php \
+  modules/mosaic_views/src/Controller/ViewsArgumentsController.php \
   modules/mosaic_views/src/Plugin/MosaicComponent/MosaicViewComponent.php \
   modules/mosaic_views/src/Plugin/MosaicDataSource/ViewsResultDataSource.php \
   modules/mosaic_views/tests/src/Kernel/ViewsPreviewControllerTest.php \
   modules/mosaic_views/tests/src/Kernel/ViewsEmbedExposedPagerTest.php \
   modules/mosaic_views/tests/src/Kernel/ViewsResultDataSourceParityTest.php \
+  modules/mosaic_views/tests/src/Kernel/ViewsArgumentEntityTypeTest.php \
   modules/mosaic_views/mosaic_views.routing.yml \
   modules/mosaic_views/mosaic_views.services.yml \
   mosaic.libraries.yml \
@@ -83,7 +89,8 @@ git add \
   js/dist/frontend-editor.js
 ```
 
-**Verify:** `git status --porcelain | grep -c '^[MA]'` → **27** (after `git add`). Count is FINAL (P5
+**Verify:** `git status --porcelain | grep -c '^[MA]'` → **29** (after `git add`; WC61 = +1 M controller
++ 1 new Kernel test on the P5 count of 27). Count is current (P5
 re-verified vs porcelain — 16 M + 11 new; the `MosaicViewsArgumentsField.tsx` line in this block covers the
 P0.5 debounce + F-105 label law, the `ViewsDataSourceField.tsx` line the P3-UI picker reuse + G0 host props,
 and `MosaicDataSourceField.tsx` the G0 thread).

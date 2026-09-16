@@ -68,6 +68,17 @@ was dead on the data-source panel because host context wasn't threaded there.)
 → **STOP: choosing "Field on this page" shows a populated field list, both on the
 component panel AND the data-source panel.**
 
+**C3. WC61 — fixed-value taxonomy argument shows the entity autocomplete + LABEL.**
+Edit **/node/986** (its mosaic_view is `cpve2_termd0:embed_1` with a fixed **term 6**). Select the
+component. On the **"Has taxonomy term ID (with depth)"** argument row (source = **Fixed value**),
+EXPECT a single entity autocomplete field showing **"Citrus"** — NOT the raw id **"6"**, NOT a plain
+text box. Clear it and type **"Cit"** → the **Citrus** suggestion resolves; pick it → the field shows
+"Citrus" and the stored value stays the term id. *(filmed: `wc61-reopen-shows-label.png`; the field
+resolves the stored id 6 → "Citrus".)* This argument carries validator "none", so the entity type is
+derived from the argument plugin (`taxonomy_index_tid_depth` → taxonomy_term) — the WC61 fix. Same on
+the data-source picker (shared field + endpoint). → **STOP: the fixed taxonomy row is an autocomplete
+showing "Citrus", not a raw-id box.**
+
 ---
 
 ## D. Runtime — exposed filters + pager depth (P2-B) — FILMED GREEN

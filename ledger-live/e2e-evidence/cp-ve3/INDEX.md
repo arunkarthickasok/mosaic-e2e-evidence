@@ -32,6 +32,20 @@ share pager element `id:0` (one `?page` key). MOSAIC.md author-note in `reports/
 |---|---|
 | `p4-preset-instance.png` | Node 986 = a `cpve3_preset` global-template instance rendering the round-tripped view. |
 
+## WC61 — fixed-value taxonomy autocomplete restored
+| Frame | Shows |
+|---|---|
+| `wc61-reopen-shows-label.png` | Node 986 builder, mosaic_view selected: the fixed taxonomy argument row's entity field shows the resolved label **"Citrus"** — not the raw id "6". |
+
+Root cause (witnessed, NOT the P0.5/P3-UI/G0 frontend refactors): `ViewsArgumentsController`
+derived `entity_type` only from an `entity:*` validator; the taxonomy "term ID (with depth)" argument
+carries validator `"none"`, so it returned `entity_type:''` → the row degraded to a raw-id text box.
+Fix (backend only, no JS change): also map the taxonomy argument plugins
+(`taxonomy_index_tid[_depth]`, `taxonomy`) → `taxonomy_term`. Both surfaces (component panel +
+data-source picker) share the field + endpoint, so both are fixed. Live witnesses: `/arguments`
+→ `entity_type:"taxonomy_term"`; `entity-label/6` → `Citrus`; `entity-autocomplete?q=Cit` →
+`[{"id":"6","label":"Citrus"}]`.
+
 Data-layer verdict (real `MosaicGlobalTemplate` config entity): a configured mosaic_view
 (`cpve2_termd0:embed_1` + `argument_sources:[{fixed,6,taxonomy_term}]` + `hide_when_empty:true`)
 saved as template → inserted on a fresh node → **view_display + argument_sources + hide_when_empty

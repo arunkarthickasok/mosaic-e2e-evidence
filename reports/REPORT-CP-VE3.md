@@ -568,3 +568,98 @@ render; the one nuance (D5 AJAX-vs-no-JS) is documented behaviour, not a defect.
 
 ### STOP — reviewer audits ALL frames (P1 stills + 14 new P2-B/P4 frames), Arun walks WALK-CP-VE3.md,
 then the ship #39 human-commit closes CP-VE3 and the Views act.
+
+---
+
+## WALK-CATCH #61 — fixed-value taxonomy autocomplete regressed to a raw id — PROBE + FIX — 2026-09-15
+
+Arun walk 2026-09-15 (tally → 61): A1/A3/B1/C1/D1-D6/E all PASS. #61: the fixed-value taxonomy argument
+row ("Has taxonomy term ID (with depth)") showed the RAW ID "6" — no entity autocomplete, no label.
+Ship #39 FROZEN; the fix accumulates into the set (probe-then-fix charter).
+
+### W1 — WITNESS (quote, not guess): the suspected frontend cause is DISPROVEN
+The charter suspected the P0.5/P3-UI/G0 refactors of `MosaicViewsArgumentsField` collapsed the fixed input
+to the plain `DebouncedTextInput`. The witness says otherwise — the frontend branch is intact + correct:
+```tsx
+// MosaicViewsArgumentsField.tsx SourceInput (unchanged since WC59 f3787cb)
+if (spec.source === 'fixed') {
+  if (arg.entity_type !== '') {
+    return <EntityAutocomplete basePath={basePath} entityType={arg.entity_type} .../>;
+  }
+  return <DebouncedTextInput value={spec.value ?? ''} .../>;   // raw-value fallback
+}
+```
+`git log -S "spec.entity_type"` on the field → no hits (the branch never read the stored spec's type; it
+has always gated on `arg.entity_type`, the /arguments descriptor). So the widget choice depends ENTIRELY
+on what the endpoint reports.
+
+**Actual root cause — the BACKEND `ViewsArgumentsController` (present since ship #36, not P0.5/P3-UI/G0):**
+```php
+// derived entity_type ONLY from an entity:* validator:
+$entityType = '';
+if (str_starts_with($validator, 'entity:')) { $entityType = substr($validator, 7); }
+```
+Live witness of the failing argument (drush, replicating the old derivation):
+```
+id=term_node_tid_depth  class=Drupal\taxonomy\Plugin\views\argument\IndexTidDepth
+  plugin_id=taxonomy_index_tid_depth
+  validate.type (validator) = "none"
+  => derived entity_type = ""  <<< EMPTY = raw-id branch (no autocomplete)
+```
+The taxonomy "term ID (with depth)" contextual filter carries validator **"none"** (the author set no
+entity validator), so `entity_type` came back `''` → the frontend's `arg.entity_type !== ''` gate failed →
+plain raw-id box. The existing `ViewsArgumentsApiTest` only covered an `entity:user` validator, so the
+validator-"none" case had NO coverage — the gap was invisible. (`getEntityType()` on the handler returns
+the base table's entity `node`, not the target `taxonomy_term`, so it can't be used naively.)
+
+### W2 — FIX (backend only; both surfaces share the endpoint + field)
+`ViewsArgumentsController::argumentEntityType()` now also maps the well-known entity-targeting Views
+argument plugins when there is no `entity:*` validator:
+```php
+return match ($plugin_id) {
+  'taxonomy_index_tid', 'taxonomy_index_tid_depth', 'taxonomy' => 'taxonomy_term',
+  default => '',
+};
+```
+Live witness AFTER the fix:
+```
+id=term_node_tid_depth  validator=none  entity_type="taxonomy_term"  <<< FIXED: autocomplete branch
+entity-label/6            -> {"id":"6","label":"Citrus"}
+entity-autocomplete?q=Cit -> [{"id":"6","label":"Citrus"}]
+```
+No frontend change → **no dist rebuild, no libs bump**. The docblock example (which wrongly showed
+`validator:"taxonomy_term"`) was corrected to the real `validator:"none"` + plugin-derivation note.
+
+### W3 — RED → GREEN
+**Kernel (the real oracle, fills the coverage gap) — `ViewsArgumentEntityTypeTest` 2/2, 34 assertions.**
+RED demonstrated by neutering the plugin map:
+```
+WC61: taxonomy_index_tid_depth → taxonomy_term
+Failed asserting that two strings are identical.
+-'taxonomy_term'
++''
+Tests: 1, Assertions: 18, Failures: 1.
+```
+GREEN with the map restored: `OK (2 tests, 34 assertions)`. A guard cell asserts a plain numeric (nid)
+argument stays `entity_type:''` (no over-reach).
+
+**Vitest guard — `viewsFields.test.tsx` 13/13** (full suite **538/1**, the 1 = pre-existing B-101). The
+existing autocomplete cells were already green because the mock hardcodes `entity_type:'taxonomy_term'` —
+they test the frontend branch in isolation and never exercised the backend derivation (same gap). The new
+guard locks: a descriptor with `entity_type:''` shows the plain input, not the autocomplete.
+
+**e2e re-film — `cpve3-wc61.spec.ts`, node 986, PASS:**
+```
+[WC61] reopen field value = "Citrus" (expected Citrus, NOT 6)
+  2 passed
+```
+Frame `wc61-reopen-shows-label.png`. Both surfaces (component panel + data-source picker) share
+`MosaicViewsArgumentsField` + the `/arguments` endpoint, so the backend fix covers both; the data-source
+render is additionally covered by the `dataSourceViewsPicker` Vitest.
+
+### W4 — gates + package
+Kernel — mosaic_views FULL (below) · Vitest 538/1 · phpcs **0 ERRORS** (controller + new test) · phpstan
+**[OK]**. Ship #39 set 27 → **29** (17 M + 12 new): `ViewsArgumentsController.php` [M] +
+`ViewsArgumentEntityTypeTest.php` [new]. Scratch `web/cpve3_content.php` (D-walk content) is NOT staged.
+
+### STOP — reviewer audits the WC61 film + oracle; Arun re-walks A2 + C3 (fixed taxonomy autocomplete).
