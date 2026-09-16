@@ -13122,6 +13122,25 @@ Mosaic git read-only verified: log -2 (fcae651 rider / 137327c ship #39), tracke
 parent 137327c. Rider = data-source picker auto-selects the first embeddable display (parity w/ component
 panel); libs 1.0.29. **#62 CLOSED on rider.** → ACT 2 opens.
 
+### PROBE-COMPONENT-PIPELINE — READ-ONLY research (2026-09-16) — reports/PROBE-COMPONENT-PIPELINE.md
+Mosaic git untouched (working tree clean, HEAD d0fdb22 = ship #40 committed by Arun; no source edits, scratch
+probe files deleted). Fresh-read: every answer file:line-quoted or live-probed. **Headlines:** Q1 discovery =
+MosaicComponentManager (DefaultPluginManager, PHP-Attribute scan + SdcComponentDiscovery setter, NOT a
+plugin.manager.sdc wrapper); SOLE gate = `.mosaic.yml` sidecar required (SdcComponentDiscovery.php:45-48) —
+live diff proved `olivero:teaser` (theme SDC) EXCLUDED, only Mosaic's 12+mosaic_view+webform_embed admitted.
+Q2 no-sidecar SDC = DROPPED; full key inventory (SIDECAR_KEYS 10 + fromSidecarYaml + manifest defaults);
+`restricted`/top-level `summary` NOT sidecar keys. Q3 schema→field derivation is TS-adapter defToField (enum→
+select, string→text, bool→radio, number, array, object; `$ref` UNMODELED→raw text); field_types override.
+Q4 SDC `slots:` NEVER parsed — Mosaic zones = Puck Slots API {type:'slot'} from PHP getSlotDefinitions()/
+sidecar, stored nodes[id].slots.{zone}; unrelated to SDC slots. Q5 render = DIRECT Twig (provider:id), NOT
+'#type'=>component; per-component SDC css reaches PAGE via core auto-attach (live: mosaic_columns/image.css on
+node/780) but NOT the builder canvas/TierB-SSR/iframe (witnessed GAP). Q6 component_package = SCHEMA-ONLY
+config entity, ZERO consumers, no class/no shipped base; governance = node_type 3rd-party mosaic.allowed_components;
+mosaic_registry DORMANT (CEM importer creates no config, drives composer/module install). Q7 variant enum→select→
+BEM class; no free-text className; design tokens = :root CSS vars page-wide + per-instance StyleOverridesControl
+text slots (never enum). Q8 8 field-type plugins (6 core+2 views) + 5 UNCONDITIONAL panel sections per component
+(labels not t()-wrapped). **STOP after push — evidence only, design is the reviewer's job.**
+
 ### ═══ ACT 2 — VISUAL CAMPAIGN (opened 2026-09-16, charter A2-0) ═══
 Arun-driven: his screenshots + design-AI set direction; reviewer runs REVIEWER-RESEARCH (Webflow/Framer/
 Canva/Builder.io benchmarks) before design rulings. A2-0 opener = INVENTORY + CLEAR-DEFECT POLISH, NO taste
