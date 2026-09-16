@@ -13117,6 +13117,33 @@ MosaicViewsArgumentsField collapsed the fixed-value input to the plain Debounced
 oracle-change → W4 gates+dist+libs+album+ledger+report. STOP after W4 — reviewer audits film, Arun re-walks
 A2 + rewritten C2/D4/D6.
 
+### ★ SHIP #39R SHIPPED 2026-09-16 = commit fcae651 (parent 137327c, == origin) — 5 files — WC62 CLOSED on rider (tally 62)
+Mosaic git read-only verified: log -2 (fcae651 rider / 137327c ship #39), tracked tree clean, HEAD==origin,
+parent 137327c. Rider = data-source picker auto-selects the first embeddable display (parity w/ component
+panel); libs 1.0.29. **#62 CLOSED on rider.** → ACT 2 opens.
+
+### ═══ ACT 2 — VISUAL CAMPAIGN (opened 2026-09-16, charter A2-0) ═══
+Arun-driven: his screenshots + design-AI set direction; reviewer runs REVIEWER-RESEARCH (Webflow/Framer/
+Canva/Builder.io benchmarks) before design rulings. A2-0 opener = INVENTORY + CLEAR-DEFECT POLISH, NO taste
+decisions. A2-0a baseline album (act2-baseline/) · A2-0b ledgered clear defects (ACT2-P0, RED→GREEN + film) ·
+A2-0c design-input packet for Arun. See work log below.
+
+**A2-0 WORK (2026-09-16) — SHIP #40 (ACT2-P0) candidate on fcae651, 4 M PHP-only, no dist/libs:**
+**A2-0a:** act2-baseline/ INDEX = full shot-list inventory (desktop+tablet, one line/frame). Seed frames
+captured via immediate-clip (headless builder closes on full-page shots — WC61): 01-admin-canvas-d/-t,
+11-template-picker-d. Remaining surfaces checkpointed for a running-builder capture (Arun's screenshots drive
+the campaign). **A2-0b:** defect 3 (page_field lists mosaic_layout → EXCLUDED: mosaic_layout/map/password
+skipped; live node/page witness field_mosaic_layout gone) + defect 2 (argument-label raw fallback → humanized
+"Term node tid depth") FIXED; Kernel RED→GREEN 2/35 (RED shown: `+'term_node_tid_depth'` + array-contains
+field_test_layout); mosaic_views FULL 57/885/0; phpcs 0; phpstan [OK]. **Defects 1+4 HONEST-CHECKPOINTED
+(witness-first):** #1 breakpoint-override machine-name panel needs baseline frame 04b as witness (adapter
+already humanizes via props.title/descriptor.label ?? humanizeFieldName — the raw-key panel not reproduced
+headless); #4 carousel/tabs render-count ≤2 needs a render-count instrument (MosaicViewsArgumentsPanel already
+React.memo). **A2-0c:** reports/ACT2-DESIGN-PACKET.md (top-10 author surfaces frequency-ranked + candidates:
+actionBar preview spike, FE chrome scope, F-099, F-037 picker, page_field polish). Reports REPORT-ACT2.md +
+SHIP-40.md. **STOP — reviewer audits defects 2+3 + album; Arun reviews packet + rules ACT 2 directions
+(reviewer runs REVIEWER-RESEARCH Webflow/Framer/Canva/Builder.io first).**
+
 ### RIDER CP-VE3-R1 — WALK-CATCH #62 FIXED (GREEN) 2026-09-16 — data-source Display auto-select
 On ship #39 (137327c), read-only mosaic git. Rider set = **5 M, 0 new** (ViewsDataSourceField.tsx +
 dataSourceViewsPicker.test.tsx + mosaic.libraries.yml + dist×2). **WITNESS-FIRST (charter):** component panel
