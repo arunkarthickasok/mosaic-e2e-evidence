@@ -663,3 +663,46 @@ Kernel — mosaic_views FULL (below) · Vitest 538/1 · phpcs **0 ERRORS** (cont
 `ViewsArgumentEntityTypeTest.php` [new]. Scratch `web/cpve3_content.php` (D-walk content) is NOT staged.
 
 ### STOP — reviewer audits the WC61 film + oracle; Arun re-walks A2 + C3 (fixed taxonomy autocomplete).
+
+---
+
+## RIDER CP-VE3-R1 — WALK-CATCH #62 — data-source Display auto-select — 2026-09-16
+
+Post-ship #39 (`137327c`) rider. Arun walk 2026-09-16: A1/A2/A3/B1/C1/C2/D1-D6/E ALL PASS (incl. A2-redo +
+C2-redo); #61 CLOSED on ship. **WC62 (tally → 62):** the data-source picker's Display doesn't auto-select
+when one embeddable display exists; the component panel does — parity gap.
+
+### Witness-first (charter S3: "witness that first")
+Component panel `MosaicViewsDisplayField.onViewChange`:
+```tsx
+const onViewChange = (viewId: string): void => {
+  const entry = views.find((v) => v.id === viewId);
+  onChange({ view: viewId, display: entry?.displays[0]?.id ?? '' }); // auto-selects first display
+};
+```
+Data-source picker `ViewsDataSourceField.handleViewChange` (WC62 — cleared it):
+```tsx
+onConfigChange({ ...config, view_id: viewId, display_id: '' });  // forces a manual pick
+```
+
+### Fix (mirror the panel)
+```tsx
+const entry = views.find((v) => v.id === viewId);
+onConfigChange({ ...config, view_id: viewId, display_id: entry?.displays[0]?.id ?? '' });
+```
+When exactly one embeddable display exists it is selected; else the first — identical to the component panel.
+
+### RED → GREEN (Vitest `dataSourceViewsPicker`)
+GREEN with the fix. RED demonstrated by reverting to `display_id: ''`:
+```
+× CP-VE3-R1 (WC62): selecting a view auto-selects its first embeddable display
+AssertionError: expected "vi.fn()" to be called with arguments: [ ObjectContaining{…} ]
+-     "display_id": "embed_1",
++     "display_id": "",
+```
+Full Vitest **539 / 1** (B-101). tsc clean. dist builder+FE rebuilt, **0** debug leaks. libs **1.0.28 → 1.0.29**.
+Rider set: **5 modified, 0 new** (SHIP-39R.md).
+
+### Polish candidate (ACT 2, ledgered): the page_field source lists the mosaic layout field itself — exclude non-sensical fields.
+
+### STOP — reviewer audits the rider; ACT 2 VISUAL CAMPAIGN opener comes from the reviewer.

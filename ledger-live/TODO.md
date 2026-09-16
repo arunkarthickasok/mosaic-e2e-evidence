@@ -13117,6 +13117,33 @@ MosaicViewsArgumentsField collapsed the fixed-value input to the plain Debounced
 oracle-change → W4 gates+dist+libs+album+ledger+report. STOP after W4 — reviewer audits film, Arun re-walks
 A2 + rewritten C2/D4/D6.
 
+### RIDER CP-VE3-R1 — WALK-CATCH #62 FIXED (GREEN) 2026-09-16 — data-source Display auto-select
+On ship #39 (137327c), read-only mosaic git. Rider set = **5 M, 0 new** (ViewsDataSourceField.tsx +
+dataSourceViewsPicker.test.tsx + mosaic.libraries.yml + dist×2). **WITNESS-FIRST (charter):** component panel
+MosaicViewsDisplayField.onViewChange auto-selects `entry?.displays[0]?.id ?? ''` (list endpoint pre-filters to
+≥1 embeddable display). **WC62:** ViewsDataSourceField.handleViewChange cleared display_id to '' → forced
+manual pick. **FIX:** mirror the panel — auto-select the view's first embeddable display. **Vitest RED→GREEN:**
+dataSourceViewsPicker R1 cell GREEN (RED demonstrated: `-'embed_1' +''`); full 539/1 (B-101); tsc clean; dist
+builder+FE rebuilt 0-leak; libs 1.0.28→1.0.29. SHIP-39R.md add block (5 M). Report reports/REPORT-CP-VE3.md
+§CP-VE3-R1. **STOP — reviewer audits the rider, then ACT 2 VISUAL CAMPAIGN opener comes from the reviewer.**
+
+### ★ SHIP #39 SHIPPED 2026-09-16 = commit 137327c (parent d915ee7, == origin) — 29 files — CP-VE3 CLOSED = THE VIEWS ACT CLOSED (ships #36–#39)
+Mosaic git read-only verified: log -2 (137327c ship #39 / d915ee7 ship #38), status clean of tracked changes,
+HEAD==origin, parent d915ee7. cpve3_content.php (docroot scratch) + cpve3-live/-preset/-wc61 spec films
+untracked/gitignored as designed. **Ship #39 = CP-VIEWS-EMBED-3:** shared MosaicViewRenderer, panel-driven
+inert SSR preview (P1), exposed-filter + pager query cacheability on embed AND data-source paths (P2/P3),
+six argument sources in the data-source picker + host-context threading (P3-UI/G0), debounced plain-value
+commits (P0.5), taxonomy-argument entity-type mapping (WC61). **THE VIEWS ACT (ships #36 embed → #37 argument
+sources → #38 optimistic commit → #39 depth+parity+preview) IS CLOSED.**
+**Arun walk verbatim (2026-09-16): A1/A2/A3/B1/C1/C2/D1-D6/E ALL PASS** incl. A2-redo + C2-redo; **#61 CLOSED
+on ship.**
+**WALK-CATCH #62 (tally → 62) — PARITY RIDER:** the data-source picker's Display does NOT auto-select when
+exactly one embeddable display exists (the component panel DOES). Fixed by RIDER CP-VE3-R1 below.
+**POLISH CANDIDATE (ACT 2):** the page_field source lists the mosaic layout field itself — exclude
+non-sensical fields (the layout field, computed/base fields that can't be a contextual value).
+**REVIEWER NOTE (standing):** walk steps must be TRANSCRIBED from the filmed UI, never paraphrased (C2 step-3
+mismatch caught). Applied to WALK docs going forward.
+
 ### WALK-CATCH #61 — FIXED (GREEN) 2026-09-15 — fixed-value taxonomy autocomplete restored
 **W1 witness (quote, not guess) DISPROVED the suspected cause:** the frontend branch is intact + unchanged
 since WC59 (`git log -S spec.entity_type` → no hits; SourceInput gates on `arg.entity_type` from the
