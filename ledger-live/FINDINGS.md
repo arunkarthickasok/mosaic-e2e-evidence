@@ -2458,3 +2458,29 @@ bypassed; the corrected smoke-alarm on node 800 (mosaic_tabs, sidecar-only) DID 
 → NULL, 1 missing component, tabs unrendered. **Implication:** the SdcComponentDiscoveryTest + the live smoke-
 alarm both target a sidecar-only path so the bare-keying stays covered; a future refactor that removes a PHP
 class for carousel/tabs/live_search must keep the alias intact.
+
+---
+
+## FINDING-108 — `getPropDefinitions()` returns the JSON-schema ROOT; adopted components return `[]`
+CP-ADOPT-2 PASS 2 (2026-09-17). Two coupled facts, both load-bearing for the panel-from-schema wiring:
+
+1. **`getPropDefinitions()` returns the full JSON-schema root `{type, properties, required}`, NOT the
+   properties map.** Documented at `SdcComponentPlugin.php:46-48` ("Returning the full JSON Schema object
+   (type/properties) matches what PHP #[MosaicComponent] classes return"). The TS adapter reads
+   `manifest.propDefinitions?.properties ?? {}` (`MosaicPuckAdapter.ts:403,666`) — i.e. it dereferences
+   `.properties` before iterating. **Consequence:** any PHP that derives per-prop data from the manifest's
+   `propDefinitions` MUST read `propDefinitions['properties']` (and `['required']`), never iterate the root.
+   The first `buildPropDescriptors` draft iterated the root and emitted descriptors for the literal keys
+   `type` + `properties` (both kind=raw) — caught by the live probe before any test, fixed to read
+   `.properties`. Kernel + live now correct.
+
+2. **Adopted (theme/other-module) components return `[]` from `getPropDefinitions()`.** `SdcComponentPlugin`
+   resolves a co-located `.component.yml` by `template_path`; that path is wired for owned/PHP-class components
+   but NOT for theme-provided adopted components, so `olivero:teaser->getPropDefinitions()` = `[]`. **Yet the
+   registry derives olivero's full descriptor set directly from the core `plugin.manager.sdc` schema**
+   (`attributes → raw`, matching its Attention grade). So: the registry (Pillar B derivation) works for adopted
+   schema TODAY; the *manifest emission* for adopted is empty because of this `getPropDefinitions()` gap — the
+   same boundary that keeps adopted components palette-guarded. **Implication:** opening the palette to adopted
+   components (a future slice) requires either wiring adopted `getPropDefinitions()` to the core SDC props or
+   deriving the manifest's descriptors from the discovery definition instead of the plugin — do it there, with
+   the palette guard, not in this pillar.
