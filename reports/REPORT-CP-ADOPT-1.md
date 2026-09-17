@@ -122,3 +122,56 @@ config/DB** and REQUIRES Arun's sanction word in the triggering message. This ch
 sanction word → **P2 is not started; STOP-and-ask at that gate** per the charter.
 
 ### STOP — reviewer audits §P0 (the derivation blueprint); P1 discovery build is the next focused pass; P2 awaits the sanction word.
+
+---
+
+## §P1 — BUILD (interim checkpoint, 2026-09-17) — building blocks GREEN; hot-path integration honest-checkpointed
+
+Mosaic git READ-ONLY (files edited, uncommitted — Arun commits at ship #41). No dev writes in this pass.
+Order note (honest): the alias map (step 1) is a **no-op until the core-SDC rebase (step 3)** — its consumer
+threading + smoke-alarm can only bite post-rebase — so I built the two **isolated, self-contained units**
+first (grader step 2 + the alias-map class step 1) to green, and honest-checkpoint the coupled hot-path
+integration (threading + rebase) as one change, per the coupling flagged in §P0.
+
+### DONE + GREEN
+**Grader (Pillar A) — `src/Sdc/MosaicComponentGrader.php` + `tests/src/Unit/Sdc/MosaicComponentGraderTest.php`:**
+Ready / Attention(prop+reason) / Blocked; slots-only = Ready; shape test mirrors `defToField`
+(enum→select; string/integer/number/boolean/array/object mapped; `$ref` + unknown type → raw fallback →
+Attention); tolerant readers for `group`/`replaces`/`internal`/`variants`. Cells C1 (all-map=Ready), C3
+(raw-fallback=Attention, names `geo`+`hero`, `$ref` reason), C4 (slots-only=Ready), C5 (no-schema=Ready),
+C6 (unrenderable=Blocked), tolerated-keys, + smoke-alarm.
+RED proof (neuter `mapsToKnownShape → TRUE`):
+```
+=== RED (mapsToKnownShape → TRUE): C3 must fail ===
+Failed asserting that two strings are identical.
+FAILURES!  Tests: 1, Assertions: 1, Failures: 1.
+```
+Restored → GREEN.
+
+**Alias map (H1) — `src/Sdc/MosaicComponentAlias.php` + `…/MosaicComponentAliasTest.php`:**
+`toCanonical` (bare→provider:id for owned) / `toBare` (provider:id→bare) / `isOwned` /
+`fromSdcDefinitions` / `providerIsOwned`; owned = provider is `mosaic`/`mosaic_*`; adopted (`olivero:teaser`)
++ unknown ids + the `mosaic_region` literal pass through unchanged; both directions idempotent. Smoke-alarm:
+bypassing `toCanonical` leaves a bare `mosaic_view` un-resolved (≠ `mosaic_views:mosaic_view`).
+
+**Gates on these units:** Unit **15 tests / 54 assertions OK**; phpcs **0 ERRORS** (4 files; warnings =
+pre-existing line-length); phpstan L6 **[OK] No errors**. No dist change → no libs bump.
+
+### NOT STARTED — honest checkpoint (the integration heart of CP-ADOPT-1)
+These are the large, coupled, hot-path + live-write pieces; not begun this pass and NOT faked:
+- **Step 1 threading + Step 3 core-SDC rebase (H2):** thread `MosaicComponentAlias` through the 8 censused
+  consumers (§P0.2) AND re-base `SdcComponentDiscovery::discover()` on core `plugin.manager.sdc` (drop the
+  `.mosaic.yml` gate; sidecar optional; carry grade/provider/theme-bound; cache-tag invalidation), under the
+  "saved layouts render byte-identical" invariant (shasum node/780 before/after) + cells C2/C4/C5/C7/C8. This
+  is one coupled change on the render hot path — deferred to a fresh focused pass rather than rushed at the
+  tail of a very long session (a half-applied gate-removal changes dev discovery on next cache rebuild).
+- **Step 4 palette guard** (`adopt_palette: FALSE`, Permission-Parity admin/FE/anon).
+- **Step 5 full gates + live drush proof** (olivero:teaser graded).
+- **P2** Component Library entity + admin page + node-type form + **live auto-create** (SANCTIONED, dev-only) —
+  not started; runs in the same focused pass after P1 integration is green.
+- **P3** Playwright lifecycle · **P4** close/SHIP-41-PLAN.
+
+No red left red: the two built units are green; the only RED (grader C3) was a deliberate smoke-alarm,
+demonstrated then restored. No oracle changed.
+
+### INTERIM CHECKPOINT filed — not CHECKPOINT-1 (which requires all of P1). Next focused pass: thread+rebase (1+3) → guard (4) → gates (5) → CHECKPOINT-1 → P2 (live, sanctioned) → P3 → P4.
