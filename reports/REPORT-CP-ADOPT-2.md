@@ -200,15 +200,84 @@ dist / libs     none        (no TS change this pass)
 | 1 | Grader C1 `testC1AllPropsMapIsReady` | bare `object` prop → READY | object moved OUT; grades ATTENTION (`testBareObjectIsAttention`) | PropShape maps a property-less object to raw (empty/opaque editor); **zero live effect** (no object props exist) |
 | 2 | ManifestControllerTest / MosaicLayoutWidgetTest | `new MosaicManifestBuilder(2 args)` | 3 args (+registry via real Symfony EventDispatcher) | registry injected |
 
-### CHECKPOINT-1 — remaining slice (next pass), each RED→GREEN
-- **Item 2 (TS half):** MosaicPuckAdapter maps `prop_descriptors[name]` → a Puck field as the LAST step
-  (`descriptorToField`, mirroring `defToField` so it is byte-identical for owned); `field_types` sidecar
-  override still wins (F-084 cell); boolean keeps the Yes/No radio. Vitest cells; **dist rebuild → BUMP-LIBS**.
-- **Item 4 (H5):** save-time validation on the layout save path via the registry — invalid enum rejected,
-  html-bearing prop without a text format rejected, unknown prop tolerated (forward-compat), valid passes —
-  Kernel cells.
-- **Item 5 (full):** re-establish the canonical region extraction; prove region shasum before==after WITH the
-  adapter change; live owned-manifest diff = descriptor keys ADDED, no field type/label changed (quote).
-- **Adopted manifest emission** (FINDING-108) — folded into the palette-guard-opening slice, not this pillar.
+---
 
-### STOP — reviewer audits the PHP derivation half (all gates green); the TS/dist/H5 slice → CHECKPOINT-1 next.
+## §P1 (PASS 3) — CHECKPOINT-1 FILED: F-108 + TS adapter + H5 + dist, all green
+
+The coupled slice the PASS-2 checkpoint deferred. Everything on disk, uncommitted (Mosaic git read-only).
+**Full ADOPT-2 set now 28 files: 17 modified + 11 new** (PASS 2's 13 + PASS 3's: F-108/adapter/H5 + the dist
+rebuild + the region-shasum script + the .gitignore exception).
+
+### LEDGER FIRST (recorded in ledger-live/TODO.md before the build)
+- **(a) ORACLE CHANGE — region-shasum baseline.** OLD `0864e238…` (ad-hoc, never scripted, non-reproducible)
+  → NEW `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec` (3954 bytes) via a **committed
+  script** `web/modules/custom/mosaic/scripts/qa/region-shasum.sh` (a `.gitignore` exception ships it, mirroring
+  `e2e-setup.sh`). Reviewer accepted on condition it ships — it does. Every later CP quotes
+  `region-shasum.sh <url>` before==after.
+- **(b) TRUTH-PASS — F-098 headline.** "Mosaic adopts any component library and feeds it Drupal data … without
+  the library knowing Mosaic exists." Recorded as a **candidate, NOT ratified**; stands as a release headline
+  only after the external-library oracle walk is filmed green.
+
+### Item 1 — F-108 FIX: adopted components expose their props schema [DONE, GREEN]
+`ComponentDefinition` now carries the core SDC `props` root (populated by `fromCoreDefinition`, the adopted
+path; threaded through `withGrade` + `toPluginDefinition`); `SdcComponentPlugin::getPropDefinitions()` prefers
+it, falling back to the co-located `.component.yml` for owned sidecar comps (that path byte-identical). LIVE:
+`olivero:teaser` `getPropDefinitions()` now returns `{type, properties}` (was `[]`) → **prop_descriptors count
+= 1** (`attributes → raw`, Attention reason intact). mosaic_card unchanged (7). **Kernel
+`AdoptedDescriptorParityTest` 1/13** (installs olivero; adopted manifest descriptors == the registry derivation
+of the same core props; adopted stays palette-guarded). **RED demo:** neuter the F-108 branch → the parity cell
+fails ("Failed asserting that an array has the key 'properties'") → restored clean.
+
+### Item 2 — TS adapter consumes prop_descriptors → Puck field [DONE, GREEN]
+`schema.ts` gains `PropDescriptorJson` + `manifest.prop_descriptors`. The `toConfig` field-assembly's base step
+is now `propsFieldsFromDescriptors(manifest.prop_descriptors, props)` → `descriptorToField` maps a descriptor →
+a Puck field, **byte-identical to the legacy `defToField`** for owned shapes (text→text, enum→select
+value-as-label, number→number±min/max, **boolean→Yes/No radio**); repeatable/media/raw defer to the schema
+field; a prop with no descriptor falls back to `defToField` verbatim; `field_types` sidecar override still wins
+(F-084). **Vitest `PropDescriptors.test.ts` 8/8**, incl. the byte-identical proof (descriptor path === legacy
+path for every user prop) + F-084 field_types-wins + the fallback. dist rebuilt (`builder.js`,
+`frontend-editor.js`).
+
+### Item 3 — H5 save-time validation via the registry [DONE, GREEN]
+`MosaicPropValidator` injects the registry and adds `validateShapes()` — a formatted_text (HTML) prop that
+carries content but declares no sibling `{prop}Format` is rejected at save; unknown props (no descriptor) are
+tolerated. Safe: no owned component uses a bare-schema `contentMediaType`, so zero regression. **Kernel
+`PropShapeSaveValidationTest` 4/4:** invalid enum rejected, html-without-format rejected, unknown-prop
+tolerated, valid passes — driven through the real `MosaicPropValidator::validate()` with a fixture component
+(`mosaic_test_shape`: an enum `variant` + a formatted_text `body`). **RED demo:** neuter `validateShapes` → the
+html-without-format cell fails ("true is false") → restored. Translatable flag (string/html/uri) already emitted
+on the descriptor (PASS 2), flag only.
+
+### Item 4 — byte-identical via the committed script; palette guard CLOSED [DONE, GREEN]
+`region-shasum.sh http://localhost/node/780` → **`14e6cb9c…` (3954 B) BEFORE (pre-code) == AFTER (dist rebuilt +
+libs bumped + `drush cr`)**. Palette guard unchanged: 15 components, only `olivero:teaser` guarded
+(`adopt_palette=FALSE`), absent from the FE/admin manifest. **Owned-manifest diff (additions only)** — mosaic_card
+entry top-level keys gained `prop_descriptors` while `propDefinitions.properties`
+(title,description,image_url,image_alt,link_url,link_text,variant) and `field_types` (none) are unchanged; no
+field type or label changed (Vitest proves the derived fields are identical).
+
+### Item 5 — dist rebuild + BUMP-LIBS [DONE]
+Bundling event: `vite build --config vite.builder.config.ts` (builder.js 1,246 kB) + `--config
+vite.frontend-editor.config.ts` (frontend-editor.js 776 kB). **BUMP-LIBS: `mosaic.libraries.yml` 1.0.29 →
+1.0.30** (all three libraries — renderer/frontend-editor/builder cache-buster). NB **FINDING-109**: the
+`package.json` `"build"` script points to a stale `vite.bundles.config.ts` (renamed to
+`vite.builder.config.ts` + `vite.frontend-editor.config.ts`); ledgered to fix the script.
+
+### Full gates (PASS 3)
+```
+Unit FULL     2758/2758 OK  (6615 assertions; 1 pre-existing warning — mosaic_registry, untouched)
+Kernel FULL    209/209  OK  (1270 assertions; +5 from the two new Adopt Kernel classes; 0 failures)
+Vitest FULL    547 pass / 1 fail  (the 1 fail = pre-existing B-101: MosaicPuckAdapter.test.ts:148 expects the
+                                    Puck-0.21-removed 'checkbox'; a descriptor-less manifest → identical
+                                    defToField radio path, so NOT touched by this change)
+phpcs           0 errors    phpstan L6  No errors (exact changed files)
+byte-identical  region shasum 14e6cb9c before==after (committed script);  palette guard CLOSED
+```
+
+### Oracle-change register (PASS 3)
+| # | Test | Old | New | Reason |
+|---|---|---|---|---|
+| 3 | ManifestControllerTest / MosaicLayoutWidgetTest | (PASS 2 3-arg) | unchanged | — |
+| 4 | MosaicPropValidatorTest | `new MosaicPropValidator(4 args)` | 5 args (+registry) | H5 registry injection |
+
+### STOP — CHECKPOINT-1 FILED (all gates green). Reviewer audits; then the ship #42 human-commit (SHIP-42-PLAN.md).

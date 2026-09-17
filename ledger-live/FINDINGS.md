@@ -2484,3 +2484,15 @@ CP-ADOPT-2 PASS 2 (2026-09-17). Two coupled facts, both load-bearing for the pan
    components (a future slice) requires either wiring adopted `getPropDefinitions()` to the core SDC props or
    deriving the manifest's descriptors from the discovery definition instead of the plugin — do it there, with
    the palette guard, not in this pillar.
+
+---
+
+## FINDING-109 — `package.json "build"` points to a renamed/missing vite config
+CP-ADOPT-2 PASS 3 (2026-09-17). `js/package.json` `"build": "vite build --config vite.bundles.config.ts"`, but
+`vite.bundles.config.ts` does not exist — the bundle build was split into `vite.builder.config.ts`
+(builder.js) + `vite.frontend-editor.config.ts` (frontend-editor.js) and the `"build"` script was never
+updated. `npm run build` fails with `UNRESOLVED_ENTRY: Cannot resolve entry module vite.bundles.config.ts`.
+**Correct rebuild:** `npx vite build --config vite.builder.config.ts` then `--config
+vite.frontend-editor.config.ts` (the renderer is separate, `build:renderer`, and does not use the adapter).
+**Fix (ledgered):** update `package.json` — `"build": "vite build --config vite.builder.config.ts && vite
+build --config vite.frontend-editor.config.ts"` — so BUMP-LIBS rebuilds don't depend on tribal knowledge.
