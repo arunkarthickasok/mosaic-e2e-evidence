@@ -281,3 +281,30 @@ byte-identical  region shasum 14e6cb9c before==after (committed script);  palett
 | 4 | MosaicPropValidatorTest | `new MosaicPropValidator(4 args)` | 5 args (+registry) | H5 registry injection |
 
 ### STOP — CHECKPOINT-1 FILED (all gates green). Reviewer audits; then the ship #42 human-commit (SHIP-42-PLAN.md).
+
+---
+
+## §P1 (PASS 4) — HELD-FILE CORRECTION
+
+**Violation:** PASS 3 implemented F-108 by editing `src/Plugin/MosaicComponent/SdcComponentPlugin.php`
+(`getPropDefinitions()` prefers stored props). That file is **HELD** (Wave 5.2 / bible P1.2) and must not be
+touched. **Honest finding from the full `git diff`:** the entire uncommitted delta on that file was my F-108
+hunk — there was **no** separate pre-existing uncommitted Wave-5.2 delta in the working tree; the held file's
+pre-ADOPT-2 content is exactly HEAD (`5a65173`).
+
+**Correction (git stays read-only — reverted via the Edit tool, not `git checkout`):**
+- `SdcComponentPlugin.php` restored to **pristine** — `git diff` on it is now **empty** (0 delta vs HEAD). Its
+  `getPropDefinitions()` still returns `[]` for an adopted theme component, unchanged. (It carries a
+  pre-existing phpcs `@return` sniff at line 50, present in HEAD — left untouched per the held-file law.)
+- F-108 **moved to the definition path**: `MosaicManifestBuilder::buildPropDescriptors($propDefinitions, $def)`
+  now falls back to the discovery-stored `$def['props']` (set by `ComponentDefinition::fromCoreDefinition`,
+  emitted by `toPluginDefinition`) when `getPropDefinitions()` yields no properties. No held file involved.
+- `AdoptedDescriptorParityTest` updated to assert F-108 on the definition path: the held plugin returns `[]`,
+  the definition carries `props`, and the manifest descriptors equal the registry derivation of those props.
+
+**Re-verified:** teaser `prop_descriptors` count = **1** (`attributes → raw`); byte-identical
+`14e6cb9c…` before==after via `scripts/qa/region-shasum.sh`; Adopt Kernel **11/11**; Unit FULL 2758/2758;
+Kernel FULL 209/209; phpcs 0 on the ADOPT-2 change set; phpstan L6 OK. **No dist/adapter change this pass** →
+libs stay 1.0.30, no re-bump. **Ship set recount: 27 files (16 modified + 11 new)** — the held plugin dropped.
+
+### STOP (PASS 4) — held file pristine, F-108 on the definition path; ship #42 = 27 files, held plugin NOT in the set.

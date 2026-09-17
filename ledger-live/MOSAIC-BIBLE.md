@@ -95,7 +95,7 @@ cleanup).
 catalog · headless · versioned upgrades · full render-element migration ·
 Lighthouse. (D-3 all-in render, M5 F-037, M6 production sites, R-C5, D-6
 all post-tag / 1.1 per the M-rulings.)
-Honest timeline of record: **6–7.5 weeks to tag.**
+Honest timeline of record: **9.5–11 weeks to tag (early-to-mid December), soak week fixed.** (Amended 2026-09-17, CP-ADOPT-2 PASS 4; was 6–7.5 weeks.)
 
 ## P5 — POINTERS
 Ledger AI/TODO.md · Findings AI/FINDINGS.md · Audits MASTER-AUDIT.md,
@@ -110,7 +110,7 @@ repo decides.
 ## TAG 1.0.0 CRITERIA (ratified 2026-09-17)
 All waves closed · tag-scope submodules walked green · ADOPT §5 oracle
 green · RC-A3 spike answered · findings clear or accepted · MOSAIC.md
-truthful · Arun's soak (production sites = post-tag). Timeline 6–7.5 weeks.
+truthful · Arun's soak (production sites = post-tag). Timeline 9.5–11 weeks (early-to-mid December), soak week fixed.
 
 *v2 — RATIFIED 2026-09-17 by Arun's delegated ruling ("you are sole
 responsibility to this now so take a right call"); overrule open.*
