@@ -276,3 +276,69 @@ library switch + Kernel CRUD/parity — plus a LIVE sanctioned `updb`/auto-creat
 its own; starting it at the tail of this one would mean a rushed config entity + install hook (exactly what
 the honest-checkpoint law warns against). The rebase (the hard part) is done, verified, and green — P2 builds
 cleanly on it next. **STOP — reviewer audits CHECKPOINT-1; next pass: P2 live → CHECKPOINT-2 → P3 → P4.**
+
+---
+
+## §P2 — CHECKPOINT-2 (PASS 5, 2026-09-17) — COMPONENT LIBRARY ENTITY + GOVERNANCE
+
+Reviewer acceptances recorded: C5 oracle change ACCEPTED (grade labelled "Ready (static)" in the report);
+Sprint02 gate-cell flips ACCEPTED. Mosaic git READ-ONLY (uncommitted, ship #41 candidates). PHP + YAML only →
+no dist, no BUMP-LIBS.
+
+**Item 1 — `mosaic_component_library` ConfigEntityType** (`src/Entity/MosaicComponentLibrary.php` + schema
+`mosaic.component_library.*`): id=provider, provider_type module|theme, status, components[]{id,enabled,
+restricted} (H8). Readiness is COMPUTED from the (cached) manager at display time, NEVER stored (config export
+asserted to omit grade/readiness).
+
+**Item 2 — idempotent auto-create** (`MosaicComponentLibrarySync` + `hook_install` + `mosaic_update_10003`).
+Live sanctioned run:
+```
+>  [notice] CP-ADOPT-1: created 4 component libraries (olivero, mosaic_components, mosaic_views, mosaic_webform).
+>  [notice] Update completed: mosaic_update_10003
+```
+Status defaults verified: mosaic_* ON, olivero OFF. Idempotent re-sync → `[]` (0 created, no overwrite).
+`drush cex` clean — exported `mosaic.component_library.olivero.yml`:
+```
+status: false
+id: olivero
+provider_type: theme
+components:
+  - { id: 'olivero:teaser', enabled: true, restricted: false }
+```
+
+**Item 3 — `default_component_package`: REMOVED** (decision). No consumer, pointed at a schema-only
+`component_package` entity that never existed. Removed from `mosaic.settings.yml` + schema; unset from live
+config in `mosaic_update_10003` (`$settings->clear('default_component_package')->save()`); verified absent on dev.
+
+**Item 4 — admin page** `/admin/config/mosaic/component-libraries` (`MosaicComponentLibrariesForm`; the old
+`ComponentPackagesController` provider-grouping page is REMOVED — the `mosaic.admin.component_packages` route
+repurposed to the new form + path, menu link retitled). Per library ON/OFF; per component enabled/restricted;
+grade badge + Attention reasons; schema-derived "@p fields, @s slots" living docs; theme-bound note. Access
+(raw): **admin (uid1) 200 · author (uid3) 403 · anon 403** (anon HTTP `403`).
+
+**Item 5 — node-type form** filtered to authorable components (adopted excluded; 14 options on `page`), with a
+link to the libraries page. Write path (`mosaic.allowed_components` third-party setting) UNCHANGED → a bundle
+with a stored allowlist behaves exactly as before (back-compat).
+
+**Item 6 — enforcement** via `MosaicComponentGovernance` (library OFF / component disabled / restricted
+entity-first, PHP-attribute fallback) wired into ManifestController + MosaicLayoutWidget (parity). Live:
+manifest 14 (all ON) → **mosaic_components OFF → 2** (mosaic_view + webform_embed) → restored. Kernel
+`ComponentLibraryGovernanceTest` **5/16**: CRUD/export shape, library-OFF blocks all, C13 disabled, C14
+restricted entity-first (admin sees / author not), H8 attribute-fallback.
+
+**Item 7 — FULL GATES**
+| Gate | Result |
+|---|---|
+| Kernel — mosaic core FULL | **203 / 1231 / 0** (+5 governance; no regression) |
+| Unit — mosaic FULL | **2709 / 6498 / 0** (1 pre-existing warning) |
+| Vitest — full | **539 / 1** (B-101; no JS change) |
+| phpcs (all changed PHP) | **0 ERRORS** |
+| phpstan L6 (new P2 PHP) | **[OK]** |
+| dist / libs | unchanged (PHP+YAML) → no BUMP-LIBS |
+
+**ORACLE-CHANGES (recorded, reviewer to accept):** ManifestControllerTest (constructor +governance arg,
+empty-storage mock → attribute fallback = pre-P2 behaviour); Sprint30SmokeTest (route path + menu title
+component-packages→component-libraries); Sprint80SmokeTest (restricted filter moved to governance →
+assert `isAuthorable`).
+
+**CHECKPOINT-2 CLOSED — all 7 items built + verified live + green. STOP — P3 (Playwright) + P4 (close) are the next pass.**
