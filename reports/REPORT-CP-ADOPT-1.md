@@ -342,3 +342,57 @@ component-packages→component-libraries); Sprint80SmokeTest (restricted filter 
 assert `isAuthorable`).
 
 **CHECKPOINT-2 CLOSED — all 7 items built + verified live + green. STOP — P3 (Playwright) + P4 (close) are the next pass.**
+
+---
+
+## §P3 — JOURNEYS (PASS 6, 2026-09-17)
+
+**J1 — libraries admin page (filmed, geometry).** `/admin/config/mosaic/component-libraries` renders 4 library
+sections in provider order — `Mosaic Components (module) | Mosaic Views (module) | Mosaic Webform (module) |
+Olivero (theme) — theme-bound` — sections non-overlapping (boundingBox order asserted); `olivero:teaser`
+graded **Attention** with its reason. Frames `j1-libraries-admin-page.png`, `j1-olivero-attention.png`. (The
+builder-heavy J2–J5 assert the manifest — the palette's data source — proven reliably below; the live Puck
+builder is unstable under headless capture, so palette states are verified via the manifest, not crash-prone
+builder screenshots. Album `ledger-live/e2e-evidence/cp-adopt-1/INDEX.md`.)
+
+**J2 — governance round-trip (raw):**
+```
+all ON: 14 components
+OFF (mosaic_components): 2 components
+ON again: 14 components
+```
+
+**J3 — per-component (raw):**
+```
+J3a disable mosaic_button: admin manifest has mosaic_button? no (disabled ✓) (count 13)
+J3b restrict mosaic_button: admin sees it YES ✓ · author sees it no ✓   (Permission-Parity)
+```
+
+**J4 — bundle allowlist:** the unchanged P7-039 `mosaic.allowed_components` node-type mechanism (widget-level).
+Write path untouched by P2, so a bundle with a stored allowlist behaves exactly as before (back-compat). NB
+(honest): the bundle allowlist is applied by the admin widget; the FE `ManifestController::manifest()` endpoint
+is bundle-agnostic (pre-existing behaviour, unchanged by CP-ADOPT-1).
+
+**J5 — anon render unchanged (raw):** node/780 region shasum
+`0864e2386cf7725d0c467f9dfc41b20d8fe41df3a5762375e3a4aabc03e894d5` == baseline.
+
+---
+
+## Oracle-change register (CP-ADOPT-1, reviewer to accept)
+
+| # | Test | Old oracle | New oracle | Reason |
+|---|---|---|---|---|
+| 1 | grader C5 | "no-schema = Blocked" (charter) | **Ready (static)** | a propless SDC still renders; Blocked reserved for unrenderable (C6) |
+| 2 | Sprint02 `…SkipsComponentsWithoutMosaicSidecar` | no-sidecar SDC skipped | **admitted** (flipped) | the `.mosaic.yml` gate is deleted (H2) |
+| 3 | Sprint02 `…FindsComponentWithMosaicSidecar` | glob `discover([$dir])` finds fixture | derives from core `plugin.manager.sdc` (mock) | rebase (H2) |
+| 4 | Sprint02 `…BuildsCorrectComponentDefinition` | fixture-sidecar shape | core-SDC shape | rebase (H2) |
+| 5 | ManifestControllerTest (9 cells) | `new ManifestController(4 args)` | 5 args (+governance; empty-storage mock = attribute fallback) | governance injected |
+| 6 | Sprint30 `…RouteRegistered` | `/component-packages` path | `/component-libraries` | admin page replaced |
+| 7 | Sprint30 `…MenuLinkRegistered` | "Component Packages" | "Component Libraries" | menu retitled |
+| 8 | Sprint80 `…FiltersRestrictedTokens` | ManifestController contains `'restricted'` | contains `isAuthorable` | filter moved to the governance service |
+
+Cross-ref: **FINDING-107** (alias bare-keying load-bearing only for the 3 sidecar-only owned components).
+Region-vs-full-page shasum note: node/780's full-page raw shasum moves on any `drush cr` (asset-aggregate
+hashes); the byte-identical invariant is the component-region shasum `0864e238…`, held throughout (§P1).
+
+**CP-ADOPT-1 COMPLETE (P0–P4). STOP — Arun eye-test (walk script below), then the ship #41 human-commit.**
