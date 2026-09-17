@@ -64,3 +64,10 @@ Ship #33 (carousel+search coupled landing, foundation banked) → **Ship #34 "AU
 1.0.0 is the starting gun, not the finish: production exposure, co-maintainers, and six months of wild usage are what convert "promising architecture" into "reliable choice." The tag campaign plans for that day one: case-study site, issue-queue SLA, the public evidence repo strategy.
 
 *End. This document + MASTER-AUDIT-CAPABILITY.md together are the complete state of truth. Next amendment only by Arun's ratified ruling.*
+## AMENDMENT 2026-09-17 (delegated ruling)
+Arun delegated the ADOPT rulings ("you are sole responsibility to this now so take a right call"); recorded as Arun's, overrule open. Full rulings: reports/ADOPT-DESIGN.md §7/§8, MOSAIC-BIBLE.md (v2 RATIFIED), TODO.md "ADOPT RATIFICATION — DELEGATED RULINGS (2026-09-17)".
+- **P-DEV journey amended (M7):** sidecar optional — any SDC on the site adopts with a readiness grade (Ready / Attention / Blocked), per the ADOPT packet. Mosaic no longer refuses a component it did not author; it grades it.
+- **§5 road:** ADOPT inserted at **position 0** (before the author-trust slice); order = 0 ADOPT → 1 author-trust → 2 backend config audit → 3 Wave D → 4 Wave F → 5 Wave G → 6 minimal ACT 2 → 7 dev push → soak → tag 1.0.0.
+- **Deferred to 1.1:** F-037 media picker (M5) and RC-A1 Schema.org.
+- **M1** moderation: Kernel cells at Wave D, live walk at Wave G, ADR at the truth pass. **M2** builder keyboard-drag = RC-A3 spike at Wave F. **M3** onboarding links (setup-status page, three-role permission recipe) folded into the backend config audit (sized S = pre-tag, else labelled post-tag). **M6** production sites = post-tag (this §5).
+- Timeline of record: 6–7.5 weeks to tag.

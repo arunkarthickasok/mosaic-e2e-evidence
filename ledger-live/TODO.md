@@ -13212,3 +13212,9 @@ A2 + C3.**
 ### OPEN QUEUE: WC61 GREEN (reviewer) → Arun re-walk (A2 + C3) → ship #39 human-commit (closes CP-VE3 + Views act) → ACT 2 → Wave D-0+D/F → Wave G → dev push → Arun soak → tag 1.0.0.
 
 [2026-09-16] CP-ADOPT-PACKET filed: reports/ADOPT-DESIGN.md (DRAFT) + ledger-live/MOSAIC-BIBLE-v2-DRAFT.md (DRAFT). Nothing built. Pending Arun ratification of D1–D9.
+
+## ADOPT RATIFICATION — DELEGATED RULINGS (2026-09-17)
+Arun 2026-09-17: "you are sole responsibility to this now so take a right call" — delegated free hand exercised; rulings recorded as Arun's; overrule open.
+D1 admit-all-and-grade, Blocked hidden · D2 derivation in PHP · D3 hybrid render 1.0, all-in = 1.1 ADR · D4 promote component_package → Component library config entity, auto-created · D5 scope A–H + cheap G in 1.0; registry/CEM, headless, versioned upgrades, render migration = 1.1 · D6 external-library oracle walk = tag-gating · D7 names: Component library / Adopt / Ready-Attention-Blocked · D8 H1–H9 pinned · D9 order: 0 ADOPT → 1 author-trust slice (D-1, D-2, D-3-hide, F-095, D-8, D-14) → 2 backend config audit (+M3) → 3 Wave D (+M1 Kernel cells) → 4 Wave F (+M2 RC-A3 keyboard-drag spike, RC-A2 alt-text; +M4 F-081, F-079) → 5 Wave G (+M1 live walk) → 6 minimal ACT 2 (consistency + ugliness only; F-037 → 1.1 labelled) → 7 dev push → soak → tag 1.0.0 + truth pass (+M1 ADR).
+M1 moderation: Kernel cells Wave D, live walk Wave G, ADR at truth pass · M2 as above; RC-A1 Schema.org 1.1 · M3 onboarding links (setup-status page, three-role permission recipe) folded into the backend config audit; audit sizes them: S = pre-tag, else labelled post-tag · M4 as above; D-6 1.1, R-C5 post-tag · M5 F-037 1.1 · M6 production sites post-tag (Northstar §5) · M7 Northstar P-DEV amended. Panel-semantics item ABSORBED by ADOPT Pillar E.
+Timeline of record: 6–7.5 weeks to tag.

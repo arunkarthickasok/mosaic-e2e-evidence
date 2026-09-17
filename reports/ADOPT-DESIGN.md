@@ -1,4 +1,4 @@
-# ADOPT — "Adopt any SDC" design packet (DRAFT — pending Arun ratification)
+# ADOPT — "Adopt any SDC" design packet (RATIFIED 2026-09-17 (delegated ruling, overrule open))
 Date: 2026-09-16 · Author: reviewer window · Evidence base:
 reports/PROBE-COMPONENT-PIPELINE.md (commit 1df630c) · Status: NOTHING
 BUILT. No CP-ADOPT-n directive may issue until Arun ratifies §7.
@@ -154,3 +154,33 @@ D7 naming: "Component library", "Adopt", Ready/Attention/Blocked.
 D8 contracts H1–H9 pinned as written.
 D9 campaign order: ADOPT first; author-trust slice; backend config
    audit; Wave D; Wave F; Wave G; minimal ACT 2; soak; tag.
+
+### §7 RULINGS — RATIFIED 2026-09-17 (delegated: "you are sole responsibility to this now so take a right call"; recorded as Arun's; overrule open)
+D1 admit-all-and-grade, Blocked hidden.
+D2 derivation in PHP.
+D3 hybrid render 1.0, all-in = 1.1 ADR.
+D4 promote component_package → Component library config entity, auto-created.
+D5 scope A–H + cheap G in 1.0; registry/CEM, headless, versioned upgrades, render migration = 1.1.
+D6 external-library oracle walk = tag-gating.
+D7 names: Component library / Adopt / Ready-Attention-Blocked.
+D8 H1–H9 pinned.
+D9 order: 0 ADOPT → 1 author-trust slice (D-1, D-2, D-3-hide, F-095, D-8, D-14) → 2 backend config audit (+M3) → 3 Wave D (+M1 Kernel cells) → 4 Wave F (+M2 RC-A3 keyboard-drag spike, RC-A2 alt-text; +M4 F-081, F-079) → 5 Wave G (+M1 live walk) → 6 minimal ACT 2 (consistency + ugliness only; F-037 → 1.1 labelled) → 7 dev push → soak → tag 1.0.0 + truth pass (+M1 ADR).
+
+## 8. Post-ratification additions (M1–M7, ruled 2026-09-17)
+M1 moderation: Kernel cells at Wave D, live walk at Wave G, ADR at the truth pass.
+M2 as above (RC-A3 keyboard-drag spike + RC-A2 alt-text at Wave F); RC-A1 Schema.org → 1.1.
+M3 onboarding links (setup-status page, three-role permission recipe) folded into the backend config audit; the audit sizes them: S = pre-tag, otherwise labelled post-tag.
+M4 as above (F-081, F-079 at Wave F); D-6 → 1.1, R-C5 → post-tag.
+M5 F-037 media picker → 1.1.
+M6 production sites → post-tag (Northstar §5).
+M7 Northstar P-DEV amended.
+Panel-semantics item ABSORBED by ADOPT Pillar E. Timeline of record: 6–7.5 weeks to tag.
+
+### §8 acceptance riders where a11y + moderation touch ADOPT
+- **RC-A3 (keyboard operability):** Pillar C child rules (allowed/preferred children, min/max, drop into slot)
+  MUST be keyboard-operable — the §5 oracle walk includes a keyboard-only pass over slot drop + child-rule
+  violation. (Builder keyboard-drag itself is the RC-A3 spike, Wave F.)
+- **RC-A2 (alt text):** any image/media prop surfaced by Pillar B/E requires an accessible-name path (alt/label)
+  in its field; the oracle checks a bound media prop carries alt.
+- **M1 (moderation) fallback rider:** Pillar H graceful degradation MUST render the fallback in BOTH draft and
+  published states (a missing library must never white-page a moderated/unpublished revision either).

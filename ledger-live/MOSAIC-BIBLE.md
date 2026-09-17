@@ -1,135 +1,116 @@
-# THE MOSAIC BIBLE — project constitution
+# THE MOSAIC BIBLE v2 — RATIFIED 2026-09-17 (delegated ruling, overrule open)
+Authored 2026-09-16 (post ship #40, post PROBE-COMPONENT-PIPELINE); ratified
+2026-09-17. Owner: Arun Karthick. Supersedes v1 (archived
+MOSAIC-BIBLE-v1-2026-08-08.md).
 
-**Authored:** 2026-08-08 (post Wave-A doc-truth pass). **Owner:** Arun Karthick.
-**Ratification record:** Grand Reconciliation Audit rulings **R1–R10, ratified by Arun 2026-08-08**
-("ratify all as recommended") — see §P4 and `AI/MASTER-AUDIT-GRAND.md` §5.
+> THE REPO OVERRULES THIS FILE. Live truth: AI/TODO.md (ledger),
+> AI/FINDINGS.md, git. Evidence repo: arunkarthickasok/mosaic-e2e-evidence
+> (ledger-live/, reports/, albums). This bible changes ONLY by
+> Arun-ratified amendment; if it disagrees with the repo, the repo wins.
 
-> **THE REPO OVERRULES THIS FILE.** Live truth lives in `AI/TODO.md` (ledger), `AI/FINDINGS.md`
-> (findings), and git (code). This bible is a stable orientation document; it changes ONLY by
-> Arun-ratified amendment. If this file and the repo disagree, the repo is right and this file is
-> stale — fix this file.
-
----
-
-## P1 — GOVERNANCE ABSOLUTES (compact; full text in `AI/Mosaic-ai-working-agreement.md` (historical governance — where it conflicts with campaign practice recorded in AI/TODO.md, the ledger wins) + iron-laws)
-
-1. **Three-party system.** Arun (owner/decider/hands) · Claude windows (build/audit, one task at a
-   time) · the repo (source of truth). No window trusts another window's memory — only the repo.
-2. **Git law — Arun's hands only.** Claude NEVER `git commit`/`git push`/stages. Claude prepares;
-   Arun ships. Every ship is a numbered ceremony in TODO.md.
-3. **Sanction word for DB/config writes.** No database or config write without Arun's explicit
-   sanction word in the triggering message. Read-only by default.
-4. **Fresh-read rule (absolute).** Never assert a file/line/route/flag exists from memory — quote a
-   fresh tool read. Every de-claim quotes current text + witnessed reality first.
-5. **Eye-test before every ship.** Arun walks the change in a real browser before the ceremony.
-   Automated green is necessary, not sufficient.
-6. **Append-only ledgers.** FINDINGS/TODO entries are appended, never rewritten; corrections are new
-   entries that supersede.
-7. **Attribution law.** Public attribution (drupal.org, commits, releases) carries **Arun's name
-   only — never AI**. Mosaic is Arun's work.
-8. **RED→GREEN + Test-Coupling.** Fix + spec + exhaustive derived tests ship together; prove the
-   test bites the fix (smoke-alarm) where feasible. Permission-Parity dimension in every derivation.
-
----
+## P1 — GOVERNANCE ABSOLUTES
+1 Three-party system: Arun (owner/decider/hands) · reviewer window
+  (drafts, cold-audits from the evidence repo) · Claude Code (builds;
+  mosaic git READ-ONLY) · the repo is truth. No window trusts another's
+  memory. 2 Git law: Arun's hands only; every ship a numbered ceremony
+  in TODO.md; single-quoted commit messages; AI/ gitignored, never in
+  ship lists; SdcComponentPlugin.php stays HELD unstaged (Wave 5.2).
+3 Sanction word for DB/config writes. 4 Fresh-read rule: quote a live
+  read, never memory. 5 Arun's eye-test BEFORE every ship; automated
+  green necessary, not sufficient; walk steps recipe-grade. 6 Append-
+  only ledgers. 7 Attribution: Arun's name only, never AI. 8 RED→GREEN
+  + Test-Coupling with DERIVED matrices; GEOMETRY dimension in every UI
+  derivation (walk-catch #10); Permission-Parity; mechanisms before
+  fixes; no sleeps; oracle changes mid-green ledgered old→new; stop-
+  when-blocked (no self-inflicted-blocker exception). 9 REPORT-TO-REPO:
+  full reports pushed to the evidence repo; chat paste = id + status +
+  path + hash; reviewer audits from the repo. 10 Evidence, never
+  summaries: raw output, file:line, red before green. 11 BUMP-LIBS
+  after every dist rebuild (walk-catch #57 root cause). 12 Reviewer-
+  research law: market scan in every CP audit. 13 Walk-catches are
+  Arun's; the tally is tracked. 14 Naming ban: no third-party library,
+  vendor, region or organization named in any ledger line.
 
 ## P2 — PRODUCT SOUL
+One line: a free, self-hosted, SDC-native visual page builder for
+Drupal 11/12 that ADOPTS ANY organization's component library with
+zero code — panel from the component's own schema, slots as governed
+drop zones, library styles on page AND canvas, typed data binding,
+library-level governance, pages that survive library updates and
+removals. Architecture 9/10; the campaign closes market fit.
+Personas: P1 Content Author · P2 Developer/Site Builder · P3 Client/
+Decision-Maker (unchanged from v1).
+Defensible seat (honest): graded admission not refusal; slot child
+rules + Views-into-slots; zero-code library switch; capability-aware
+panel; drag-and-drop canvas with CKE5 freedom intact. We borrow prop-
+shape matching and versioning designs from Canvas; we do not out-
+engineer them by tag.
 
-**One-line strategy:** a free, self-hosted, Twig-first visual page builder for Drupal 11/12 — the
-architecture is strong (9/10); the campaign is about closing **market fit (5/10)**: instant demo,
-AI assist, a headless path, governance (i18n/moderation/security), and a spec that tells the truth.
+## P3 — STATE OF THE PRODUCT (witnessed, post ship #40)
+Ships: #21–#40 on fix/finding-016-validator — latest = **d0fdb22
+(ship #40)**; 20 numbered ships #21→#40 on this branch (SHIP #21 =
+TODO.md:10939; SHIP #40 = `d0fdb22` per `git log`, TODO.md:13126).
+Views act CLOSED (#36→#39 + riders): BubbleableMetadata renderer gate,
+ViewsArgumentResolver (6 sources), MosaicViewRenderer, url.query_args
+cacheability. WC60 optimistic commit for all Tier-B components (#38).
+Carousel v6 (#34/#35). Walk-catch tally: **62** (TODO.md:13186; WC62
+closed on ship #39R, ship #40 opened no new catch), all Arun's.
+Submodules (MASTER-AUDIT-CAPABILITY, "16 units = core + 15 submodules"):
+2 complete-walked (`mosaic` core, `mosaic_components`) · 11 functional-
+unwalked · 1 experimental (`mosaic_intelligence`) · 1 skeleton
+(`mosaic_canvas_bridge`) · 1 broken (`mosaic_commerce`). 13/15
+submodules test-desert (MASTER-AUDIT-CAPABILITY.md:14-21, :191). Live
+split 2026-09-09: 6 enabled / 10 disabled (core.extension export stale).
+Component pipeline (PROBE-COMPONENT-PIPELINE, 1df630c): foreign SDCs
+excluded by the .mosaic.yml gate; SDC slots unparsed; direct-Twig
+render; component CSS on page but not canvas; component_package
+schema-only; five unconditional panel sections; mosaic_registry +
+mosaic_tokens present-but-disabled.
+Open: author-trust slice (D-1/D-2/D-3/D-8/D-14, ratified Sept 9, never
+shipped) · panel semantics (→ ADOPT Pillar E) · backend config never
+audited · **M1 moderation unwalked** (Kernel cells Wave D, live walk
+Wave G, ADR at truth pass) · **M2 builder keyboard-drag unverified**
+(RC-A3 spike, Wave F) · findings: FINDINGS.md tail = **F-092 + F-093,
+both FIXED (ship #31)**; the open list is tracked in the Wave F roadmap
+(F-072, F-059, F-069, F-076, B-101, F-086).
+Security posture: as v1 P3 plus Wave B shipped — **SHIP #22 CP-WAVE-B,
+WAVE B CLOSED 2026-08-09** (TODO.md:10990; security & permission
+cleanup).
 
-**The three personas (who we build for):**
-| Persona | Who | Buys on | What kills adoption |
-|---|---|---|---|
-| **P1 Content Author** | Non-technical editor (gov/enterprise), daily builder use | "Build a page in 10 min, no IT ticket" | props-hunting, no inline edit, broken search, no AI assist |
-| **P2 Developer / Site Builder** | Drupal dev evaluating Mosaic vs Canvas vs Paragraphs (~30 min trial) | "installs clean, demos instantly, headless + D12 + migrations" | no demo recipe, DB bloat at scale, no decoupled path, doc drift |
-| **P3 Client / Decision-Maker** | Gov IT director / agency PM / procurement | "translation, workflow, a11y, security coverage, who maintains it" | missing multilingual/moderation, single-maintainer risk, no stable release |
+## P4 — RATIFIED ROADMAP TO 1.0.0 (D9 order, ruled 2026-09-17)
+0 ADOPT (design packet reports/ADOPT-DESIGN.md; CP-ADOPT-1..7) →
+1 author-trust slice (D-1, D-2, D-3-hide, F-095, D-8, D-14) →
+2 backend config audit (+M3 onboarding: setup-status page + three-role
+  permission recipe; audit sizes them S = pre-tag else labelled post-tag) →
+3 Wave D test-desert + D-0 retrofits + F-096 upgrade rehearsal
+  (+M1 moderation Kernel cells) →
+4 Wave F (D-4 translation promoted, F-072, F-059, F-069, F-076, B-101,
+  F-086; +M2 RC-A3 keyboard-drag spike + RC-A2 alt-text; +M4 F-081, F-079) →
+5 Wave G enable-or-demote every dark submodule, commerce fix-or-demote,
+  walk round 4 (+M1 moderation live walk) →
+6 minimal ACT 2 (consistency + ugliness only; F-037 → 1.1 labelled;
+  packet reports/ACT2-DESIGN-PACKET.md) →
+7 dev push → Arun soak → TAG 1.0.0 + F-098 truth pass (+M1 moderation ADR).
+**1.1:** F-037 media picker · RC-A1 Schema.org · D-6 · registry/CEM
+catalog · headless · versioned upgrades · full render-element migration ·
+Lighthouse. (D-3 all-in render, M5 F-037, M6 production sites, R-C5, D-6
+all post-tag / 1.1 per the M-rulings.)
+Honest timeline of record: **6–7.5 weeks to tag.**
 
-**Feature-vision map (honest status, post Wave-A):**
-| Capability | Status |
-|---|---|
-| Puck admin builder, Twig-first render, 7 data-source types | DONE |
-| Edit-locking (both save paths enforced), revisions | DONE (Wave 3.3) |
-| Frontend inline-edit dialog | DONE (blocked-state parity gap open — F-066) |
-| AI layout generation (OpenAI-compatible, rule-based fallback) | DONE, off by default |
-| Real-time collab (Yjs + Hocuspocus WS + SSE presence fallback) | DONE (mosaic_collab; unwalked on dev) |
-| Design tokens (DTCG import, Figma/git sync) | DONE (mosaic_tokens; experimental sync surfaces) |
-| Media Library bridge, a11y axe panel, device preview | DONE |
-| Schema.org JSON-LD / OG auto-emission | PLANNED (RC-A1) |
-| Save-blocking alt-text enforcement | PLANNED (RC-A2) |
-| WCAG 2.5.7 keyboard-drag verification | PLANNED spike (RC-A3) |
-| Admin-configurable breakpoints | PLANNED (fixed 4-bp set today) |
-| Reusable global-component entity | PLANNED (global TEMPLATES ship today) |
-| View Display component with full contextual-filter source matrix | PLANNED (ratified) |
-| Lighthouse scoring (mosaic_intelligence) | EXPERIMENTAL (needs external Node worker; parked for tag) |
-| Multilingual + Content Moderation stance | ADR pending (P3 gating) |
-| Headless/decoupled path | roadmap (P2 differentiator) |
+## P5 — POINTERS
+Ledger AI/TODO.md · Findings AI/FINDINGS.md · Audits MASTER-AUDIT.md,
+MASTER-AUDIT-GRAND.md, MASTER-AUDIT-CAPABILITY.md · Design packets
+reports/ADOPT-DESIGN.md, reports/ACT2-DESIGN-PACKET.md,
+P-VIEWS-EMBED-DESIGN.md · Probes reports/PROBE-*.md · Ships SHIP-*.md ·
+Governance Mosaic-ai-working-agreement.md (ledger wins on conflict),
+MOSAIC-TEST-ARCHITECTURE-DIRECTIVE.md · Northstar AI/MOSAIC-NORTHSTAR.md.
+Future windows: FRESH-READ before asserting; this bible orients, the
+repo decides.
 
----
+## TAG 1.0.0 CRITERIA (ratified 2026-09-17)
+All waves closed · tag-scope submodules walked green · ADOPT §5 oracle
+green · RC-A3 spike answered · findings clear or accepted · MOSAIC.md
+truthful · Arun's soak (production sites = post-tag). Timeline 6–7.5 weeks.
 
-## P3 — STATE OF THE PRODUCT (post Wave-A, witnessed)
-
-**Surface:** 26 routes · 6 permissions · ~23 services · 4 libraries · 90 PHP classes · 81 TS files ·
-15 submodules (10 tag-scope, 5 experimental — R8).
-
-**Ships:** ~20 ceremonies; latest #15–#20 (SDC-props, layout-hardening, doc-truth×2, CP-FE-LOCK Wave
-3.3). **Wave 3.3 CLOSED**, 22 Arun walk-catches.
-
-**Findings:** F-009..F-067. Wave A bulk-closed the shipped set (F-050/054/058/061/063/064/065) +
-F-016 (validators witnessed) + F-062. Remaining open: product (F-013/019/020/027/028/029/030),
-deferred waves (F-034/035/036/055/056/057), ratification-pending (F-037..042), infra
-(F-048/052/053/059), design (F-060/062→closed/066), candidate (F-067).
-
-**Security posture (witnessed, better than the F-050 scare implied):** CSRF on all POST; per-entity
-`_custom_access` on lock/revision/frontend-save; Resolve/EntityQuery/EntitySuggest enforce
-`access`/`accessCheck(TRUE)`; SSRF allow-list on ExternalRest; collab/webhook endpoints bearer/HMAC
-authed. Open items: phantom `administer mosaic` perm (→ Wave B), dead `manage_site_templates`
-(→ Wave B), fail-open-when-secret-unset nuance (→ Wave B, R10), TemplateSave ownership, F-052 race.
-
-**Test-desert:** strong top-level suite (Kernel 111/111, Unit 23/23, lock-2b e2e); **14/15 submodules
-have ZERO PHP tests** (→ Wave D).
-
-**Walk Round 4 charter (§3 of MASTER-AUDIT-GRAND):** enable + walk the 10 tag-scope submodules
-(esp. collab 2-session, tokens sync, data-source submodules), the FE dialog (F-066), media picker,
-AI generation. Security walks: delegated-admin (post phantom-perm fix), template overwrite, unset-secret.
-
----
-
-## P4 — RATIFIED ROADMAP (Waves A–G, R-outcomes baked in; est. 3–4 weeks to tag — R9)
-
-- **WAVE A — DOC-TRUTH (COMPLETE, pending ship #21).** 12 CBF de-claimed/corrected, FINDINGS refreshed,
-  Reality Addendum added. Paper-only. R1(keep both audits)/R2(3 roadmap candidates)/R5/R6/F-062 applied.
-- **WAVE B — SECURITY & PERMISSION CLEANUP.** R3: `administer mosaic`→`mosaic.administer` (4 routes).
-  R4: WIRE `manage_site_templates`. R10: FAIL CLOSED on unset collab/webhook secrets. + TemplateSave
-  ownership, F-052 lock race + Kernel test.
-- **WAVE C — FUNCTIONAL QUEUE.** F-066 (FE blocked-state parity + break wiring + #21 icon), F-067
-  (2-window e2e → SSE owner-change detection + heartbeat 409 handling), Wave 3.4 (F-055/056), F-059.
-- **WAVE D — TEST-DESERT CLOSURE.** Access + smoke tests per real submodule; e2e for untested
-  endpoints; resolve F-048 (js/e2e gitignore).
-- **WAVE E — DESIGN CAMPAIGN. Act 1 (component authoring):** F-060 persistent field labels · CP-TABS-REDESIGN
-  (Stages 0–5: DSD cure, v4→v5 migration, MosaicFieldType machinery, array UX, TipTap+media, template) ·
-  F-083 carousel · F-084 search · **CP-VIEWS-EMBED (F-088, 3 CPs — design AI/P-VIEWS-EMBED-DESIGN.md)** —
-  ratified 2026-09-01, slotted immediately after ship #32, BEFORE Act 2 (so the visual campaign styles the
-  new panel field types once). **Act 2 (visual):** Arun's disabled-button-message idea; F-037/060/062 riders;
-  polish.
-- **WAVE F — DEFERRED DURABLE FIXES.** Wave 3.2 (F-035 @layer order), Wave 5.2 (F-034 shared-dist,
-  F-057 mosaic_image), F-046-B (strip renderer.js from anon).
-- **WAVE G — WALK ROUND 4 FULL SOAK** (all tag-scope submodules enabled) → **rc → Arun soak → TAG.**
-- **Roadmap candidates (R2):** RC-A1 Schema.org JSON-LD · RC-A2 alt-text enforcement · RC-A3 keyboard-drag a11y spike (slot into C/E per Arun).
-- **R7:** mosaic_intelligence/Lighthouse PARKED, labeled experimental — not tag-gating.
-
-**Tag criteria:** Waves A–G closed · all tag-scope submodules walked green (round 4) · findings clear
-or accepted · MOSAIC.md truthful · ≥1 production site · Arun's soak. No tag until all hold.
-
----
-
-## P5 — POINTERS (what lives ONLY in the repo; how future windows must read)
-
-- **Ledger:** `AI/TODO.md` (chronological, ships, rulings). **Findings:** `AI/FINDINGS.md`.
-- **Audits:** `AI/MASTER-AUDIT.md` (July-18) + `AI/MASTER-AUDIT-GRAND.md` (2026-08-08, current) — both kept (R1).
-- **Reports:** `AI/REPORT-*.md` (per-wave evidence). **Spec:** `MOSAIC.md` (truthful post Wave-A; repo still overrules).
-- **Governance:** `AI/Mosaic-ai-working-agreement.md` (historical governance — where it conflicts with campaign practice recorded in AI/TODO.md, the ledger wins), `AI/MOSAIC-TEST-ARCHITECTURE-DIRECTIVE.md`, `contrib_drupal_11_bible.md`.
-- **Future windows:** FRESH-READ before asserting. Never trust a prior window's summary of code —
-  quote a live read. This bible orients; the repo decides.
-
-*End. DRAFT constitution — amend only by Arun's ratified ruling.*
+*v2 — RATIFIED 2026-09-17 by Arun's delegated ruling ("you are sole
+responsibility to this now so take a right call"); overrule open.*
