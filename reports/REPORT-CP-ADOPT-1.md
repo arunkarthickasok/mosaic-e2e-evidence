@@ -175,3 +175,56 @@ No red left red: the two built units are green; the only RED (grader C3) was a d
 demonstrated then restored. No oracle changed.
 
 ### INTERIM CHECKPOINT filed — not CHECKPOINT-1 (which requires all of P1). Next focused pass: thread+rebase (1+3) → guard (4) → gates (5) → CHECKPOINT-1 → P2 (live, sanctioned) → P3 → P4.
+
+---
+
+## §P1 — INTEGRATION HEART (PASS 3, 2026-09-17) — STEP 1+3+4 DONE + verified live
+
+Mosaic git READ-ONLY (files edited, uncommitted — ship #41 candidates). The hot-path rebase was built as one
+coherent change and verified against the byte-identical invariant.
+
+### STEP 1+3 — core-SDC rebase (H2) + alias (H1) [DONE]
+- `SdcComponentDiscovery` re-based on core `plugin.manager.sdc` (`arguments: ['@plugin.manager.sdc',
+  '@mosaic.component_grader']`); the `.mosaic.yml` **gate at :45-48 DELETED**; sidecar now an optional enhancer
+  (`readSidecar()` merged when present). Owned keyed BARE via `MosaicComponentAlias::providerIsOwned` +
+  machineName; adopted keyed `provider:id`. `ComponentDefinition` gained `grade/gradeReasons/providerType/
+  adoptPalette` (+ `fromCoreDefinition`, `withGrade`); manager merge preserves them when a PHP class wins.
+- **LIVE registry (drush) — gate removed, olivero:teaser ADMITTED + graded + guarded:**
+  ```
+  mosaic_button … mosaic_view, webform_embed   grade=ready  pt=module palette=Y   (14 owned, BARE ids)
+  olivero:teaser  grade=attention pt=theme palette=N | Prop "attributes" (Drupal\Core\Template\Attribute)
+                                                        has no known field shape — falls to a raw text input.
+  TOTAL: 15   (was 14 — gate removed)
+  ```
+- **BYTE-IDENTICAL invariant HELD.** node/780 component-region shasum:
+  `0864e2386cf7725d0c467f9dfc41b20d8fe41df3a5762375e3a4aabc03e894d5` **before == after**. (The raw full-page
+  shasum changed 4e368565→a9e63b58, but that is `drush cr` asset-aggregate noise: a bare `cr` with ZERO code
+  change moved it again a9e63b58→951cca12, while the cache-buster-stripped page shasum is stable
+  `c9972a7b`==`c9972a7b`. Diff understood = benign.)
+- **SMOKE-ALARM (RED→restored)** on a sidecar-only owned component (mosaic_tabs, node 800): bypassing the
+  bare-keying (`$definitions[$sdcId]` instead of `$machineName`) → `getDefinition('mosaic_tabs')` = NULL, node
+  800 shows 1 missing component, tabs unrendered → restored → RESOLVES, 0 missing, region shasum back to
+  `0864e2386…`. **HONEST FINDING:** most owned components have a PHP `#[MosaicComponent]` class (keyed bare
+  independently), so the alias bare-keying is load-bearing specifically for the 3 **sidecar-only** owned
+  components (mosaic_carousel/tabs/live_search) — node/780 uses none of those, so its own smoke-alarm couldn't
+  bite; node 800 (tabs) is the correct target.
+
+### STEP 4 — palette guard [DONE]
+Adopted (`adopt_palette` FALSE) excluded from the author manifest in BOTH consumers — `ManifestController`
+(all users) + `MosaicLayoutWidget` (admin widget). This is what makes admitting every SDC safe for authors
+today. **LIVE:** admin manifest count = **14**, `olivero:teaser` absent (guarded) — previously excluded only
+by accident (createInstance failing); now excluded by explicit guard.
+
+### STEP 5 — gates (partial)
+- Unit (grader+alias) **15/54 OK**; phpcs **0 ERRORS** (7 changed files); phpstan L6 **[OK]**.
+- Discovery/manifest Kernel regression (5 files) **23/112 OK** — no regression from the rebase.
+- No dist change (PHP + services.yml only) → **no BUMP-LIBS**.
+
+### HONEST CHECKPOINT — remaining before CHECKPOINT-1 is fully closed + P2/P3/P4
+Done + verified: STEP 1+3+4 (the integration heart) live + green. NOT yet done: the DERIVED matrix as FORMAL
+Kernel cells C2/C4/C5/C7/C8 (verified live via drush this pass, not yet codified as Kernel tests — needs a
+Kernel harness that enables a theme/test-SDC + core SDC discovery in Kernel); FULL Kernel + Vitest sweeps; and
+**P2** (mosaic_component_library entity + admin page + node-type form + LIVE sanctioned auto-create + update
+hook), **P3** (Playwright), **P4** (close/SHIP-41-PLAN). No red left red (the tabs smoke-alarm RED was
+demonstrated + restored; byte-identical holds). Next pass: codify C2-C8 Kernel cells + full gates → close
+CHECKPOINT-1 → P2 live → P3 → P4.
