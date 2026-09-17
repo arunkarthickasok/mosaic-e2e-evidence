@@ -396,3 +396,43 @@ Region-vs-full-page shasum note: node/780's full-page raw shasum moves on any `d
 hashes); the byte-identical invariant is the component-region shasum `0864e238…`, held throughout (§P1).
 
 **CP-ADOPT-1 COMPLETE (P0–P4). STOP — Arun eye-test (walk script below), then the ship #41 human-commit.**
+
+---
+
+## §R — RIDER for walk-catches #63 + #64 (Arun eye-test 2026-09-17)
+
+**WC#63 — "restricted hides Button from ADMIN too" — NOT REPRODUCED (witnessed).** Governance restricted branch
+(`MosaicComponentGovernance.php:88`): `return $isAdmin || !$restricted;` — an admin always retains a restricted
+component. `$isAdmin = hasPermission('mosaic.administer')` in both consumers. Reproduction attempts, all showing
+admin RETAINS restricted Button:
+```
+FE ManifestController — uid1 sees Button: YES   · walktester(uid3): no
+Admin WIDGET (drush render node/add/page) count=14; sees Button=YES
+Admin real-HTTP builder (Playwright) count=14; hasButton=true
+Libraries form: mosaic_button enabled-checkbox checked=true, restricted-checkbox=false (renders correctly)
+Form save (mosaic_button restricted): enabled=T restricted=T, 12 components survive
+Cache: library OFF (no cr) → builder manifest=2 (FRESH, invalidates correctly)
+```
+Locked by a real **two-account Kernel cell** (`testWc63RealTwoAccountRestrictedVisibility` — real admin + author
+users, not a mocked bool). Most plausible cause of the eye-test symptom: a walk-sequence transient (Button left
+disabled from W3.1's untick before W3.2). **STOP — Arun re-walks W3.**
+
+**WC#64 — node-type allowlist doesn't persist — FIXED (real bug).** Article third-party settings BEFORE:
+`article mosaic 3rd-party: []` (no stored allowlist on this dev site). MECHANISM (witnessed): the
+`allowed_components` checkbox value lands at `#parents: ["allowed_components"]` (the `mosaic_governance` details
+group is `#tree: false`), but `saveAllowedComponents` read `getValue(['mosaic_governance','allowed_components'])`
+→ default `[]` → `unsetThirdPartySetting` on EVERY save (a latent pre-existing path bug). Read + enforcement were
+correct (a pre-seeded bare-id list read checked + enforced palette=3). **FIX:** read the flat `allowed_components`
+path. Also added the missing config schema `node.type.*.third_party.mosaic` (the setting was unschema'd → failed
+strict config validation). Article AFTER (real-browser round-trip): `checked allowed_components = 3` (persists).
+RED→GREEN: Functional `NodeTypeAllowlistTest` 2/20 (round-trip + clear-unsets + back-compat read); RED demo
+(nested path) → `Failed asserting … -0 => 'mosaic_button'`.
+
+### Test-Coupling note (why the manifest-only oracle missed both)
+The §P3 journeys asserted the manifest (the palette's data source) but never exercised **(a)** two REAL accounts
+(only a mocked `isAdmin` bool) or **(b)** the node-type FORM write round-trip. WC#63 lived in the form/two-account
+space (and turned out correct); WC#64 lived entirely in the form WRITE path (broken). Both are now permanent in
+the DERIVED matrix: a two-account Kernel cell + a Functional form round-trip (persist + read + clear).
+
+**CP-ADOPT-1R: WC#64 FIXED (RED→GREEN + filmed), WC#63 not reproduced (locked by a two-account cell). Ship #41
+un-blocked pending Arun's W3+W4 re-walk.**

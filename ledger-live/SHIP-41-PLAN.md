@@ -1,8 +1,16 @@
 # SHIP #41 PLAN — CP-ADOPT-1 (Adopt any SDC: discovery + grading + component libraries)
 
 Accumulates on ship #40 (`d0fdb22`). Mosaic git READ-ONLY — this is the ceremony add block for Arun's human
-commit. **26 files: 16 modified + 10 new. All trackable, 0 gitignored.** PHP + YAML only → no dist rebuild, no
-BUMP-LIBS. `SdcComponentPlugin.php` is UNTOUCHED this campaign (not HELD, not in the set).
+commit. **27 files: 16 modified + 11 new** (CP-ADOPT-1R rider added `tests/src/Functional/Adopt/NodeTypeAllowlistTest.php`
+[new] + WC#64 edits to `src/Hook/MosaicFormHooks.php` + `config/schema/mosaic.schema.yml`, both already in the
+set). All trackable, 0 gitignored. PHP + YAML only → no dist rebuild, no BUMP-LIBS. `SdcComponentPlugin.php`
+UNTOUCHED (not HELD, not in the set).
+
+### CP-ADOPT-1R rider delta
+- `src/Hook/MosaicFormHooks.php` — WC#64: `saveAllowedComponents` reads the flat `allowed_components` value path.
+- `config/schema/mosaic.schema.yml` — WC#64: adds `node.type.*.third_party.mosaic` (allowed_components schema).
+- `tests/src/Kernel/Adopt/ComponentLibraryGovernanceTest.php` — WC#63 real two-account cell.
+- `tests/src/Functional/Adopt/NodeTypeAllowlistTest.php` [NEW] — WC#64 form round-trip (2/20).
 
 ## `git check-ignore -v` verdict — every file trackable (0 ignored)
 Verified via `git status --porcelain | cut -c4- | git check-ignore -v` — all 26 return no ignore rule.
