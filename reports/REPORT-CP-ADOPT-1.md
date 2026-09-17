@@ -228,3 +228,51 @@ Kernel harness that enables a theme/test-SDC + core SDC discovery in Kernel); FU
 hook), **P3** (Playwright), **P4** (close/SHIP-41-PLAN). No red left red (the tabs smoke-alarm RED was
 demonstrated + restored; byte-identical holds). Next pass: codify C2-C8 Kernel cells + full gates → close
 CHECKPOINT-1 → P2 live → P3 → P4.
+
+---
+
+## §P1 — CHECKPOINT-1 CLOSED (PASS 4, 2026-09-17) — C2–C8 codified + full gates green
+
+### C2–C8 codified as cells (SdcComponentDiscoveryTest — mocked plugin.manager.sdc + real grader)
+| Cell | Oracle | Result |
+|---|---|---|
+| C2 schema-only foreign module | admitted (gate gone), Ready, provider:id, adopt_palette FALSE | GREEN |
+| C4 slots-only | admitted, Ready ("no props = no props") | GREEN |
+| C5 no-schema **renderable** | **Ready** — oracle CHOSEN + recorded (charter A said "Blocked"; witnessed reality: a propless SDC still renders, so Blocked is reserved for the unrenderable case C6) | GREEN |
+| C6 unrenderable (no template) | Blocked + reason | GREEN |
+| C7 theme-active | admitted, provider_type=theme (theme-bound), Attention (attributes class-type → raw) | GREEN |
+| C8 theme-inactive | excluded at the core layer (plugin.manager.sdc omits disabled-extension SDCs) | GREEN |
+| alias | owned keyed BARE, adopted keyed provider:id | GREEN |
+| palette-guard | adopted carry adopt_palette FALSE, owned TRUE | GREEN |
+| cache-invalidation (live) | `mosaic_tabs` (sidecar-only) category Interactive→CACHEPROBE_ZZZ after `cr`→restored | GREEN |
+
+### ORACLE-CHANGE (recorded)
+`Sprint02SmokeTest` — 3 cells drove the removed filesystem gate + `new SdcComponentDiscovery()` (0-arg):
+- `testSdcDiscoverySkipsComponentsWithoutMosaicSidecar` → **flipped** to
+  `testSdcDiscoveryAdmitsComponentsWithoutMosaicSidecar` (gate removed; no-sidecar SDC admitted + guarded).
+- `testSdcDiscoveryFindsComponentWithMosaicSidecar` / `…BuildsCorrectComponentDefinition` → retargeted to the
+  2-arg constructor + core-SDC-derived contract (mocked manager). Old→new documented inline; superseded by the
+  full C2–C8 matrix in SdcComponentDiscoveryTest.
+
+### FULL GATES (CHECKPOINT-1)
+| Gate | Result |
+|---|---|
+| Kernel — mosaic core FULL | **198 tests / 1215 assertions / 0 failures** (no regression from the rebase) |
+| — incl. discovery/manifest subset | 23/112 |
+| Unit — mosaic FULL | **2709 tests / 6493 assertions / 0 failures** (1 pre-existing warning) |
+| — incl. Sdc suite (grader+alias+discovery) | 23/78 |
+| Vitest — full | **539 / 1** (1 = pre-existing B-101; no JS change) |
+| phpcs (all changed PHP) | **0 ERRORS** |
+| phpstan L6 (changed PHP) | **[OK]** on all CP-ADOPT-1 code (the legacy MosaicLayoutWidget carries 16 PRE-EXISTING errors untouched by the 4-line guard) |
+| dist / libs | unchanged (PHP-only) → no BUMP-LIBS |
+| FINDINGS | **FINDING-107** (alias bare-keying load-bearing only for the 3 sidecar-only owned components) |
+
+**CHECKPOINT-1 CLOSED — §P1 (steps 1–5) complete + green.**
+
+### HONEST CHECKPOINT — P2/P3/P4 deferred to a dedicated pass
+P2 is a NEW subsystem: a `mosaic_component_library` ConfigEntityType + install/update hook + idempotent
+auto-create-on-discovery + an admin page (`/admin/config/mosaic/component-libraries`) + a node-type-form
+library switch + Kernel CRUD/parity — plus a LIVE sanctioned `updb`/auto-create on dev. That is a full pass of
+its own; starting it at the tail of this one would mean a rushed config entity + install hook (exactly what
+the honest-checkpoint law warns against). The rebase (the hard part) is done, verified, and green — P2 builds
+cleanly on it next. **STOP — reviewer audits CHECKPOINT-1; next pass: P2 live → CHECKPOINT-2 → P3 → P4.**

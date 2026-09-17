@@ -2443,3 +2443,18 @@ editor surfaces — admin widget + FE editor Pass 2 — anonymous pages never lo
 libraries-extend → deduped, no regression; bridge library resolves with the deps (verified). Requirement bar
 (grid thumbnails, source tabs, selection state, Insert button, exposed filters) met by the real Claro CSS.
 **STATUS: FIXED (ship #31). Live FE geometry oracle = Arun re-walk + held FE journey.**
+
+## FINDING-107 — alias bare-keying is load-bearing only for sidecar-only owned components (CP-ADOPT-1) — BY DESIGN, documented
+**Severity: INFO (design nuance, not a bug).** During the CP-ADOPT-1 core-SDC rebase, the H1 alias bare-keying
+(discover() keying owned components by their BARE id) is what lets saved layouts (`nodes[id].type =
+"mosaic_view"`) resolve after discovery switched to core `plugin.manager.sdc` (which yields `provider:id`).
+**Witnessed:** 11+ of the 14 owned components ALSO ship a PHP `#[MosaicComponent]` class (MosaicButtonComponent,
+… MosaicViewComponent, WebformEmbedComponent), and those PHP defs are keyed BARE by their attribute id
+independently of discover(). So for the PHP-class components the alias bare-keying is redundant — they resolve
+bare via the PHP def regardless. The alias bare-keying is **load-bearing specifically for the 3 sidecar-only
+owned components** (`mosaic_carousel`, `mosaic_tabs`, `mosaic_live_search`), which have no PHP class.
+**Proof:** the PASS-3 smoke-alarm on node/780 (all PHP-class components) did NOT bite when the bare-keying was
+bypassed; the corrected smoke-alarm on node 800 (mosaic_tabs, sidecar-only) DID — `getDefinition('mosaic_tabs')`
+→ NULL, 1 missing component, tabs unrendered. **Implication:** the SdcComponentDiscoveryTest + the live smoke-
+alarm both target a sidecar-only path so the bare-keying stays covered; a future refactor that removes a PHP
+class for carousel/tabs/live_search must keep the alias intact.
