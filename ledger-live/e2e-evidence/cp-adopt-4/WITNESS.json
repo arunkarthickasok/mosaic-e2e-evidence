@@ -1,0 +1,25 @@
+{
+  "ssr": [
+    {
+      "url": "https://drupalak.ddev.site:33001/api/mosaic/canvas/ssr",
+      "status": 200,
+      "postData": "{\"component_id\":\"olivero:teaser\",\"props\":{\"title\":[],\"prefix\":[],\"meta\":[],\"image\":[],\"content\":[{\"type\":\"mosaic_heading\",\"props\":{\"id\":\"head-a4\",\"text\":\"Adopted Olivero teaser\",\"level\":\"h3\",\"alignment\":\"left\",\"_mosaic_bp\":{\"mobile\":{},\"tablet\":{},\"desktop\":{}},\"_mosaic_visibility\":{\"mobile\":true,\"tablet\":true,\"desktop\":true},\"_mosaic_ds\":{},\"_mosaic_spacing\":{\"pt\":0,\"pr\":0,\"pb\":0,\"pl\":0,\"mb\":0},\"_mosaic_style_overrides\":{}}}],\"id\":\"teaser-a4\",\"_mosaic_bp\":{\"mobile\":{},\"tablet\":{},\"desktop\":{}},\"_mosaic_visibility\":{\"mobile\":true,\"tablet\":true,\"desktop\":true},\"_mosaic_ds\":{},\"_mosaic_spacing\":{\"pt\":0,\"pr\":0,\"pb\":0,\"pl\":0,\"mb\":0},\"_mosaic_style_overrides\":{}}}",
+      "body": "{\"html\":\"\\u003Carticle data-mosaic-component=\\u0022olivero:teaser\\u0022 data-mosaic-preview=\\u0022canvas\\u0022 data-component-id=\\u0022olivero:teaser\\u0022 class=\\u0022teaser\\u0022\\u003E\\n  \\u003Cheader\\u003E\\n        \\u003Cmosaic-slot data-mosaic-slot=\\u0022prefix\\u0022\\u003E\\u003C\\/mosaic-slot\\u003E\\n      \\u003Cdiv class=\\u0022teaser__meta\\u0022\\u003E\\n          \\u003Cmosaic-slot data-mosaic-slot=\\u0022meta\\u0022\\u003E\\u003C\\/mosaic-slot\\u003E\\n      \\u003C\\/div\\u003E\\n    \\u003Cdiv class=\\u0022teaser__top\\u0022\\u003E\\n      \\u003Cdiv class=\\u0022teaser__image\\u0022\\u003E    \\u003Cmosaic-slot data-mosaic-slot=\\u0022image\\u0022\\u003E\\u003C\\/mosaic-slot\\u003E\\n  \\u003C\\/div\\u003E\\n          \\u003Cmosaic-slot data-mosaic-slot=\\u0022title\\u0022\\u003E\\u003C\\/mosaic-slot\\u003E\\n      \\u003C\\/div\\u003E\\n  \\u003C\\/header\\u003E\\n  \\u003Cdiv class=\\u0022teaser__content\\u0022\\u003E\\n        \\u003Cmosaic-slot data-mosaic-slot=\\u0022content\\u0022\\u003E\\u003C\\/mosaic-slot\\u003E\\n    \\u003C\\/div\\u003E\\n\\u003C\\/article\\u003E\\n\"}"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+  ],
+  "dom": {
+    "teaserCount": 1,
+    "teaserPos": "relative",
+    "ssrPreviewCount": 1,
+    "loadingCount": 0,
+    "errorNoticeCount": 0,
+    "oliveroSheets": [
+      "https://drupalak.ddev.site:33001/core/themes/olivero/components/teaser/teaser.css?tlk99x"
+    ],
+    "totalSheets": 122,
+    "firstPuckComponentHtml": "<div style=\"position: relative;\" data-puck-component=\"teaser-a4\" data-puck-dnd=\"teaser-a4\" tabindex=\"0\" role=\"button\" aria-roledescription=\"draggable\" aria-describedby=\"dnd-kit-description-1\" aria-pressed=\"false\" aria-grabbed=\"false\" aria-disabled=\"false\"><div class=\"mosaic-ssr-preview\"><div class=\"mosaic-adopted-chrome\"><article data-mosaic-component=\"olivero:teaser\" data-mosaic-preview=\"canvas\" data-component-id=\"olivero:teaser\" class=\"teaser\">\n  <header>\n        <mosaic-slot data-mosaic-slot=\"prefix\"><div class=\"mosaic-slot-zone\" data-slot=\"prefix\" data-slot-count=\"0\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:teaser-a4:prefix\" data-puck-dropzone=\"teaser-a4:prefix\" style=\"--min-empty-height: 128p"
+  }
+}

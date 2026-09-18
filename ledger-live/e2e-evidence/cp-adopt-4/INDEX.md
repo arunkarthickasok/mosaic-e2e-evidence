@@ -1,28 +1,27 @@
-# CP-ADOPT-4 evidence album — the first outside component becomes usable (P1b)
+# CP-ADOPT-4 evidence album — the first outside component becomes usable (P1b + P1b-client)
 
-Filmed 2026-09-18 against DDEV, real admin auth, `--project=journeys`, no sleeps. Journey
-`js/e2e/journeys/cp-adopt-4.spec.ts` (gitignored `js/e2e/`; the frames are the artifact). Scratch node **988**
-(a page whose layout places `olivero:teaser` with its `content` slot filled by an owned `mosaic_heading`).
+Filmed 2026-09-18 against DDEV, real admin auth, `--project=journeys`, no sleeps. Journeys
+`js/e2e/journeys/cp-adopt-4.spec.ts` (+ the mechanism witness `cp-adopt-4-witness.spec.ts`; `js/e2e/` is
+gitignored — the frames + JSON are the artifact). Scratch node **988** places `olivero:teaser` with its
+`content` slot filled by an owned `mosaic_heading`.
 
 | Frame | Screen | Shows |
 |---|---|---|
-| `j1-libraries-olivero-enabled.png` | Component Libraries admin page | the **Olivero (theme) — theme-bound** library **enabled**, with **Teaser** (`olivero:teaser`) graded **Attention** ("Prop 'attributes' … has no known field shape — falls to a raw text input", **0 fields, 5 slots**). "Adopted (non-Mosaic) libraries are off by default." |
-| `j3-page-teaser-olivero-css.png` | anon page (node 988) | the adopted teaser rendered on a real page — Olivero's own `.teaser` markup + the Mosaic-authored heading inside the `content` slot |
-| `palette-ids.json` | builder drupalSettings | the live palette contains **`olivero:teaser`** (data proof — the Puck palette panel is not stably screenshot-able headlessly) |
-| `page-computed.json` | computed style | `.teaser` → **`position: relative`** (default is `static`; only set by `core/components.olivero--teaser`) + boundingBox 788×144 → **Olivero's stylesheet applied** |
+| `j1-libraries-olivero-enabled.png` | Component Libraries admin page | the **Olivero (theme) — theme-bound** library **enabled**; **Teaser** graded **Attention** (0 fields, 5 slots); "adopted libraries off by default" |
+| `j2-canvas-teaser-tierb-ssr.png` | builder canvas (node 988/edit) | the adopted teaser rendered on the **canvas** via Tier-B SSR — its `content` slot drop zone holds **"Adopted Olivero"** (the Mosaic heading, portaled into the library's own slot marker) |
+| `j3-page-teaser-olivero-css.png` | anon page (node 988) | the teaser rendered with Olivero's own markup + the Mosaic heading in its content slot |
+| `canvas-computed.json` | canvas computed style | `.teaser` → **`position: relative`** + box 288×440 — Olivero's stylesheet applied ON THE CANVAS |
+| `page-computed.json` | page computed style | `.teaser` → **`position: relative`** + box 788×144 — same on the page (canvas == page) |
+| `palette-ids.json` | builder drupalSettings | the live palette contains `olivero:teaser` |
+| `WITNESS.json` | mechanism probe | **before the fix:** `ssr: []`, `.teaser` count 0, the dashed generic scaffold; **the CSS was attached** (`teaser.css`) but the SSR was never requested |
 
-## What the album proves
-- The **Olivero teaser** — a theme-provided, NON-Mosaic component — is **enabled + graded on the libraries
-  page** (j1) and **present in the live builder palette** (palette-ids.json).
-- It **renders on a real page** through the hybrid core element with **Olivero's own markup + CSS**
-  (j3 + page-computed.json: `position: relative`), and the author's Mosaic content sits inside its `content`
-  slot. The library owns its DOM; Mosaic added only `data-mosaic-instance`.
-
-## Machine-proven, not filmed (headless builder is unstable — cp-adopt-1 precedent)
-- **Palette + governance:** `PaletteOpenTest` (4 cells) — adopted eligible unless Blocked; authorable only when
-  the library is ENABLED (adopted default OFF); admin/author restricted parity.
-- **The canvas Tier-B SSR render** of an adopted component: `renderSingleComponent` renders it through the
-  hybrid (`PaletteOpenTest::testAdoptedSsrRendersViaHybrid`), but the **client** Tier-B injection into the Puck
-  canvas + the SSR-attachments client work (R5/R10) is the P1b-client slice (checkpointed) — the headless Puck
-  canvas did not render `.teaser` within 30s. The adopted-with-slots-on-canvas composition (drop a child into
-  an adopted slot on the canvas) is a known Tier-B+slots gap, deferred.
+## The mechanism (witnessed) → the fix
+**Root cause:** the adapter's `slotKeys.length > 0` generic-scaffold branch (`MosaicPuckAdapter.ts:495`) ran
+BEFORE the `requires_ssr_preview` Tier-B branch (`:539`), so an adopted component *with slots* rendered the
+dashed placeholder and never requested its SSR (`WITNESS.json`: `ssr: []`, teaser count 0).
+**Fix:** the Tier-B branch now precedes the generic scaffold; an adopted component with slots uses
+`buildAdoptedRenderer` → `MosaicAdoptedPreview`, which renders the library's SSR chrome and **portals a Puck
+slot drop zone into each `<mosaic-slot>` marker** the server emits — so the component renders with its own
+markup AND its slots stay authorable.
+**After the fix (re-witnessed):** `ssr: 1 (200)`, `.teaser` count 1, `position: relative`, `mosaic-ssr-preview`
+present — the teaser renders on the canvas (j2), styled the same as the page (canvas-computed == page-computed).

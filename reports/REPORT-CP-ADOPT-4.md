@@ -338,3 +338,62 @@ byte-identical 14e6cb9c before==after   (NO dist → libs unchanged 1.0.31)
 - Film the builder canvas (or Arun's own-browser walk); the anon page + libraries page are already filmed.
 
 ### STOP — P1b server foundation GREEN + filmed (page + libraries); the P1b-client (canvas render + SSR-attachments + dist) → CHECKPOINT-2 next. Ship #44 human-commit closes the P1b server slice.
+
+---
+
+## §P1b-client — CANVAS RENDER OF ADOPTED (mechanism → fix → witness) — CHECKPOINT-3 FILED
+
+Ship #44 was HELD until the canvas render was witnessed on screen. **Mechanism first, then fix.**
+
+### Item 1 — MECHANISM WITNESS (no fix)
+Probe `cp-adopt-4-witness.spec.ts` opened the real builder (node 988, teaser placed) and captured (`WITNESS.json`):
+`ssr: []` (**no SSR request**), `.teaser` count **0**, and the first Puck component was the **generic dashed slot
+scaffold** (`<div … data-puck-component="teaser-a4"><div style="…grid…border:1px dashed…">…<div class=
+"mosaic-slot-zone" data-slot="content">…`). The CSS **was** attached (`teaser.css` in the stylesheet list) — so
+not a CSS problem.
+**Witnessed root cause (one line):** the adapter's `slotKeys.length > 0` generic-scaffold branch
+(`MosaicPuckAdapter.ts:495`) ran BEFORE the `requires_ssr_preview` Tier-B branch (`:539`), so an adopted
+component WITH slots rendered the placeholder and **never requested its SSR**.
+
+### Item 2/3 — FIX per the mechanism [DONE, GREEN]
+- **Routing:** the `requires_ssr_preview` branch now precedes the generic slot scaffold. An adopted component
+  with slots → `buildAdoptedRenderer`; without slots → `buildTierBRenderer`; `mosaic_view` unchanged. Owned
+  render selection unchanged (columns/card handled first; only owned slot container is columns).
+- **Adopted slots on canvas (the composition):** `renderSingleComponent` emits a `<mosaic-slot
+  data-mosaic-slot="…">` MARKER per declared slot (server); the new **`MosaicAdoptedPreview`** renders the
+  library's SSR chrome imperatively and **portals a Puck slot drop zone (`MosaicSlotZone`) into each marker**,
+  so the component renders with its own markup AND its slots stay authorable — a dropped child re-renders inside
+  the library's own slot. **Kernel `PaletteOpenTest`** asserts the SSR markers; **Vitest
+  `MosaicAdoptedPreview.test.tsx` 2/2** (portals the slot + child into the marker; an empty required slot shows
+  the below-min banner inside the library slot).
+- **RE-WITNESSED (RED→GREEN):** after the fix, `WITNESS.json` → `ssr: 1 (200)`, `.teaser` count **1**,
+  `position: relative`, `mosaic-ssr-preview` present, 0 errors.
+
+### Item 4 — FILMED (canvas now renders)
+Album extended: **`j2-canvas-teaser-tierb-ssr.png`** — the adopted teaser on the **builder canvas** via Tier-B
+SSR, its content slot holding the Mosaic heading ("Adopted Olivero"). **`canvas-computed.json`:** `.teaser`
+**`position: relative`** + box 288×440 → **Olivero's CSS applied on the canvas**, matching the page
+(`page-computed.json` — canvas == page). All 5 journey cells pass.
+
+### Item 5 — gates
+```
+Unit FULL     2762/2762 OK   (1 oracle-change: Sprint66 Tier-A dispatch — the SSR branch precedes the scaffold)
+Kernel FULL    222/222  OK  (1372 assertions; Adopt 24/24; PaletteOpenTest + the SSR-marker cell; 0 failures)
+Vitest FULL    554 pass / 1 pre-existing B-101   (+2 MosaicAdoptedPreview)
+phpcs 0        phpstan L6: MosaicRenderer 14 (pre-existing, unchanged — my markers add ZERO); tsc: only dsdShadow
+byte-identical 14e6cb9c before==after   (owned render selection + FE render untouched)
+dist rebuilt   builder.js 1,252.65 kB + frontend-editor.js 782.31 kB → BUMP-LIBS 1.0.31 → 1.0.32
+```
+
+### Oracle-change (P1b-client)
+| # | Test | Old | New | Reason |
+|---|---|---|---|---|
+| 1 | Sprint66SmokeTest Tier-A dispatch | `canvas_class && !requires_ssr_preview` | `else if (canvas_class)` + `buildAdoptedRenderer` present | the SSR branch now precedes the scaffold |
+
+### Deferred (ledgered — a refinement, not a blocker)
+SSR `{html, attachments}` + the client attaching the SSR response's DYNAMIC libraries once (dedupe R5) +
+`Drupal.attachBehaviors` (R10): the STATIC adopted CSS already loads via the builder-route attachment (item 1,
+witnessed: `teaser.css` present), so this matters only for adopted components that attach libraries at render
+time (e.g. an embedded View). Ledgered for CP-ADOPT-5/6.
+
+### CHECKPOINT-3 FILED — the canvas render is witnessed on screen (j2 + WITNESS.json before/after). Ship #44 (the whole ADOPT-4 set, 21 files, dist 1.0.32) unblocked. Reviewer audits; then the human commit.
