@@ -137,15 +137,67 @@ phpcs 0        phpstan L6 No errors  (SlotDescriptor + MosaicManifestBuilder)
 byte-identical 14e6cb9c before==after   (no dist change → libs stay 1.0.30)
 ```
 
-### CHECKPOINT — items 2–5 (next pass), each RED→GREEN
-- **Item 2 — child-rules model:** read `{allowed[], preferred[], min, max, defaults[], empty_display}` from SDC
-  slot metadata (tolerant of absence) + the sidecar (rules only). **H7 cell:** a sidecar entry naming a slot id
-  the SDC descriptor does not declare → rejected + a logged warning (the descriptor wins).
-- **Item 3 — enforcement + geometry:** non-allowed drop refused with a visible reason; min/max → a banner on
-  the zone (never silent); defaults inserted on first placement; empty_display rendered in the canvas. Admin +
-  FE dialog parity cells + drop-zone boundingBox geometry. Adapter rework → **dist rebuild → BUMP-LIBS**.
-- **Item 4 — palette guard CLOSED for adopted;** olivero:teaser's slots shown in the libraries living-docs
-  (already proven at the registry level above — the descriptors emit; the living-docs surfacing is the UI cell).
-- **Item 5 — full gates + dist + CHECKPOINT-1.**
+## §P1 — BUILD (PASS 2) — child-rules model + own-house truth
 
-### STOP — item 1 GREEN (byte-identical); the child-rules + enforcement + geometry + dist slice → CHECKPOINT-1 next.
+Same seam: PASS 2 builds the **PHP child-rules model** (items 2 + 2b) — additive, byte-identical; the
+**adapter enforcement + geometry filming + dist** (items 3–5) is the coupled hot-path + UI slice →
+CHECKPOINT-1. **8 files this pass** on top of item 1 (3 M src + 1 M services + 4 tests).
+
+### Item 2 — child-rules model + H7 [DONE, GREEN]
+`SlotDescriptor::fromMetadata()` reads `{allowed[], preferred[], min, max, defaults[], empty_display}` from a
+slot's metadata, tolerant of absence, and maps `required → min = 1` (a required zone cannot be left empty).
+`SlotDescriptor::withRules()` overlays sidecar rules **without touching identity** (id/label/required are the
+descriptor's truth). `SlotDescriptor::partitionSidecarRules()` is the **H7** gate: a rule keyed by a slot the
+descriptor does not declare is rejected. The manifest builder applies the overlay from the definition's
+`slot_rules` (threaded through `ComponentDefinition` from the sidecar `slot_rules:` key) and **logs a warning**
+(injected `logger.channel.mosaic`) for every rejected phantom id.
+- LIVE: `olivero:teaser.content` (a required SDC slot) now emits **`min: 1`** in the manifest; `image` (not
+  required) has no `min`. Owned columns unchanged (no rules → identity only).
+- **Unit `SlotDescriptorTest` 4/4** (tolerant read, all-rules read, withRules-keeps-identity, H7 partition);
+  **Kernel `SlotDescriptorEmissionTest` 5/5** (+required→min=1, +H7 wiring: valid rule applied, phantom
+  rejected, `warning()` asserted once). **RED demo:** neuter `partitionSidecarRules` → the phantom slot appears
+  and the logger is never warned → both cells fail → restored clean.
+
+### Item 2b — own-house truth (audit) [DONE]
+Only **one** owned container declares slots via a PHP hardcode: `MosaicColumnsComponent::getSlotDefinitions()`
+→ `column_1..4`. Its core SDC `slots` is `[]` (§P0.2). **`mosaic_tabs` is NOT a slot container** — it uses a
+`sets` repeatable (`field_types`), no `slots:`. No other `getSlotDefinitions()` override exists.
+- **Ruled DYNAMIC exception — columns keeps its PHP source.** Reason: the container declares the max set
+  (column_1..4) but the number of ACTIVE zones is driven by the `columns` prop (1–4) at author + render time
+  (`MosaicPuckAdapter.ts:794` `slotKeys.filter((_, i) => i < colCount)`). Declaring a static `slots:` in the
+  `.component.yml` would lose the prop-driven activation and cannot express "N of 4 by prop", so the PHP source
+  is the correct home. **No storage change; byte-identical** (region shasum `14e6cb9c…` before==after).
+- There is **no static owned slot container to migrate** — so no `.component.yml` slot move is made (honest:
+  the charter's "move static slots to .component.yml" has an empty work-list here).
+
+### Item 2 — byte-identical [DONE]
+Additive to `slot_descriptors`; adapter + render path untouched. node/780 region shasum
+`14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec` (3954 B) **before == after**. No dist → libs
+stay 1.0.30.
+
+### Gates (PASS 2 — PHP only)
+```
+Unit FULL     2762/2762 OK   (+4 SlotDescriptorTest; additive slot rules broke no assertion)
+Kernel FULL    214/214  OK    (1308 assertions; +2 SlotDescriptorEmissionTest cells; 0 failures)
+phpcs 0        phpstan L6 No errors   (SlotDescriptor, ComponentDefinition, MosaicManifestBuilder)
+byte-identical 14e6cb9c before==after   (no dist → libs 1.0.30)
+```
+
+### Oracle-change (PASS 2)
+| # | Test | Old | New | Reason |
+|---|---|---|---|---|
+| 1 | ManifestControllerTest / MosaicLayoutWidgetTest | `MosaicManifestBuilder(3 args)` | 4 args (+logger, NullLogger) | H7 warning logging |
+
+### CHECKPOINT — items 3–5 (next pass), each RED→GREEN
+- **Item 3 — enforcement + ADAPTER:** the adapter consumes `slot_descriptors[zone].{allowed,min,max,defaults,
+  empty_display}` — Puck `allow`/`disallow` + a reason surface (non-allowed drop refused with a visible
+  reason); min/max → a banner on the zone (never silent); defaults inserted on first placement; empty_display
+  rendered in the canvas. Admin + FE parity (Vitest on the adapter; Kernel on the manifest). Render passes
+  children as `slots` unchanged. **Adapter rework → dist rebuild → BUMP-LIBS.**
+- **Item 4 — geometry journeys FILMED** (the walk screens): columns drop-zones visible + non-overlapping
+  (boundingBox); a refused drop shows its reason at the zone; a below-min banner inside the zone; FE dialog
+  parity. Album `cp-adopt-3/` + INDEX. Palette guard CLOSED; teaser `content` required=true in the libraries
+  living-docs.
+- **Item 5 — full gates + dist + BUMP-LIBS + SHIP-43-PLAN + WALK-CP-ADOPT-3 → CHECKPOINT-1.**
+
+### STOP — items 2 + 2b GREEN (byte-identical); the adapter-enforcement + geometry-filming + dist slice → CHECKPOINT-1 next.
