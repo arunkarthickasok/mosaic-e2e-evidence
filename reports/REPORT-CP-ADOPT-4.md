@@ -263,3 +263,78 @@ misrouted their owned components to the adopted branch. Fixed in the RENDERER (e
 the tests — the tests are byte-for-byte unchanged and green.
 
 ### STOP — P1a GREEN (hybrid page render, byte-identical owned). P1b (canvas assets, SSR attachments, palette opening, adopted geometry + F-098 walk, dist) is the next pass.
+
+---
+
+## §P1b — BUILD — PALETTE OPENS + CANVAS ASSETS + ADOPTED SSR — CHECKPOINT-2 FILED
+
+The server-side "adopted becomes usable" foundation. **14 files (9 modified + the adopt_fixture module + 2 new
+Kernel tests). PHP + Twig-fixture only — NO dist / NO libs.** Ledger-first: R9–R11 + the teaser rule (done in
+§P1a). Baseline `14e6cb9c` before == after throughout.
+
+### Item 3 — the palette opens [DONE, GREEN]
+Adopted components become palette-ELIGIBLE (`adopt_palette = grade != blocked`) — `ComponentDefinition::
+fromCoreDefinition` + the discovery adopted-with-sidecar path. The RUNTIME gate stays governance: adopted
+libraries **default OFF** (`status => providerIsOwned`), and `MosaicComponentGovernance::isAuthorable` now
+returns FALSE for an adopted component with **no library entity** (opt-in), so nothing appears until an admin
+enables the library. LIVE: with the Olivero library ON, the admin palette is **15** — `olivero:teaser` (Attention)
+now present; with it OFF / absent, excluded. **Kernel `PaletteOpenTest` 4/4:** eligibility + Tier-B flag +
+descriptors/slots; governance ON/OFF + no-library; restricted admin/author parity; SSR hybrid. **RED demo:**
+neuter the no-library exclusion → adopted authorable with no enabled library → the governance cell fails →
+restored.
+
+### Item 2 (canvas SSR) — adopted render on the canvas [DONE server-side]
+The manifest flags adopted `requires_ssr_preview = TRUE` (adapter routes them to the EXISTING Tier-B SSR path —
+no dist change). `MosaicRenderer::renderSingleComponent()` now uses the **same hybrid** as the page (owned →
+Twig; adopted → core element), so the canvas SSR of an adopted component renders its library markup, not the
+double-provider error. **`PaletteOpenTest::testAdoptedSsrRendersViaHybrid`** asserts the SSR html.
+
+### Item 1 — builder route attachments [DONE]
+`MosaicLayoutWidget` attaches `core/components.<provider>--<id>` for every ADOPTED component in the (already
+governance-filtered) palette, so its CSS/JS loads in the same-document canvas; and stamps the
+`config:mosaic.component_library_list` cache tag so a library toggle rebuilds the attachment set without a
+manual cache clear (**R11**).
+
+### Item 4 — FILMED journey [DONE — the stable proof; the builder UI is deferred]
+Journey `js/e2e/journeys/cp-adopt-4.spec.ts` (scratch node 988 places `olivero:teaser`; content slot = an owned
+heading). Album `ledger-live/e2e-evidence/cp-adopt-4/` + INDEX (**2 frames + 2 data files**):
+- `j1` — the **Component Libraries page**: Olivero (theme-bound) **enabled**, teaser graded **Attention**
+  (0 fields, 5 slots), "adopted libraries off by default".
+- `j3` — the **anon page**: the teaser rendered with **Olivero's own markup + CSS** + the Mosaic heading in its
+  content slot.
+- `page-computed.json` — the **computed-style assertion**: `.teaser { position: relative }` (default `static`;
+  only `core/components.olivero--teaser` sets it) + boundingBox 788×144.
+- `palette-ids.json` — the live builder palette contains `olivero:teaser`.
+- **HONEST — deferred to P1b-client:** the **builder-canvas LIVE render** of the adopted teaser did not
+  materialise in the headless Puck canvas within 30s (the canvas is unstable to film — cp-adopt-1 precedent),
+  and the **client Tier-B SSR-attachments** work (R5/R10: attach the SSR response's libraries + dedupe +
+  `Drupal.attachBehaviors`) + the **adopted-with-slots-on-canvas composition** (dropping a child into an
+  adopted slot on the canvas — a Tier-B+slots gap) are the P1b-client slice. The canvas render is machine-proven
+  at the Kernel level (`testAdoptedSsrRendersViaHybrid`).
+
+### Item 5 — gates
+```
+Unit FULL     2762/2762 OK   (5 oracle-changes: adopted Ready/Attention now palette-ELIGIBLE)
+Kernel FULL    222/222  OK    (1370 assertions; +4 PaletteOpenTest; 0 failures)
+Vitest FULL    unchanged (no JS change; 552 pass / 1 pre-existing B-101)
+phpcs 0        phpstan L6: MosaicRenderer 14 + MosaicLayoutWidget 28 errors — ALL PRE-EXISTING (identical
+               counts in HEAD; my P1a/P1b changes add ZERO to either). Documented, not scope-crept.
+byte-identical 14e6cb9c before==after   (NO dist → libs unchanged 1.0.31)
+```
+
+### Oracle-changes (P1b)
+| # | Test | Old | New | Reason |
+|---|---|---|---|---|
+| 1 | AdoptedDescriptorParityTest | adopted stays palette-guarded (FALSE) | adopted (Attention) is palette-eligible (TRUE) | the palette opens |
+| 2 | SdcComponentDiscoveryTest C2 (Ready) | adopt_palette FALSE | TRUE (Ready eligible) | palette opens |
+| 3 | SdcComponentDiscoveryTest C7 (Attention) | adopt_palette FALSE | TRUE (Attention eligible) | palette opens |
+| 4 | SdcComponentDiscoveryTest palette-guard invariant | all adopted FALSE | eligible unless Blocked (+ Blocked FALSE) | palette-eligibility invariant |
+| 5 | Sprint02SmokeTest (Ready adopted) | adopt_palette FALSE | TRUE | palette opens |
+
+### CHECKPOINT-2 — the P1b-client slice (next pass)
+- **Item 2-client:** `renderSingleComponent`/`CanvasPreviewController` return `{html, attachments}`; the Tier-B
+  client attaches the libraries once (dedupe, R5) + `Drupal.attachBehaviors` (R10); dist rebuild → BUMP-LIBS.
+- **Adopted-on-canvas LIVE render** + the **adopted-with-slots composition** (Tier-B + Puck slots).
+- Film the builder canvas (or Arun's own-browser walk); the anon page + libraries page are already filmed.
+
+### STOP — P1b server foundation GREEN + filmed (page + libraries); the P1b-client (canvas render + SSR-attachments + dist) → CHECKPOINT-2 next. Ship #44 human-commit closes the P1b server slice.
