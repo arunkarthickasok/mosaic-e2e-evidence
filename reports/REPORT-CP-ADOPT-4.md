@@ -176,6 +176,15 @@ across the entire hybrid landing (owned never touches the core-element path).
 | R6 | **Prop validation dev/prod skew** — core validates props only under assertions (dev) | rely on Mosaic's H5 save-time validation (already the gate); never assume core rejects a bad prop at runtime |
 | R7 | **Attribute pre-seeding loss** — a core-rendered adopted component won't carry `data-mosaic-instance` unless passed | pass ALL Mosaic data-attributes via `#attributes`; a Kernel cell asserts `data-mosaic-instance` is present on the adopted component's root |
 | R8 | **check_markup filter scope** — only mosaic_text uses it (owned); adopted never does | no action — owned stays direct-Twig; the filter is module-global anyway |
+| R9 | **core floor** — `#attributes` + `#variant` landed 11.3; a site below that would break the hybrid | pin the module to `core_version_requirement: ^11.3` (or feature-detect the component element); a Kernel cell asserts the merged `#attributes` reaches an adopted component on THIS version (11.4.5) |
+| R10 | **SSR behavior attach** — an adopted component's JS behaviours won't run unless re-attached after the client injects the SSR html | the client calls `Drupal.attachBehaviors(node, settings)` on the injected subtree AFTER attaching its libraries (P1b) — never before the assets land |
+| R11 | **library-toggle staleness** — the builder attachment list must drop a library the moment its governance entity is toggled OFF | the builder route's attachment build carries the `mosaic_component_library` **config cache tag** (`config:mosaic.component_library.*`), so a library toggle invalidates the page + canvas asset set (P1b) |
+
+**Teaser rule (H-rule, standing):** a raw / class-typed `attributes` prop (SDC props whose type is
+`Drupal\Core\Template\Attribute` — e.g. `olivero:teaser.attributes`) is **NEVER passed in `#props`**. All
+Mosaic data-attributes (`data-mosaic-*`, visibility, spacing/style) reach an adopted component **only** through
+`#attributes` (merged by core at ComponentElement:170-184). This keeps Mosaic from ever writing into the
+library's own attribute contract and dodges the "Object could not be converted to string" class-typed-prop trap.
 
 ### P0.10 P1 build order (for the reviewer to gate, then a later pass)
 1. Hybrid switch (owned direct-Twig unchanged; adopted → core element) — byte-identical owned (region shasum).
@@ -187,3 +196,70 @@ across the entire hybrid landing (owned never touches the core-element path).
 5. Full gates + dist + BUMP-LIBS + CHECKPOINT-1.
 
 ### STOP — reviewer audits §P0 (the hybrid boundary + the canvas-asset gap + the risk register). No build until then.
+
+---
+
+## §P1a — BUILD — HYBRID RENDERER (page) — CHECKPOINT-1 FILED
+
+The page-render half of Pillar D (P1b = canvas assets / SSR attachments / palette opening / journeys is the
+next pass). **5 files: 1 modified (`MosaicRenderer.php`) + 4 new (the `adopt_fixture` test module + the Kernel
+test). PHP + YAML + Twig-fixture only — NO dist / NO libs.**
+
+### Item 1 — the hybrid switch [DONE, GREEN]
+`MosaicRenderer::renderNode()` now branches at the render step. **Owned** (`provider` `mosaic`/`mosaic_*`, or
+empty → the byte-identical default) → **direct Twig, unchanged**. **Adopted** → `buildAdoptedComponentElement()`
+→ `['#type' => 'component', '#component' => <provider:id>, '#props', '#slots', '#variant', '#attributes']`,
+rendered inside the SAME `executeInRenderContext` harvest.
+- **#component** = `$instance->type` (the adopted key IS the SDC id; `getTemplatePath()` would DOUBLE the
+  provider — a bug caught + fixed: `adopt_fixture:adopt_fixture:adopt_widget`).
+- **#props** — stored (H5-validated) data, **excluding** `attributes`, `variant`, and any **class-typed** shape
+  (`type` contains `\`) — the teaser rule / R7. Mosaic never writes the library's attribute contract.
+- **#slots** — the already-rendered child HTML per zone as `['#markup' => Markup::create(...)]`, keyed exactly;
+  empty zones omitted.
+- **#variant** — an enum `variant` prop → the singular `#variant` (11.4.5).
+- **#attributes** — the Mosaic `Attribute` (data-mosaic-*, visibility, spacing/style); core merges it with the
+  component's own attributes, the library's winning (R2/R3/R7).
+
+### Item 2 — attachments [DONE, GREEN]
+The adopted render runs inside the existing render-context harvest, so core's auto-attached
+`core/components.<provider>--<id>` library lands in the page's BubbleableMetadata. **R1 cell asserts it.**
+
+### Item 3 — fixtures [DONE, GREEN]
+`Kernel HybridRenderTest 4/4` (36 assertions):
+- **`adopt_fixture:adopt_widget`** (a NEW non-Mosaic fixture SDC — **honest deviation:** the charter suggested
+  `mosaic_test`, but that provider is `mosaic_*` = OWNED and cannot reach the adopted branch; a non-Mosaic
+  provider is required) with a **variant enum + a required slot + a class-typed raw prop** → renders via the
+  core element: `adopt-widget--wide` (variant), the heading (props), the owned `mosaic_heading` child inside
+  the body slot, `data-mosaic-instance="aw-1"` (attribute merged), and the raw prop `should-be-dropped`
+  **absent** (class-typed excluded).
+- **`olivero:teaser`** (real theme-provided adopted) → its own `teaser` markup + a filled `content` slot +
+  the merged Mosaic attribute.
+- **R1** — `core/components.adopt_fixture--adopt_widget` on the page `#attached`.
+- **Owned** `mosaic_heading` still renders direct-Twig (`data-mosaic-component="mosaic_heading"`).
+- **RED demo:** force `$isOwned = TRUE` → adopted misroutes to direct Twig → `LoaderError: Template
+  "adopt_fixture:adopt_fixture:adopt_widget" is not defined` → restored clean.
+
+### Item 4 — owned byte-identical [DONE]
+node/780 region shasum `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec` (3954 B)
+**before == after**. **`git diff --stat` on the 19 owned templates = EMPTY** (no template changed; owned never
+touches the core-element path).
+
+### Item 5 — gates
+```
+Unit FULL     2762/2762 OK   (fixed a mock regression: the unit renderer mocks carry no `provider`, so an
+                              empty provider now defaults to OWNED — the safe byte-identical path)
+Kernel FULL    218/218  OK  (1345 assertions; +4 HybridRenderTest; 0 failures)
+phpcs 0        (MosaicRenderer + HybridRenderTest)
+phpstan L6     MosaicRenderer = 14 errors, ALL PRE-EXISTING (identical count in HEAD — `missingType.
+               iterableValue` docblocks on render()/renderResponsive()/… ; the CP-ADOPT-4 branch +
+               buildAdoptedComponentElement add ZERO). Documented, not scope-crept on a 900-line hot-path file.
+byte-identical 14e6cb9c before==after   (no dist → libs unchanged 1.0.31)
+```
+
+### Oracle-changes (P1a)
+**None** — no test oracle was changed. The 8 unit failures (`MosaicRendererTest`, `MosaicRendererCacheTest`)
+were a **code** gap: those mocks return a definition with no `provider`, so the first-cut `providerIsOwned('')`
+misrouted their owned components to the adopted branch. Fixed in the RENDERER (empty provider → owned), not in
+the tests — the tests are byte-for-byte unchanged and green.
+
+### STOP — P1a GREEN (hybrid page render, byte-identical owned). P1b (canvas assets, SSR attachments, palette opening, adopted geometry + F-098 walk, dist) is the next pass.
