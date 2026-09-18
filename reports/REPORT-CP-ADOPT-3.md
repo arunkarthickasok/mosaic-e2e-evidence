@@ -188,16 +188,71 @@ byte-identical 14e6cb9c before==after   (no dist → libs 1.0.30)
 |---|---|---|---|---|
 | 1 | ManifestControllerTest / MosaicLayoutWidgetTest | `MosaicManifestBuilder(3 args)` | 4 args (+logger, NullLogger) | H7 warning logging |
 
-### CHECKPOINT — items 3–5 (next pass), each RED→GREEN
-- **Item 3 — enforcement + ADAPTER:** the adapter consumes `slot_descriptors[zone].{allowed,min,max,defaults,
-  empty_display}` — Puck `allow`/`disallow` + a reason surface (non-allowed drop refused with a visible
-  reason); min/max → a banner on the zone (never silent); defaults inserted on first placement; empty_display
-  rendered in the canvas. Admin + FE parity (Vitest on the adapter; Kernel on the manifest). Render passes
-  children as `slots` unchanged. **Adapter rework → dist rebuild → BUMP-LIBS.**
-- **Item 4 — geometry journeys FILMED** (the walk screens): columns drop-zones visible + non-overlapping
-  (boundingBox); a refused drop shows its reason at the zone; a below-min banner inside the zone; FE dialog
-  parity. Album `cp-adopt-3/` + INDEX. Palette guard CLOSED; teaser `content` required=true in the libraries
-  living-docs.
-- **Item 5 — full gates + dist + BUMP-LIBS + SHIP-43-PLAN + WALK-CP-ADOPT-3 → CHECKPOINT-1.**
+---
 
-### STOP — items 2 + 2b GREEN (byte-identical); the adapter-enforcement + geometry-filming + dist slice → CHECKPOINT-1 next.
+## §P1 — BUILD (PASS 3) — items 3–5 — enforcement + FILMED geometry + dist — CHECKPOINT-1 FILED
+
+### Item 3 — adapter enforcement [DONE, GREEN]
+```
+NEW  js/src/builder/fields/MosaicSlotZone.tsx        drop-zone chrome (allowed hint, live min/max banner, empty_display)
+MOD  js/src/builder/MosaicPuckAdapter.ts             slot field +allow (Puck drop refusal); slots render via MosaicSlotZone
+MOD  js/src/shared/types/schema.ts                   + SlotDescriptorJson + manifest.slot_descriptors
+MOD  modules/…/MosaicColumnsComponent.php            column_1 min=1 + empty_display (ruled-exception → a real banner)
+MOD  tests/…/Smoke/Sprint61SmokeTest.php             oracle-change (slots render via MosaicSlotZone)
+NEW  js/src/builder/__tests__/SlotEnforcement.test.tsx   adapter allow + zone chrome + live banner-clear (5 cells)
+```
+- **Drop refusal:** the slot field carries Puck `allow` from `slot_descriptors[zone].allowed`, so a non-allowed
+  child is refused **natively at drop time**. The "Accepts: …" hint names why. (Vitest: the field carries
+  `allow`; a bare slot stays `{type:'slot'}`.)
+- **min/max banner (never silent):** `MosaicSlotZone` reads the **live** child count from the rendered canvas
+  (`[data-puck-component]` via a MutationObserver) and shows a banner inside the zone when below min / above
+  max. (Vitest: an empty min-1 zone shows `Requires at least 1 item — 0/1`; once a child is counted the banner
+  clears.)
+- **empty_display:** rendered while the zone is empty; **defaults/preferred** carried on the descriptor for the
+  palette (defaults-insertion-on-first-placement is the one deferred sub-item — see §Deferred).
+- **Columns min=1 (ruled exception):** `MosaicColumnsComponent.column_1` carries `min=1` + `empty_display`
+  from its PHP source, so a **shipped** component shows a live banner. **Vitest `SlotEnforcement.test.tsx`
+  5/5.** Oracle-change: `Sprint61SmokeTest` now asserts slots render via `MosaicSlotZone`.
+
+### Item 4 — FILMED geometry journeys [DONE — real frames]
+Journey `js/e2e/journeys/cp-adopt-3.spec.ts`, `--project=journeys`, no sleeps, element clips (full-page Puck
+canvas is unstable — cp-adopt-1 precedent). Scratch node **987** (`column_1` empty). Album
+`ledger-live/e2e-evidence/cp-adopt-3/` + INDEX (**4 frames + geometry.json**):
+- `j1` — the live builder: red **"Requires at least 1 item — 0/1"** banner on the empty `column_1` + the
+  dashed empty zone + the empty_display text.
+- `j2`/`j3` — banner + empty_display crops.
+- `j4` — a **filled** `column_1` (node 334) → **no banner** (the after-drop state; the banner is conditional).
+- `geometry.json` — `col1 {x:415,w:136}` + `col2 {x:567,w:136}` → **non-overlapping** (551 ≤ 567).
+- **Palette guard CLOSED;** teaser `content` required=true was proven in the manifest (§P1 PASS 2).
+- **Machine-proven, not filmed (drag is the unstable surface):** drop-refusal (`allow`) + the live banner-clear
+  are asserted in `SlotEnforcement.test.tsx`; FE-dialog parity is by construction (frontend-editor.js uses the
+  same `MosaicPuckAdapter` + `MosaicSlotZone`). Honest: the album films the min-banner path (the "banner Arun
+  sees") + before/after; the refused-drop is Vitest-proven, not filmed.
+
+### Item 5 — gates + dist + BUMP-LIBS [DONE]
+```
+Unit FULL     2762/2762 OK   (oracle-changed Sprint61; 1 pre-existing warning)
+Kernel FULL    214/214  OK    (SlotDescriptorEmissionTest updated for the column_1 rule)
+Vitest FULL    552 pass / 1 pre-existing B-101   (+5 SlotEnforcement)
+phpcs 0        phpstan L6 No errors   (MosaicColumnsComponent docblocks cleaned)   tsc: only pre-existing dsdShadow
+byte-identical 14e6cb9c before==after   (dist rebuilt; FE render is Twig, unaffected by the builder adapter)
+```
+Bundling event: `vite build --config vite.builder.config.ts` (builder.js 1,249.57 kB) + `--config
+vite.frontend-editor.config.ts` (779.23 kB). **BUMP-LIBS: `mosaic.libraries.yml` 1.0.30 → 1.0.31** (×3).
+
+### Deferred (one honest sub-item)
+**defaults[]-insertion-on-first-placement** — inserting the `defaults` children automatically when a zone is
+first shown needs a Puck `dispatch(insert)` on mount, which risks a save-state write the byte-identical
+invariant must not trigger silently; the `defaults` are emitted on the descriptor + carried to the palette,
+but auto-insertion is ledgered for the author-trust slice (it is the one place "never write silently" and
+"insert defaults" tension needs Arun's ruling). All other item-3 rules (allow, min/max banner, empty_display,
+preferred) are done + filmed/tested.
+
+### Oracle-changes (PASS 3)
+| # | Test | Old | New | Reason |
+|---|---|---|---|---|
+| 1 | Sprint61SmokeTest slot-render | `React.createElement(SlotComp)` | `React.createElement(MosaicSlotZone, {…SlotComp})` | slots render through the zone chrome |
+| 2 | SlotDescriptorEmissionTest owned | column_1 identity-only | column_1 has min=1 + empty_display | the ruled-exception rule |
+
+### CHECKPOINT-1 FILED — CP-ADOPT-3 enforcement built, filmed, dist-shipped; SHIP-43-PLAN + WALK written.
+### STOP — reviewer audits; then the ship #43 human-commit closes CP-ADOPT-3 (defaults-insertion → author-trust slice).
