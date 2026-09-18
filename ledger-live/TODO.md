@@ -13292,3 +13292,14 @@ Fresh-read 5a65173 (HEAD, clean; 13 PASS-2 files uncommitted). Built the coupled
 (c) **Timeline of record amended.** 6–7.5 weeks → **9.5–11 weeks to tag (early-to-mid December), soak week fixed.** Bible P4 line updated (P4:98 + TAG-criteria:113): OLD "6–7.5 weeks" → NEW "9.5–11 weeks (early-to-mid December), soak week fixed."
 
 ### OPEN QUEUE: CP-ADOPT-2 CHECKPOINT-1 GREEN (reviewer) → ship #42 human-commit (27 files, held plugin NOT in set) → fix FINDING-109 → CP-ADOPT-3..7 → adopted-authoring+palette-opening (F-098 external-library oracle walk) → backend config audit (parallel, post-ADOPT-4, read-only) → author-trust → Wave D/F/G (submodules working, commerce dep to Arun w/ evidence, registry read-only catalog + 1.1 import) → minimal ACT 2 → soak (fixed week) → tag 1.0.0 (early-to-mid December).
+
+## ★ SHIP #42 SHIPPED 2026-09-17 = commit 87be200 (parent 5a65173) — 27 files — CP-ADOPT-2 (panel from schema)
+Pillar B / H3+H4+H5 + F-108. PropShape classifier + prop-shape registry derive abstract descriptors in PHP; manifest emits prop_descriptors; Puck adapter consumes them byte-identically for owned (field_types wins, boolean=Yes/No radio); H4 defaults; H5 save-time validation (formatted_text needs a format); F-108 adopted components expose their props schema (on the DEFINITION path — held SdcComponentPlugin untouched). Committed region-shasum invariant (scripts/qa/region-shasum.sh, 14e6cb9c). Arun walk PASS (WALK-CP-ADOPT-2, 4 steps). Tally unchanged 64. Gates: Unit 2758/2758, Kernel 209/209, Vitest 547/1-B101, phpcs 0, phpstan L6, dist 1.0.30. SHIP-42.md written. **CP-ADOPT-2 CLOSED.**
+
+## STANDING LAW — WALK-SCRIPT LAW (ratified 2026-09-17)
+Every Arun walk script MUST:
+1. **Open with a four-line story** — (i) what changed, (ii) why, (iii) what proves it, (iv) the one-line claim under test.
+2. **Contain ONLY steps on screens filmed in the album** — no step references a screen/state that isn't in the evidence album for that ship.
+3. **One STOP per step** — each step ends with a single explicit STOP/Expected; no compound steps.
+4. **NO machine-only steps** — anything with no author-facing UI path (Kernel oracles, POST-only guards, shasum checks) lives in the REPORT, not the walk. If a behaviour has no screen, it is named in the report as a machine-only cell and omitted from the walk (see WALK-CP-ADOPT-2 step 3: the H5 guard stated as machine-only, not walked).
+Applies to every WALK-*.md from ship #42 forward.
