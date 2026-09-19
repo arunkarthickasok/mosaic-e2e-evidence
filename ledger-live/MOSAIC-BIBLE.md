@@ -42,7 +42,8 @@ Personas: P1 Content Author · P2 Developer/Site Builder · P3 Client/
 Decision-Maker (unchanged from v1).
 Defensible seat (honest): graded admission not refusal; slot child
 rules + Views-into-slots; zero-code library switch; capability-aware
-panel; drag-and-drop canvas with CKE5 freedom intact. We borrow prop-
+panel; drag-and-drop canvas with CKE5 freedom intact; style ownership
+with cascade discipline (ADOPT §9). We borrow prop-
 shape matching and versioning designs from Canvas; we do not out-
 engineer them by tag.
 

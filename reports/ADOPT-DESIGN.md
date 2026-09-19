@@ -184,3 +184,116 @@ Panel-semantics item ABSORBED by ADOPT Pillar E. Timeline of record: 6–7.5 wee
   in its field; the oracle checks a bound media prop carries alt.
 - **M1 (moderation) fallback rider:** Pillar H graceful degradation MUST render the fallback in BOTH draft and
   published states (a missing library must never white-page a moderated/unpublished revision either).
+
+## §9 Style Ownership + Cascade Discipline (delegated ruling 2026-09-19, overrule open)
+
+Witnessed in CP-ADOPT-4R: an adopted SDC (Olivero `teaser`) brings its OWN layout CSS
+(`position:absolute`, flex/grid). On the canvas that CSS collapsed + overlapped the Puck slot
+drop zones (WC#69 cause 2) and clipped a field (WC#72); on the frontend it is authoritative
+(byte-identical). Whose styles win — library, Mosaic chrome, author override, canvas-only —
+was never contracted. This §9 contracts it. Delegated ruling: **O4**. Overrule open.
+
+### 9.a Walls (world scan — prior art we measured against)
+- **Shopify specificity study** — Shopify caps theme CSS specificity + uses predictable,
+  low-weight selectors so section/app styles layer without wars. Lesson: a specificity
+  BUDGET beats ad-hoc `!important`.
+- **Canvas layer/preflight collisions** — a builder's global reset/preflight (Tailwind-style
+  `@layer base` preflight) silently strips a component's own element styles; the fix is
+  ordered `@layer`s, not turning preflight off. Lesson: order the cascade, do not reset into
+  the library.
+- **Builder.io `noWrap`** — Builder can render a component with NO extra wrapper so its own
+  cascade + layout are untouched. Lesson: Mosaic's wrapper must be cascade-inert (attributes
+  only, no style that leaks in).
+- **Gutenberg `contentOnly`** — Gutenberg locks structure and exposes only content editing for
+  third-party blocks, so the author never fights the block's CSS. Lesson: separate "restyle"
+  from "fill"; adopted defaults to fill.
+- **Shadow-DOM slot ownership** — a Shadow root encapsulates the library's CSS; `<slot>`s
+  pierce it for author content + global tokens. Lesson: a per-library escape hatch when a
+  library's CSS leaks beyond tolerance — opt-in, not default (breaks global tokens + is heavy).
+
+### 9.b Contracts SO-1..SO-8 (verbatim, decide-once)
+SO-1 The library OWNS its own visual identity; Mosaic never rewrites a library selector nor
+     wins a declaration by specificity war or `!important` against library markup.
+SO-2 The FRONTEND render stays byte-identical to the library's own output (the region-shasum
+     invariant); Mosaic adds only element `#attributes` (data-mosaic-*), never a style attr.
+SO-3 Author overrides (spacing, style tokens, visibility) apply through ONE low-specificity
+     Mosaic layer scoped to the instance wrapper — a single class hook, never a library
+     selector, never a descendant of library internals.
+SO-4 Canvas layout resets (`.mosaic-adopted-preview`) are EDIT-MODE ONLY, class-gated, and
+     never emitted on the frontend; they restore authorability (drop-zone geometry) without
+     touching the shipped render. (WC#69 cause 2 fix lives here.)
+SO-5 Cascade order is fixed with `@layer`: `reset < library < mosaic-chrome < author-override
+     < canvas-edit`. Each Mosaic layer carries a specificity BUDGET (≤ 0,1,0 for chrome/author;
+     canvas-edit may go higher but is edit-mode-scoped).
+SO-6 No `!important` in any Mosaic style that targets adopted markup. Precedence comes from
+     layer order + scope, never from weight — so a library update can never be out-warred.
+SO-7 (CP-ADOPT-6) A library whose CSS LEAKS or collides beyond tolerance may opt into
+     per-library Shadow-DOM encapsulation; slots pierce the boundary and design tokens are
+     forwarded as custom properties. Opt-in per library entity, never global (breaks tokens).
+SO-8 Overflow/clip discipline: the instance wrapper + canvas chrome never CLIP a library field
+     (WC#72) — adopted previews use `overflow: visible`; a library that clips its OWN content
+     is reported in the readiness grade, never silently cropped.
+
+### 9.c Scenarios S1–S18 (each an oracle case)
+S1  Library sets margins on its root; Mosaic spacing override changes them predictably (author
+    layer wins by order, not weight). S2 Library `!important` on a declaration Mosaic also sets
+    → library wins, Mosaic surfaces "library-locked" in the field, no war. S3 Global preflight
+    would strip library element styles → `@layer` order keeps library intact. S4 Two adopted
+    components with clashing global class names on one page → instance-scoped author layer keeps
+    them independent. S5 `position:absolute` field (teaser image) on the canvas → SO-4 reset
+    keeps it hittable; frontend unchanged. S6 A field clipped by the library's own
+    `overflow:hidden` (WC#72) → reported in grade; canvas wrapper does not add clipping. S7
+    z-index collision between library chrome + Puck selection overlay → Mosaic overlay owns a
+    reserved z-index band; library never reaches it. S8 Author sets a design token; library
+    reads `var(--x)` → token forwarded (and through Shadow boundary under SO-7). S9 Theme switch
+    changes a theme-bound library's CSS → H6 fallback + SO-5 order both hold; no page break. S10
+    Library update adds a style-bearing prop → appears silently (Pillar F), author layer still
+    lowest-but-one. S11 Author override removed → library default returns exactly (no residue).
+    S12 RTL/dir flip → library owns direction; Mosaic chrome is logical-property clean. S13
+    Print stylesheet from the library → survives (Mosaic adds no print rules to adopted). S14
+    Nested adopted inside an adopted slot → each keeps its own scope; no cross-leak. S15 Canvas
+    zoom/device-preview → SO-4 reset is edit-mode-scoped, device-preview shows frontend cascade.
+    S16 A library ships utility classes matching Mosaic's → namespaced; no collision (SO-3
+    scope). S17 High-contrast / forced-colors mode → library owns; Mosaic never forces a color
+    on adopted. S18 Shadow-DOM opt-in library (SO-7) → author content in slots styled by global
+    tokens, library internals encapsulated; byte-identical still measured on the composed output.
+
+### 9.d Options O1–O4 (ruling: O4)
+O1 Do nothing — library CSS wins everywhere; author overrides fight by specificity/`!important`.
+   REJECTED: unpredictable, `!important` wars, breaks on library update.
+O2 Wrap every adopted component in Shadow DOM (full encapsulation). REJECTED as default: breaks
+   global design tokens + slot ergonomics, heavy, over-encapsulates the 95% that don't leak.
+O3 Global preflight reset + rewrite library selectors to Mosaic's. REJECTED: breaks SO-2
+   byte-identical, fragile against every library update.
+O4 **RULED — `@layer` cascade discipline (SO-5) + one scoped low-specificity author layer
+   (SO-3/SO-6) + edit-mode-only canvas reset (SO-4) + overflow discipline (SO-8) + optional
+   per-library Shadow-DOM escape hatch (SO-7, ADOPT-6).** Preserves byte-identical frontend,
+   predictable overrides with no `!important`, an authorable canvas, and a bounded escape hatch
+   for the rare leaky library. This is what CP-ADOPT-4R already half-built (SO-4 canvas reset);
+   §9 generalises it into a contracted cascade.
+
+### 9.e The movie (style ownership, plain words)
+S-a Author adopts Olivero `teaser`; it renders on the canvas with Olivero's OWN look, and its
+    slots are clean, hittable drop zones (canvas reset, edit-mode only). S-b She nudges the
+    teaser's spacing with the Mosaic spacing control; it moves predictably — the library's other
+    styles are untouched, nothing else shifts. S-c She removes the override; the teaser returns
+    to Olivero's exact default, no residue. S-d She publishes; the page render is byte-identical
+    to Olivero's own teaser — Mosaic added only data-attributes. S-e A leaky third-party library
+    later collides with the page; the site builder flips its Shadow-DOM ownership ON per library
+    (SO-7); author content in slots keeps the site's design tokens, the library's internals stop
+    leaking. No `!important` was written anywhere.
+
+### 9.f Acceptance additions to §5 (tag-gating)
+The §5 oracle walk gains: (i) apply + remove a spacing/token override on an adopted component →
+predictable change + exact revert, no `!important` in the emitted CSS (grep the instance CSS);
+(ii) byte-identical FRONTEND holds with an override applied then removed (region-shasum returns
+to baseline); (iii) canvas reset class is ABSENT from the frontend markup (SO-4); (iv) a
+clipped-field library is reported in its grade, not silently cropped (SO-8, WC#72); (v) SO-7
+Shadow-DOM opt-in library: author-content-in-slot carries global tokens + composed output is
+byte-identical measured. Geometry + Permission-Parity dimensions already apply.
+
+### 9.g Scope
+SO-1..SO-6 + SO-8 land in **CP-ADOPT-5** (style-ownership + cascade discipline). **SO-7**
+(per-library Shadow-DOM escape hatch) lands in **CP-ADOPT-6**. Consistent with H1 (adopted ids
+= full `provider:id` in the SAVED layout; the CP-ADOPT-4R colon-free key is a Puck-INTERNAL
+alias only, saved type unchanged) and H2 (decorate core SDC, never fork). Overrule open.
