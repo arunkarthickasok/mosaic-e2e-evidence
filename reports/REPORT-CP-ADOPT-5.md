@@ -342,3 +342,86 @@ MOSAIC git READ-ONLY (edits only); no dev DB/config writes. STOP for audit; P1b 
 CHECKPOINT-1 filed. Capability-aware panel + grandfather land with owned byte-identical (panel +
 render) and BOTH shasums held. Add-dropdown honesty (not offering a non-bindable prop in the ADD
 list) is deferred to P1b with the bare-render + layer work, so P1a touches no owned add-flow. STOP.
+
+---
+
+# CP-ADOPT-5 P1b — CHECKPOINT-2 (SO-1 bare render delivered; cascade items gate-analyzed) — 2026-09-19
+
+MOSAIC git READ-ONLY (edits only); no dev DB/config writes. **PARTIAL P1b — read the honest
+scope note.** SO-1 delivered + proven with both byte-identical gates held; SO-2/SO-4/SO-5/SO-6
+are scoped for the next slice with a specific, evidence-based reason each (below).
+
+## Oracles — BOTH IDENTICAL before == after (SO-1 is a foreign-slot-only render change)
+- REGION node/780 `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954`.
+- STYLE  node/780 `b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10`.
+- node/780 is owned-only (no adopted components), so SO-1 (which only changes children INSIDE an
+  adopted slot) cannot touch it — both hashes hold exactly. `scripts/qa/style-shasum.sh` is the
+  committed R2 gate (from P1a).
+
+## SO-1 BARE RENDER — DELIVERED (server render) + Kernel-proven
+`MosaicRenderer::renderNode` gained a `$bare` param. An ADOPTED component (its type is the SDC
+`provider:id`, carrying a colon) renders its slot children BARE: no Mosaic wrapper chrome — no
+`data-mosaic-component`, no visibility class, no spacing / style-override attribute, no
+per-breakpoint spacing `<style>` block — only `data-mosaic-instance` (so the builder can still
+select it). Owned containers keep their children unchanged. CID keyed by `:bare` so a node
+rendered bare never collides with the same node at top level. Kernel `BareRenderTest` 2/2.
+
+**Markup excerpt (Heading inside teaser vs at top level):**
+```
+inside olivero:teaser.content (BARE):
+  <h3 class="mosaic-heading mosaic-heading--h3 mosaic-heading--left"
+      data-mosaic-instance="h-1">Slot child</h3>
+top level (UNCHANGED):
+  <h3 class="mosaic-heading mosaic-heading--h3 mosaic-heading--left"
+      data-mosaic-component="mosaic_heading" data-mosaic-instance="h-1"
+      style="--mosaic-pt:var(--mosaic-space-4);--mosaic-mb:var(--mosaic-space-3)">Slot child</h3>
+```
+(inside: no `data-mosaic-component`, no `--mosaic-pt` — asserted by BareRenderTest.)
+
+## Inherited font-family — MEASURED, and why SO-5 is required
+`.mosaic-heading { font-family: var(--mosaic-font-heading); }` (`css/mosaic-design-system.css:199`,
+`@layer mosaic-components`) applies GLOBALLY. So today, EVEN inside the teaser, the bare Heading
+resolves `font-family: var(--mosaic-font-heading)` = `var(--mosaic-font-sans)` =
+`system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif` — Mosaic's font, NOT Olivero's. SO-1
+strips Mosaic's WRAPPER chrome but the component's OWN class rule (`.mosaic-heading` font) still
+wins from the global layer. **Making the child inherit Olivero's font requires SO-5 — an `@scope`
+that stops the `mosaic-components` layer at the adopted box boundary** (`@scope (…) to
+([data-mosaic-component*=":"])` on the front end; `to (.mosaic-adopted-preview)` on the canvas).
+So the "inherited font-family" the walk wants is SO-5 work, not yet landed.
+
+## Honest scope: SO-2 / SO-4 / SO-5 / SO-6 — NEXT slice, with gate-analysis
+- **SO-6 tokens off `:root` → `.mosaic-owned` roots** — literally specified, it adds a
+  `.mosaic-owned` CLASS to owned components' markup → that CHANGES the REGION hash (a markup
+  delta the byte-identical gate does NOT sanction — the charter only permits a STYLE-hash delta
+  with proof). A no-markup alternative exists — scope tokens with the EXISTING owned-only
+  selector `[data-mosaic-component]:not([data-mosaic-component*=":"])` — which cleans `:root` and
+  holds BOTH hashes, but deviates from the literal `.mosaic-owned` class. **Needs Arun's ruling:**
+  sanction a region-hash delta for the class, or accept the selector approach. Not landed rather
+  than break the committed invariant.
+- **SO-5 `@scope` donut** — requires refactoring the whole `@layer mosaic-components` (owned
+  component CSS) under an `@scope … to ([data-mosaic-component*=":"])`, plus a browser-support
+  decision (`@scope` is Chrome 118+/Safari 17.4+/Firefox 128+). It MUST be proven not to drift
+  node/780's STYLE hash (owned components must stay inside the scope's outer boundary). Deep CSS;
+  deferred to a dedicated pass with the computed-style oracle as the gate.
+- **SO-4 `@layer` reconcile** — consolidating the existing declarations (`mosaic-design-system.css:23`,
+  `mosaic-canvas-reset.css:30`) into one order + inserting `mosaic-library` is low-value WITHOUT
+  SO-5 (nothing populates `mosaic-library` until adopted CSS is layered there), so it lands WITH SO-5.
+- **SO-2 plain content** — a clean new-component build (`mosaic_plain_content` SDC: formatted body,
+  H5 text-format enforced, no chrome; foreign-slot-only palette entry). Gate-safe (never on
+  node/780). Deferred only for scope; no blocker.
+
+## Gates (this pass — PHP-only, SO-1)
+- Full Kernel+Unit **3005 / 0** (+2 BareRenderTest). Vitest unchanged (569/1-B101 from P1a — no
+  JS touched). PHPCS **0 errors** on changed files. **REGION + STYLE shasums IDENTICAL**.
+- **No dist/CSS change → no BUMP-LIBS** (SO-1 is `MosaicRenderer.php` only). The cascade slice
+  (SO-4/5/6 CSS + any dist) will carry the libs bump.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `src/Service/MosaicRenderer.php` (SO-1 `$bare`) · `tests/src/Kernel/Adopt/BareRenderTest.php` (new).
+
+## Honest status
+CHECKPOINT-2 = SO-1 bare render, delivered + Kernel-proven + BOTH byte-identical gates held. The
+cascade discipline (SO-2/4/5/6) is honestly deferred: SO-6 as specified breaks the committed
+region invariant (needs Arun's ruling), SO-5 is a deep `@scope`/browser-compat refactor that must
+be gate-proven, SO-4 rides with SO-5, SO-2 is a clean follow-on. I did NOT rush gate-breaking CSS
+at the tail of the pass. STOP for audit.
