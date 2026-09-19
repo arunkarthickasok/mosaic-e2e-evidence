@@ -1,0 +1,270 @@
+{
+  "teaser-a4:content": {
+    "rect": {
+      "w": 288,
+      "h": 33
+    },
+    "center": {
+      "cx": 559,
+      "cy": 1317
+    },
+    "ancestorChain": [
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--hasChildren",
+        "dz": "teaser-a4:content",
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-slot-zone__body",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-slot-zone",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "teaser__content",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "grid"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "teaser",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-ssr-preview",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "dz": null,
+        "dnd": "teaser-a4",
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--isRootZone_",
+        "dz": "root:default-zone",
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview-frame_z2rgu_6",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "0",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview_z2rgu_1",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      }
+    ],
+    "elementsFromPointTop": [],
+    "dropzoneReachableAtCenter": false
+  },
+  "teaser-a4:image": {
+    "rect": {
+      "w": 96,
+      "h": 128
+    },
+    "center": {
+      "cx": 463,
+      "cy": 1201
+    },
+    "ancestorChain": [
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1",
+        "dz": "teaser-a4:image",
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-slot-zone__body",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-slot-zone",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "teaser__image",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "absolute",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "teaser__top",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "flex"
+      },
+      {
+        "tag": "HEADER",
+        "cls": "",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "ARTICLE",
+        "cls": "teaser",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-ssr-preview",
+        "dz": null,
+        "dnd": null,
+        "pe": "none",
+        "inert": false,
+        "pos": "static",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "dz": null,
+        "dnd": "teaser-a4",
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--isRootZone_",
+        "dz": "root:default-zone",
+        "dnd": null,
+        "pe": "auto",
+        "inert": false,
+        "pos": "relative",
+        "z": "auto",
+        "vis": "visible",
+        "disp": "block"
+      }
+    ],
+    "elementsFromPointTop": [],
+    "dropzoneReachableAtCenter": false
+  }
+}

@@ -1,0 +1,452 @@
+{
+  "teaser-a4:image": {
+    "rect": {
+      "x": 536,
+      "y": 1113,
+      "w": 96,
+      "h": 128
+    },
+    "point": {
+      "cx": 576,
+      "cy": 1137
+    },
+    "thisDropzoneInStack": true,
+    "stack": [
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1",
+        "dz": "teaser-a4:title",
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1",
+        "dz": "teaser-a4:image",
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "dz": null,
+        "dnd": "teaser-a4",
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--isR",
+        "dz": "root:default-zone",
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview-frame_z2rgu_6",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview_z2rgu_1",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-canvas-scope",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas-root_ur8dl_42",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas-inner_ur8dl_33",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas_ur8dl_1 _PuckCanvas-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckLayout-inner_1dd16_40",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckLayout_1dd16_36 _PuckLayout",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "Puck _Puck_1dd16_19",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-puck-wrapper",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-canvas",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-inline",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-mount",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "field--type-mosaic-layout field-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-region__content",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-region layout-region--mai",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-form clearfix",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "FORM",
+        "cls": "node-page-edit-form node-form",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "block block-system block-system-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "region region-content",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "page-content clearfix",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-container",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "MAIN",
+        "cls": "",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "page-wrapper dialog-off-canvas-m",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "BODY",
+        "cls": "user-logged-in path-node page-no",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "HTML",
+        "cls": "no-touchevents js",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      }
+    ]
+  },
+  "teaser-a4:content": {
+    "rect": {
+      "x": 512,
+      "y": 1276,
+      "w": 288,
+      "h": 33
+    },
+    "point": {
+      "cx": 552,
+      "cy": 1293
+    },
+    "thisDropzoneInStack": true,
+    "stack": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "dz": null,
+        "dnd": "head-a4",
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--has",
+        "dz": "teaser-a4:content",
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "dz": null,
+        "dnd": "teaser-a4",
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_DropZone_1i2sv_1 _DropZone--isR",
+        "dz": "root:default-zone",
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview-frame_z2rgu_6",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckPreview_z2rgu_1",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-canvas-scope",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas-root_ur8dl_42",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas-inner_ur8dl_33",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckCanvas_ur8dl_1 _PuckCanvas-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckLayout-inner_1dd16_40",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "_PuckLayout_1dd16_36 _PuckLayout",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "Puck _Puck_1dd16_19",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-puck-wrapper",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-canvas",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-inline",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "mosaic-builder-mount",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "field--type-mosaic-layout field-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-region__content",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-region layout-region--mai",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-form clearfix",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "FORM",
+        "cls": "node-page-edit-form node-form",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "block block-system block-system-",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "region region-content",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "page-content clearfix",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "layout-container",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "MAIN",
+        "cls": "",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "cls": "page-wrapper dialog-off-canvas-m",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "BODY",
+        "cls": "user-logged-in path-node page-no",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "HTML",
+        "cls": "no-touchevents js",
+        "dz": null,
+        "dnd": null,
+        "pe": "auto"
+      }
+    ]
+  }
+}

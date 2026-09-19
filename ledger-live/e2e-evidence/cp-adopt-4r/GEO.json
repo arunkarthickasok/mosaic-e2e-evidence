@@ -1,0 +1,66 @@
+{
+  "article.teaser": {
+    "x": 536,
+    "y": 800,
+    "w": 288,
+    "h": 663,
+    "pos": "static",
+    "disp": "block"
+  },
+  "teaser__top": {
+    "x": 536,
+    "y": 1094,
+    "w": 288,
+    "h": 294,
+    "pos": "static",
+    "disp": "block"
+  },
+  "teaser__image": {
+    "x": 536,
+    "y": 1094,
+    "w": 288,
+    "h": 147,
+    "pos": "static",
+    "disp": "block"
+  },
+  "zone:prefix": {
+    "x": 536,
+    "y": 819,
+    "w": 288,
+    "h": 128,
+    "pos": "static",
+    "disp": "block"
+  },
+  "zone:meta": {
+    "x": 536,
+    "y": 966,
+    "w": 288,
+    "h": 128,
+    "pos": "static",
+    "disp": "block"
+  },
+  "zone:image": {
+    "x": 536,
+    "y": 1113,
+    "w": 288,
+    "h": 128,
+    "pos": "static",
+    "disp": "block"
+  },
+  "zone:title": {
+    "x": 536,
+    "y": 1260,
+    "w": 288,
+    "h": 128,
+    "pos": "static",
+    "disp": "block"
+  },
+  "zone:content": {
+    "x": 536,
+    "y": 1423,
+    "w": 288,
+    "h": 33,
+    "pos": "static",
+    "disp": "block"
+  }
+}

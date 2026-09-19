@@ -1,0 +1,11 @@
+{
+  "present": true,
+  "lead": "No fields — this component is built from its slots. Drop content into each slot on the canvas.",
+  "items": [
+    "Content(required)",
+    "Image",
+    "Meta",
+    "Prefix",
+    "Title content"
+  ]
+}

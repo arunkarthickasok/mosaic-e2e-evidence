@@ -1,0 +1,18 @@
+{
+  "before": 0,
+  "after": 0,
+  "landed": false,
+  "itemInView": true,
+  "zoneY": 1113,
+  "logs": [
+    "MDBG rawEls=[\"_r_8_\"] hasPreview=false",
+    "MDBG rawEls=[\"_r_8_\"] hasPreview=false",
+    "MDBG rawEls=[\"_r_7_\"] hasPreview=false",
+    "MDBG rawEls=[\"teaser-a4\",\"root:default-zone\"] hasPreview=true",
+    "MDBG cands=[{\"id\":\"teaser-a4\",\"type\":\"component\"},{\"id\":\"root:default-zone\",\"type\":\"dropzone\"}]",
+    "MDBG rawEls=[\"teaser-a4\",\"root:default-zone\"] hasPreview=true",
+    "MDBG cands=[{\"id\":\"teaser-a4\",\"type\":\"component\"},{\"id\":\"root:default-zone\",\"type\":\"dropzone\"}]",
+    "MDBG rawEls=[\"teaser-a4\",\"root:default-zone\"] hasPreview=true",
+    "MDBG cands=[{\"id\":\"teaser-a4\",\"type\":\"component\"},{\"id\":\"root:default-zone\",\"type\":\"dropzone\"}]"
+  ]
+}

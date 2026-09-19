@@ -1,0 +1,11 @@
+{
+  "before": 0,
+  "after": 1,
+  "landed": true,
+  "itemInView": true,
+  "zoneY": 864,
+  "logs": [
+    "MDBG dragOver targetType=dropzone targetId=cols-a3:column_1 targetZone=cols-a3:column_1 mode=new",
+    "MDBG dragEnd srcZone=cols-a3:column_1 srcId=mosaic_heading-8ab73cff-858a-47ba-b861-99c6e3b4f50a previewKeys=[\"cols-a3:column_1\"] targetType=component targetId=mosaic_heading-8ab73cff-858a-47ba-b861-99c6e3b4f50a"
+  ]
+}

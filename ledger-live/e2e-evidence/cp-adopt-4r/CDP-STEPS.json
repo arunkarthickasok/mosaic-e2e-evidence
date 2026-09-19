@@ -1,0 +1,44 @@
+{
+  "steps": [
+    {
+      "tag": "after-press+hold",
+      "dragging": false,
+      "enabled": [],
+      "shimmer": false
+    },
+    {
+      "tag": "after-activate",
+      "dragging": false,
+      "enabled": [],
+      "shimmer": false
+    },
+    {
+      "tag": "mid-move",
+      "dragging": false,
+      "enabled": [],
+      "shimmer": false
+    },
+    {
+      "tag": "at-target",
+      "dragging": false,
+      "enabled": [
+        "teaser-a4:content"
+      ],
+      "shimmer": false
+    },
+    {
+      "tag": "wiggle",
+      "dragging": false,
+      "enabled": [
+        "teaser-a4:content"
+      ],
+      "shimmer": false
+    }
+  ],
+  "ssrLog": [
+    "SSR req @+preloadms"
+  ],
+  "beforeDom": 1,
+  "afterDom": 1,
+  "landed": false
+}

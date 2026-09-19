@@ -1,0 +1,5 @@
+{
+  "tag": "owned-987",
+  "dialogFired": false,
+  "fieldHead": "{\"schema_version\":6,\"root\":\"root-a3\",\"nodes\":{\"root-a3\":{\"id\":\"root-a3\",\"type\":\"mosaic_region\",\"props\":{},\"slots\":{\"items\":[\"cols-a3\"]},\"data_sources\":{}},\"cols"
+}

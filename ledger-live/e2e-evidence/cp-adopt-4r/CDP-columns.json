@@ -1,0 +1,50 @@
+{
+  "node": "987",
+  "target": "cols-a3:column_1",
+  "before": 0,
+  "itemBox": {
+    "x": 208,
+    "y": 1255.859375,
+    "width": 287,
+    "height": 84
+  },
+  "zoneBox": {
+    "x": 536,
+    "y": 863.859375,
+    "width": 136,
+    "height": 128
+  },
+  "reachBefore": {
+    "top": [
+      {
+        "tag": "DIV",
+        "dz": "cols-a3:column_1",
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone",
+        "pe": "auto"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pe": "auto"
+      }
+    ],
+    "reachable": true
+  },
+  "midDrag": {
+    "dragging": true,
+    "enabled": [
+      "cols-a3:column_1"
+    ]
+  },
+  "after": 1,
+  "landed": true
+}

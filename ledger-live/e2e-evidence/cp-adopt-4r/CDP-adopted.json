@@ -1,0 +1,110 @@
+{
+  "teaser-a4:image": {
+    "node": "988",
+    "target": "teaser-a4:image",
+    "before": 0,
+    "itemBox": {
+      "x": 208,
+      "y": 1911.859375,
+      "width": 287,
+      "height": 84
+    },
+    "zoneBox": {
+      "x": 512,
+      "y": 920.859375,
+      "width": 288,
+      "height": 32
+    },
+    "reachBefore": {
+      "top": [
+        {
+          "tag": "DIV",
+          "dz": "teaser-a4:image",
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": null,
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": "root:default-zone",
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": null,
+          "pe": "auto"
+        }
+      ],
+      "reachable": true
+    },
+    "midDrag": {
+      "dragging": true,
+      "enabled": [
+        "teaser-a4:image"
+      ],
+      "homedTo": {
+        "fx": 552,
+        "fy": 805
+      }
+    },
+    "after": 1,
+    "landed": true
+  },
+  "teaser-a4:content": {
+    "node": "988",
+    "target": "teaser-a4:content",
+    "before": 1,
+    "itemBox": {
+      "x": 208,
+      "y": 1779.859375,
+      "width": 287,
+      "height": 84
+    },
+    "zoneBox": {
+      "x": 512,
+      "y": 922.859375,
+      "width": 288,
+      "height": 33.3125
+    },
+    "reachBefore": {
+      "top": [
+        {
+          "tag": "DIV",
+          "dz": null,
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": "teaser-a4:content",
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": null,
+          "pe": "auto"
+        },
+        {
+          "tag": "DIV",
+          "dz": "root:default-zone",
+          "pe": "auto"
+        }
+      ],
+      "reachable": true
+    },
+    "midDrag": {
+      "dragging": true,
+      "enabled": [
+        "teaser-a4:content"
+      ],
+      "homedTo": {
+        "fx": 552,
+        "fy": 884
+      }
+    },
+    "after": 2,
+    "landed": true
+  }
+}
