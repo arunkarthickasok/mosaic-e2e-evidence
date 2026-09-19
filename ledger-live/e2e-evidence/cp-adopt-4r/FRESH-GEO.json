@@ -1,0 +1,168 @@
+{
+  "adoptedPreviewPresent": true,
+  "previewRect": {
+    "x": 530,
+    "y": 700,
+    "w": 288,
+    "h": 284,
+    "pos": "static",
+    "disp": "block",
+    "pe": "none"
+  },
+  "zone:root:default-zone": {
+    "box": {
+      "x": 530,
+      "y": 700,
+      "w": 288,
+      "h": 284,
+      "pos": "relative",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      }
+    ]
+  },
+  "zone:olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:prefix": {
+    "box": {
+      "x": 530,
+      "y": 719,
+      "w": 288,
+      "h": 32,
+      "pos": "static",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:prefix"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      }
+    ]
+  },
+  "zone:olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:meta": {
+    "box": {
+      "x": 530,
+      "y": 770,
+      "w": 288,
+      "h": 32,
+      "pos": "static",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:meta"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      }
+    ]
+  },
+  "zone:olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:image": {
+    "box": {
+      "x": 530,
+      "y": 821,
+      "w": 288,
+      "h": 32,
+      "pos": "static",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:image"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      }
+    ]
+  },
+  "zone:olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:title": {
+    "box": {
+      "x": 530,
+      "y": 872,
+      "w": 288,
+      "h": 32,
+      "pos": "static",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:title"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      }
+    ]
+  },
+  "zone:olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:content": {
+    "box": {
+      "x": 530,
+      "y": 951,
+      "w": 288,
+      "h": 32,
+      "pos": "static",
+      "disp": "block",
+      "pe": "auto"
+    },
+    "reachAtCenter": true,
+    "efpTop": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-34a564ca-44f3-4ab5-801f-4ad0a9814e52:content"
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone"
+      }
+    ]
+  }
+}

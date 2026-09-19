@@ -1,0 +1,45 @@
+{
+  "placedId": "olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f",
+  "before": 0,
+  "after": 0,
+  "landed": false,
+  "hover": {
+    "zoneBox": {
+      "x": 506,
+      "y": 407,
+      "w": 288,
+      "h": 32
+    },
+    "isEnabled": false,
+    "hovering": false,
+    "efp": [
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null
+      }
+    ]
+  },
+  "beforeDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--isAreaSelected_1i2sv_24\" data-testid=\"dropzone:olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f:content\" ",
+  "afterDom": "<div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f:content\" data-puck-dropzone=\"olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f:content\" style=\"--min-empty-heig",
+  "saved": {
+    "teaserId": "olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f",
+    "teaserType": "olivero:teaser",
+    "contentSlot": null
+  },
+  "mdbg": [
+    "MDBG dragOver targetType=component targetId=olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f targetZone=root:default-zone idx=1",
+    "MDBG dragEnd srcZone=root:default-zone previewKeys=[\"root:default-zone\"] targetType=component targetId=olivero--teaser-2c3e5ac2-af4c-4366-97e4-29bda598951f canceled=false"
+  ]
+}

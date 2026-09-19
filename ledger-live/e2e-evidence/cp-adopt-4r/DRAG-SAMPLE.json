@@ -1,0 +1,86 @@
+{
+  "samples": [
+    {
+      "tag": "pre-drag",
+      "box": {
+        "y": 951,
+        "h": 32
+      }
+    },
+    {
+      "tag": "after-pickup",
+      "box": {
+        "y": 951,
+        "h": 32
+      }
+    },
+    {
+      "tag": "mid-move",
+      "box": {
+        "y": 951,
+        "h": 32
+      }
+    },
+    {
+      "tag": "at-target-predrag-y",
+      "box": {
+        "y": 923,
+        "h": 68
+      }
+    }
+  ],
+  "atTarget": {
+    "liveBox": {
+      "y": 923,
+      "h": 68
+    },
+    "pointer": {
+      "x": 570.375,
+      "y": 967.453125
+    },
+    "efp": [
+      {
+        "tag": "DIV",
+        "dz": "olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content",
+        "pv": false,
+        "cls": "_DropZone_1i2sv_1 _DropZ"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pv": false,
+        "cls": ""
+      },
+      {
+        "tag": "DIV",
+        "dz": "root:default-zone",
+        "pv": false,
+        "cls": "_DropZone_1i2sv_1 _DropZ"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pv": false,
+        "cls": "_PuckPreview-frame_z2rgu"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pv": true,
+        "cls": "_PuckPreview_z2rgu_1"
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "pv": false,
+        "cls": "mosaic-canvas-scope"
+      }
+    ]
+  },
+  "after": 1,
+  "mdbg": [
+    "MDBG cands=[{\"id\":\"olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content\",\"type\":\"dropzone\",\"dt\":true},{\"id\":\"olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696\",\"type\":\"component\"},{\"id\":\"root:default-zone\",\"type\":\"dropzone\",\"dt\":true}]",
+    "MDBG dragOver targetType=dropzone targetId=olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content targetZone=olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content idx=0",
+    "MDBG dragEnd srcZone=olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content previewKeys=[\"olivero--teaser-eca8bb1f-6a13-47a9-9fc5-ab62207cc696:content\"] targetType=component targetId=mosaic_heading-cf22ef18-64fe-4fce-aa25-cdf85aad8a3b canceled=false"
+  ]
+}

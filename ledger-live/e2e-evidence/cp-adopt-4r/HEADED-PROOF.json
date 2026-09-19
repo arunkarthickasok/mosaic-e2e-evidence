@@ -1,0 +1,50 @@
+[
+  {
+    "run": 1,
+    "placedId": "olivero--teaser-59084e05-9a4c-4e2c-94b4-33eae56f4984",
+    "beforeDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--isAreaSelected_1i2sv_24\" data-testid=\"dropzone:olivero--teaser-59084e05-9a4c-4e2c-94b4-33",
+    "before": 0,
+    "after": 1,
+    "landed": true,
+    "afterDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--hoveringOverArea_1i2sv_25 _DropZone--isEnabled_1i2sv_59 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:olivero--teaser-59084e05-9a4c-4e2c-94b4-33eae56f",
+    "saved": {
+      "teaserType": "olivero:teaser",
+      "contentSlot": [
+        "mosaic_heading-97f5e2d3-e54c-45aa-a35e-f2dbe5001321"
+      ],
+      "childType": "mosaic_heading"
+    }
+  },
+  {
+    "run": 2,
+    "placedId": "olivero--teaser-b437885e-e28d-450e-ae8c-6b53f5940697",
+    "beforeDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--isAreaSelected_1i2sv_24\" data-testid=\"dropzone:olivero--teaser-b437885e-e28d-450e-ae8c-6b",
+    "before": 0,
+    "after": 1,
+    "landed": true,
+    "afterDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--hoveringOverArea_1i2sv_25 _DropZone--isEnabled_1i2sv_59 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:olivero--teaser-b437885e-e28d-450e-ae8c-6b53f594",
+    "saved": {
+      "teaserType": "olivero:teaser",
+      "contentSlot": [
+        "mosaic_heading-93527ec0-e839-47d4-b56b-2cccd9712c15"
+      ],
+      "childType": "mosaic_heading"
+    }
+  },
+  {
+    "run": 3,
+    "placedId": "olivero--teaser-78ccf4e4-3285-4e6e-adb9-150dc92a915d",
+    "beforeDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--isAreaSelected_1i2sv_24\" data-testid=\"dropzone:olivero--teaser-78ccf4e4-3285-4e6e-adb9-15",
+    "before": 0,
+    "after": 1,
+    "landed": true,
+    "afterDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--hoveringOverArea_1i2sv_25 _DropZone--isEnabled_1i2sv_59 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:olivero--teaser-78ccf4e4-3285-4e6e-adb9-150dc92a",
+    "saved": {
+      "teaserType": "olivero:teaser",
+      "contentSlot": [
+        "mosaic_heading-192d1f0d-f127-4079-853b-66baed8af88e"
+      ],
+      "childType": "mosaic_heading"
+    }
+  }
+]

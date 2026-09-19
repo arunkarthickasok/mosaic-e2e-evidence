@@ -11,10 +11,14 @@ you perform.
 
 Prereq: admin on the dev site.
 
-> **Drop-proof note.** Every "drop lands" step below is backed by a real-input (CDP)
-> `Input.dispatchMouseEvent` drag that was filmed committing the child AND persisting it to
-> the saved layout (`reports/REPORT-CP-ADOPT-4R-P2.md`, `ledger-live/e2e-evidence/cp-adopt-4r/
-> WC69-CDP-PROOF.json`). Per the DROP-PROOF LAW these steps are **PROVEN**, not asserted.
+> **Drop-proof note.** The "drop lands" step below is proven under the **PROOF-CONDITIONS
+> LAW**: reproduced in **headed Chrome** on a **fresh in-session `/node/add/page`** with the
+> **served bundle == built dist** (1.0.43, `js.preprocess=false`), following this exact step
+> order — the child commits AND persists to the saved layout, 3/3 runs
+> (`reports/REPORT-CP-ADOPT-4R-P3.md`, `ledger-live/e2e-evidence/cp-adopt-4r/HEADED-PROOF.json`).
+> (The PASS-2 CDP mark was WITHDRAWN — it passed only on a fixture whose hand-crafted id was
+> colon-free, hiding the real cause: a placed adopted id `olivero:teaser-<uuid>` carries a
+> colon that broke Puck's `:`-based zone parsing. Now fixed with a colon-free Puck key.)
 
 ---
 

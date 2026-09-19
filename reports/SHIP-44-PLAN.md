@@ -327,3 +327,23 @@ src/Plugin/MosaicComponent/SdcComponentPlugin.php — TRACKED + PRISTINE (absent
 ```
 'ship #44: CP-ADOPT-4 + 4R adopt any SDC end-to-end - hybrid renderer (owned direct-Twig byte-identical, adopted via core component element), palette opens enabled adopted libraries, canvas renders the library markup with authorable slot drop zones (WC#69 drop PROVEN via CDP: min hittable box + .mosaic-adopted-preview layout reset + min-empty-height cap fix the zero-width/overlap/reflow causes), empty required slot refused at save + renders nothing not broken markup (WC#70 a+b), props-less adopted panel shows built-from-slots empty state (WC#68), no false unsaved prompt on load (WC#66), slot labels + banners (WC#67); full Kernel+Unit 2988/0, byte-identical 14e6cb9c held, dist rebuilt, libs 1.0.42'
 ```
+
+---
+
+## PASS-3 update (2026-09-19) — WC#69 TRUE cause fixed + HEADED-PROVEN
+
+- **Root cause:** a PLACED adopted teaser's instance id is `olivero:teaser-<uuid>` (colon);
+  Puck parses zone ids by `split(":")` → the slot never resolves. The node-988 fixture
+  (`teaser-a4`, colon-free) HID it. Fix: register adopted under a colon-free Puck key
+  (`:`⇆`--`), map back to the real type for save (`MosaicPuckAdapter.ts`).
+- **Proof:** headed Chrome, fresh `/node/add/page`, Arun's exact steps — 3/3 land + persist
+  (`HEADED-PROOF.json`), served==built for 1.0.43 (`d7429dc57b77fcff9b5a18ac3264a62518e963e72aba4ffbdc46985f95e7875a`). PROOF-CONDITIONS LAW met.
+- **New file this pass (+1 → 29 to stage):** `js/src/builder/__tests__/MosaicPuckAdapterColonType.test.ts`.
+- **Changed:** `js/src/builder/MosaicPuckAdapter.ts` (already in the M set); dist rebuilt clean.
+- **libs → 1.0.43** (was 1.0.42). builder.js sha256 = `d7429dc57b77fcff9b5a18ac3264a62518e963e72aba4ffbdc46985f95e7875a`.
+- **WC#69 status:** was "FIXED + PROVEN (CDP)" → **corrected to "FIXED + HEADED-PROVEN
+  (PROOF-CONDITIONS LAW)"**; the CDP-only mark was withdrawn.
+- **Commit message (single-quoted, updated):**
+```
+'ship #44: CP-ADOPT-4 + 4R adopt any SDC end-to-end - hybrid renderer (owned direct-Twig byte-identical, adopted via core component element), palette opens enabled adopted libraries, canvas renders the library markup with authorable slot drop zones - WC#69 drop HEADED-PROVEN (colon-free Puck key so a placed adopted id olivero--teaser-uuid parses its slot zone; + min hittable box + .mosaic-adopted-preview layout reset + min-empty-height cap), empty required slot refused at save + renders nothing not broken markup (WC#70 a+b), props-less adopted panel shows built-from-slots empty state (WC#68), no false unsaved prompt on load (WC#66), slot labels + banners (WC#67); byte-identical 14e6cb9c held, dist rebuilt, libs 1.0.43'
+```

@@ -1,0 +1,51 @@
+{
+  "contentSel": "[data-puck-dropzone=\"olivero:teaser-5b1121bd-2a1f-4a18-b3ba-7cdbf9c9ec35:content\"]",
+  "before": 0,
+  "after": 0,
+  "landed": false,
+  "hover": {
+    "zoneBox": {
+      "x": 506,
+      "y": 407,
+      "w": 288,
+      "h": 32
+    },
+    "isEnabled": false,
+    "hovering": false,
+    "efp": [
+      {
+        "tag": "DIV",
+        "dz": null,
+        "dnd": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "dnd": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "dnd": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "dnd": null
+      },
+      {
+        "tag": "DIV",
+        "dz": null,
+        "dnd": null
+      }
+    ]
+  },
+  "saved": {
+    "teaserId": "olivero:teaser-5b1121bd-2a1f-4a18-b3ba-7cdbf9c9ec35",
+    "contentSlot": []
+  },
+  "mdbg": [
+    "MDBG dragOver targetType=component targetId=olivero:teaser-5b1121bd-2a1f-4a18-b3ba-7cdbf9c9ec35 targetZone=root:default-zone idx=1",
+    "MDBG dragEnd srcZone=root:default-zone previewKeys=[\"root:default-zone\"] targetType=component targetId=olivero:teaser-5b1121bd-2a1f-4a18-b3ba-7cdbf9c9ec35 canceled=false"
+  ]
+}
