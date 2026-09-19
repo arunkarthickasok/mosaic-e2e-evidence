@@ -185,7 +185,7 @@ Panel-semantics item ABSORBED by ADOPT Pillar E. Timeline of record: 6–7.5 wee
 - **M1 (moderation) fallback rider:** Pillar H graceful degradation MUST render the fallback in BOTH draft and
   published states (a missing library must never white-page a moderated/unpublished revision either).
 
-## §9 Style Ownership + Cascade Discipline (delegated ruling 2026-09-19, overrule open)
+## §9 Style Ownership + Cascade Discipline (RATIFIED 2026-09-19 — Arun: "I agree with your solution, it's your call"; overrule open)
 
 Witnessed in CP-ADOPT-4R: an adopted SDC (Olivero `teaser`) brings its OWN layout CSS
 (`position:absolute`, flex/grid). On the canvas that CSS collapsed + overlapped the Puck slot
