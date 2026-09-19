@@ -269,3 +269,76 @@ today is dishonest (kind-agnostic binding/breakpoint). H9 slot-into-View is unbu
 false; the design RECONCILES the existing order, it does not introduce it.** 10 risks; behaviour-
 change migration (R10) + the layer computed-style oracle (R2) are the two that most need Arun's eye
 before P1a. STOP for audit.
+
+---
+
+# CP-ADOPT-5 P1a — CHECKPOINT-1 (capability rules + panel gating + grandfather) — 2026-09-19
+
+MOSAIC git READ-ONLY (edits only); no dev DB/config writes. STOP for audit; P1b next.
+
+## STEP 0 oracles (both gates in place, both identical after this pass)
+- Committed `scripts/qa/style-shasum.sh` (+ `style-shasum.mjs`) — fixed computed properties on
+  every `[data-mosaic-component]` at node/780, headless. R2 second gate beside region-shasum.
+- **REGION** node/780 `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954` —
+  baseline == after.
+- **STYLE** node/780 `b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10` —
+  baseline == after. P1a is panel + capability metadata ONLY → no render/visual change; both hold.
+
+## 1 PHP — capability rules per descriptor kind
+- `PropShape::capabilities(kind)` emits the P0 table: `bind` (source kinds or FALSE), `breakpoint`,
+  `style` (always FALSE per-prop — component-level). `PropDescriptor::toArray()` adds
+  `capabilities: {bind, breakpoint, style, translate}` to every `prop_descriptors` entry (translate
+  = the descriptor's own translatable). Unit `PropShapeCapabilityTest` 12/12 — one cell per table
+  row (the smoke-alarm: flip a cell → the row bites).
+
+## 2 ADAPTER — capability-driven sections
+- `MosaicPuckAdapter.ts`: an ADOPTED component (id carries the SDC colon) shows Data only if it has
+  a bindable-kind prop, Breakpoint only if a breakpointable-kind prop. OWNED components keep EXACTLY
+  today's five sections. `foreignSlotResolveFields` (Puck passes `parent`) hides
+  spacing/style-overrides/responsive + adds "Styling is owned by {Library} {Component}" when the
+  parent is adopted, and returns the fields UNCHANGED otherwise. Vitest
+  `MosaicPuckAdapterCapability` 6/6.
+- **OWNED top-level panel field-set diff = EMPTY**: `metaKeys(owned) === ['_mosaic_bp',
+  '_mosaic_visibility', '_mosaic_ds', '_mosaic_spacing', '_mosaic_style_overrides']` — today's exact
+  set (Vitest cell "OWNED component keeps all five meta sections"). resolveFields returns default
+  fields outside a foreign slot, so an owned top-level component is byte-identical.
+
+## 3 GRANDFATHER (R10)
+- Renderer STILL honours a binding on a now-non-bindable kind — no capability check on the render
+  path (Kernel `CapabilityAuditTest::testRendererHonoursGrandfatheredBinding`: a `level` (select)
+  binding renders `<h2>`, not the default `<h3>`).
+- `MosaicCapabilityAudit::legacyBindings($layout)` emits the list for the Pillar G report (Kernel:
+  flags a `level` binding, ignores a `text` binding). Smoke-alarm = the two audit cells.
+- Panel shows "Legacy binding — remove to edit" for a bound non-bindable prop (Vitest
+  `MosaicDataSourceFieldLegacy` 2/2; Remove clears it). Only triggers on an existing legacy binding,
+  so a normal panel is unchanged (byte-identical preserved).
+
+## 4 FE dialog parity
+- The gating is computed in `toConfig` from `manifest.prop_descriptors[*].capabilities` — the SAME
+  manifest the admin (drupalSettings) and FE (API) builders consume (single PHP source). `toConfig`
+  is surface-agnostic, so the FE dialog shows identical sections + the identical ownership line by
+  construction (the `MosaicPuckAdapterCapability` cells cover both surfaces).
+
+## 5 Gates (FULL)
+- Full Kernel+Unit **3003 / 0** (+15: PropShapeCapabilityTest 12, CapabilityAuditTest 3).
+- Vitest **569 passed / 1 failed** — the 1 is pre-existing **B-101** (`MosaicPuckAdapter.test.ts:148`
+  checkbox drift); +8 cells mine.
+- PHPCS **0 errors** on changed files; PHPStan **0 errors** on changed files.
+- **REGION + STYLE shasums IDENTICAL before==after** (quoted above).
+- Dist rebuilt (builder.js + frontend-editor.js); **BUMP-LIBS 1.0.43 → 1.0.44**.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `src/Sdc/PropShape.php` (capabilities map) · `src/Sdc/PropDescriptor.php` (toArray capabilities) ·
+  `src/Service/MosaicCapabilityAudit.php` (new) · `mosaic.services.yml` (audit service).
+- `js/src/builder/MosaicPuckAdapter.ts` (gating + foreignSlotResolveFields + PuckComponentConfig) ·
+  `js/src/builder/fields/MosaicDataSourceField.tsx` (legacy "remove to edit").
+- Tests: `tests/src/Unit/Sdc/PropShapeCapabilityTest.php`, `tests/src/Kernel/Adopt/CapabilityAuditTest.php`,
+  `js/src/builder/__tests__/MosaicPuckAdapterCapability.test.ts`,
+  `js/src/builder/fields/__tests__/MosaicDataSourceFieldLegacy.test.tsx`,
+  `js/src/builder/__tests__/MosaicPuckAdapterColonType.test.ts` (import fix).
+- Oracles: `scripts/qa/style-shasum.sh`, `scripts/qa/style-shasum.mjs` · `js/dist/*` · `mosaic.libraries.yml` (1.0.44).
+
+## Honest status
+CHECKPOINT-1 filed. Capability-aware panel + grandfather land with owned byte-identical (panel +
+render) and BOTH shasums held. Add-dropdown honesty (not offering a non-bindable prop in the ADD
+list) is deferred to P1b with the bare-render + layer work, so P1a touches no owned add-flow. STOP.
