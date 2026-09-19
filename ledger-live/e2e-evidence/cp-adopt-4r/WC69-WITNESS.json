@@ -1,0 +1,54 @@
+{
+  "ssr": [
+    {
+      "status": 200,
+      "postData": "{\"component_id\":\"olivero:teaser\",\"props\":{\"title\":[],\"prefix\":[],\"meta\":[],\"image\":[],\"content\":[{\"type\":\"mosaic_heading\",\"props\":{\"id\":\"head-a4\",\"text\":\"Adopted Olivero teaser\",\"level\":\"h3\",\"alignment\":\"left\",\"_mosaic_bp\":{\"mobile\":{},\"tablet\":{},\"desktop\":{}},\"_mosaic_visibility\":{\"mobile\":true,\"t"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+  ],
+  "dom": {
+    "markerCount": 5,
+    "detail": [
+      {
+        "slot": "prefix",
+        "hasSlotZone": true,
+        "hasDropzone": true,
+        "innerHtmlHead": "<div class=\"mosaic-slot-zone\" data-slot=\"prefix\" data-slot-count=\"0\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:teaser-a4:prefix\" data-puck-dropzone=\"teaser-a4:prefix\" style=\"--min-empty-height: 128px;\"></div"
+      },
+      {
+        "slot": "meta",
+        "hasSlotZone": true,
+        "hasDropzone": true,
+        "innerHtmlHead": "<div class=\"mosaic-slot-zone\" data-slot=\"meta\" data-slot-count=\"0\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:teaser-a4:meta\" data-puck-dropzone=\"teaser-a4:meta\" style=\"--min-empty-height: 128px;\"></div></div"
+      },
+      {
+        "slot": "image",
+        "hasSlotZone": true,
+        "hasDropzone": true,
+        "innerHtmlHead": "<div class=\"mosaic-slot-zone\" data-slot=\"image\" data-slot-count=\"0\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:teaser-a4:image\" data-puck-dropzone=\"teaser-a4:image\" style=\"--min-empty-height: 128px;\"></div></"
+      },
+      {
+        "slot": "title",
+        "hasSlotZone": true,
+        "hasDropzone": true,
+        "innerHtmlHead": "<div class=\"mosaic-slot-zone\" data-slot=\"title\" data-slot-count=\"0\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1\" data-testid=\"dropzone:teaser-a4:title\" data-puck-dropzone=\"teaser-a4:title\" style=\"--min-empty-height: 128px;\"></div></"
+      },
+      {
+        "slot": "content",
+        "hasSlotZone": true,
+        "hasDropzone": true,
+        "innerHtmlHead": "<div class=\"mosaic-slot-zone\" data-slot=\"content\" data-slot-count=\"1\"><div class=\"mosaic-slot-zone__body\" style=\"min-height: 40px; position: relative;\"><div class=\"_DropZone_1i2sv_1 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:teaser-a4:content\" data-puck-dropzone=\"teaser-a4:content\" style"
+      }
+    ],
+    "allDropzones": [
+      "root:default-zone",
+      "teaser-a4:prefix",
+      "teaser-a4:meta",
+      "teaser-a4:image",
+      "teaser-a4:title",
+      "teaser-a4:content"
+    ]
+  }
+}

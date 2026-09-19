@@ -1,0 +1,41 @@
+{
+  "target": "cols-a3:column_1",
+  "before": 0,
+  "itemBox": {
+    "x": 163,
+    "y": 1279.859375,
+    "width": 257,
+    "height": 84
+  },
+  "zoneBox": {
+    "x": 461,
+    "y": 868.859375,
+    "width": 136,
+    "height": 128
+  },
+  "midDrag": {
+    "dragging": true,
+    "draggingAttrEls": 1,
+    "enabledZones": [],
+    "hoveringZones": [
+      "root:default-zone"
+    ],
+    "dragOverlay": false
+  },
+  "atTarget": {
+    "enabledZones": [],
+    "hoveringZones": [
+      "root:default-zone",
+      "cols-a3:column_1",
+      "cols-a3:column_2"
+    ]
+  },
+  "underPointer": {
+    "tag": "DIV",
+    "dzChain": [
+      "dz=root:default-zone"
+    ]
+  },
+  "after": 0,
+  "landed": false
+}

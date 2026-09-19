@@ -1,0 +1,27 @@
+{
+  "teaser-a4:content": {
+    "w": 288,
+    "h": 33,
+    "passesBuffer": true
+  },
+  "teaser-a4:image": {
+    "w": 96,
+    "h": 128,
+    "passesBuffer": true
+  },
+  "teaser-a4:meta": {
+    "w": 288,
+    "h": 128,
+    "passesBuffer": true
+  },
+  "teaser-a4:prefix": {
+    "w": 288,
+    "h": 128,
+    "passesBuffer": true
+  },
+  "teaser-a4:title": {
+    "w": 96,
+    "h": 128,
+    "passesBuffer": true
+  }
+}

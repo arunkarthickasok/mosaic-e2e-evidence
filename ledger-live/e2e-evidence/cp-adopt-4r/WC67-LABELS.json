@@ -1,0 +1,22 @@
+[
+  {
+    "boundSlot": "prefix",
+    "label": "Prefix"
+  },
+  {
+    "boundSlot": "meta",
+    "label": "Meta"
+  },
+  {
+    "boundSlot": "image",
+    "label": "Image"
+  },
+  {
+    "boundSlot": "title",
+    "label": "Title content"
+  },
+  {
+    "boundSlot": "content",
+    "label": "Content"
+  }
+]

@@ -1,3 +1,13 @@
+> ⛔ **CP-ADOPT-4R UPDATE (2026-09-18) — SHIP #44 BLOCKED. The slot-fill DROP step below is UNPROVEN.**
+> Arun's eye-test caught WC#66–#69. Per the DROP-PROOF LAW, the "content slot is a live drop zone / fill it
+> with your content" claim is **UNPROVEN** — a committed real-pointer drop could not be filmed (Puck 0.21 has
+> no keyboard sensor; its new dnd-kit is not driven by Playwright's synthetic pointer — even the OWNED columns
+> control never enables a zone headlessly). WC#69's *structural* cause (empty adopted slots render zero-width →
+> Puck's `BUFFER=6` pointer-collision makes them undroppable) is root-caused at source + FIXED (min hittable
+> box, rect `0→96` filmed) + WC#67 (labels/order) FIXED; WC#66 not reproduced; WC#68 open. The gating next step
+> is **Arun's manual re-test of the min-box fix**. See `reports/REPORT-CP-ADOPT-4R.md` +
+> `ledger-live/e2e-evidence/cp-adopt-4r/`.
+
 # WALK — CP-ADOPT-4 (the first outside component becomes usable) — Arun eye-test
 
 **What changed:** a component from OUTSIDE Mosaic — Olivero's `teaser`, a theme-provided SDC Mosaic never

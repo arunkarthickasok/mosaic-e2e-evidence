@@ -1,0 +1,48 @@
+{
+  "self": [
+    "class=_DropZone_1i2sv_1",
+    "data-testid=dropzone:cols-a3:column_1",
+    "data-puck-dropzone=cols-a3:column_1",
+    "style=--min-empty-height: 128px;"
+  ],
+  "ancestry": [
+    {
+      "tag": "DIV",
+      "cls": "_DropZone_1i2sv_1",
+      "pdnd": null,
+      "dz": "cols-a3:column_1"
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-slot-zone__body",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-slot-zone",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-columns__col mosaic-columns__col--1",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-columns mosaic-columns--2 mosaic-columns--gap-md",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "",
+      "pdnd": "cols-a3",
+      "dz": null
+    }
+  ],
+  "hasDndAttr": false,
+  "dropzoneInnerAttrs": []
+}

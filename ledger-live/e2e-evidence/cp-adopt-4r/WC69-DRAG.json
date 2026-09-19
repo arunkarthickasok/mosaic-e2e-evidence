@@ -1,0 +1,12 @@
+{
+  "method": "real-pointer",
+  "itemFound": 1,
+  "before": 1,
+  "after": 1,
+  "landed": false,
+  "ssrBefore": 1,
+  "ssrAfter": 1,
+  "errs": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+  ]
+}

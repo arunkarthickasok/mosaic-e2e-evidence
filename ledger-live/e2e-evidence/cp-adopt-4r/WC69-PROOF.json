@@ -1,0 +1,9 @@
+{
+  "before": 1,
+  "after": 1,
+  "landed": false,
+  "ssrBefore": 1,
+  "ssrAfter": 1,
+  "beforeDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:teaser-a4:content\" data-puck-dropzone=\"teaser-a4:content\" style=\"--min-empty-height: 128px;\"><div style=\"position: relative;\" data-puck",
+  "afterDom": "<div class=\"_DropZone_1i2sv_1 _DropZone--hoveringOverArea_1i2sv_25 _DropZone--isEnabled_1i2sv_59 _DropZone--hasChildren_1i2sv_11\" data-testid=\"dropzone:teaser-a4:content\" data-puck-dropzone=\"teaser-a4:content\" style=\"--min-empty-height: 128px;\"><div style=\"position: relative;\" data-puck-component=\"head-a4\" data-puck-dn"
+}

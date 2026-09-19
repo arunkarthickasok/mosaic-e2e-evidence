@@ -1,0 +1,20 @@
+{
+  "zones": [
+    "root:default-zone",
+    "teaser-a4:content",
+    "teaser-a4:image",
+    "teaser-a4:meta",
+    "teaser-a4:prefix",
+    "teaser-a4:title"
+  ],
+  "root:default-zone": {
+    "before": 2,
+    "after": 2,
+    "landed": false
+  },
+  "teaser-a4:content": {
+    "before": 1,
+    "after": 1,
+    "landed": false
+  }
+}

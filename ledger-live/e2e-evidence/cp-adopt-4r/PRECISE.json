@@ -1,0 +1,27 @@
+{
+  "zoneInfo": {
+    "exists": true,
+    "rect": {
+      "x": 415,
+      "y": 1079.859375,
+      "w": 96,
+      "h": 128
+    }
+  },
+  "itemBox": {
+    "x": 133,
+    "y": 1935.859375,
+    "width": 241,
+    "height": 84
+  },
+  "zoneBox": {
+    "x": 415,
+    "y": 1079.859375,
+    "width": 96,
+    "height": 128
+  },
+  "underPointer": {
+    "chain": []
+  },
+  "afterCount": 0
+}

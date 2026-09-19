@@ -1,0 +1,14 @@
+{
+  "teaser-a4:image": {
+    "before": 0,
+    "after": 0,
+    "landed": false,
+    "ssrFired": false
+  },
+  "teaser-a4:content": {
+    "before": 1,
+    "after": 1,
+    "landed": false,
+    "ssrFired": false
+  }
+}

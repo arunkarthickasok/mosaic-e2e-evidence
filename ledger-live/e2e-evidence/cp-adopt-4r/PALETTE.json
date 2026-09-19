@@ -1,0 +1,46 @@
+{
+  "draggableCount": 0,
+  "drag": [],
+  "drawer": [
+    {
+      "cls": "_Drawer_pl7z0_1",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_Drawer-draggable_pl7z0_8",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_Drawer-draggableBg_pl7z0_12",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_DrawerItem_pl7z0_22",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_DrawerItem_pl7z0_22",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_Drawer_pl7z0_1",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_Drawer-draggable_pl7z0_8",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_Drawer-draggableBg_pl7z0_12",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_DrawerItem_pl7z0_22",
+      "tag": "DIV"
+    },
+    {
+      "cls": "_DrawerItem_pl7z0_22",
+      "tag": "DIV"
+    }
+  ]
+}

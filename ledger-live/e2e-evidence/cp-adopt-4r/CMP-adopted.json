@@ -1,0 +1,61 @@
+{
+  "self": [
+    "class=_DropZone_1i2sv_1 _DropZone--hasChildren",
+    "data-testid=dropzone:teaser-a4:content",
+    "data-puck-dropzone=teaser-a4:content",
+    "style=--min-empty-height: 128px;"
+  ],
+  "ancestry": [
+    {
+      "tag": "DIV",
+      "cls": "_DropZone_1i2sv_1 _DropZone--hasChildren_1i2sv_11",
+      "pdnd": null,
+      "dz": "teaser-a4:content"
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-slot-zone__body",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-slot-zone",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "teaser__content",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "ARTICLE",
+      "cls": "teaser",
+      "pdnd": null,
+      "dz": null
+    },
+    {
+      "tag": "DIV",
+      "cls": "mosaic-ssr-preview",
+      "pdnd": null,
+      "dz": null
+    }
+  ],
+  "hasDndAttr": false,
+  "dropzoneInnerTag": "DIV",
+  "dropzoneInnerAttrs": [
+    "style=position: relative;",
+    "data-puck-component=head-a4",
+    "data-puck-dnd=head-a4",
+    "tabindex=0",
+    "role=button",
+    "aria-roledescription=draggable",
+    "aria-describedby=dnd-kit-description-1",
+    "aria-pressed=false",
+    "aria-grabbed=false",
+    "aria-disabled=false"
+  ],
+  "firstComp": "head-a4"
+}

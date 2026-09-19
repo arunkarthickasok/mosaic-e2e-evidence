@@ -1,0 +1,12 @@
+{
+  "total": 6,
+  "dropzoneWarn": [],
+  "sample": [
+    "[warning] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.",
+    "[warning] You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance.",
+    "[warning] You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance.",
+    "[error] Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+    "[warning] `setData` is expensive and may cause unnecessary re-renders. Consider using a more atomic action instead.",
+    "[warning] You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance."
+  ]
+}

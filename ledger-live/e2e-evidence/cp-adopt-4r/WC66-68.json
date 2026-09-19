@@ -1,0 +1,14 @@
+{
+  "wc66": {
+    "initialLen": 362,
+    "settledLen": 362,
+    "changedOnLoad": false,
+    "initialHead": "{\"schema_version\":1,\"root\":\"teaser-a4\",\"nodes\":{\"teaser-a4\":{\"id\":\"teaser-a4\",\"type\":\"olivero:teaser\",\"props\":{\"title\":[",
+    "settledHead": "{\"schema_version\":1,\"root\":\"teaser-a4\",\"nodes\":{\"teaser-a4\":{\"id\":\"teaser-a4\",\"type\":\"olivero:teaser\",\"props\":{\"title\":["
+  },
+  "wc68": {
+    "panelFound": true,
+    "fieldCount": 10,
+    "panelTextHead": "MobileTabletDesktopMobileTabletDesktopData Sources▼AllMobileTabletPaddingTopNone4px8px12px16px20px24px28px32px36px40px44px48pxRightNone4px8px12px16px20px24px28px32px36px40px44px48pxBottomNone4px8px12p"
+  }
+}
