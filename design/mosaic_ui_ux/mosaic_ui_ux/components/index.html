@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Component inventory · Mosaic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300..800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../src/mosaic-ui.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); }
+  .sheet { width: 1200px; margin: 0 auto; background: var(--surface); box-shadow: var(--shadow-lg); }
+  .sheetbar { width: 1200px; margin: 0 auto; padding: 20px 24px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .sheetbar h1 { font-size: 22px; line-height: 28px; font-weight: 700; margin: 0; }
+  .sheetbar p { font-size: 13px; line-height: 19px; color: var(--ink-muted); margin: 0; max-width: 78ch; }
+  .themeswitch { position: fixed; top: 12px; right: 12px; z-index: 999; }
+
+/* --- Drupal admin chrome (not part of Mosaic) ---------------------------- */
+.chrome { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #232429; }
+.chrome--claro { background: #f3f4f7; }
+.chrome--claro .chrome__toolbar { background: #0f1214; color: #fff; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 40px; font-size: 13px; }
+.chrome--claro .chrome__toolbar b { font-weight: 600; }
+.chrome--claro .chrome__tabs { background: #fff; border-bottom: 1px solid #d3d4d9; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--claro .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-bottom: 3px solid transparent; }
+.chrome--claro .chrome__tab--on { color: #003cc5; border-bottom-color: #003cc5; font-weight: 700; }
+.chrome--claro .chrome__title { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.chrome--claro .chrome__crumbs { font-size: 12px; color: #55565b; }
+.chrome--claro .chrome__label { font-size: 13px; font-weight: 700; color: #232429; display: block; margin-bottom: 4px; }
+.chrome--claro .chrome__input { width: 100%; height: 40px; border: 1px solid #8e929c; border-radius: 2px; padding: 0 12px; font-size: 15px; background: #fff; box-shadow: inset 0 2px 2px rgba(0,0,0,.075); }
+.chrome--claro .chrome__side { background: #fff; border: 1px solid #d3d4d9; border-radius: 2px; }
+.chrome--claro .chrome__sidehead { padding: 12px 16px; border-bottom: 1px solid #d3d4d9; font-weight: 700; font-size: 14px; }
+.chrome--claro .chrome__sidebody { padding: 16px; font-size: 13px; color: #55565b; line-height: 20px; }
+.chrome--claro .chrome__actions { background: #fff; border-top: 1px solid #d3d4d9; padding: 14px 28px; display: flex; gap: 12px; align-items: center; }
+.chrome--claro .chrome__save { background: #003cc5; color: #fff; border: 0; border-radius: 2px; padding: 0 20px; height: 40px; font-size: 15px; font-weight: 700; }
+.chrome--claro .chrome__cancel { background: none; border: 0; color: #003cc5; font-size: 15px; text-decoration: underline; }
+
+.chrome--gin { background: #f3f4f7; }
+.chrome--gin .chrome__toolbar { background: #1b1b1d; color: #e7e7ea; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 48px; font-size: 13px; }
+.chrome--gin .chrome__tabs { background: transparent; border-bottom: 1px solid #dcdcde; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--gin .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-radius: 6px 6px 0 0; }
+.chrome--gin .chrome__tab--on { color: #fff; background: #0550e6; font-weight: 600; }
+.chrome--gin .chrome__title { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.chrome--gin .chrome__crumbs { font-size: 12px; color: #6f7076; }
+.chrome--gin .chrome__label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+.chrome--gin .chrome__input { width: 100%; height: 44px; border: 1px solid #c7c8cd; border-radius: 8px; padding: 0 14px; font-size: 15px; background: #fff; }
+.chrome--gin .chrome__side { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; }
+.chrome--gin .chrome__sidehead { padding: 14px 18px; border-bottom: 1px solid #e4e4e7; font-weight: 600; font-size: 14px; }
+.chrome--gin .chrome__sidebody { padding: 18px; font-size: 13px; color: #6f7076; line-height: 20px; }
+.chrome--gin .chrome__actions { background: #fff; border-top: 1px solid #e4e4e7; padding: 14px 28px; display: flex; gap: 12px; align-items: center; border-radius: 0 0 12px 12px; }
+.chrome--gin .chrome__save { background: #0550e6; color: #fff; border: 0; border-radius: 8px; padding: 0 22px; height: 44px; font-size: 15px; font-weight: 600; }
+.chrome--gin .chrome__cancel { background: none; border: 0; color: #0550e6; font-size: 15px; font-weight: 600; }
+.chrome__grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 28px; padding: 24px 28px 0; align-items: start; }
+.chrome__grid--narrow { grid-template-columns: minmax(0,1fr); }
+.chrome__head { padding: 20px 28px 12px; }
+
+
+.scaleframe { width: 100%; max-width: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); height: 330px; }
+.scaleframe--tall { height: 476px; }
+.scaleframe__inner { width: 1280px; min-width: 1280px; transform: scale(.44); transform-origin: top left; }
+
+
+</style>
+</head>
+<body>
+<div class="mosaic themeswitch">
+  <div class="m-seg" role="group" aria-label="Theme">
+    <button type="button" class="m-seg__item" aria-pressed="true" onclick="document.documentElement.dataset.theme='light';this.setAttribute('aria-pressed','true');this.nextElementSibling.setAttribute('aria-pressed','false')">Light</button>
+    <button type="button" class="m-seg__item" aria-pressed="false" onclick="document.documentElement.dataset.theme='dark';this.setAttribute('aria-pressed','true');this.previousElementSibling.setAttribute('aria-pressed','false')">Dark</button>
+  </div>
+</div>
+
+<div class="sheetbar"><h1>Mosaic component inventory</h1><p>Every primitive and every builder composite, in the states that matter. Markup here is the reference implementation: the React layer in <code>mosaic_ui</code> renders exactly these class names.</p></div>
+<div class="sheet" style="padding:32px">
+  <div class="mosaic" style="display:grid;gap:40px">
+  
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Button</h2>
+        <span class="m-badge">Controls</span>
+        <span class="m-field__help">Four variants, three sizes, one focus ring.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="">
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Variants</p><button type="button" class="m-btn m-btn--primary" ><span>Save layout</span></button><button type="button" class="m-btn m-btn--secondary" ><span>Choose a display</span></button><button type="button" class="m-btn m-btn--quiet" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M2.5 2.5v3h3"/></svg><span>Revert to saved</span></button><button type="button" class="m-btn m-btn--danger" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 8.2a1.5 1.5 0 0 0 1.5 1.3h3.3a1.5 1.5 0 0 0 1.5-1.3l.6-8.2"/></svg><span>Remove</span></button></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Sizes</p><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Small</span></button><button type="button" class="m-btn m-btn--secondary" ><span>Default</span></button><button type="button" class="m-btn m-btn--secondary m-btn--lg" ><span>Large</span></button></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Icon only</p><button type="button" class="m-btn m-btn--quiet m-btn--icon" aria-label="Move"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2 5.5 4.5M8 2l2.5 2.5M8 14l-2.5-2.5M8 14l2.5-2.5M2 8l2.5-2.5M2 8l2.5 2.5M14 8l-2.5-2.5M14 8l-2.5 2.5"/></svg></button><button type="button" class="m-btn m-btn--secondary m-btn--icon" aria-label="Duplicate"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.75" y="5.75" width="8.5" height="8.5" rx="1.5"/><path d="M10.25 5.75v-2a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h2"/></svg></button><button type="button" class="m-btn m-btn--quiet m-btn--sm m-btn--icon" aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">States</p><button type="button" class="m-btn m-btn--primary m-focus" ><span>Focused</span></button><button type="button" class="m-btn m-btn--secondary" disabled><span>Disabled</span></button><button type="button" class="m-btn m-btn--primary" disabled><span>Disabled</span></button></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Input</h2>
+        <span class="m-badge">Controls</span>
+        <span class="m-field__help">The text field, its label, its help line and its error.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:360px">
+    
+<div class="m-field">
+  <span class="m-field__label">Heading<span class="m-field__req" aria-hidden="true">*</span></span>
+  <input class="m-input" type="text" value="Apply for a business licence">
+  <span class="m-field__help">Plain text. One line, no formatting.</span>
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Button link</span>
+  <input class="m-input" type="text" value="" placeholder="/services/business-licence/apply">
+  <span class="m-field__help">An internal path, or a full URL.</span>
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Alternative text<span class="m-field__req" aria-hidden="true">*</span></span>
+  <input class="m-input" aria-invalid="true" value="">
+  
+  <span class="m-field__error"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14.5 13.5h-13z"/><path d="M8 6.5v3.2M8 11.8v.2"/></svg>Enter alternative text, or tick “This image is decorative”.</span>
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Summary</span>
+  <textarea class="m-textarea">Most licences are issued within ten business days.</textarea>
+  
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Agency</span>
+  <input class="m-input" type="text" value="Department of Financial Services" readonly>
+  <span class="m-field__help"><b>Legacy binding — remove to edit.</b> Bound by a version of Mosaic before 1.0.</span>
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Body</span>
+  <div class="m-richtext"><div class="m-richtext__preview">Have your EIN and certificate of occupancy ready before you start.</div><div class="m-richtext__bar"><span>Basic HTML</span><button type="button" class="m-btn m-btn--quiet m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.25 3.75h9.5M8 3.75v8.5M6 12.25h4"/></svg><span>Edit in CKEditor</span></button></div></div>
+  <span class="m-field__help">Formatted text opens in a dialog.</span>
+  
+</div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Select</h2>
+        <span class="m-badge">Controls</span>
+        <span class="m-field__help">A native select, restyled — never a custom listbox.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:360px">
+    
+<div class="m-field">
+  <span class="m-field__label">Source</span>
+  <select class="m-select"><option selected>Field of this page</option><option>Drupal View</option><option>Entity reference</option><option>Route or user context</option></select>
+  
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Display</span>
+  <select class="m-select"><option selected>Block: latest</option><option>Page: all notices</option><option>Feed: rss</option></select>
+  
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Heading level</span>
+  <select class="m-select"><option selected>H2 — recommended here</option><option>H1</option><option>H3</option></select>
+  <span class="m-field__help">The page already has one H1.</span>
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Contextual filter</span>
+  <select class="m-select" disabled><option selected>Not available for this View</option></select>
+  <span class="m-field__help">This View declares no arguments, so there is nothing to feed.</span>
+  
+</div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Toggle</h2>
+        <span class="m-badge">Controls</span>
+        <span class="m-field__help">A switch for state that applies at once; a checkbox for state that applies at save.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="">
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Switch</p><div class="m-col m-gap-3" style="gap:10px">
+<span class="m-toggle" role="switch" aria-checked="true" tabindex="0">
+  <span class="m-toggle__track"><span class="m-toggle__thumb"></span></span>
+  <span>Show the View’s pager</span>
+</span>
+<span class="m-toggle" role="switch" aria-checked="false" tabindex="0">
+  <span class="m-toggle__track"><span class="m-toggle__thumb"></span></span>
+  <span>Show exposed filters to visitors</span>
+</span>
+<span class="m-toggle" role="switch" aria-checked="true" tabindex="0">
+  <span class="m-toggle__track"><span class="m-toggle__thumb"></span></span>
+  <span>Library on</span>
+</span>
+<span class="m-toggle" role="switch" aria-checked="false" tabindex="0" aria-disabled="true">
+  <span class="m-toggle__track"><span class="m-toggle__thumb"></span></span>
+  <span>Not available here</span>
+</span></div></div>
+    <hr>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Checkbox</p><div class="m-col m-gap-3" style="gap:10px">
+<span class="m-check" role="checkbox" aria-checked="true" tabindex="0">
+  <span class="m-check__box"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg></span>
+  <span><b>Mosaic Starter</b> — 12 components</span>
+</span>
+<span class="m-check" role="checkbox" aria-checked="false" tabindex="0">
+  <span class="m-check__box"></span>
+  <span><b>WebNY Patterns</b> — 13 components</span>
+</span>
+<span class="m-check" role="checkbox" aria-checked="false" tabindex="0">
+  <span class="m-check__box"></span>
+  <span>This image is decorative and needs no description</span>
+</span></div></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Segmented</h2>
+        <span class="m-badge">Controls</span>
+        <span class="m-field__help">Two to four mutually exclusive views of the same thing.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="">
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Breakpoint</p>
+<div class="m-seg" role="group" aria-label="Preview width">
+  <button type="button" class="m-seg__item" aria-pressed="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="8.5" rx="1.5"/><path d="M6 13.75h4"/></svg><span>Desktop</span></button><button type="button" class="m-seg__item" aria-pressed="false"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.25" y="1.75" width="9.5" height="12.5" rx="1.5"/><path d="M7 12.25h2"/></svg><span>Tablet</span></button><button type="button" class="m-seg__item" aria-pressed="false"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.75" y="1.75" width="6.5" height="12.5" rx="1.5"/><path d="M7.25 12.25h1.5"/></svg><span>Mobile</span></button>
+</div></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Data state</p>
+<div class="m-seg" role="group" aria-label="Data state">
+  <button type="button" class="m-seg__item" aria-pressed="true">Populated</button><button type="button" class="m-seg__item" aria-pressed="false">One item</button><button type="button" class="m-seg__item" aria-pressed="false">Empty</button><button type="button" class="m-seg__item" aria-pressed="false">Failing</button>
+</div></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Availability</p>
+<div class="m-seg" role="group" aria-label="Availability">
+  <button type="button" class="m-seg__item" aria-pressed="false">Enabled</button><button type="button" class="m-seg__item" aria-pressed="true">Restricted</button><button type="button" class="m-seg__item" aria-pressed="false">Off</button>
+</div></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Slot mode</p>
+<div class="m-seg" role="group" aria-label="Slot mode">
+  <button type="button" class="m-seg__item" aria-pressed="false">Components</button><button type="button" class="m-seg__item" aria-pressed="true">Plain content</button>
+</div></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Badge</h2>
+        <span class="m-badge">Signals</span>
+        <span class="m-field__help">Readiness, bindability and permission, each with a glyph as well as a colour.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="">
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Readiness</p><span class="m-badge m-badge--ready"><span class="m-badge__glyph" aria-hidden="true">✔</span>Ready</span><span class="m-badge m-badge--attention"><span class="m-badge__glyph" aria-hidden="true">▲</span>Attention</span><span class="m-badge m-badge--blocked"><span class="m-badge__glyph" aria-hidden="true">■</span>Blocked</span></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Capability</p><span class="m-badge m-badge--data"><span class="m-badge__glyph" aria-hidden="true">◆</span>Data</span><span class="m-badge m-badge--restricted"><span class="m-badge__glyph" aria-hidden="true">●</span>Restricted</span><span class="m-badge m-badge--data"><span class="m-badge__glyph" aria-hidden="true">◆</span>Bound</span><span class="m-badge">12</span></div>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Sync</p><span class="m-pill m-pill--synced"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg> In sync with the saved layout</span><span class="m-pill m-pill--unsaved"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14.5 13.5h-13z"/><path d="M8 6.5v3.2M8 11.8v.2"/></svg> Unsaved changes</span></div>
+    <hr>
+    <p class="m-field__help">Attention never travels alone:</p>
+    <div style="max-width:264px">
+<button type="button" class="m-pitem" draggable="true">
+  <span class="m-pitem__thumb" aria-hidden="true"><svg viewBox="0 0 72 40" width="72" height="40" role="presentation"><rect x="8" y="7" width="3" height="26" rx="1.5" fill="var(--brand)"/><rect x="16" y="10" width="48" height="3" rx="1.5" fill="var(--ink)"/><rect x="16" y="17" width="44" height="3" rx="1.5" fill="var(--ink)"/><rect x="16" y="26" width="20" height="2.5" rx="1.25" fill="var(--ink-subtle)"/></svg></span>
+  <span>
+    <span class="m-pitem__name">Pull quote</span>
+    <span class="m-pitem__blurb">Quotation with an attribution line.</span>
+    <span class="m-pitem__badges"><span class="m-badge m-badge--attention"><span class="m-badge__glyph" aria-hidden="true">▲</span>Attention</span><span class="m-pitem__blurb" style="flex-basis:100%;color:var(--attention)">Field <b>attribution</b>: no label in the schema.</span></span>
+  </span>
+</button></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Banner</h2>
+        <span class="m-badge">Signals</span>
+        <span class="m-field__help">An explanation with a way out of it — four kinds, and never a toast.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:620px">
+    
+<div class="m-banner" role="status">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M8 7.25v3.75M8 5v.2"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">Binding shows an entity</span>
+    <span class="m-banner__text">Nothing is copied into this layout. Edit the notice and the card follows.</span>
+    
+  </div>
+</div>
+    
+<div class="m-banner m-banner--attention" role="status">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14.5 13.5h-13z"/><path d="M8 6.5v3.2M8 11.8v.2"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">Content needs at least one component</span>
+    <span class="m-banner__text">Teaser (Olivero) needs content in its Content area before this page can be saved.</span>
+    <div class="m-banner__actions"><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Go to Content</span></button></div>
+  </div>
+</div>
+    
+<div class="m-banner m-banner--danger" role="alert">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M5.5 5.5 10.5 10.5"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">The View could not run</span>
+    <span class="m-banner__text">Display “Block: latest” no longer exists on the View “Recent notices”. Values are kept — pick another display and the cards come back.</span>
+    <div class="m-banner__actions"><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Choose a display</span></button><button type="button" class="m-btn m-btn--quiet m-btn--sm" ><span>Open the View</span></button></div>
+  </div>
+</div>
+    
+<div class="m-banner m-banner--success" role="status">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">Contrast passes at AA</span>
+    <span class="m-banner__text">Heading 8.1:1 and body 5.4:1 against Brand subtle.</span>
+    
+  </div>
+</div>
+    
+<p class="m-owned"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M8 7.25v3.75M8 5v.2"/></svg><span>Styling is owned by <strong>Olivero Blocks</strong> <strong>Teaser</strong>.</span></p>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Toolbar</h2>
+        <span class="m-badge">Builder</span>
+        <span class="m-field__help">The selection toolbar — the one control surface on the canvas.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:620px">
+    
+<div class="m-toolbar" role="toolbar" aria-label="Call to action actions">
+  <span class="m-toolbar__name"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" fill="currentColor" stroke="none"><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><circle cx="6" cy="8" r="1"/><circle cx="10" cy="8" r="1"/><circle cx="6" cy="12" r="1"/><circle cx="10" cy="12" r="1"/></svg>Call to action</span>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn" aria-label="Move"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2 5.5 4.5M8 2l2.5 2.5M8 14l-2.5-2.5M8 14l2.5-2.5M2 8l2.5-2.5M2 8l2.5 2.5M14 8l-2.5-2.5M14 8l-2.5 2.5"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Wrap in a layout"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2"/><rect x="5" y="5" width="6" height="6" rx="1"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Duplicate"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.75" y="5.75" width="8.5" height="8.5" rx="1.5"/><path d="M10.25 5.75v-2a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h2"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Select parent"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13.5V6.5M8 6.5 4.5 10M8 6.5 11.5 10M3 2.5h10"/></svg></button>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn m-toolbar__btn--danger" aria-label="Remove"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 8.2a1.5 1.5 0 0 0 1.5 1.3h3.3a1.5 1.5 0 0 0 1.5-1.3l.6-8.2"/></svg></button>
+</div>
+    
+<div class="m-toolbar" role="toolbar" aria-label="Teaser actions">
+  <span class="m-toolbar__name"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" fill="currentColor" stroke="none"><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><circle cx="6" cy="8" r="1"/><circle cx="10" cy="8" r="1"/><circle cx="6" cy="12" r="1"/><circle cx="10" cy="12" r="1"/></svg>Teaser</span>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn m-focus" aria-label="Move"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2 5.5 4.5M8 2l2.5 2.5M8 14l-2.5-2.5M8 14l2.5-2.5M2 8l2.5-2.5M2 8l2.5 2.5M14 8l-2.5-2.5M14 8l-2.5 2.5"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Wrap in a layout"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2"/><rect x="5" y="5" width="6" height="6" rx="1"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Duplicate"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.75" y="5.75" width="8.5" height="8.5" rx="1.5"/><path d="M10.25 5.75v-2a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h2"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Select parent"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13.5V6.5M8 6.5 4.5 10M8 6.5 11.5 10M3 2.5h10"/></svg></button>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn m-toolbar__btn--danger" aria-label="Remove"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 8.2a1.5 1.5 0 0 0 1.5 1.3h3.3a1.5 1.5 0 0 0 1.5-1.3l.6-8.2"/></svg></button>
+</div>
+    <p class="m-field__help">In place on the canvas:</p>
+    <div style="background:var(--canvas);padding:32px 16px 16px;border-radius:var(--radius-md)">
+      <div class="m-node m-node--selected" style="background:var(--surface);border-radius:var(--radius-sm)">
+        <span class="m-node__tag">Mosaic Starter</span>
+        <span class="m-node__toolbar">
+<div class="m-toolbar" role="toolbar" aria-label="Call to action actions">
+  <span class="m-toolbar__name"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" fill="currentColor" stroke="none"><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><circle cx="6" cy="8" r="1"/><circle cx="10" cy="8" r="1"/><circle cx="6" cy="12" r="1"/><circle cx="10" cy="12" r="1"/></svg>Call to action</span>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn" aria-label="Move"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2 5.5 4.5M8 2l2.5 2.5M8 14l-2.5-2.5M8 14l2.5-2.5M2 8l2.5-2.5M2 8l2.5 2.5M14 8l-2.5-2.5M14 8l-2.5 2.5"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Wrap in a layout"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2"/><rect x="5" y="5" width="6" height="6" rx="1"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Duplicate"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.75" y="5.75" width="8.5" height="8.5" rx="1.5"/><path d="M10.25 5.75v-2a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h2"/></svg></button>
+  <button type="button" class="m-toolbar__btn" aria-label="Select parent"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13.5V6.5M8 6.5 4.5 10M8 6.5 11.5 10M3 2.5h10"/></svg></button>
+  <span class="m-toolbar__sep" aria-hidden="true"></span>
+  <button type="button" class="m-toolbar__btn m-toolbar__btn--danger" aria-label="Remove"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 8.2a1.5 1.5 0 0 0 1.5 1.3h3.3a1.5 1.5 0 0 0 1.5-1.3l.6-8.2"/></svg></button>
+</div></span>
+        <div style="padding:20px 24px"><p style="font-size:19px;font-weight:700">Apply for a business licence</p></div>
+      </div>
+    </div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Card</h2>
+        <span class="m-badge">Surfaces</span>
+        <span class="m-field__help">A bounded block on an admin page, and the palette item built from it.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-row m-gap-4" style="align-items:flex-start;flex-wrap:wrap">
+    <div style="width:264px">
+<button type="button" class="m-pitem" draggable="true">
+  <span class="m-pitem__thumb" aria-hidden="true"><svg viewBox="0 0 72 40" width="72" height="40" role="presentation"><rect x="4" y="8" width="64" height="24" rx="2" fill="var(--brand)"/><rect x="12" y="14" width="30" height="3.5" rx="1.75" fill="var(--on-brand)"/><rect x="12" y="22" width="16" height="5" rx="2.5" fill="var(--on-brand)" opacity=".7"/></svg></span>
+  <span>
+    <span class="m-pitem__name">Call to action</span>
+    <span class="m-pitem__blurb">Heading, sentence and one button.</span>
+    <span class="m-pitem__badges"><span class="m-badge m-badge--ready"><span class="m-badge__glyph" aria-hidden="true">✔</span>Ready</span><span class="m-badge m-badge--data"><span class="m-badge__glyph" aria-hidden="true">◆</span>Data</span></span>
+  </span>
+</button>
+    
+<button type="button" class="m-pitem" draggable="true">
+  <span class="m-pitem__thumb" aria-hidden="true"><svg viewBox="0 0 72 40" width="72" height="40" role="presentation"><rect x="4" y="5" width="64" height="30" rx="2" fill="var(--surface-sunken)" stroke="var(--line)"/><rect x="8" y="9" width="22" height="22" rx="2" fill="var(--line)"/><rect x="34" y="11" width="28" height="3" rx="1.5" fill="var(--ink)"/><rect x="34" y="18" width="24" height="2.5" rx="1.25" fill="var(--ink-subtle)"/><rect x="34" y="24" width="14" height="2.5" rx="1.25" fill="var(--brand)"/></svg></span>
+  <span>
+    <span class="m-pitem__name">Teaser</span>
+    <span class="m-pitem__blurb">Five slots. Olivero owns the look.</span>
+    <span class="m-pitem__badges"><span class="m-badge m-badge--ready"><span class="m-badge__glyph" aria-hidden="true">✔</span>Ready</span><span class="m-badge m-badge--data"><span class="m-badge__glyph" aria-hidden="true">◆</span>Data</span></span>
+  </span>
+</button>
+    
+<button type="button" class="m-pitem" aria-disabled="true" draggable="true">
+  <span class="m-pitem__thumb" aria-hidden="true"><svg viewBox="0 0 72 40" width="72" height="40" role="presentation"><rect x="4" y="6" width="30" height="28" rx="2" fill="var(--surface-sunken)" stroke="var(--line)"/><rect x="38" y="6" width="30" height="28" rx="2" fill="var(--surface-sunken)" stroke="var(--line)"/><rect x="9" y="13" width="14" height="7" rx="1.5" fill="var(--brand)"/><rect x="43" y="13" width="14" height="7" rx="1.5" fill="var(--data)"/></svg></span>
+  <span>
+    <span class="m-pitem__name">Data table</span>
+    <span class="m-pitem__blurb">Tabular figures with a caption.</span>
+    <span class="m-pitem__badges"><span class="m-badge m-badge--blocked"><span class="m-badge__glyph" aria-hidden="true">■</span>Blocked</span><span class="m-pitem__blurb" style="flex-basis:100%;color:var(--danger)">Schema fails validation: <b>rows</b> has no type.</span></span>
+  </span>
+</button></div>
+    <div class="m-card" style="width:300px">
+      <p class="m-card__title" style="margin-bottom:4px">Olivero Blocks</p>
+      <p class="m-mono" style="color:var(--ink-subtle)">olivero_blocks</p>
+      <div class="m-row m-gap-2" style="margin-top:12px;flex-wrap:wrap"><span class="m-badge">9 components</span><span class="m-badge m-badge--restricted"><span class="m-badge__glyph" aria-hidden="true">●</span>Theme-bound · Olivero</span></div>
+      <div class="m-row m-gap-2" style="margin-top:12px"><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 3a1.25 1.25 0 0 1 1.25-1.25h8.25a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4A1.25 1.25 0 0 0 2.75 13.5z"/><path d="M2.75 12.25A1.25 1.25 0 0 1 4 11h9.25"/></svg><span>Component docs</span></button></div>
+    </div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Tabs</h2>
+        <span class="m-badge">Surfaces</span>
+        <span class="m-field__help">Page-level navigation on the admin screens only.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-tabs" role="tablist">
+    <button class="m-tab" role="tab" aria-selected="true">Libraries <span class="m-tab__count">3</span></button>
+    <button class="m-tab" role="tab" aria-selected="false">Components <span class="m-tab__count">34</span></button>
+    <button class="m-tab" role="tab" aria-selected="false">Diagnostics <span class="m-tab__count">5</span></button>
+    <button class="m-tab" role="tab" aria-selected="false">Tokens</button>
+  </div>
+  <p class="m-field__help" style="margin-top:14px">Not used in the property rail — see the Rail section component.</p></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">Dialog</h2>
+        <span class="m-badge">Surfaces</span>
+        <span class="m-field__help">Modal for content editing, docked panel for front-end editing.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div style="position:relative;height:330px;background:var(--canvas);border-radius:var(--radius-md);overflow:hidden">
+    <div class="m-scrim" style="position:absolute"></div>
+    <div class="m-dialog" style="position:absolute;inset:20px 40px;z-index:61">
+      <div class="m-dialog__head">
+        <div class="m-col"><span class="m-dialog__title">Body</span><span class="m-dialog__sub">Call to action · Basic HTML</span></div>
+        <button type="button" class="m-btn m-btn--quiet m-btn--sm m-btn--icon" aria-label="Close without saving"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </div>
+      <div class="m-dialog__body" style="padding:0">
+        <div style="border-bottom:1px solid var(--line);padding:8px 12px;display:flex;gap:6px;background:var(--surface-sunken)">
+          <span class="m-toolbar__btn" style="font-weight:700">B</span><span class="m-toolbar__btn" style="font-weight:700">I</span><span class="m-toolbar__btn" style="font-weight:700">S</span><span class="m-toolbar__btn" style="font-weight:700">¶</span><span class="m-toolbar__btn" style="font-weight:700">“</span><span class="m-toolbar__btn" style="font-weight:700">⋯</span>
+        </div>
+        <div style="padding:20px 24px;min-height:120px">
+          <p>Most licences are issued within ten business days. Have your EIN and certificate of occupancy ready before you start.</p>
+        </div>
+      </div>
+      <div class="m-dialog__foot">
+        <button type="button" class="m-btn m-btn--quiet" ><span>Cancel</span></button>
+        <span class="m-dialog__foot-actions"><button type="button" class="m-btn m-btn--primary" ><span>Apply to the component</span></button></span>
+      </div>
+    </div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">RailSection</h2>
+        <span class="m-badge">Builder</span>
+        <span class="m-field__help">Content · Data · Style · Responsive · Accessibility — shown only when they apply.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div style="max-width:320px;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden">
+    <div class="m-rail__head">
+      <span class="m-rail__name"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.75 14.25 5 8 8.25 1.75 5 8 1.75Z"/><path d="M1.75 8 8 11.25 14.25 8M1.75 11 8 14.25 14.25 11"/></svg> Call to action</span>
+      <span class="m-rail__origin">Mosaic Starter · <span class="m-badge m-badge--ready"><span class="m-badge__glyph" aria-hidden="true">✔</span>Ready</span></span>
+    </div>
+    
+<section class="m-section">
+  <button type="button" class="m-section__head" aria-expanded="true">
+    <span class="m-section__chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span>
+    <span class="m-section__title">Content</span>
+    <span class="m-section__meta"><span class="m-badge">5 fields</span></span>
+  </button>
+  <div class="m-section__body">
+<div class="m-field">
+  <span class="m-field__label">Heading<span class="m-field__req" aria-hidden="true">*</span></span>
+  <input class="m-input" type="text" value="Apply for a business licence">
+  <span class="m-field__help">Plain text. One line, no formatting.</span>
+  
+</div></div>
+</section>
+    
+<section class="m-section m-section--data">
+  <button type="button" class="m-section__head" aria-expanded="false">
+    <span class="m-section__chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span>
+    <span class="m-section__title">Data</span>
+    <span class="m-section__meta"><span class="m-badge m-badge--data"><span class="m-badge__glyph" aria-hidden="true">◆</span>1 bound</span></span>
+  </button>
+  
+</section>
+    
+<section class="m-section">
+  <button type="button" class="m-section__head" aria-expanded="false">
+    <span class="m-section__chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span>
+    <span class="m-section__title">Style</span>
+    <span class="m-section__meta"></span>
+  </button>
+  
+</section>
+    
+<section class="m-section">
+  <button type="button" class="m-section__head" aria-expanded="false">
+    <span class="m-section__chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span>
+    <span class="m-section__title">Responsive</span>
+    <span class="m-section__meta"></span>
+  </button>
+  
+</section>
+    
+<section class="m-section">
+  <button type="button" class="m-section__head" aria-expanded="false">
+    <span class="m-section__chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></span>
+    <span class="m-section__title">Accessibility</span>
+    <span class="m-section__meta"><span class="m-badge m-badge--attention"><span class="m-badge__glyph" aria-hidden="true">▲</span>1 to fix</span></span>
+  </button>
+  
+</section>
+    <div style="padding:12px 16px">
+<p class="m-owned"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M8 7.25v3.75M8 5v.2"/></svg><span>Styling is owned by <strong>Olivero Blocks</strong> <strong>Teaser</strong>.</span></p></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">SlotZone</h2>
+        <span class="m-badge">Builder</span>
+        <span class="m-field__help">An inner drop zone that states its own rules and shows its violations.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:560px">
+    <div>
+      <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Media <span class="m-slot__rule">Image or Video · 0–1</span></span>
+      <div class="m-slot__zone"><div class="m-row m-gap-2"><span style="width:88px;height:56px;border-radius:4px;background:var(--surface-sunken);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-subtle)" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="3.25" width="12.5" height="9.5" rx="1.5"/><circle cx="5.75" cy="6.75" r="1.1"/><path d="M2.5 11.5 6 8.5l2.5 2 2-1.75 3 2.75"/></svg></span><span class="m-muted" style="font-size:13px">Image · licence-counter.jpg</span></div></div>
+    </div>
+    <div>
+      <div class="m-row m-row--between"><span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Eyebrow <span class="m-slot__rule">Plain text · 0–1</span></span>
+<div class="m-seg" role="group" aria-label="Eyebrow mode">
+  <button type="button" class="m-seg__item" aria-pressed="false">Components</button><button type="button" class="m-seg__item" aria-pressed="true">Plain content</button>
+</div></div>
+      <div class="m-slot__zone"><p style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-muted)">Programme</p></div>
+    </div>
+    <div>
+      <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Content <span class="m-slot__rule">Rich text or Columns · 1–3 · required</span></span>
+      <div class="m-slot__zone m-slot__zone--violation m-slot__zone--empty">
+        <p class="m-slot__empty-text" style="color:var(--ink)"><b>Needs at least one component.</b> Olivero will not render the teaser without it.</p>
+        <div class="m-row m-gap-2"><button type="button" class="m-btn m-btn--primary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add Rich text</span></button><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add Columns</span></button></div>
+      </div>
+    </div>
+    <div>
+      <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Actions <span class="m-slot__rule">Link or Button · 0–2</span></span>
+      <div class="m-slot__zone m-slot__zone--empty"><p class="m-slot__empty-text">Optional. Drop a Link or a Button here.</p></div>
+    </div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">DataBind</h2>
+        <span class="m-badge">Data</span>
+        <span class="m-field__help">The bind control, the field map, and the sentence under every bound thing.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:420px">
+    
+<div class="m-field">
+  <span class="m-field__label">Source</span>
+  <select class="m-select"><option selected>Drupal View</option><option>Field of this page</option><option>Entity reference</option><option>Route or user context</option></select>
+  
+  
+</div>
+    <div class="m-row m-gap-3" style="align-items:flex-start">
+      <div style="flex:1">
+<div class="m-field">
+  <span class="m-field__label">View</span>
+  <select class="m-select"><option selected>Recent notices</option><option>Published programmes</option></select>
+  
+  
+</div></div>
+      <div style="flex:1">
+<div class="m-field">
+  <span class="m-field__label">Display</span>
+  <select class="m-select"><option selected>Block: latest</option><option>Page: all notices</option></select>
+  
+  
+</div></div>
+    </div>
+    
+<div class="m-field">
+  <span class="m-field__label">Contextual filter — Agency</span>
+  <select class="m-select"><option selected>From a field on this page</option><option>From the URL</option><option>From a reference on this page</option><option>From a taxonomy term</option><option>From the current user</option><option>A fixed value</option></select>
+  <span class="m-field__help">Only the sources Drupal can actually feed this argument are listed.</span>
+  
+</div>
+    
+<div class="m-field">
+  <span class="m-field__label">Each row becomes</span>
+  <select class="m-select"><option selected>Teaser (Olivero)</option><option>Card (Mosaic Starter)</option></select>
+  <span class="m-field__help">One child of this type per row, placed in the slot.</span>
+  
+</div>
+    <p class="m-field__label">Field map</p>
+    <div class="m-map">
+      <div class="m-map__row m-map__row--head"><span>View field</span><span></span><span>Teaser field</span></div>
+      <div class="m-map__row"><span class="m-map__src">title</span><span class="m-map__arrow" aria-hidden="true">→</span><span><select class="m-select"><option selected>Content → Heading</option><option>Not mapped</option></select></span></div><div class="m-map__row"><span class="m-map__src">field_summary</span><span class="m-map__arrow" aria-hidden="true">→</span><span><select class="m-select"><option selected>Content → Body</option><option>Not mapped</option></select></span></div><div class="m-map__row"><span class="m-map__src">field_image</span><span class="m-map__arrow" aria-hidden="true">→</span><span><select class="m-select"><option selected>Media</option><option>Not mapped</option></select></span></div>
+    </div>
+    
+<p class="m-result"><span class="m-result__dot" aria-hidden="true"></span><span>6 of 128 · Recent notices (Block: latest)</span><span class="m-result__src">agency = field_agency</span></p>
+    <p class="m-field__help">Binding shows the entities. Nothing is copied into this layout.</p>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">ResultLine</h2>
+        <span class="m-badge">Data</span>
+        <span class="m-field__help">One line under every bound component: how many, out of how many, from where.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:520px">
+    
+<p class="m-result"><span class="m-result__dot" aria-hidden="true"></span><span>6 of 128 · Recent notices (Block: latest)</span><span class="m-result__src">agency = field_agency</span></p>
+    
+<p class="m-result"><span class="m-result__dot" aria-hidden="true"></span><span>1 of 128 · Recent notices (Block: latest)</span><span class="m-result__src">one-item preview</span></p>
+    
+<p class="m-result m-result--empty"><span class="m-result__dot" aria-hidden="true"></span><span>0 of 128 · Recent notices (Block: latest)</span><span class="m-result__src">agency = field_agency</span></p>
+    
+<p class="m-result m-result--failing"><span class="m-result__dot" aria-hidden="true"></span><span>Source failing · Recent notices (Block: latest)</span><span class="m-result__src">HTTP 500</span></p>
+    <hr>
+    <div class="m-row m-gap-3" style="flex-wrap:wrap;align-items:flex-start;"><p class="m-field__help" style="min-width:74px">Switcher</p>
+<div class="m-seg" role="group" aria-label="Data state to preview">
+  <button type="button" class="m-seg__item" aria-pressed="true">Populated</button><button type="button" class="m-seg__item" aria-pressed="false">One item</button><button type="button" class="m-seg__item" aria-pressed="false">Empty</button><button type="button" class="m-seg__item" aria-pressed="false">Failing</button>
+</div></div>
+    <p class="m-field__help">The switcher changes only what the canvas renders. It never writes to the layout, and it resets when the node form is saved.</p>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">StatusBar</h2>
+        <span class="m-badge">Builder</span>
+        <span class="m-field__help">The trust line: what is in the layout, what is bound, whether it matches what is saved.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div style="border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden">
+    <div class="m-builder__bar">
+      
+<span class="m-brandmark"><span class="m-brandmark__tiles" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Mosaic</span>
+      <span class="m-toolbar__sep"></span>
+      
+<div class="m-seg" role="group" aria-label="Preview width">
+  <button type="button" class="m-seg__item" aria-pressed="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="8.5" rx="1.5"/><path d="M6 13.75h4"/></svg><span>Desktop</span></button><button type="button" class="m-seg__item" aria-pressed="false"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.25" y="1.75" width="9.5" height="12.5" rx="1.5"/><path d="M7 12.25h2"/></svg><span>Tablet</span></button><button type="button" class="m-seg__item" aria-pressed="false"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.75" y="1.75" width="6.5" height="12.5" rx="1.5"/><path d="M7.25 12.25h1.5"/></svg><span>Mobile</span></button>
+</div>
+      <span class="m-grow"></span>
+      <span class="m-pill m-pill--synced"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg> In sync with the saved layout</span>
+      <button type="button" class="m-btn m-btn--quiet m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M2.5 2.5v3h3"/></svg><span>Revert to saved</span></button>
+    </div>
+    <div class="m-builder__bar" style="border-bottom:0">
+      
+<span class="m-brandmark"><span class="m-brandmark__tiles" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Mosaic</span>
+      <span class="m-toolbar__sep"></span>
+      
+<div class="m-seg" role="group" aria-label="Data state">
+  <button type="button" class="m-seg__item" aria-pressed="false">Populated</button><button type="button" class="m-seg__item" aria-pressed="false">One item</button><button type="button" class="m-seg__item" aria-pressed="true">Empty</button><button type="button" class="m-seg__item" aria-pressed="false">Failing</button>
+</div>
+      <span class="m-grow"></span>
+      <span class="m-pill m-pill--unsaved"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14.5 13.5h-13z"/><path d="M8 6.5v3.2M8 11.8v.2"/></svg> Unsaved changes</span>
+      <button type="button" class="m-btn m-btn--quiet m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M2.5 2.5v3h3"/></svg><span>Revert to saved</span></button>
+    </div>
+    <div class="m-status">
+      <span class="m-status__item"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.75 14.25 5 8 8.25 1.75 5 8 1.75Z"/><path d="M1.75 8 8 11.25 14.25 8M1.75 11 8 14.25 14.25 11"/></svg> 12 components</span>
+      <span class="m-status__item" style="color:var(--data)"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="4" rx="5.25" ry="2.25"/><path d="M2.75 4v8c0 1.24 2.35 2.25 5.25 2.25s5.25-1.01 5.25-2.25V4M2.75 8c0 1.24 2.35 2.25 5.25 2.25S13.25 9.24 13.25 8"/></svg> 3 bound</span>
+      <span class="m-status__item"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> 2 slots below their minimum</span>
+      <span class="m-status__end">
+        <span class="m-status__item"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><circle cx="8" cy="5" r=".85" fill="currentColor" stroke="none"/><path d="M5 7h6M8 7v2.5M8 9.5 6.5 12M8 9.5 9.5 12"/></svg> WCAG AA · 1 to fix</span>
+        <span class="m-status__item">Layout field · <span class="m-mono">field_page_layout</span></span>
+      </span>
+    </div>
+  </div>
+  <div style="margin-top:16px">
+    <p class="m-field__help" style="margin-bottom:8px">Optimistic commit, with the stale shimmer while the server preview refreshes:</p>
+    <div class="m-stale" style="border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;max-width:420px"><p style="font-weight:700">Apply for a business licence</p><p class="m-muted" style="font-size:13px">Most licences are issued within ten business days.</p></div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">EmptyState</h2>
+        <span class="m-badge">Signals</span>
+        <span class="m-field__help">Five designed nothings: canvas, slot, palette, data, missing library.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div class="m-empty">
+      <span class="m-empty__art" aria-hidden="true"><svg viewBox="0 0 96 64" width="96" height="64"><rect x="2" y="2" width="42" height="26" rx="4" fill="var(--brand-subtle)"/><rect x="48" y="2" width="46" height="26" rx="4" fill="none" stroke="var(--slot-line)" stroke-dasharray="3 3"/><rect x="2" y="32" width="92" height="30" rx="4" fill="none" stroke="var(--slot-line)" stroke-dasharray="3 3"/></svg></span>
+      <p class="m-empty__title">This layout is empty</p>
+      <p class="m-empty__text">Drag a component from the palette, or start from a pattern.</p>
+      <div class="m-empty__actions"><button type="button" class="m-btn m-btn--primary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add your first component</span></button></div>
+    </div>
+    <div class="m-empty m-empty--plain">
+      <p class="m-empty__title">No components here</p>
+      <p class="m-empty__text">Every library is switched off for Program page.</p>
+      <button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Ask a site builder</span></button>
+      <p class="m-field__help">Structure › Content types › Program page › Mosaic</p>
+    </div>
+    <div style="grid-column:1/-1;border:2px dashed var(--attention);border-radius:var(--radius-md);padding:16px;background:var(--attention-subtle)">
+      <div class="m-row m-gap-2" style="margin-bottom:8px"><span class="m-badge m-badge--attention"><span class="m-badge__glyph" aria-hidden="true">▲</span>Library missing</span><span class="m-field__label">Hero banner</span></div>
+      <p class="m-field__help" style="margin-bottom:10px">The library <b>WebNY Patterns</b> is not installed. <b>Its values are kept.</b></p>
+      <div class="m-disclosure__body" style="background:var(--surface)">heading: "Apply for a business licence"<br>slots.actions: [ Link, Link ]</div>
+    </div>
+  </div></div>
+    </section>
+    <section>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="font-size:19px;line-height:26px;font-weight:700;margin:0">KeyboardMove</h2>
+        <span class="m-badge">Builder</span>
+        <span class="m-field__help">The keyboard twin of every drag, announced and reversible.</span>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;background:var(--surface)"><div class="m-col m-gap-3" style="max-width:620px">
+    <div class="m-movebar" role="status">
+      <span class="m-row m-gap-1" style="font-weight:600"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.25" y="4.25" width="13.5" height="8" rx="1.5"/><path d="M4 7h.01M6.5 7h.01M9 7h.01M11.5 7h.01M4.75 9.5h6.5"/></svg> Moving <b>Call to action</b></span>
+      <span class="m-movebar__hint"><span class="m-kbd">↑</span><span class="m-kbd">↓</span> before or after</span>
+      <span class="m-movebar__hint"><span class="m-kbd">→</span> into a slot</span>
+      <span class="m-movebar__hint"><span class="m-kbd">←</span> out to the parent</span>
+      <span class="m-movebar__hint"><span class="m-kbd">Enter</span> drop here</span>
+      <span class="m-movebar__hint"><span class="m-kbd">Esc</span> put it back</span>
+    </div>
+    <p class="m-field__help">Announced live: “Call to action, position 2 of 4, inside Columns, second column.”</p>
+    <div style="background:var(--canvas);border-radius:var(--radius-md);padding:16px">
+      <div class="m-node" style="padding:12px;background:var(--surface);border-radius:var(--radius-sm)"><p style="font-weight:600">Page heading</p></div>
+      <div class="m-dropline" style="margin:8px 0"></div>
+      <div class="m-node m-node--moving" style="padding:12px;border-radius:var(--radius-sm)"><p style="font-weight:600">Call to action</p></div>
+    </div>
+  </div></div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keyboard move, and the errors that stop a save — 1440 · Mosaic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300..800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../src/mosaic-ui.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); }
+  .sheet { width: 1440px; margin: 0 auto; background: var(--surface); box-shadow: var(--shadow-lg); }
+  .sheetbar { width: 1440px; margin: 0 auto; padding: 20px 24px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .sheetbar h1 { font-size: 22px; line-height: 28px; font-weight: 700; margin: 0; }
+  .sheetbar p { font-size: 13px; line-height: 19px; color: var(--ink-muted); margin: 0; max-width: 78ch; }
+  .themeswitch { position: fixed; top: 12px; right: 12px; z-index: 999; }
+
+/* --- Drupal admin chrome (not part of Mosaic) ---------------------------- */
+.chrome { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #232429; }
+.chrome--claro { background: #f3f4f7; }
+.chrome--claro .chrome__toolbar { background: #0f1214; color: #fff; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 40px; font-size: 13px; }
+.chrome--claro .chrome__toolbar b { font-weight: 600; }
+.chrome--claro .chrome__tabs { background: #fff; border-bottom: 1px solid #d3d4d9; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--claro .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-bottom: 3px solid transparent; }
+.chrome--claro .chrome__tab--on { color: #003cc5; border-bottom-color: #003cc5; font-weight: 700; }
+.chrome--claro .chrome__title { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.chrome--claro .chrome__crumbs { font-size: 12px; color: #55565b; }
+.chrome--claro .chrome__label { font-size: 13px; font-weight: 700; color: #232429; display: block; margin-bottom: 4px; }
+.chrome--claro .chrome__input { width: 100%; height: 40px; border: 1px solid #8e929c; border-radius: 2px; padding: 0 12px; font-size: 15px; background: #fff; box-shadow: inset 0 2px 2px rgba(0,0,0,.075); }
+.chrome--claro .chrome__side { background: #fff; border: 1px solid #d3d4d9; border-radius: 2px; }
+.chrome--claro .chrome__sidehead { padding: 12px 16px; border-bottom: 1px solid #d3d4d9; font-weight: 700; font-size: 14px; }
+.chrome--claro .chrome__sidebody { padding: 16px; font-size: 13px; color: #55565b; line-height: 20px; }
+.chrome--claro .chrome__actions { background: #fff; border-top: 1px solid #d3d4d9; padding: 14px 28px; display: flex; gap: 12px; align-items: center; }
+.chrome--claro .chrome__save { background: #003cc5; color: #fff; border: 0; border-radius: 2px; padding: 0 20px; height: 40px; font-size: 15px; font-weight: 700; }
+.chrome--claro .chrome__cancel { background: none; border: 0; color: #003cc5; font-size: 15px; text-decoration: underline; }
+
+.chrome--gin { background: #f3f4f7; }
+.chrome--gin .chrome__toolbar { background: #1b1b1d; color: #e7e7ea; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 48px; font-size: 13px; }
+.chrome--gin .chrome__tabs { background: transparent; border-bottom: 1px solid #dcdcde; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--gin .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-radius: 6px 6px 0 0; }
+.chrome--gin .chrome__tab--on { color: #fff; background: #0550e6; font-weight: 600; }
+.chrome--gin .chrome__title { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.chrome--gin .chrome__crumbs { font-size: 12px; color: #6f7076; }
+.chrome--gin .chrome__label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+.chrome--gin .chrome__input { width: 100%; height: 44px; border: 1px solid #c7c8cd; border-radius: 8px; padding: 0 14px; font-size: 15px; background: #fff; }
+.chrome--gin .chrome__side { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; }
+.chrome--gin .chrome__sidehead { padding: 14px 18px; border-bottom: 1px solid #e4e4e7; font-weight: 600; font-size: 14px; }
+.chrome--gin .chrome__sidebody { padding: 18px; font-size: 13px; color: #6f7076; line-height: 20px; }
+.chrome--gin .chrome__actions { background: #fff; border-top: 1px solid #e4e4e7; padding: 14px 28px; display: flex; gap: 12px; align-items: center; border-radius: 0 0 12px 12px; }
+.chrome--gin .chrome__save { background: #0550e6; color: #fff; border: 0; border-radius: 8px; padding: 0 22px; height: 44px; font-size: 15px; font-weight: 600; }
+.chrome--gin .chrome__cancel { background: none; border: 0; color: #0550e6; font-size: 15px; font-weight: 600; }
+.chrome__grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 28px; padding: 24px 28px 0; align-items: start; }
+.chrome__grid--narrow { grid-template-columns: minmax(0,1fr); }
+.chrome__head { padding: 20px 28px 12px; }
+
+
+.scaleframe { width: 100%; max-width: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); height: 330px; }
+.scaleframe--tall { height: 476px; }
+.scaleframe__inner { width: 1280px; min-width: 1280px; transform: scale(.44); transform-origin: top left; }
+
+
+</style>
+</head>
+<body>
+<div class="mosaic themeswitch">
+  <div class="m-seg" role="group" aria-label="Theme">
+    <button type="button" class="m-seg__item" aria-pressed="true" onclick="document.documentElement.dataset.theme='light';this.setAttribute('aria-pressed','true');this.nextElementSibling.setAttribute('aria-pressed','false')">Light</button>
+    <button type="button" class="m-seg__item" aria-pressed="false" onclick="document.documentElement.dataset.theme='dark';this.setAttribute('aria-pressed','true');this.previousElementSibling.setAttribute('aria-pressed','false')">Dark</button>
+  </div>
+</div>
+<div class="sheetbar"><h1>8. Keyboard move, and the errors that stop a save</h1><p><b>1440px.</b> Move mode is explicit, announced and reversible with Esc; both save errors lead with an alert the author is moved into, and both are written in the author’s language — “Teaser (Olivero) needs content in its Content area”, never a machine name or “validation failed”.</p></div><div class="sheet">
+<div class="chrome chrome--claro">
+  <div class="chrome__toolbar"><strong>Manage</strong><span>Content</span><span>Structure</span><span>Appearance</span><span>Extend</span><span>Configuration</span><span style="margin-inline-start:auto">a.ashokkumar</span></div>
+  <div class="chrome__head">
+    <p class="chrome__crumbs">Mosaic — design reference</p>
+    <h1 class="chrome__title">Keyboard move, and the errors that stop a save</h1>
+  </div>
+  
+  <div style="padding:24px 28px 40px">
+<div class="mosaic" style="display:grid;gap:32px;max-width:1180px">
+
+  
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Keyboard move mode</span></div>
+  <p class="m-field__help" style="max-width:52ch">Every drag has a keyboard twin. Move mode is explicit — entered with Space, announced, and confirmed with Enter — so nothing moves by accident while an author is only reading.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+  <div class="m-page" style="max-width:760px;padding:var(--space-5)">
+    <div style="margin-bottom:14px">
+      <div class="m-movebar" role="status">
+        <span class="m-row m-gap-1" style="font-weight:600"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.25" y="4.25" width="13.5" height="8" rx="1.5"/><path d="M4 7h.01M6.5 7h.01M9 7h.01M11.5 7h.01M4.75 9.5h6.5"/></svg> Moving <b>Call to action</b></span>
+        <span class="m-movebar__hint"><span class="m-kbd">↑</span><span class="m-kbd">↓</span> before or after</span>
+        <span class="m-movebar__hint"><span class="m-kbd">→</span> into a slot</span>
+        <span class="m-movebar__hint"><span class="m-kbd">←</span> out to the parent</span>
+        <span class="m-movebar__hint"><span class="m-kbd">Enter</span> drop here</span>
+        <span class="m-movebar__hint"><span class="m-kbd">Esc</span> put it back</span>
+      </div>
+      <p class="m-field__help" style="margin-top:6px">Announced live: “Call to action, position 2 of 4, inside Columns, second column.”</p>
+    </div>
+
+    <div class="m-node" style="padding:16px;border:1px solid var(--line-faint);border-radius:var(--radius-sm)">
+      <p style="font-weight:600">Page heading</p>
+    </div>
+    <div class="m-dropline" style="margin:8px 0" aria-hidden="true"></div>
+    <div class="m-node m-node--moving" style="padding:16px;border-radius:var(--radius-sm)">
+      <div class="m-row m-gap-2"><span class="m-badge m-badge--ready"><span class="m-badge__glyph" aria-hidden="true">✔</span>Moving</span><p style="font-weight:600">Call to action</p></div>
+    </div>
+    <div class="m-slot" style="margin-top:14px">
+      <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Columns → Second column <span class="m-slot__rule">Press <span class="m-kbd">→</span> to move inside</span></span>
+      <div class="m-slot__zone" style="min-height:44px"></div>
+    </div>
+  </div></div>
+</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Alt text is required at save</span></div>
+  <p class="m-field__help" style="max-width:52ch">The summary is the first thing focus lands on after a failed save; each line is a link straight to the field, and the field itself takes focus when the link is followed.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4);display:grid;gap:14px">
+      <div role="alert" tabindex="-1" class="m-focus" style="border-radius:var(--radius-md)">
+        
+<div class="m-banner m-banner--danger" role="alert">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M5.5 5.5 10.5 10.5"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">1 error must be fixed before this page can be saved</span>
+    <span class="m-banner__text"><a href="#alt-1" style="color:var(--danger);font-weight:600">Image in <b>Media and text</b> needs alternative text</a> — or mark it decorative if it carries no information.</span>
+    
+  </div>
+</div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:var(--radius-md);padding:var(--space-4)">
+        <span class="m-field__label" style="margin-bottom:8px"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.75 14.25 5 8 8.25 1.75 5 8 1.75Z"/><path d="M1.75 8 8 11.25 14.25 8M1.75 11 8 14.25 14.25 11"/></svg> Media and text → Accessibility</span>
+        
+<div class="m-field">
+  <span class="m-field__label">Alternative text<span class="m-field__req" aria-hidden="true">*</span></span>
+  <input class="m-input m-focus" id="alt-1" aria-invalid="true" aria-describedby="alt-1-err" placeholder="Describe the image for a screen reader">
+  <span class="m-field__help">licence-counter.jpg · 1600 × 900</span>
+  <span class="m-field__error"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14.5 13.5h-13z"/><path d="M8 6.5v3.2M8 11.8v.2"/></svg>Enter alternative text, or tick “This image is decorative”.</span>
+</div>
+        <div style="margin-top:10px">
+<span class="m-check" role="checkbox" aria-checked="false" tabindex="0">
+  <span class="m-check__box"></span>
+  <span>This image is decorative and needs no description</span>
+</span></div>
+      </div>
+    </div></div>
+</div>
+
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">A required slot is empty</span></div>
+  <p class="m-field__help" style="max-width:52ch">Author-grade wording: the component’s own label, the library it comes from, and the slot’s own name — never a machine name, never “validation failed”.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4);display:grid;gap:14px">
+      <div role="alert">
+        
+<div class="m-banner m-banner--danger" role="alert">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M5.5 5.5 10.5 10.5"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">1 error must be fixed before this page can be saved</span>
+    <span class="m-banner__text"><a href="#slot-content" style="color:var(--danger);font-weight:600">Teaser (Olivero) needs content in its Content area</a> — it accepts Rich text or Columns, and needs at least one.</span>
+    
+  </div>
+</div>
+      </div>
+      <div id="slot-content" style="border:1px solid var(--line);border-radius:var(--radius-md);padding:var(--space-4)">
+        <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Content <span class="m-slot__rule">Rich text or Columns · 1–3 · required</span></span>
+        <div class="m-slot__zone m-slot__zone--violation m-slot__zone--empty m-focus">
+          <p class="m-slot__empty-text" style="color:var(--ink)"><b>Needs at least one component.</b></p>
+          <div class="m-row m-gap-2">
+            <button type="button" class="m-btn m-btn--primary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add Rich text</span></button>
+            <button type="button" class="m-btn m-btn--secondary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add Columns</span></button>
+          </div>
+        </div>
+      </div>
+      <p class="m-field__help">Mosaic shows the violation. It never silently refuses the drop that caused it, and it never deletes what is already there to make the rule pass.</p>
+    </div></div>
+</div>
+  </div>
+</div></div>
+</div></div>
+</body>
+</html>

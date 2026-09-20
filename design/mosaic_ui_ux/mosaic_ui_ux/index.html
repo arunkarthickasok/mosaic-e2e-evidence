@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mosaic 1.0 — authoring UI · Mosaic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300..800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens/tokens.css">
+<link rel="stylesheet" href="src/mosaic-ui.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); }
+  .sheet { width: 1000px; margin: 0 auto; background: var(--surface); box-shadow: var(--shadow-lg); }
+  .sheetbar { width: 1000px; margin: 0 auto; padding: 20px 24px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .sheetbar h1 { font-size: 22px; line-height: 28px; font-weight: 700; margin: 0; }
+  .sheetbar p { font-size: 13px; line-height: 19px; color: var(--ink-muted); margin: 0; max-width: 78ch; }
+  .themeswitch { position: fixed; top: 12px; right: 12px; z-index: 999; }
+
+/* --- Drupal admin chrome (not part of Mosaic) ---------------------------- */
+.chrome { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #232429; }
+.chrome--claro { background: #f3f4f7; }
+.chrome--claro .chrome__toolbar { background: #0f1214; color: #fff; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 40px; font-size: 13px; }
+.chrome--claro .chrome__toolbar b { font-weight: 600; }
+.chrome--claro .chrome__tabs { background: #fff; border-bottom: 1px solid #d3d4d9; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--claro .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-bottom: 3px solid transparent; }
+.chrome--claro .chrome__tab--on { color: #003cc5; border-bottom-color: #003cc5; font-weight: 700; }
+.chrome--claro .chrome__title { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.chrome--claro .chrome__crumbs { font-size: 12px; color: #55565b; }
+.chrome--claro .chrome__label { font-size: 13px; font-weight: 700; color: #232429; display: block; margin-bottom: 4px; }
+.chrome--claro .chrome__input { width: 100%; height: 40px; border: 1px solid #8e929c; border-radius: 2px; padding: 0 12px; font-size: 15px; background: #fff; box-shadow: inset 0 2px 2px rgba(0,0,0,.075); }
+.chrome--claro .chrome__side { background: #fff; border: 1px solid #d3d4d9; border-radius: 2px; }
+.chrome--claro .chrome__sidehead { padding: 12px 16px; border-bottom: 1px solid #d3d4d9; font-weight: 700; font-size: 14px; }
+.chrome--claro .chrome__sidebody { padding: 16px; font-size: 13px; color: #55565b; line-height: 20px; }
+.chrome--claro .chrome__actions { background: #fff; border-top: 1px solid #d3d4d9; padding: 14px 28px; display: flex; gap: 12px; align-items: center; }
+.chrome--claro .chrome__save { background: #003cc5; color: #fff; border: 0; border-radius: 2px; padding: 0 20px; height: 40px; font-size: 15px; font-weight: 700; }
+.chrome--claro .chrome__cancel { background: none; border: 0; color: #003cc5; font-size: 15px; text-decoration: underline; }
+
+.chrome--gin { background: #f3f4f7; }
+.chrome--gin .chrome__toolbar { background: #1b1b1d; color: #e7e7ea; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 48px; font-size: 13px; }
+.chrome--gin .chrome__tabs { background: transparent; border-bottom: 1px solid #dcdcde; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--gin .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-radius: 6px 6px 0 0; }
+.chrome--gin .chrome__tab--on { color: #fff; background: #0550e6; font-weight: 600; }
+.chrome--gin .chrome__title { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.chrome--gin .chrome__crumbs { font-size: 12px; color: #6f7076; }
+.chrome--gin .chrome__label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+.chrome--gin .chrome__input { width: 100%; height: 44px; border: 1px solid #c7c8cd; border-radius: 8px; padding: 0 14px; font-size: 15px; background: #fff; }
+.chrome--gin .chrome__side { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; }
+.chrome--gin .chrome__sidehead { padding: 14px 18px; border-bottom: 1px solid #e4e4e7; font-weight: 600; font-size: 14px; }
+.chrome--gin .chrome__sidebody { padding: 18px; font-size: 13px; color: #6f7076; line-height: 20px; }
+.chrome--gin .chrome__actions { background: #fff; border-top: 1px solid #e4e4e7; padding: 14px 28px; display: flex; gap: 12px; align-items: center; border-radius: 0 0 12px 12px; }
+.chrome--gin .chrome__save { background: #0550e6; color: #fff; border: 0; border-radius: 8px; padding: 0 22px; height: 44px; font-size: 15px; font-weight: 600; }
+.chrome--gin .chrome__cancel { background: none; border: 0; color: #0550e6; font-size: 15px; font-weight: 600; }
+.chrome__grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 28px; padding: 24px 28px 0; align-items: start; }
+.chrome__grid--narrow { grid-template-columns: minmax(0,1fr); }
+.chrome__head { padding: 20px 28px 12px; }
+
+
+.scaleframe { width: 100%; max-width: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); height: 330px; }
+.scaleframe--tall { height: 476px; }
+.scaleframe__inner { width: 1280px; min-width: 1280px; transform: scale(.44); transform-origin: top left; }
+
+
+</style>
+</head>
+<body>
+<div class="mosaic themeswitch">
+  <div class="m-seg" role="group" aria-label="Theme">
+    <button type="button" class="m-seg__item" aria-pressed="true" onclick="document.documentElement.dataset.theme='light';this.setAttribute('aria-pressed','true');this.nextElementSibling.setAttribute('aria-pressed','false')">Light</button>
+    <button type="button" class="m-seg__item" aria-pressed="false" onclick="document.documentElement.dataset.theme='dark';this.setAttribute('aria-pressed','true');this.previousElementSibling.setAttribute('aria-pressed','false')">Dark</button>
+  </div>
+</div>
+
+<div class="sheetbar"><h1>Mosaic 1.0 — authoring UI/UX</h1><p>The complete design: token sheet, component inventory and every screen at desktop, tablet and mobile. Open any file below straight from the repository.</p></div>
+<div class="sheet" style="padding:32px">
+  <div class="mosaic" style="display:grid;gap:24px">
+    <div class="m-card">
+      <p class="m-card__title" style="margin-bottom:10px">Foundations</p>
+      <ul style="display:grid;gap:8px">
+        <li><a href="tokens/tokens.css">tokens/tokens.css</a> — the compiled custom properties, light and dark</li>
+        <li><a href="tokens/tokens.json">tokens/tokens.json</a> — the source of truth, with a usage note on every token</li>
+        <li><a href="src/mosaic-ui.css">src/mosaic-ui.css</a> — the builder’s stylesheet, tokens only</li>
+        <li><a href="components/index.html">components/index.html</a> — the component inventory</li>
+      </ul>
+    </div>
+    <div class="m-card">
+      <p class="m-card__title" style="margin-bottom:10px">Screens</p>
+      <ul style="display:grid;gap:10px">
+      <li><b>1. Builder inside the node form</b><br><a href="screens/01-builder-node-form.html">1440</a> · <a href="screens/01-builder-node-form-tablet.html">1024</a> · <a href="screens/01-builder-node-form-mobile.html">390</a><br><span class="m-field__help">The builder is a field, so it stays inside the form: Drupal keeps its title, sidebar and Save, and Mosaic claims one bordered rectangle with its own tokens — no takeover, no second Save button competing with Drupal’s.</span></li><li><b>2. The same component, edited on the live page</b><br><a href="screens/02-front-end-dialog.html">1440</a> · <a href="screens/02-front-end-dialog-tablet.html">1024</a> · <a href="screens/02-front-end-dialog-mobile.html">390</a><br><span class="m-field__help">The dialog is docked, not centred, so the component being edited stays visible beside it — and it renders the identical rail sections, because two implementations of one panel is how the two surfaces drift apart.</span></li><li><b>3. Five slots, and a library that owns the look</b><br><a href="screens/03-slots-and-ownership.html">1440</a> · <a href="screens/03-slots-and-ownership-tablet.html">1024</a><br><span class="m-field__help">Each slot states its own rules on the canvas, the required one is marked rather than silently refused, and Style/Spacing/Responsive are gone from the rail — replaced by one sentence naming who owns the styling instead of greyed-out controls that imply a permission problem.</span></li><li><b>4. A slot bound to a View</b><br><a href="screens/04-slot-bound-to-view.html">1440</a> · <a href="screens/04-slot-bound-to-view-mobile.html">390</a><br><span class="m-field__help">Binding is shown as a chain an author can read end to end — View, display, which page field feeds the argument, what each row becomes, which field lands where — and the empty and failing states sit on the same screen, because those are the two an author never sees until production.</span></li><li><b>5. Component libraries</b><br><a href="screens/05-libraries-admin.html">1440</a> · <a href="screens/05-libraries-admin-tablet.html">1024</a><br><span class="m-field__help">Readiness is never a bare badge: every Attention and Blocked carries the field and the reason, and the schema-derived fields and slots are printed as living documentation, so the page cannot go stale relative to the code.</span></li><li><b>6. Content-type governance</b><br><a href="screens/06-content-type-governance.html">1440</a> · <a href="screens/06-content-type-governance-mobile.html">390</a><br><span class="m-field__help">The library switch and the per-component picks sit on one form because they are one decision, and the sentence that defines Restricted is next to the control rather than in a help page nobody opens.</span></li><li><b>7. Empty states</b><br><a href="screens/07-empty-states.html">1440</a><br><span class="m-field__help">Five designed nothings. The one that earns the most care is “library missing”: it prints the stored values in full and says they are kept, because an author who cannot see their content assumes it is gone and deletes the component.</span></li><li><b>8. Keyboard move, and the errors that stop a save</b><br><a href="screens/08-keyboard-and-errors.html">1440</a><br><span class="m-field__help">Move mode is explicit, announced and reversible with Esc; both save errors lead with an alert the author is moved into, and both are written in the author’s language — “Teaser (Olivero) needs content in its Content area”, never a machine name or “validation failed”.</span></li><li><b>9. Light, dark, Claro and Gin</b><br><a href="screens/09-themes-and-frames.html">1440</a><br><span class="m-field__help">Four surroundings, one builder. Light and dark both resolve from tokens.json, and the Claro and Gin frames prove the point the other way round: the chrome changes completely and not one pixel inside the border moves.</span></li>
+      </ul>
+    </div>
+    <div class="m-card">
+      <p class="m-card__title" style="margin-bottom:10px">Documents</p>
+      <ul style="display:grid;gap:8px">
+        <li><a href="README.md">README.md</a> — the system, and the reasoning per screen</li>
+        <li><a href="docs/accessibility.md">docs/accessibility.md</a> — the accessibility contract</li>
+        <li><a href="docs/data-binding.md">docs/data-binding.md</a> — what can be bound, and what the rail shows</li>
+        <li><a href="docs/decisions.md">docs/decisions.md</a> — the decisions, and what was rejected</li>
+        <li><a href="tools/contrast.js">tools/contrast.js</a> — the contrast audit, 122 pairs</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

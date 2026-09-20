@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empty states — 1440 · Mosaic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300..800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../src/mosaic-ui.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-sans); }
+  .sheet { width: 1440px; margin: 0 auto; background: var(--surface); box-shadow: var(--shadow-lg); }
+  .sheetbar { width: 1440px; margin: 0 auto; padding: 20px 24px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .sheetbar h1 { font-size: 22px; line-height: 28px; font-weight: 700; margin: 0; }
+  .sheetbar p { font-size: 13px; line-height: 19px; color: var(--ink-muted); margin: 0; max-width: 78ch; }
+  .themeswitch { position: fixed; top: 12px; right: 12px; z-index: 999; }
+
+/* --- Drupal admin chrome (not part of Mosaic) ---------------------------- */
+.chrome { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #232429; }
+.chrome--claro { background: #f3f4f7; }
+.chrome--claro .chrome__toolbar { background: #0f1214; color: #fff; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 40px; font-size: 13px; }
+.chrome--claro .chrome__toolbar b { font-weight: 600; }
+.chrome--claro .chrome__tabs { background: #fff; border-bottom: 1px solid #d3d4d9; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--claro .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-bottom: 3px solid transparent; }
+.chrome--claro .chrome__tab--on { color: #003cc5; border-bottom-color: #003cc5; font-weight: 700; }
+.chrome--claro .chrome__title { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.chrome--claro .chrome__crumbs { font-size: 12px; color: #55565b; }
+.chrome--claro .chrome__label { font-size: 13px; font-weight: 700; color: #232429; display: block; margin-bottom: 4px; }
+.chrome--claro .chrome__input { width: 100%; height: 40px; border: 1px solid #8e929c; border-radius: 2px; padding: 0 12px; font-size: 15px; background: #fff; box-shadow: inset 0 2px 2px rgba(0,0,0,.075); }
+.chrome--claro .chrome__side { background: #fff; border: 1px solid #d3d4d9; border-radius: 2px; }
+.chrome--claro .chrome__sidehead { padding: 12px 16px; border-bottom: 1px solid #d3d4d9; font-weight: 700; font-size: 14px; }
+.chrome--claro .chrome__sidebody { padding: 16px; font-size: 13px; color: #55565b; line-height: 20px; }
+.chrome--claro .chrome__actions { background: #fff; border-top: 1px solid #d3d4d9; padding: 14px 28px; display: flex; gap: 12px; align-items: center; }
+.chrome--claro .chrome__save { background: #003cc5; color: #fff; border: 0; border-radius: 2px; padding: 0 20px; height: 40px; font-size: 15px; font-weight: 700; }
+.chrome--claro .chrome__cancel { background: none; border: 0; color: #003cc5; font-size: 15px; text-decoration: underline; }
+
+.chrome--gin { background: #f3f4f7; }
+.chrome--gin .chrome__toolbar { background: #1b1b1d; color: #e7e7ea; display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 48px; font-size: 13px; }
+.chrome--gin .chrome__tabs { background: transparent; border-bottom: 1px solid #dcdcde; display: flex; gap: 4px; padding: 0 28px; }
+.chrome--gin .chrome__tab { padding: 12px 14px; font-size: 14px; color: #55565b; border-radius: 6px 6px 0 0; }
+.chrome--gin .chrome__tab--on { color: #fff; background: #0550e6; font-weight: 600; }
+.chrome--gin .chrome__title { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.chrome--gin .chrome__crumbs { font-size: 12px; color: #6f7076; }
+.chrome--gin .chrome__label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+.chrome--gin .chrome__input { width: 100%; height: 44px; border: 1px solid #c7c8cd; border-radius: 8px; padding: 0 14px; font-size: 15px; background: #fff; }
+.chrome--gin .chrome__side { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; }
+.chrome--gin .chrome__sidehead { padding: 14px 18px; border-bottom: 1px solid #e4e4e7; font-weight: 600; font-size: 14px; }
+.chrome--gin .chrome__sidebody { padding: 18px; font-size: 13px; color: #6f7076; line-height: 20px; }
+.chrome--gin .chrome__actions { background: #fff; border-top: 1px solid #e4e4e7; padding: 14px 28px; display: flex; gap: 12px; align-items: center; border-radius: 0 0 12px 12px; }
+.chrome--gin .chrome__save { background: #0550e6; color: #fff; border: 0; border-radius: 8px; padding: 0 22px; height: 44px; font-size: 15px; font-weight: 600; }
+.chrome--gin .chrome__cancel { background: none; border: 0; color: #0550e6; font-size: 15px; font-weight: 600; }
+.chrome__grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 28px; padding: 24px 28px 0; align-items: start; }
+.chrome__grid--narrow { grid-template-columns: minmax(0,1fr); }
+.chrome__head { padding: 20px 28px 12px; }
+
+
+.scaleframe { width: 100%; max-width: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); height: 330px; }
+.scaleframe--tall { height: 476px; }
+.scaleframe__inner { width: 1280px; min-width: 1280px; transform: scale(.44); transform-origin: top left; }
+
+
+</style>
+</head>
+<body>
+<div class="mosaic themeswitch">
+  <div class="m-seg" role="group" aria-label="Theme">
+    <button type="button" class="m-seg__item" aria-pressed="true" onclick="document.documentElement.dataset.theme='light';this.setAttribute('aria-pressed','true');this.nextElementSibling.setAttribute('aria-pressed','false')">Light</button>
+    <button type="button" class="m-seg__item" aria-pressed="false" onclick="document.documentElement.dataset.theme='dark';this.setAttribute('aria-pressed','true');this.previousElementSibling.setAttribute('aria-pressed','false')">Dark</button>
+  </div>
+</div>
+<div class="sheetbar"><h1>7. Empty states</h1><p><b>1440px.</b> Five designed nothings. The one that earns the most care is “library missing”: it prints the stored values in full and says they are kept, because an author who cannot see their content assumes it is gone and deletes the component.</p></div><div class="sheet">
+<div class="chrome chrome--claro">
+  <div class="chrome__toolbar"><strong>Manage</strong><span>Content</span><span>Structure</span><span>Appearance</span><span>Extend</span><span>Configuration</span><span style="margin-inline-start:auto">a.ashokkumar</span></div>
+  <div class="chrome__head">
+    <p class="chrome__crumbs">Mosaic — design reference</p>
+    <h1 class="chrome__title">Empty states</h1>
+  </div>
+  
+  <div style="padding:24px 28px 40px">
+<div class="mosaic" style="display:grid;gap:32px;max-width:1180px">
+
+  
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Empty canvas</span></div>
+  <p class="m-field__help" style="max-width:52ch">The first thing a new author ever sees. It names the field, offers the two ways in, and shows a real starting point rather than a shrug.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+  <div class="m-page" style="max-width:760px;padding:var(--space-6)">
+    <div class="m-empty">
+      <span class="m-empty__art" aria-hidden="true"><svg viewBox="0 0 96 64" width="96" height="64" role="presentation"><rect x="2" y="2" width="42" height="26" rx="4" fill="var(--brand-subtle)"/><rect x="48" y="2" width="46" height="26" rx="4" fill="none" stroke="var(--slot-line)" stroke-dasharray="3 3"/><rect x="2" y="32" width="92" height="30" rx="4" fill="none" stroke="var(--slot-line)" stroke-dasharray="3 3"/><path d="M71 11v8M67 15h8" stroke="var(--brand)" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <p class="m-empty__title">This layout is empty</p>
+      <p class="m-empty__text">Drag a component from the palette, or start from a pattern. Nothing is published until you save the node.</p>
+      <div class="m-empty__actions">
+        <button type="button" class="m-btn m-btn--primary" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add your first component</span></button>
+        <button type="button" class="m-btn m-btn--secondary" ><span>Start from a pattern</span></button>
+      </div>
+      <p class="m-field__help">Keyboard: press <span class="m-kbd">Tab</span> to the palette, then <span class="m-kbd">Enter</span> to place.</p>
+    </div>
+  </div></div>
+</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Empty slot</span></div>
+  <p class="m-field__help" style="max-width:52ch">A slot says what it accepts before you drop anything. The rule line is generated from the schema, so it can never drift from what the component will actually take.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4)">
+      <span class="m-slot__label"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" stroke-dasharray="2 2"/><path d="M8 5.5v5M5.5 8h5"/></svg> Content <span class="m-slot__rule">Rich text or Columns · 1–3 · required</span></span>
+      <div class="m-slot__zone m-slot__zone--empty">
+        <p class="m-slot__empty-text">Nothing here yet. Olivero will not render the teaser without it.</p>
+        <div class="m-row m-gap-2">
+          <button type="button" class="m-btn m-btn--secondary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg><span>Add Rich text</span></button>
+          <button type="button" class="m-btn m-btn--quiet m-btn--sm" ><span>Browse components</span></button>
+        </div>
+      </div>
+    </div></div>
+</div>
+
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Library missing</span></div>
+  <p class="m-field__help" style="max-width:52ch">The one empty state that must never lose anything. The component’s stored props and children are listed in full, so an author can see exactly what will come back when the library returns.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4)">
+      <div class="m-node" style="border:2px dashed var(--attention);border-radius:var(--radius-md);padding:var(--space-4);background:var(--attention-subtle)">
+        <div class="m-row m-gap-2" style="margin-bottom:8px"><span class="m-badge m-badge--attention"><span class="m-badge__glyph" aria-hidden="true">▲</span>Library missing</span><span class="m-field__label">Hero banner</span></div>
+        <p class="m-field__help" style="margin-bottom:10px">The library <b>WebNY Patterns</b> is not installed on this site, so Mosaic cannot render this component. <b>Its values are kept.</b> Reinstall the library and the component returns exactly as it was.</p>
+        <div class="m-disclosure__body" style="background:var(--surface)">heading: "Apply for a business licence"<br>variant: "emphasis"<br>slots.actions: [ Link, Link ]<br>slots.media: [ Image ]</div>
+        <div class="m-row m-gap-2" style="margin-top:10px">
+          <button type="button" class="m-btn m-btn--secondary m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8S4 3.75 8 3.75 14.5 8 14.5 8 12 12.25 8 12.25 1.5 8 1.5 8Z"/><circle cx="8" cy="8" r="1.75"/></svg><span>Show me what is stored</span></button>
+          <button type="button" class="m-btn m-btn--danger m-btn--sm" ><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.75 4.25h10.5M6.25 4.25V2.75h3.5v1.5M4.25 4.25l.6 8.2a1.5 1.5 0 0 0 1.5 1.3h3.3a1.5 1.5 0 0 0 1.5-1.3l.6-8.2"/></svg><span>Remove from this layout</span></button>
+        </div>
+      </div>
+    </div></div>
+</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Empty palette</span></div>
+  <p class="m-field__help" style="max-width:52ch">Never a blank column. It says who can change it and links straight there, because the author usually cannot.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4);max-width:264px">
+      <div class="m-empty m-empty--plain" style="padding:var(--space-6) var(--space-4)">
+        <p class="m-empty__title">No components here</p>
+        <p class="m-empty__text">Every library is switched off for Program page.</p>
+        <button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Ask a site builder</span></button>
+        <p class="m-field__help">Structure › Content types › Program page › Mosaic</p>
+      </div>
+    </div></div>
+</div>
+
+    
+<div style="display:grid;gap:10px;align-content:start">
+  <div class="m-row m-gap-2"><span class="m-field__label">Empty and failing data</span></div>
+  <p class="m-field__help" style="max-width:52ch">Two different sentences. Empty is a normal state of a healthy source; failing is a broken one, and only failing gets a red banner and a way to fix it.</p>
+  <div style="border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--canvas);padding:var(--space-5)">
+    <div style="background:var(--surface);border-radius:var(--radius-md);padding:var(--space-4);display:grid;gap:12px">
+      
+<p class="m-result m-result--empty"><span class="m-result__dot" aria-hidden="true"></span><span>0 of 128 · Recent notices (Block: latest)</span><span class="m-result__src">agency = field_agency</span></p>
+      <p class="m-field__help">Visitors will see: “There are no notices at this time.”</p>
+      <hr>
+      
+<p class="m-result m-result--failing"><span class="m-result__dot" aria-hidden="true"></span><span>Source failing · Recent notices (Block: latest)</span><span class="m-result__src">HTTP 500</span></p>
+      
+<div class="m-banner m-banner--danger m-banner--sm" role="alert">
+  <span class="m-banner__glyph" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M5.5 5.5 10.5 10.5"/></svg></span>
+  <div class="m-banner__body">
+    <span class="m-banner__title">The View could not run</span>
+    <span class="m-banner__text">Display “Block: latest” no longer exists. Values are kept.</span>
+    <div class="m-banner__actions"><button type="button" class="m-btn m-btn--secondary m-btn--sm" ><span>Choose a display</span></button></div>
+  </div>
+</div>
+    </div></div>
+</div>
+  </div>
+</div></div>
+</div></div>
+</body>
+</html>

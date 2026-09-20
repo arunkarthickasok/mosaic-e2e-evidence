@@ -13733,3 +13733,13 @@ EXCLUDED; SdcComponentPlugin pristine). WALK step 2 rewritten.
 `arunkarthickasok`. Repo prepared (582983d, main, SSH remote); Arun runs `git push -u origin main`.
 
 ### FOLLOW-UP — WC#76-CONT: rendered-entity row displays → offer the row entity's fields.
+
+---
+
+## Design system → evidence repo (2026-09-20)
+
+The Mosaic 1.0 design system export now lives in the evidence repo at
+`design/mosaic_ui_ux/` (35 files; the source of truth for ACT 2, frozen plan §6).
+The standalone remote `github.com/arunkarthickasok/mosaic_ui_ux` stays EMPTY/UNUSED
+(the env could not push to it — its SSH key is a different GitHub account); Arun may
+delete that empty repo. The local `<root>/mosaic_ui_ux/` folder is left untouched.
