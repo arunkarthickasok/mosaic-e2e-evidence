@@ -928,3 +928,82 @@ CHECKPOINT-6 = DELIVERY-PLAN filled + the H9 bind panel FOUNDATION (client round
 + bind form + panel wiring), headed-proven at the panel, both byte-identical gates held,
 WC#73 still green. Canvas bound-render + SO-2 client + full save-to-page journeys →
 P1d-A-CONT2. STOP for audit. NEXT: P1d-A-CONT2 (B-remainder + C + D) then P1d-B.
+
+---
+
+# CHECKPOINT-7 — PASS 8 (P1d-A-CONT2): canvas bound-render + result line + bind journey
+
+Scope per charter: ONLY the canvas bound-render + result line + the bind journey.
+(SO-2 client enforcement moved to P1d-B by reviewer ruling — not built here.)
+
+## §1 — CANVAS BOUND-RENDER (built, Vitest + Kernel + headed)
+- **Server:** `MosaicRenderer::renderBoundSlotPreview(SlotBinding, bare)` (NEW,
+  public) runs the same row provider + hybrid child render as the page
+  (renderBoundSlot) but returns `{html, shown, total, label}` for the result line;
+  `CanvasPreviewController::boundSlot` + route `POST /api/mosaic/canvas/bound-slot`
+  (mosaic.use_builder + CSRF). Kernel `SlotBindingRenderTest` +2 cells (rows + counts;
+  empty → 0/0).
+- **Client:** `MosaicBoundSlot.tsx` (NEW) — the zone state machine
+  loading → rows | empty (empty_display + "0 of 0 · …") | error (text-only failing
+  state); result line `{shown} of {total} · {label}`. Wired into
+  `buildColumnsRenderer`: a bound column renders its rows (SSR) instead of the Puck
+  slot. Vitest `MosaicBoundSlot` 6 cells + `resultLineText`.
+- **Puck-walk fix (found via the headed journey):** the round-trip prop
+  `_mosaic_slot_binding` was an OBJECT keyed by slot name; Puck's `walkField`
+  recurses object props using the component's fields, so keys like `column_1`
+  collided with the SLOT fields and Puck ran `containsPromise` (`.some`) on the
+  binding — `TypeError: arr.some is not a function`, blanking the canvas. Fix: the
+  prop is now an ARRAY of `{slot, binding}` (Puck returns arrays with no arrayFields
+  as-is, never recursing); the saved layout stays an object `{slot: binding}`.
+  Round-trip + field + columns render all use the array shape.
+
+## §2 — THE BIND JOURNEY (headed Chrome, node 992 fixture)
+Fixture: node 992 = owned Columns, column_1 bound to the journey-fixture View
+`mosaic_j8_articles` (limit 3), child mosaic_card, field_map {title: title}.
+`e2e/journeys/cp-adopt-5-bind-journey.spec.ts` proves (all asserted):
+| claim | result |
+|---|---|
+| canvas renders the bound rows | **3 Cards** (one bound-slot SSR request) |
+| result line under the zone | **"3 of 4 · J8 Articles"** (shown 3 · mini-pager total 4 · label) |
+| Desktop→Mobile→Desktop keeps every node | **kept** (WC#73 cell reused) |
+| saved page renders the same rows | **3 Cards** |
+| geometry | **cards non-overlapping**; **result line inside the zone bounds** |
+
+Album: `ledger-live/e2e-evidence/cp-adopt-5/` (INDEX.md, J8-JOURNEY.json,
+geometry.json, j8-01-canvas-bound.png). **Frame count: 2** png frames
+(j8-01-canvas-bound.png this pass + bind-panel.png from CHECKPOINT-6).
+
+The bind/unbind + drag-from-palette interactions are covered by Vitest (the bind
+form's "checking seeds / unchecking clears" + round-trip cells) + the headed
+panel-presence test (CHECKPOINT-6); this journey proves the NEW capability — the
+canvas bound-render + result line + viewport survival + page parity.
+
+## Gates
+- **Kernel+Unit 3016 / 0** (1 pre-existing warning; Sprint66 oracle updated for the
+  `buildColumnsRenderer(manifest, capturedBasePath)` signature).
+- **mosaic_views submodule 62 / 62** (+2 preview cells).
+- **Vitest 590 / 1** (the 1 = pre-existing B-101; +8: 6 MosaicBoundSlot + 2 round-trip).
+- **PHPCS 0 errors**; **PHPStan** only the 3 pre-existing MosaicRenderer errors;
+  **tsc** 0 from this slice (1 pre-existing dsdShadow).
+- **REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL** — the
+  canvas/endpoint changes never touch the frontend of an owned-only page.
+- **BUMP-LIBS 1.0.47 → 1.0.48** (builder + frontend-editor dist rebuilt).
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- Server: `src/Service/MosaicRenderer.php` (renderBoundSlotPreview),
+  `src/Controller/CanvasPreviewController.php` (boundSlot), `mosaic.routing.yml`
+  (bound_slot route).
+- Client: `src/builder/fields/MosaicBoundSlot.tsx` (NEW),
+  `src/builder/MosaicPuckAdapter.ts` (array-shape round-trip + buildColumnsRenderer
+  bound branch), `src/builder/fields/MosaicSlotBindField.tsx` (unchanged shape).
+- Tests: `MosaicBoundSlot.test.tsx` (NEW, 6), `MosaicPuckAdapterSlotRoundTrip.test.ts`
+  (array shape), `SlotBindingRenderTest.php` (+2), `Sprint66SmokeTest.php` (oracle),
+  `cp-adopt-5-bind-journey.spec.ts` (NEW, headed).
+- `mosaic.libraries.yml` (1.0.48), `js/dist/*` (rebuilt).
+
+## Honest status
+CHECKPOINT-7 = the canvas bound-render + result line, headed-proven end-to-end
+(canvas 3 Cards + "3 of 4 · J8 Articles" → viewport survives → page 3 Cards →
+geometry clean), both byte-identical gates held. A real Puck-walk bug the headed
+journey surfaced (object-keyed prop colliding with slot fields) was fixed. STOP for
+audit. NEXT: P1d-B (owned panel gating + CKE5 sheet + SO-2 client + walk + SHIP-45-PLAN).

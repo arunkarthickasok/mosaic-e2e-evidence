@@ -1,0 +1,36 @@
+{
+  "zone": {
+    "x": 415,
+    "y": 823.859375,
+    "width": 136,
+    "height": 1050.75
+  },
+  "cards": [
+    {
+      "x": 415,
+      "y": 823.859375,
+      "width": 136,
+      "height": 296.5
+    },
+    {
+      "x": 415,
+      "y": 1120.359375,
+      "width": 136,
+      "height": 396.4375
+    },
+    {
+      "x": 415,
+      "y": 1516.796875,
+      "width": 136,
+      "height": 329.8125
+    }
+  ],
+  "resultLine": {
+    "x": 415,
+    "y": 1850.609375,
+    "width": 136,
+    "height": 24
+  },
+  "cardsOverlap": false,
+  "resultLineInsideZone": true
+}

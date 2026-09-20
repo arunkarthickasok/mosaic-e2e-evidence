@@ -13629,3 +13629,24 @@ b7756795 both IDENTICAL (editor-only) · Kernel+Unit unchanged 3016/0 (no PHP) �
 - **D full journeys:** bind→3 Cards+result line on canvas→viewport survives→plain-content-first→
   save→page; album + INDEX + geometry.json. "result-line text captured" + "frame count" ride here.
 Deferred as unverified canvas/E2E UI (SO-2-CONT / H9-PANEL-CONT discipline).
+
+---
+
+## CP-ADOPT-5 PASS 8 (P1d-A-CONT2) — canvas bound-render + result line + bind journey — CHECKPOINT-7 — DONE
+
+**§1 CANVAS BOUND-RENDER:** server `MosaicRenderer::renderBoundSlotPreview` + `CanvasPreviewController::boundSlot`
++ route `/api/mosaic/canvas/bound-slot`. Client `MosaicBoundSlot.tsx` (loading→rows|empty|error + result
+line "{shown} of {total} · {label}") wired into buildColumnsRenderer (bound column → SSR rows). Vitest 6 +
+Kernel 2. **Puck-walk bug fixed:** `_mosaic_slot_binding` object keyed by slot names collided with slot
+fields → Puck walkField containsPromise `.some` on a non-array → canvas blanked; now an ARRAY of
+{slot, binding} (saved layout stays object).
+
+**§2 JOURNEY (headed, node 992):** canvas 3 Cards + result line **"3 of 4 · J8 Articles"** → Desktop↔Mobile
+keeps nodes (WC#73) → page 3 Cards → geometry (cards non-overlapping; result line inside zone). Album
+cp-adopt-5/ (INDEX + geometry.json + j8-01-canvas-bound.png). Frame count 2.
+
+**Gates:** Kernel+Unit 3016/0 (Sprint66 oracle updated for buildColumnsRenderer signature) · mosaic_views
+62/62 · Vitest 590/1-B101 · phpcs 0 err · phpstan 3 pre-existing MosaicRenderer only · REGION 14e6cb9c /
+STYLE b7756795 both IDENTICAL · BUMP-LIBS 1.0.48.
+
+NEXT → P1d-B (owned panel gating + CKE5 sheet + SO-2 client + walk + SHIP-45-PLAN).

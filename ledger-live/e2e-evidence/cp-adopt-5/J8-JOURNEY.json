@@ -1,0 +1,46 @@
+{
+  "cardsOnCanvas": 3,
+  "resultLine": "3 of 4 · J8 Articles",
+  "boundReq": 1,
+  "viewportBefore": 1,
+  "viewportAfter": 1,
+  "viewportKept": true,
+  "pageCards": 3,
+  "pageExcerpt": "<div data-mosaic-component=\"mosaic_columns\" data-mosaic-instance=\"b8000000-0000-4000-8000-000000000001\" data-component-id=\"mosaic_components:mosaic_columns\" class=\"mosaic-columns mosaic-columns--2 mosaic-columns--gap-md\">\n  <div class=\"mosaic-columns__col mosaic-columns__col--1\">\n\n<article data-mosaic-component=\"mosaic_card\" data-mosaic-instance=\"mosaic-bound-mosaic_j8_articles-block_1-0\" data-component-id=\"mosaic_components:mosaic_card\" class=\"mosaic-card mosaic-card--default\">\n  \n  <div class=\"mosaic-card__body\">\n          <h3 id=\"mosaic-card-title-mosaic-bound-mosaic_j8_articles-block_1-0\" ",
+  "geometry": {
+    "zone": {
+      "x": 415,
+      "y": 823.859375,
+      "width": 136,
+      "height": 1050.75
+    },
+    "cards": [
+      {
+        "x": 415,
+        "y": 823.859375,
+        "width": 136,
+        "height": 296.5
+      },
+      {
+        "x": 415,
+        "y": 1120.359375,
+        "width": 136,
+        "height": 396.4375
+      },
+      {
+        "x": 415,
+        "y": 1516.796875,
+        "width": 136,
+        "height": 329.8125
+      }
+    ],
+    "resultLine": {
+      "x": 415,
+      "y": 1850.609375,
+      "width": 136,
+      "height": 24
+    },
+    "cardsOverlap": false,
+    "resultLineInsideZone": true
+  }
+}
