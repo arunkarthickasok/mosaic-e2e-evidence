@@ -13739,7 +13739,27 @@ EXCLUDED; SdcComponentPlugin pristine). WALK step 2 rewritten.
 ## Design system → evidence repo (2026-09-20)
 
 The Mosaic 1.0 design system export now lives in the evidence repo at
-`design/mosaic_ui_ux/` (35 files; the source of truth for ACT 2, frozen plan §6).
+`design/mosaic_ui_ux/` (35 files), committed `ba37506`.
 The standalone remote `github.com/arunkarthickasok/mosaic_ui_ux` stays EMPTY/UNUSED
 (the env could not push to it — its SSH key is a different GitHub account); Arun may
 delete that empty repo. The local `<root>/mosaic_ui_ux/` folder is left untouched.
+
+### RULING (2026-09-20, Arun) — v1 is a DRAFT, not the source of truth
+`design/mosaic_ui_ux/` (`ba37506`) = **DRAFT v1**. It is **NOT yet the ACT 2 source
+of truth**. A refined **v2 is owed before ACT 2 (frozen plan §6) starts**, and v2 —
+not this draft — becomes the source of truth.
+
+**The bar (Arun):** best-in-class, modern AND easy — **better than the paid builders
+Mosaic will be compared to**. "A Rolls-Royce, not an Ambassador."
+
+**v2 KEEPS what v1 got right:** own tokens; `.mosaic` scoping; absent-not-disabled
+sections; no settings page; shimmer-not-overlay; the contrast audit.
+
+**v2 RAISES:** distinctive composites (rail, canvas chrome, bind panel, palette);
+interaction choreography (drag / drop / violation / shimmer); tablet + mobile for
+screens 7–9; a **dark mode that is designed, not inverted**.
+
+**ACT 2 ruling candidate (Arun rules at ACT 2):** design decision 6 — accept-and-mark
+rule-breaking drops (Save stops) vs the current native refusal.
+
+Recorded also in `design/README.md` and DELIVERY-PLAN §6.

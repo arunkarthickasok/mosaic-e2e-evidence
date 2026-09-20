@@ -40,6 +40,20 @@ Reference mocks implemented across builder, FE dialog, libraries page, governanc
 form; empty / failing states; keyboard paths; WCAG AA; **D1 admin-theme-agnostic**;
 WC#65 / #72 + the consistency list closed.
 
+**The bar (Arun):** best-in-class, modern AND easy — **better than the paid builders
+it will be compared to**. "A Rolls-Royce, not an Ambassador."
+
+**Design system source of truth:** the v1 export at `design/mosaic_ui_ux/` (`ba37506`)
+is a **DRAFT** — NOT yet the source of truth. A refined **v2 is owed before ACT 2
+starts** and becomes the source of truth. v2 KEEPS what v1 got right (own tokens,
+`.mosaic` scoping, absent-not-disabled sections, no settings page, shimmer-not-overlay,
+contrast audit) and RAISES: distinctive composites (rail, canvas chrome, bind panel,
+palette); interaction choreography (drag / drop / violation / shimmer); tablet + mobile
+for screens 7–9; and a **dark mode that is designed, not inverted**.
+
+**Ruling candidate (Arun rules at ACT 2):** design decision 6 — accept-and-mark
+rule-breaking drops (Save stops) vs the current native refusal.
+
 ## §7 — Release
 Dev push → Arun soak → truth pass (bible, MOSAIC.md, docs, headline verified by
 the oracle walk, M1 ADR) → **TAG 1.0.0**.
