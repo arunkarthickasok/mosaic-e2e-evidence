@@ -13599,3 +13599,33 @@ b7756795 both IDENTICAL (admin-canvas-only fix) · **BUMP-LIBS 1.0.45→1.0.46**
   save→page) + album cp-adopt-5/ + geometry.json. "result-line text captured" belongs here.
 Deferred as a large React+E2E build requiring PROOF-CONDITIONS-LAW real-drag film (a focused
 session), not a tail-end rush.
+
+---
+
+## CP-ADOPT-5 PASS 7 (P1d-A-CONT) — bind panel foundation + DELIVERY-PLAN — CHECKPOINT-6 — DONE
+
+**LEDGER:** reports/DELIVERY-PLAN-1.0.md FILLED verbatim (§0 ADOPT-5/6/7 ships #45/#46/#47 · §1
+author-trust + §1.1 labelled · §2 config audit · §3 Wave D · §4 Wave F · §5 Wave G · §6 ACT 2 full
+1.0 · §7 → TAG 1.0.0; late Jan 2027, soak fixed). Frozen after Arun's line-by-line ratification.
+
+**§B bind panel FOUNDATION (headed-proven):** client adapter now round-trips `slots_binding` (the
+editor gap — server already did): schema.ts + nodeToPuckItem (`_mosaic_slot_binding` meta prop) +
+fromPuck write-back. New `MosaicSlotBindField.tsx` (Bind-to-data → View/display via CP-VE3 picker →
+child type from slot allowed list → field map of bindable descriptors only). Adapter wires a
+`_mosaic_slot_binding` field on every slot-bearing component (bindable index). HEADED: node 334
+Columns selected → "Bind Column 1 to data" control present in the real panel. End-to-end today:
+bind in panel → round-trip/save → server renders rows (CHECKPOINT-4). Vitest +9 (2 round-trip +
+7 form); tsc clean.
+
+**Gates:** Vitest 584/1-B101 · tsc 0-from-slice · WC#73 still green · REGION 14e6cb9c / STYLE
+b7756795 both IDENTICAL (editor-only) · Kernel+Unit unchanged 3016/0 (no PHP) · BUMP-LIBS 1.0.47.
+
+### FOLLOW-UP — P1d-A-CONT2 (TODO)
+- **B canvas bound-render + result line:** canvas Tier-B preview of bound rows ("N of M · View ·
+  display" from BoundSlotResult) — a new canvas render path for bound slots. Frontend already
+  renders (CHECKPOINT-4).
+- **C SO-2 client:** root disallow via root.render (PuckConfig models no root) + per-zone add-picker
+  (Puck palette has no per-zone order). Canvas surfaces → need headed proof.
+- **D full journeys:** bind→3 Cards+result line on canvas→viewport survives→plain-content-first→
+  save→page; album + INDEX + geometry.json. "result-line text captured" + "frame count" ride here.
+Deferred as unverified canvas/E2E UI (SO-2-CONT / H9-PANEL-CONT discipline).

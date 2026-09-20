@@ -850,3 +850,81 @@ CHECKPOINT-5 = LEDGER FIRST + WC#73 witnessed→fixed→headed-proven (the P1d b
 cleared), both byte-identical gates held. B/C/D (bind panel + SO-2 enforcement +
 journeys) honest-checkpointed to P1d-A-CONT — now unblocked. STOP for audit. NEXT:
 P1d-A-CONT (B/C/D) then P1d-B (owned panel gating + CKE5 sheet + walk).
+
+---
+
+# CHECKPOINT-6 — PASS 7 (P1d-A-CONT): H9 bind panel foundation + DELIVERY-PLAN filled
+
+## LEDGER FIRST
+`reports/DELIVERY-PLAN-1.0.md` FILLED from the reviewer's ruling: §0 ADOPT
+(ADOPT-5/6/7, ships #45/#46/#47) · §1 Author-trust (+ §1.1 labelled) · §2 backend
+config audit · §3 Wave D · §4 Wave F · §5 Wave G · §6 ACT 2 (full 1.0) · §7 release
+→ TAG 1.0.0. Timeline of record late January 2027, soak week fixed. Frozen after
+Arun's line-by-line ratification.
+
+## §B — H9 bind panel (foundation delivered, headed-proven)
+- **Client round-trip (the gap):** the client adapter now round-trips `slots_binding`
+  (server already did — the editor did NOT). `schema.ts` gains `slots_binding` +
+  `SlotBinding`; `nodeToPuckItem` exposes it as the `_mosaic_slot_binding` meta prop;
+  `fromPuck` writes it back to `nodes[id].slots_binding` (never into props); a cleared
+  binding drops out. Vitest `MosaicPuckAdapterSlotRoundTrip` +2 cells.
+- **Bind form** `js/src/builder/fields/MosaicSlotBindField.tsx` (NEW): a "Bind to data"
+  checkbox → View + display (reuses the CP-VE3 `ViewsDataSourceField` picker) → child
+  type (the slot's allowed list) → field map (one input per BINDABLE child descriptor,
+  from the P0 capability table) → writes a `SlotBinding` up; unchecking clears it; a
+  hidden-content notice when static children coexist. Vitest `MosaicSlotBindField` 7 cells.
+- **Panel wiring:** the adapter builds a `type → {label, bindable descriptors}` index
+  and adds a `_mosaic_slot_binding` custom field to every slot-bearing component, one
+  MosaicSlotBindField per slot. **Headed-proven:** on node 334 (owned Columns), selecting
+  the component shows the "Bind Column 1 to data" control in the real builder panel
+  (`e2e/journeys/cp-adopt-5-bind-panel.spec.ts`, `bindControlPresent: true`).
+- **End-to-end today:** an author binds a slot in the panel → the binding round-trips
+  and saves → the SERVER renders the bound rows (CHECKPOINT-4 vertical). Admin + FE
+  share the same field components (parity by construction).
+
+## Gates
+- **Vitest 584 / 1** (the 1 = pre-existing B-101; +9: 2 round-trip + 7 bind-form).
+- **tsc** 0 from this slice (1 pre-existing `dsdShadow.ts:17`).
+- **Headed:** bind-panel control present (node 334); **WC#73 still green** (adopted
+  survives viewport switch) after the new dist.
+- **REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL** — all
+  changes are admin-editor-only; the frontend render is untouched.
+- **Kernel+Unit unchanged 3016/0** — NO PHP touched this slice.
+- **BUMP-LIBS 1.0.46 → 1.0.47** (builder + frontend-editor dist rebuilt).
+
+## HONEST — B-remainder + C + D → P1d-A-CONT2
+Delivered the bind panel foundation (round-trip + form + wiring, all tested + headed
+panel presence). NOT built this slice:
+- **B canvas bound-render + result line:** the canvas PREVIEW of bound rows ("N of M ·
+  View · display" from `BoundSlotResult`). Requires a canvas Tier-B render path for a
+  bound slot (owned containers render Puck children on the canvas, but bound rows are
+  server-produced) — a new canvas render + SSR-of-a-bound-slot endpoint. `BoundSlotResult`
+  already carries the line data; the frontend already renders rows (CHECKPOINT-4).
+- **C SO-2 client:** `mosaic_plain_content` root `disallow` via a `root.render` override
+  (PuckConfig currently models no `root`) + a per-zone add-picker offering plain content
+  first (Puck's palette has no per-zone order). Both are canvas surfaces needing headed
+  proof (the WC#73 lesson: canvas changes must be headed-verified).
+- **D full journeys:** bind Columns → 3 Cards + result line ON THE CANVAS → viewport
+  survives (WC#73 already green) → plain-content-first in teaser → save → page. Album
+  + INDEX + geometry.json. Needs the canvas render (B-remainder) + C + a real View
+  fixture; the paste fields "result-line text captured" + "frame count" ride with D.
+
+Deferred rather than shipped as unverified canvas UI (the standing SO-2-CONT /
+H9-PANEL-CONT discipline). The bind panel is real + accessible today (panel → save →
+frontend); the canvas preview + SO-2 client + the save-to-page film are the remaining
+canvas/E2E layer.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `js/src/shared/types/schema.ts` (slots_binding + SlotBinding + PropDescriptorJson.capabilities),
+  `js/src/builder/MosaicPuckAdapter.ts` (round-trip + bindable index + panel field),
+  `js/src/builder/fields/MosaicSlotBindField.tsx` (NEW),
+  `js/src/builder/fields/__tests__/MosaicSlotBindField.test.tsx` (NEW, 7 cells),
+  `js/src/builder/__tests__/MosaicPuckAdapterSlotRoundTrip.test.ts` (+2 cells),
+  `js/e2e/journeys/cp-adopt-5-bind-panel.spec.ts` (NEW, headed),
+  `mosaic.libraries.yml` (1.0.47), `js/dist/*` (rebuilt).
+
+## Honest status
+CHECKPOINT-6 = DELIVERY-PLAN filled + the H9 bind panel FOUNDATION (client round-trip
++ bind form + panel wiring), headed-proven at the panel, both byte-identical gates held,
+WC#73 still green. Canvas bound-render + SO-2 client + full save-to-page journeys →
+P1d-A-CONT2. STOP for audit. NEXT: P1d-A-CONT2 (B-remainder + C + D) then P1d-B.
