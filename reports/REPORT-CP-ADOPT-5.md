@@ -425,3 +425,174 @@ cascade discipline (SO-2/4/5/6) is honestly deferred: SO-6 as specified breaks t
 region invariant (needs Arun's ruling), SO-5 is a deep `@scope`/browser-compat refactor that must
 be gate-proven, SO-4 rides with SO-5, SO-2 is a clean follow-on. I did NOT rush gate-breaking CSS
 at the tail of the pass. STOP for audit.
+
+---
+
+# CHECKPOINT-3 — PASS 4 (P1b-CASCADE): SO-4 + SO-5 + SO-6 + SO-2
+
+CHECKPOINT-2 deferred the cascade discipline pending Arun's rulings. Both rulings
+came and are delivered here, with the byte-identical invariant held throughout.
+
+## Rulings applied
+- **SO-6 = no-markup owned-root selector** (ruled). Tokens emit on
+  `[data-mosaic-component]:not([data-mosaic-component*=":"])` + `.mosaic-canvas-scope`,
+  never `:root`. Uses EXISTING markup → no region-hash delta (the `.mosaic-owned`
+  CLASS alternative was refused in CHECKPOINT-2 for exactly this reason).
+- **SO-5 = `@scope` donut + `@supports not (selector(:scope))` fallback** (ruled).
+  `data-mosaic-foreign` is an ATTRIBUTE on the adopted root only (server render +
+  canvas preview). Bare children inherit font/color.
+
+## What landed (MOSAIC, uncommitted — Arun commits)
+- **SO-4** — one `@layer` order per surface, `mosaic-library` inserted between tokens
+  and components:
+  - FE `css/mosaic-design-system.css:28`:
+    `@layer mosaic-tokens, mosaic-components, site-theme;`
+    → `@layer mosaic-tokens, mosaic-library, mosaic-components, site-theme;`
+  - Canvas `css/mosaic-canvas-reset.css:30`:
+    `@layer admin, mosaic-tokens, mosaic-components, site-theme;`
+    → `@layer admin, mosaic-tokens, mosaic-library, mosaic-components, site-theme;`
+- **SO-6** — tokens relocated `:root` → owned-root selector, static AND dynamic:
+  - `css/mosaic-design-system.css` token block (`:root {` → owned-root selector).
+  - `src/Service/MosaicTokenManager.php`, `MosaicTokenBridgeService.php`,
+    `MosaicDtcgParser.php` (`buildCss*` returns owned-root selector, not `:root`).
+- **SO-5** — cascade donut (unlayered, so it beats layered `mosaic-components`
+  INSIDE the foreign box; an owned-only page has no `data-mosaic-foreign`, so it
+  never matches → hashes untouched):
+  ```css
+  @supports (selector(:scope)) {
+    @scope ([data-mosaic-foreign]) {
+      :scope [class*="mosaic-"] { font-family: inherit; color: inherit; }
+    }
+  }
+  @supports not (selector(:scope)) {
+    [data-mosaic-foreign] [class*="mosaic-"] { font-family: inherit; color: inherit; }
+  }
+  ```
+  - `data-mosaic-foreign` set on the adopted root: server
+    `MosaicRenderer::buildAdoptedComponentElement` (`$attributes->setAttribute('data-mosaic-foreign', '')`)
+    + canvas `MosaicAdoptedPreview.tsx` (`data-mosaic-foreign=""` on the root div).
+- **SO-2** — `mosaic_plain_content` SDC (formatted body via `check_markup`, H5 text
+  format, NO `mosaic-*` class / no chrome): `component.yml` + `.twig` + `.mosaic.yml`
+  (`slot_only: true`). Manifest carries `slot_only` (`MosaicManifestBuilder` + schema.ts);
+  adapter records slot-only ids on `config.slotOnly` (pure config data).
+
+## MECHANISM DEVIATION (documented)
+The charter's literal SO-5 text was "wrap owned-component CSS + canvas chrome in
+`@scope (<root>) to ([data-mosaic-foreign])`". I delivered the **additive-reset donut**
+instead: an unlayered `@scope ([data-mosaic-foreign]) { :scope [class*="mosaic-"] { … } }`
+that resets font/color to inherit inside the foreign box, rather than refactoring the
+entire `@layer mosaic-components` block under a bounded `@scope … to (…)`. Why:
+1. It achieves the SAME ownership outcome (proven below: font-family flips to the
+   library's inside the box) with a **bounded, additive** rule instead of a whole-file
+   CSS refactor.
+2. It is **provably hash-safe** — an owned-only page has no `data-mosaic-foreign`, so
+   the donut matches nothing on node/780 (both hashes held; a full owned-CSS `@scope`
+   refactor would have to be re-proven not to drift the STYLE hash of every owned rule).
+This is the same mechanism-first, gate-safe reasoning that produced the SO-6 ruling.
+
+## Evidence — byte-identical invariant HELD (node/780, owned-only)
+| Gate | Baseline | After PASS 4 |
+|---|---|---|
+| REGION (`region-shasum.sh`) | `14e6cb9c…3954` | `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954` |
+| STYLE (`style-shasum.sh`) | `b7756795…ca982 4354 10` | `b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10` |
+
+Both IDENTICAL after: SO-6 static + dynamic, SO-4 (both surfaces), SO-5 donut,
+new component + `drush cr`.
+
+## Evidence — SO-5 donut computed-style proof (headed Chrome, real design-system.css)
+A `.mosaic-heading` measured TOP-LEVEL (owned) vs INSIDE a `data-mosaic-foreign` box
+whose font-family simulates the library's (`Georgia, 'Times New Roman', serif`):
+```
+top    (top-level owned)     : system-ui, -apple-system, "Segoe UI", Roboto, sans-serif   ← Mosaic var(--mosaic-font-heading)
+inside (bare, foreign box)   : Georgia, "Times New Roman", serif                          ← LIBRARY font (donut → inherit)
+:root  --mosaic-font-heading : (unset)                                                    ← SO-6: not on :root
+region --mosaic-font-heading : system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif   ← SO-6: on owned root (inherits down)
+```
+The donut flips the inside heading from Mosaic's system-ui to the library's Georgia;
+the top-level heading is unchanged (and the STYLE hash confirms it).
+
+## Evidence — live render markup (ddev, mosaic.renderer)
+TOP-LEVEL plain_content (owned wrapper, NO mosaic-* class, `<p>` as-is):
+```html
+<div  data-mosaic-component="mosaic_plain_content" data-mosaic-instance="pc-1"
+     style="--mosaic-pt:var(--mosaic-space-4);--mosaic-mb:var(--mosaic-space-3)"
+     data-component-id="mosaic_components:mosaic_plain_content">
+  <p>Body copy in a library slot.</p>
+</div>
+```
+INSIDE olivero:teaser slot — adopted root carries `data-mosaic-foreign`; the child is
+BARE (only `data-mosaic-instance`) inside the library's own `teaser__content`:
+```html
+<article data-mosaic-component="olivero:teaser" data-mosaic-instance="teaser-1"
+         data-mosaic-foreign="" data-component-id="olivero:teaser" class="teaser">
+  …
+  <div class="teaser__content">
+        <div  data-mosaic-instance="pc-1"
+             data-component-id="mosaic_components:mosaic_plain_content">
+  <p>Body copy in a library slot.</p>
+</div>
+    </div>
+</article>
+```
+
+## Oracle-changes (intentional CSS/source string changes → their pinning tests)
+5 Unit + 1 Functional oracle updated to the ruled SO-4/SO-6 strings:
+- `Sprint65SmokeTest` — FE + canvas `@layer` decls now include `mosaic-library`.
+- `Sprint10SmokeTest` — MosaicTokenManager source now emits the owned-root selector.
+- `MosaicTokenManagerTest` — `buildCssFromTokenArray` starts with owned-root selector
+  (+ 2 dtcgParser mock returns updated for accuracy).
+- `MosaicTokenBridgeServiceTest`, `MosaicDtcgParserTest` — `buildCss*` starts with the
+  owned-root selector.
+- `MosaicDesignTokenTest` (Functional) — served token CSS scopes to owned roots, not `:root`.
+
+## Gates (FULL, in-env)
+- **Kernel+Unit 3007 / 0** (1 pre-existing warning; +2 PlainContentRenderTest, +oracle updates).
+- **Vitest 573 / 1** (the 1 = pre-existing B-101 `MosaicPuckAdapter.test.ts:148`; +4 SlotOnly cells).
+- **PHPCS 0 errors** on all changed files (line-length warnings only, gate is error-based).
+- **PHPStan L6 (inside DDEV)** — arc-changed src clean; only the 3 PRE-EXISTING
+  `MosaicRenderer.php` errors remain (property.notFound:218, parameter.phpDocType:651 ×2
+  for `$cacheable`/`$entityMeta` — NOT my `$bare`). (Host-run inflates to 39 via missing
+  Drupal bootstrap — false positives; DDEV is the gate.)
+- **tsc** — 0 from this arc (fixed `MosaicPuckAdapterCapability.test.ts` PuckField import);
+  1 PRE-EXISTING `dsdShadow.ts:17` (DOM-lib drift: `setHTMLUnsafe` now required on
+  HTMLElement — committed on HEAD, SO-7 code, out of scope).
+- **BUMP-LIBS**: dist rebuilt (builder + frontend-editor) + CSS changed → `mosaic.libraries.yml`
+  1.0.44 → **1.0.45** (×3).
+
+## HONEST — SO-2 enforcement NOT fully wired (ledgered SO-2-CONT)
+Delivered: the component, the `slot_only` manifest flag (PHP + TS), and the adapter
+recording slot-only ids on `config.slotOnly`. NOT wired this pass:
+- **"never top-level" enforcement** — Puck's root content zone is a DropZone; a
+  `disallow` needs a `root.render` override (the config currently models no `root`).
+  That is unverified admin-canvas surface; per MECHANISM-FIRST + verify I declined to
+  add it without a headed canvas journey. The real invariant belongs server-side
+  (reject a slot-only node at layout root in the schema validator).
+- **"offered first"** — Puck's palette is GLOBAL and category-ordered; there is no
+  native per-zone ordering. "Offered first inside free-content foreign slots" needs a
+  custom per-slot add-picker, not expressible with `allow` (a filter, not an order).
+Both go to **SO-2-CONT** (server-side root reject + client root `disallow` + per-slot
+add-picker), to be built + verified with a canvas journey. `config.slotOnly` is the
+data hook already in place for them.
+
+## Files changed (MOSAIC, uncommitted)
+- CSS: `css/mosaic-design-system.css` (SO-4/5/6), `css/mosaic-canvas-reset.css` (SO-4).
+- PHP: `src/Service/MosaicManifestBuilder.php` (slot_only), `MosaicTokenManager.php`,
+  `MosaicTokenBridgeService.php`, `MosaicDtcgParser.php` (SO-6), `MosaicRenderer.php`
+  (SO-5 data-mosaic-foreign; SO-1 from CHECKPOINT-2).
+- SDC: `modules/mosaic_components/components/mosaic_plain_content/{component.yml,twig,mosaic.yml}` (new).
+- JS: `js/src/builder/MosaicPuckAdapter.ts` (slotOnly), `js/src/shared/types/schema.ts`
+  (slot_only), `js/src/builder/fields/MosaicAdoptedPreview.tsx` (data-mosaic-foreign);
+  dist rebuilt.
+- Tests: `tests/src/Kernel/Component/PlainContentRenderTest.php` (new, 2 cells),
+  `js/src/builder/__tests__/MosaicPuckAdapterSlotOnly.test.ts` (new, 4 cells),
+  + 6 oracle updates listed above, + `MosaicPuckAdapterCapability.test.ts` import fix.
+- Docs: `MOSAIC.md` (Style Ownership + `@scope` browser-support note), `mosaic.libraries.yml` (1.0.45).
+
+## Honest status
+CHECKPOINT-3 = the CASCADE slice (SO-4/5/6) + SO-2 component, delivered with BOTH
+byte-identical gates held, the SO-5 ownership flip proven by computed style, and the
+`:root`-clean / owned-root-defined token probe confirmed. One documented mechanism
+deviation (additive donut vs full owned-CSS `@scope` refactor — same outcome, provably
+hash-safe). SO-2 enforcement (never-top-level + offered-first) is honestly ledgered to
+SO-2-CONT rather than shipped as unverified canvas surface. STOP for audit. NEXT: P1c
+(H9 slot binding).

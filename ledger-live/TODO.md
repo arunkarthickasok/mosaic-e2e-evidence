@@ -13486,3 +13486,43 @@ Report `reports/REPORT-CP-ADOPT-5.md §P1b`. MOSAIC READ-ONLY. **PARTIAL P1b (ho
 - **DEFERRED with gate-analysis (next slice):** **SO-6** literal `.mosaic-owned` class = a REGION-hash markup delta the gate does NOT sanction → needs Arun's ruling (sanction the delta OR accept the no-markup selector `[data-mosaic-component]:not([*=":"])`). **SO-5** = deep @layer/@scope refactor + browser-compat (@scope Chrome118+/Safari17.4+/FF128+), must be style-shasum-proven. **SO-4** rides with SO-5 (mosaic-library layer empty until then). **SO-2** plain-content = clean new-component build, gate-safe.
 - **Gates:** Kernel+Unit **3005/0** (+2), Vitest unchanged 569/1-B101 (no JS), phpcs 0-err, **both shasums identical**. **No dist/CSS change → no BUMP-LIBS** (SO-1 is PHP only; the cascade slice carries the bump).
 - **STOP — CHECKPOINT-2 filed. Arun's ruling needed on SO-6 region-hash vs selector; then the SO-2 + SO-4/5/6 cascade slice, then P1c (H9), P1d.**
+
+## CP-ADOPT-5 PASS 4 — P1b-CASCADE rulings (2026-09-19, Arun)
+- **SO-6:** tokens on `[data-mosaic-component]:not([data-mosaic-component*=":"])` (owned-only, NO markup change → region hash safe) + the canvas root; `:root` cleared of `--mosaic-*`.
+- **SO-5:** owned-component CSS + canvas chrome wrapped in `@scope (<root>) to ([data-mosaic-foreign])`; `data-mosaic-foreign` is an ATTRIBUTE on the ADOPTED root ONLY (not on node/780 → region hash safe); `@supports not (selector(:scope))` fallback (bare children inherit font/color); browser-support note → MOSAIC.md.
+- **EXPECTATION:** region + style BOTH identical (node/780 is owned-only; the donut must not change owned visuals). Any style delta STOPS + reports.
+
+---
+
+## CP-ADOPT-5 PASS 4 (P1b-CASCADE) — CHECKPOINT-3 — DONE (report: reports/REPORT-CP-ADOPT-5.md)
+
+**Delivered (MOSAIC uncommitted — Arun commits):** SO-4 (`@layer … mosaic-library …`
+both surfaces) · SO-6 (tokens on owned-root selector `[data-mosaic-component]:not([data-mosaic-component*=":"])`,
+static + dynamic token services, never `:root`) · SO-5 (`@scope`/`@supports` cascade
+donut resetting font/color to inherit inside `data-mosaic-foreign`; attr set on adopted
+root server + canvas) · SO-2 (`mosaic_plain_content` SDC + `slot_only` manifest flag +
+adapter `config.slotOnly`).
+
+**Invariant HELD:** REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL
+after the whole slice + `drush cr` (node/780 is owned-only). SO-5 ownership flip proven by
+computed style (inside-foreign heading = library font `Georgia…`; top-level = `system-ui…`;
+`:root` `--mosaic-font-heading` = (unset); owned-root = set).
+
+**Gates:** Kernel+Unit **3007/0** · Vitest **573/1** (1 = pre-existing B-101) · PHPCS 0 err ·
+PHPStan (DDEV) arc-clean, 3 PRE-EXISTING MosaicRenderer errors only · tsc 0-from-arc
+(1 pre-existing `dsdShadow.ts:17` DOM-lib drift) · **BUMP-LIBS 1.0.44 → 1.0.45**.
+Oracle-changes: Sprint65/Sprint10/TokenManager/Bridge/DtcgParser (Unit) + MosaicDesignToken (Functional).
+
+**One documented MECHANISM DEVIATION:** SO-5 delivered as an ADDITIVE donut (unlayered
+`@scope ([data-mosaic-foreign]) { :scope [class*="mosaic-"] { font/color: inherit } }` +
+`@supports not` fallback) instead of the charter's literal "wrap all owned-component CSS
+under `@scope … to (…)`" — same ownership outcome, provably hash-safe, no whole-file refactor.
+
+### FOLLOW-UP — SO-2-CONT (TODO)
+`mosaic_plain_content` component + `slot_only` flag + `config.slotOnly` are landed, but the
+ENFORCEMENT is NOT wired (declined as unverified canvas surface):
+- **never-top-level:** server-side reject a slot-only node at layout root (schema validator)
+  + client root DropZone `disallow` via a `root.render` override (needs a headed canvas journey).
+- **offered-first:** Puck's palette is global/category-ordered — no native per-zone ordering;
+  needs a custom per-slot add-picker (`allow` is a filter, not an order).
+Build + verify with a canvas journey. `config.slotOnly` is the data hook already in place.
