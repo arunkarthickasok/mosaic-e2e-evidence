@@ -1007,3 +1007,87 @@ CHECKPOINT-7 = the canvas bound-render + result line, headed-proven end-to-end
 geometry clean), both byte-identical gates held. A real Puck-walk bug the headed
 journey surfaced (object-keyed prop colliding with slot fields) was fixed. STOP for
 audit. NEXT: P1d-B (owned panel gating + CKE5 sheet + SO-2 client + walk + SHIP-45-PLAN).
+
+---
+
+# CHECKPOINT-8 — PASS 9 (P1d-B): owned panels go honest + CKE5 sheet + ship plan
+
+## §1 — OWNED PANEL GATING (the first visible owned-panel change)
+Applied the Pillar E capability rule to OWNED components too (the `!isAdopted`
+escape hatch retired): `showDs = hasBindable`, `showBp = hasBreakpointable`
+(`MosaicPuckAdapter.ts`). Style/Spacing/Visibility always kept (top context);
+inside a foreign slot Style/Spacing hide via foreignSlotResolveFields (SO-5).
+
+**PANEL-DIFF (`reports/PANEL-DIFF.md`, authoritative — computed from the live
+manifests): 3 changed, 12 unchanged.**
+| component | removed | reason |
+|---|---|---|
+| `mosaic_spacer` | **Data** | only `size` (select) — no bindable prop |
+| `mosaic_tabs` | **Data + Breakpoint** | only `sets` (repeatable) — neither |
+| `mosaic_view` | **Data** | `view_display` (raw) + `arguments`/`argument_sources` (repeatable) + `hide_when_empty` (toggle) — no bindable prop (keeps Breakpoint via the toggle) |
+
+The 12 unchanged keep Data+Breakpoint (each has a bindable text prop). Per-PROP
+binding is still gated inside Data (e.g. `mosaic_card.variant` = select is not
+offered a binding). **Saved data untouched:** a binding persists + renders
+regardless of the section (fromPuck reads `_mosaic_ds` from props, not the field);
+R10 grandfather shows it read-only wherever the Data section still appears; the
+page render is unchanged.
+
+- **Vitest:** `MosaicPuckAdapterCapability.test.ts` — the old "owned keeps all 5"
+  cell replaced by 4 honest cells (Card keeps; Spacer drops Data; Tabs drops both;
+  View drops Data/keeps Breakpoint). 9 total.
+- **Headed proof:** `cp-adopt-5-owned-panel.spec.ts` — on the REAL builder, Tabs
+  (node 329) shows its "Tab sets" field but **no Data + no Breakpoint**; View
+  (970) shows **no Data**; Columns (992) **keeps Data** (`OWNED-PANEL.json`).
+- **FE dialog parity:** the FE dialog builds its config through the SAME
+  `MosaicPuckAdapter.toConfig(manifests)`, so the gating is identical admin + FE —
+  parity by construction (the capability cells cover the single config path both
+  surfaces consume).
+- **Page byte-identical** (panel-only change): REGION `14e6cb9c…3954` + STYLE
+  `b7756795…ca982 4354 10` both IDENTICAL.
+
+## §2 — CKE5 SHEET (report-only) — `reports/CKE5-SHEET.md`
+Every owned text-like prop (30) with today's kind/widget + a recommendation
+(`text → single-line` 16 · `select (enum)` 8 · `formatted_text → CKE5` 6) + reason.
+**No code change in #45** — Arun rules per line; changes ship in a later rider.
+
+## §5 (partial) — ship plan + walk
+- **`reports/SHIP-45-PLAN.md`** — full `git status --short`, the .log-cruft
+  exclusion (170 .log files, NOT gitignored → must be excluded from a bare
+  `git add -A`), `SdcComponentPlugin.php` **PRISTINE** (unchanged vs HEAD),
+  **ship file count 55** (38 modified + 17 untracked code), single-quoted message.
+- **`reports/WALK-CP-ADOPT-5.md`** — 5-step acceptance walk (WALK-SCRIPT LAW +
+  DROP-PROOF + PROOF-CONDITION), auto-coverage noted per step.
+
+## Gates
+- **Vitest 593 / 1** (the 1 = pre-existing B-101; +3 net capability cells).
+- **tsc** 0 from this slice (1 pre-existing dsdShadow).
+- **Headed:** owned-panel gating proven; bind-journey + WC#73 still green.
+- **Kernel+Unit unchanged 3016/0** — NO PHP touched this slice (JS + docs only).
+- **REGION + STYLE both IDENTICAL** (panel-only).
+- **BUMP-LIBS 1.0.48 → 1.0.49**.
+
+## HONEST — §3 SO-2 client + §4 full journey → P1d-B-CONT
+NOT built this slice:
+- **§3 SO-2 client** — `mosaic_plain_content` disallowed at root (needs a Puck
+  `root.render`/`disallow`; PuckConfig models no `root` — an admin-canvas surface
+  that the WC#73 lesson says must be headed-verified) + offered FIRST in
+  free-content foreign slots via a per-zone add-picker (Puck's palette has no
+  per-zone ordering, so a custom picker is required, not a palette tweak).
+- **§4 full journey** — the teaser-slot leg (Plain content offered first,
+  Olivero-look typed text, bare Heading + ownership line) depends on §3's
+  add-picker. The rest of §4 is already proven: honest Card/Tabs/View panel
+  (headed here), bind → 3 Cards + result line + viewport survival (CHECKPOINT-7),
+  in-foreign ownership line + font inheritance (SO-5 donut + bare-render cells,
+  CHECKPOINT-3). WALK step 4 is marked `[manual / P1d-B-CONT]` accordingly.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `js/src/builder/MosaicPuckAdapter.ts` (owned gating),
+  `js/src/builder/__tests__/MosaicPuckAdapterCapability.test.ts` (honest cells),
+  `js/e2e/journeys/cp-adopt-5-owned-panel.spec.ts` (NEW, headed),
+  `mosaic.libraries.yml` (1.0.49), `js/dist/*` (rebuilt).
+
+## Honest status
+CHECKPOINT-8 = owned panels go honest (3 components lose a section, headed-proven,
+page byte-identical) + the CKE5 sheet + SHIP-45-PLAN + the acceptance walk. SO-2
+client + the teaser-slot journey leg → P1d-B-CONT. STOP for audit.

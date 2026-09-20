@@ -13650,3 +13650,29 @@ cp-adopt-5/ (INDEX + geometry.json + j8-01-canvas-bound.png). Frame count 2.
 STYLE b7756795 both IDENTICAL · BUMP-LIBS 1.0.48.
 
 NEXT → P1d-B (owned panel gating + CKE5 sheet + SO-2 client + walk + SHIP-45-PLAN).
+
+---
+
+## CP-ADOPT-5 PASS 9 (P1d-B) — owned panels honest + CKE5 sheet + ship plan — CHECKPOINT-8 — DONE
+
+**§1 OWNED PANEL GATING (first visible owned-panel change):** showDs=hasBindable, showBp=hasBreakpointable
+(retired the !isAdopted escape). PANEL-DIFF (reports/PANEL-DIFF.md): **spacer −Data · tabs −Data,−Breakpoint
+· view −Data**; 12 unchanged. Saved data untouched (binding persists+renders; R10 grandfather). Vitest 9
+(honest cells) + headed cp-adopt-5-owned-panel.spec.ts (Tabs/View drop Data panelShown=true, Columns keeps).
+FE parity by construction (same toConfig). Page byte-identical (REGION 14e6cb9c / STYLE b7756795).
+
+**§2 CKE5 SHEET (report-only):** reports/CKE5-SHEET.md — 30 text-like owned props · widget · recommendation
+(16 single-line / 8 enum / 6 CKE5) · reason. No code change in #45; Arun rules per line; later rider.
+
+**§5 ship plan + walk:** reports/SHIP-45-PLAN.md (55 files = 38 M + 17 new code; 170 .log excluded;
+SdcComponentPlugin.php PRISTINE; single-quoted message). reports/WALK-CP-ADOPT-5.md (5-step walk).
+
+**Gates:** Vitest 593/1-B101 · tsc 0-from-slice · Kernel+Unit unchanged 3016/0 (no PHP) · shasums both
+IDENTICAL · BUMP-LIBS 1.0.49.
+
+### FOLLOW-UP — P1d-B-CONT (TODO)
+- **§3 SO-2 client:** plain_content root disallow (Puck root.render — canvas surface, headed-verify) +
+  offered-first per-zone add-picker (Puck palette has no per-zone order → custom picker).
+- **§4 teaser-slot journey leg** (Plain-content-first, Olivero-look, bare Heading + ownership line) —
+  depends on §3. Rest of §4 already proven (owned panel headed; bind→cards+result+viewport CHECKPOINT-7;
+  ownership/font SO-5 donut + bare-render CHECKPOINT-3). WALK step 4 = [manual/P1d-B-CONT].

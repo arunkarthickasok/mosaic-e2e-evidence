@@ -1,0 +1,14 @@
+{
+  "tabs": {
+    "panelShown": true,
+    "data": false,
+    "breakpoint": false
+  },
+  "view": {
+    "panelShown": true,
+    "data": false
+  },
+  "columns": {
+    "data": true
+  }
+}
