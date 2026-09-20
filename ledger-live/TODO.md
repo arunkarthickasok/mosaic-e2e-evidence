@@ -13704,3 +13704,32 @@ export 2026-09-20' (35 files), push REFUSED (egress/auth). 3 commands handed to 
 ### FOLLOW-UP — CP-ADOPT-5R-CONT
 - Breakpoint rule code: PropShape text→not-breakpointable + descriptor `layout` flag + layout:true
   sidecar rollout + grandfather + after-rule PANEL-DIFF regen. Lands WITH the CKE5 enum rider.
+
+---
+
+## CP-ADOPT-5R PASS 2 — WC#76/#77/#78 (Arun's screen) — CHECKPOINT-10 — DONE (tally 78)
+
+**WC#78 (crash, cause MosaicLayoutWidget.php:262):** #element_validate stores the widget in the form
+cache; on the validation rebuild DependencySerializationTrait::__wakeup can't re-inject `readonly`
+promoted services → $schemaValidator uninitialised. FIX: services now non-readonly (proven: post-
+unserialize all set). Standing cell MosaicLayoutWidgetSerializationTest. Coupled: empty field_map
+serialised as [] → schema reject; client coerces field_map/source.config to objects.
+
+**WC#77 (no visible rows):** (1) form only DISPLAYED auto-match, never committed → empty field_map →
+empty cards; (2) mapped title rendered as escaped `<a>` link. FIX: auto-commit matches on fields load;
+provider strips wrapper markup to clean text. Headed: cards show clean titles, node-form Save works.
+No-fields display → designed message.
+
+**WC#76 (map only Title):** /api/mosaic/views/fields J8/block_1 + J8/embed_1 both [{title:Title}] —
+J8 has one field (correct). Display chosen by LABEL; field map = SELECT of display fields; no-fields
+message. WC#76-CONT: rendered-entity row fields (follow-up).
+
+**Gates:** Kernel+Unit 3017/0 · Vitest 595/1-B101 (+2) · mosaic_views green · phpcs/phpstan clean ·
+REGION 14e6cb9c / STYLE b7756795 both IDENTICAL · BUMP-LIBS 1.0.51. SHIP-45-PLAN regen (66 files;
+folder verdict INCLUDE mosaic_plain_content/3 + src/Render/3 + mosaic_views/src/Render/1; esc-probe
+EXCLUDED; SdcComponentPlugin pristine). WALK step 2 rewritten.
+
+**DESIGN REPO:** SSH push refused — env key = GitHub user `arunkarthickits` ≠ repo owner
+`arunkarthickasok`. Repo prepared (582983d, main, SSH remote); Arun runs `git push -u origin main`.
+
+### FOLLOW-UP — WC#76-CONT: rendered-entity row displays → offer the row entity's fields.

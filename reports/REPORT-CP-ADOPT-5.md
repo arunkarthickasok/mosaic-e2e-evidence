@@ -1201,3 +1201,111 @@ now a real form — heading, filtered Row list, View-field selects), headed-prov
 byte-identical. The breakpoint ruling is recorded; its coupled code lands with the enum
 rider (CP-ADOPT-5R-CONT). Design repo committed (582983d) — push handed to Arun (egress).
 STOP.
+
+---
+
+# CHECKPOINT-10 — CP-ADOPT-5R PASS 2: WC#76 + WC#77 + WC#78 (Arun's screen)
+
+Ship #45 was BLOCKED on three catches Arun hit binding a column from the screen
+(Columns → Bind Column 1 → View "J8 Articles" → block_1 → Card → Title→Title →
+NODE FORM Save). Reproduced with those exact choices; all three fixed + headed.
+
+## LEDGER (tally 78)
+- **WC#78** — the node-form Save CRASHED: "$schemaValidator must not be accessed
+  before initialization".
+- **WC#77** — the bound column showed no visible rows on the canvas.
+- **WC#76** — the field map offered only "Title".
+
+## WC#78 — cause file:line + fix (CRASH, fixed first)
+**Cause: `MosaicLayoutWidget.php:262`** (`validateJson` → `$this->schemaValidator->validate()`),
+called from `FormValidator->doValidateForm()`. The widget registers
+`#element_validate => [$this, 'validateJson']`, so it is serialised into the form
+cache and unserialised on the validation rebuild. `DependencySerializationTrait`
+(PluginBase) records each service id on __sleep and re-injects on __wakeup — **but
+it cannot write a `readonly` promoted property**, so after the round-trip every
+injected service was uninitialised. A bound-slot save that failed validation once
+(the field_map error below) rebuilt the form and hit the uninitialised
+`$schemaValidator`. **Proof:** a serialize→unserialize of the real widget left
+`schemaValidator` = NOT initialised. **Fix:** the 8 injected services are now
+**non-`readonly`** (so __wakeup can restore them); post-round-trip they are all set.
+**Standing cell:** `MosaicLayoutWidgetSerializationTest` serialises + unserialises
+the real widget and asserts every service survives — runs every ship. Also fixed a
+coupled save-blocker: an empty `field_map` serialised as `[]` (JSON empty array)
+and the schema rejected it ("Array value found, but an object is required"); the
+client now coerces `field_map`/`source.config` through `{ … }` so they are always
+JSON objects.
+
+## WC#77 — cause + fix (no visible rows)
+**Cause:** two things. (1) The bind form only DISPLAYED the auto-matched field; it
+never committed it, so `field_map` stayed empty → the row component got no data →
+empty/invisible cards. (2) Even when mapped, a Views field renders wrapper markup
+(the title field's `link_to_entity` `<a>…</a>`); mapped into the Card's plain-text
+title prop, the Card's Twig ESCAPED it, so the title showed literal
+`<a href=…>NYS ITS…</a>` text. **Fix:** (1) the form **auto-commits** name matches
+into `field_map` when the View fields load; (2) the row provider **strips the
+wrapper markup** to the field's visible text. Result (headed): the canvas cards
+render **clean titles** ("NYS ITS Multi-Site Platform"), and the node saves via the
+form (WC#78) — `canvasCards 3, titleText clean, savedOk, no crash, pageCards 3`.
+A display with **no fields** shows a designed message in the form (and the empty
+result shows the empty_display + "0 of 0 · …" on the canvas).
+
+## WC#76 — fields endpoint output for both displays + fix
+`GET /api/mosaic/views/fields` (read-only, added CP-ADOPT-5R):
+- `J8 / block_1` → `[{"id":"title","label":"Title"}]`
+- `J8 / embed_1` → `[{"id":"title","label":"Title"}]` (falls back to the default's
+  fields — embed_1 has none of its own)
+So "only Title" is CORRECT — J8 exposes one field. **Fix:** the display is chosen by
+its **label** (the ViewsDataSourceField display dropdown, never a bare machine
+name), the field map is a **SELECT of the display's fields** (labels), and a
+**no-fields** display shows the designed message. **HONEST:** a display whose rows
+are RENDERED ENTITIES (not fields) still returns `[]` → shows the no-fields message;
+offering the row entity's fields for that case is a follow-up (**WC#76-CONT**) — the
+common **fields-row** case (the vast majority) is fully supported now.
+
+## Journey (headed, Arun's sequence, NODE-FORM save)
+`cp-adopt-5r-nodesave.spec.ts` — node 992 (Columns bound to J8/block_1, Card,
+Title→Title) → canvas 3 Cards with clean titles → **Save via the node form** →
+status "…has been updated", **no crash** → page renders 3 Cards.
+`cp-adopt-5r-bindform.spec.ts` — the form's heading + Row list + field selects.
+
+## Gates
+- **Kernel+Unit 3017 / 0** (1 pre-existing warning; +1 widget serialization cell).
+- **Vitest 595 / 1** (the 1 = pre-existing B-101; +2 bind-form cells: auto-commit,
+  no-fields). **mosaic_views Kernel** green (SlotBindingRenderTest 5/5 post-strip).
+- **PHPCS 0 err**; **PHPStan** clean on the widget + provider.
+- **REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL**
+  (strip_tags touches only bound rows; node/780 is owned-only).
+- **BUMP-LIBS 1.0.50 → 1.0.51.** SHIP-45-PLAN regenerated with the **folder verdict**
+  (INCLUDE mosaic_plain_content/ 3 files + src/Render/ 3 files +
+  mosaic_views/src/Render/ 1 file; esc-probe.config.ts EXCLUDED; **ship 66 files**).
+  WALK step 2 rewritten (display label + clean titles + no-fields case).
+
+## DESIGN REPO (SSH, requested mid-turn)
+`mosaic_ui_ux/` toplevel verified, `git log -1` = `582983d`, remote switched to
+`git@github.com:arunkarthickasok/mosaic_ui_ux.git`. **Push refused:** the env's SSH
+key authenticates as GitHub user **`arunkarthickits`**, but the repo is
+`arunkarthickasok/mosaic_ui_ux` → "Permission to arunkarthickasok/mosaic_ui_ux.git
+denied to arunkarthickits." This environment cannot push to Arun's account. Arun
+pushes from his machine (repo prepared: commit 582983d, branch main, SSH remote set):
+```
+git push -u origin main
+```
+Repo tree (top two levels): `.gitignore`, `mosaic_ui_ux_design_system.md`,
+`mosaic_ui_ux/{.gitignore, LICENSE, README.md, index.html, components/, docs/,
+screens/, src/, tokens/, tools/}` (35 files).
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php` (WC#78 non-readonly),
+  `js/src/builder/MosaicPuckAdapter.ts` (field_map/source.config object coerce),
+  `js/src/builder/fields/MosaicSlotBindField.tsx` (auto-commit + no-fields message),
+  `modules/mosaic_views/src/Render/ViewsSlotBindingRowProvider.php` (strip markup),
+  `modules/mosaic_views/src/Controller/ViewsBrowserController.php` +
+  `mosaic_views.routing.yml` (fields endpoint), tests (widget serialization Kernel;
+  bind-form Vitest), `cp-adopt-5r-nodesave.spec.ts` (NEW headed), `mosaic.libraries.yml`
+  (1.0.51), `js/dist/*`.
+
+## Honest status
+CHECKPOINT-10 = all three screen catches fixed + headed-proven (node-form save works,
+clean visible cards, honest field map). WC#76-CONT (rendered-entity row fields) is
+the one follow-up. Design-repo push blocked by the env's GitHub identity — handed to
+Arun. STOP.

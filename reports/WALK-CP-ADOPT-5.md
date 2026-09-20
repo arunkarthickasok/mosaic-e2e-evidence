@@ -19,13 +19,17 @@ wipes your work.
    *Pass:* Tabs/View lose Data; empty sections simply aren't there.
 
 2. **Fill a column from a View.**
-   Drop a **Columns**, click it, tick **Bind Column 1 to data**. You now see a
-   **Data binding** panel: pick the **View**, pick the **display**, pick **Card**
-   as the row component, then under "Fill the row from View fields" **choose which
-   View field fills the Card title** (a dropdown of the View's fields, already
-   guessing "Title"). Watch the column fill with **one Card per row**, and a line
-   under it: **"3 of 4 · J8 Articles"**.
-   *Pass:* the cards appear as you pick; the line matches the View.
+   Drop a **Columns**, click it, tick **Bind Column 1 to data**. A **Data binding**
+   panel opens: pick the **View**, pick the **display by its name** (never a machine
+   name), pick **Card** as the row component. Under "Fill the row from View fields"
+   you **choose which View field fills the Card title** — a dropdown of the View's
+   fields that has already guessed "Title", so you can leave it. The column fills
+   with **one Card per row**, each showing the row's title as **clean text** (not
+   `<a href…>` markup), and a line under the zone reads **"3 of 4 · J8 Articles"**.
+   If the display you picked has **no fields**, the panel says *"This display
+   exposes no fields; choose a display with fields or add fields to the View."*
+   *Pass:* the cards appear with readable titles; the line matches the View; you
+   can save the node from the normal **Save** button and the page shows the cards.
 
 3. **The phone size keeps everything.**
    With that bound Columns (and a teaser) on the page, switch the size to
