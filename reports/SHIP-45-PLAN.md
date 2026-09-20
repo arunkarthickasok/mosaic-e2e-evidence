@@ -18,10 +18,18 @@ modules/mosaic_views/src/Render/ (Views provider):
 ```
 
 ## Counts
-- Tracked-modified (M): 42
-- Untracked code files (NEW, enumerated -uall): 24  (esc-probe.config.ts excluded)
-- Ship total: 66 files
+- Tracked-modified (M): 43
+- Untracked code files (NEW, enumerated -uall): 25  (esc-probe.config.ts excluded)
+- Ship total: 68 files
 - Untracked .log cruft to EXCLUDE: 170
+
+PASS 3 delta (WC#79/#80, +2 files vs 66):
+- M +1: `js/src/builder/fields/htmlToReactSlots.tsx` (bound adopted slot → MosaicBoundSlot)
+- U +1: `js/src/builder/fields/__tests__/htmlToReactSlots.test.tsx` (new WC#80 cell)
+- Also re-touched (already in M): tierBOptimistic.ts, MosaicAdoptedPreview.tsx,
+  MosaicPuckAdapter.ts, tierBOptimistic.test.ts, Sprint66SmokeTest.php (oracle),
+  mosaic.libraries.yml (1.0.52), js/dist/{builder,frontend-editor}.js (rebuilt).
+- e2e journeys (cp-adopt-5r-wc79-80, -slot-child-matrix) are gitignored (harness, not shipped).
 
 ## SdcComponentPlugin.php
 - PRISTINE — unchanged vs HEAD. ✓
@@ -41,6 +49,7 @@ js/src/builder/__tests__/tierBOptimistic.test.ts
 js/src/builder/fields/MosaicAdoptedPreview.tsx
 js/src/builder/fields/MosaicDataSourceField.tsx
 js/src/builder/fields/SpacingControl.tsx
+js/src/builder/fields/htmlToReactSlots.tsx
 js/src/builder/tierBOptimistic.ts
 js/src/shared/types/schema.ts
 modules/mosaic_views/mosaic_views.routing.yml
@@ -80,6 +89,7 @@ js/src/builder/fields/MosaicSlotBindField.tsx
 js/src/builder/fields/__tests__/MosaicBoundSlot.test.tsx
 js/src/builder/fields/__tests__/MosaicDataSourceFieldLegacy.test.tsx
 js/src/builder/fields/__tests__/MosaicSlotBindField.test.tsx
+js/src/builder/fields/__tests__/htmlToReactSlots.test.tsx
 modules/mosaic_components/components/mosaic_plain_content/mosaic_plain_content.component.yml
 modules/mosaic_components/components/mosaic_plain_content/mosaic_plain_content.mosaic.yml
 modules/mosaic_components/components/mosaic_plain_content/mosaic_plain_content.twig
@@ -105,5 +115,5 @@ js/esc-probe.config.ts   ← throwaway probe config
 ```
 ## Commit message (single-quoted)
 ```
-git commit -m 'ship #45: CP-ADOPT-5 adopt-any-SDC style ownership + typed slot binding + honest panels - Pillar E capability rules; SO cascade keeps adopted libraries owning their look; H9 Views-into-slots (model + validation + server render + canvas bound-render + result line + human bind panel with View-field selects, auto-mapped, clean text); mosaic_plain_content; WC#73 viewport-wipe + WC#74 empty sections + WC#75 usable bind panel + WC#77 visible bound rows + WC#78 node-form-save crash all fixed; byte-identical frontend 14e6cb9c/b7756795, libs 1.0.51'
+git commit -m 'ship #45: CP-ADOPT-5 adopt-any-SDC style ownership + typed slot binding + honest panels - Pillar E capability rules; SO cascade keeps adopted libraries owning their look; H9 Views-into-slots (model + validation + server render + canvas bound-render + result line + human bind panel with View-field selects, auto-mapped, clean text); mosaic_plain_content; WC#73 viewport-wipe + WC#74 empty sections + WC#75 usable bind panel + WC#77 visible bound rows + WC#78 node-form-save crash + WC#79 slotted Tier-B child stuck on hourglass + WC#80 bound adopted slot blank on canvas all fixed; children inside adopted slots preview via the same path as top level (Tier-B SSR write-back recurses into nested slot props; bound adopted slot renders bare View rows); byte-identical frontend 14e6cb9c/b7756795, libs 1.0.52'
 ```

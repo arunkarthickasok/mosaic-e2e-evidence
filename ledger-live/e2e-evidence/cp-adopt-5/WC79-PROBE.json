@@ -1,0 +1,35 @@
+{
+  "ssrRequests": [
+    {
+      "comp": "mosaic_plain_content",
+      "status": 200,
+      "htmlHead": "<div data-mosaic-component=\"mosaic_plain_content\" data-mosaic-preview=\"canvas\" data-component-id=\"mosaic_components:mosaic_plain_content\"> This is my life </div"
+    },
+    {
+      "comp": "olivero:teaser",
+      "status": 200,
+      "htmlHead": "<article data-mosaic-component=\"olivero:teaser\" data-mosaic-preview=\"canvas\" data-mosaic-foreign=\"\" data-component-id=\"olivero:teaser\" class=\"teaser\"> <header> "
+    }
+  ],
+  "plainContentSsr": [
+    {
+      "comp": "mosaic_plain_content",
+      "status": 200,
+      "htmlHead": "<div data-mosaic-component=\"mosaic_plain_content\" data-mosaic-preview=\"canvas\" data-component-id=\"mosaic_components:mosaic_plain_content\"> This is my life </div"
+    }
+  ],
+  "adoptedPreviewsOnCanvas": 1,
+  "loadingSkeletonCount": 0,
+  "loadingSkeletonTexts": [],
+  "canvasShowsBodyText": true,
+  "bodyTextInsideTeaser": true,
+  "consoleTail": [
+    "warning: An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing.",
+    "warning: You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance.",
+    "warning: You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance.",
+    "error: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+    "warning: `setData` is expensive and may cause unnecessary re-renders. Consider using a more atomic action instead.",
+    "warning: `setData` is expensive and may cause unnecessary re-renders. Consider using a more atomic action instead.",
+    "warning: You're using the `usePuck` method without a selector, which may cause unnecessary re-renders. Replace with `createUsePuck` and provide a selector for improved performance."
+  ]
+}

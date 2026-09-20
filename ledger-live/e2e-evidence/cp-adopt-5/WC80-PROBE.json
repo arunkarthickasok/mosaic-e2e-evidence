@@ -1,0 +1,28 @@
+{
+  "page": {
+    "teaserExists": 1,
+    "cardsInTeaser": 3,
+    "cardTitles": [
+      "CPVE1 Article 1",
+      "CPVE1 Article 2",
+      "CPVE1 Article 3"
+    ]
+  },
+  "canvas": {
+    "adoptedPreviewExists": 1,
+    "cardsInTeaser": 3,
+    "slotZoneCount": 4,
+    "boundSlotCount": 1,
+    "boundSlotRequests": [
+      {
+        "status": 200,
+        "rows": 1
+      },
+      {
+        "status": 200,
+        "rows": 1
+      }
+    ],
+    "adoptedText": "PREFIX META IMAGE TITLE CONTENT CPVE1 Article 1 CPVE1 Article 2 CPVE1 Article 3 3 of 4 · CPVE1 recent articles"
+  }
+}

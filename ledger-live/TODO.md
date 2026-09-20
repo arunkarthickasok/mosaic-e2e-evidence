@@ -13763,3 +13763,48 @@ screens 7–9; a **dark mode that is designed, not inverted**.
 rule-breaking drops (Save stops) vs the current native refusal.
 
 Recorded also in `design/README.md` and DELIVERY-PLAN §6.
+
+---
+
+## CP-ADOPT-5R PASS 3 — WC#79 + WC#80 (children inside an adopted slot on the canvas) — CHECKPOINT-11 — DONE (tally 80)
+
+MECHANISM-FIRST, headed Chrome, Arun's exact steps. Both reproduced live before the fix.
+
+**WC#79 (plain_content in teaser.content = ⏳ hourglass forever; page renders; reload still ⏳).**
+Cause: `js/src/builder/tierBOptimistic.ts` `applyPreview()` — the `visit` closure scanned only
+`clone.content` (top level) + legacy `clone.zones`, NEVER nested slot-field props. A Tier-B child
+(plain_content, adopted) lives NESTED at `teaser.props.content = [Puck items]`, so the SSR write-back
+never found it → `_renderedHtml` never applied → buildTierBRenderer kept returning the ⏳ skeleton.
+Live proof (node 993): `/api/mosaic/canvas/ssr` for `mosaic_plain_content` = 200, html
+`<div data-mosaic-component="mosaic_plain_content" …>This is my life</div>` (bare), yet canvas
+`loadingSkeletonCount=1 "⏳ Plain content"`, `canvasShowsBodyText=false`. FIX: `visit` recurses into
+every array-valued prop that holds Puck items (same slot shape `fromPuck` reads) → child in ANY slot
+gets its preview. After: `loadingSkeletonCount=0`, body text inside teaser, survives reload.
+
+**WC#80 (bind teaser.content to a View → page shows cards, canvas shows the empty Puck slot zone + a
+spurious "Requires at least 1 item — 0/1").**
+Cause: `MosaicAdoptedPreview` / `htmlToReactSlots` rendered `MosaicSlotZone` at every `<mosaic-slot>`
+marker and NEVER consulted `_mosaic_slot_binding`; owned Columns already swapped in MosaicBoundSlot
+(buildColumnsRenderer) but the adopted path was never given the binding. The SERVER page render was
+always correct (MosaicRenderer union loop over static+bound slot names, bare children for `type` with
+`:`), so page=3 cards; canvas=empty zone, no `/api/mosaic/canvas/bound-slot` fired. Live proof
+(node 994): page `cardsInTeaser=3`; canvas `slotZoneCount=5, cardsInTeaser=0, boundSlotCount=0`.
+FIX: thread bindings + basePath through `buildAdoptedRenderer(manifest, basePath)` →
+`MosaicAdoptedPreview` (memo keyed on a stable bindings JSON) → `htmlToReactSlots`; a bound slot
+renders `MosaicBoundSlot` (bare:true, SO-1) instead of the static zone. After: canvas `cardsInTeaser=3`,
+`boundSlotCount=1`, result line "3 of 4 · CPVE1 recent articles", min banner gone. SO-5 donut:
+card font == teaser font (library-owned), `data-mosaic-foreign` wraps them.
+
+**Standing matrix (child inside adopted slot × {canvas, reload, page}):**
+plain content (993) · owned Tier-A heading (995) · owned Tier-B html (996) · bound rows (994).
+Journey `cp-adopt-5r-slot-child-matrix.spec.ts` — 4×3 all green.
+
+**Cells:** tierBOptimistic.test.ts +1 (nested-slot SSR write-back), htmlToReactSlots.test.tsx +3
+(bound→MosaicBoundSlot, bare SO-1, unbound→MosaicSlotZone). Oracle-change: Sprint66SmokeTest.php:120
+`buildAdoptedRenderer(manifest)` → `buildAdoptedRenderer(manifest,` (a regression I introduced by
+adding the basePath arg, caught by the full Kernel+Unit gate + fixed).
+
+**Gates FULL:** Kernel+Unit 3017/0 (the 1 fail was my Sprint66 oracle → fixed, re-verified) ·
+mosaic_views Kernel 62/0 · Vitest 599/1 (B-101 boolean→radio pre-existing) · phpcs ship-surface
+(35 files) clean · phpstan ship-surface = 3 documented MosaicRenderer drift lines · REGION 14e6cb9c
+IDENTICAL · STYLE b7756795 IDENTICAL · BUMP-LIBS 1.0.52. SHIP-45-PLAN regen 66→68. WALK step 5 rewritten.

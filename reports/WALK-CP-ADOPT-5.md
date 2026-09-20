@@ -45,10 +45,29 @@ wipes your work.
    *(The "Plain content first" picker is P1d-B-CONT; the Olivero look + ownership
    note are already proven by the SO-5 font cell + the bare-render cell.)*
 
-5. **Save and look at the page.**
+5. **A child inside the teaser shows on the canvas — not a spinner (WC#79/#80).**
+   This is what a child placed inside an adopted (library) slot must do — on the
+   canvas, after a reload, and on the page:
+   - **Plain content (WC#79).** In the teaser's content slot, drop **Plain content**
+     and type a sentence in the rail. The sentence appears **inside the teaser on the
+     canvas within a second** — NOT a spinning "⏳ Plain content" that never resolves.
+     Reload the edit form: still there. This also holds for any child the canvas has
+     to render from the server (an **HTML** block, an **Image**) and for a plain
+     **Heading** (which draws instantly).
+   - **A View into the teaser (WC#80).** Click the teaser, open **Data binding**, and
+     **Bind Content to data**: pick the View, the display by its name, **Card** as the
+     row component, map **Title**. The teaser fills with **one Card per row on the
+     canvas** — the cards look like **Olivero's** text (the library owns the look) —
+     and a line under them reads e.g. **"3 of 4 · CPVE1 recent articles"**. No
+     "Requires at least 1 item" warning on a bound slot.
+   *Pass:* the child's content is visible inside the teaser on the canvas (never a
+   stuck spinner), survives a reload, and matches the page.
+
+6. **Save and look at the page.**
    Save, then view the published page.
    *Pass:* the cards show, the teaser shows Olivero's own markup, the plain content
-   looks like Olivero. The owned parts of the page are unchanged to the byte.
+   and the bound cards look like Olivero. The owned parts of the page are unchanged
+   to the byte.
 
 ## Known reds (not walk failures)
 - One Vitest cell (boolean→checkbox, B-101), one tsc line in the shadow-DOM code,

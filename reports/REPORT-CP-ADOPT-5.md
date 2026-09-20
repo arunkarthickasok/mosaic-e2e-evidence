@@ -1309,3 +1309,76 @@ CHECKPOINT-10 = all three screen catches fixed + headed-proven (node-form save w
 clean visible cards, honest field map). WC#76-CONT (rendered-entity row fields) is
 the one follow-up. Design-repo push blocked by the env's GitHub identity — handed to
 Arun. STOP.
+
+---
+
+## CHECKPOINT-11 — CP-ADOPT-5R PASS 3 — WC#79 + WC#80 (tally 80)
+
+Children placed **inside an adopted (library) slot** did not preview on the canvas.
+Both reproduced live (headed Chrome, Arun's exact steps) before any fix.
+
+### WC#79 — plain_content in olivero:teaser.content = ⏳ hourglass forever
+- **Symptom (Arun):** type text in the rail → canvas shows "⏳ Plain content" forever;
+  page (node 993) renders correctly; reloading the edit form still shows the hourglass.
+- **Mechanism (proven):** the child's SSR fires and returns bare html —
+  `/api/mosaic/canvas/ssr` for `mosaic_plain_content` = **200**,
+  `<div data-mosaic-component="mosaic_plain_content" …>This is my life</div>` — but
+  `tierBOptimistic.ts applyPreview()` wrote the result back by scanning only
+  `content` + legacy `zones`, never nested slot-field props. The child lives NESTED at
+  `teaser.props.content = [Puck items]`, so `_renderedHtml` was never applied and
+  `buildTierBRenderer` kept returning the ⏳ skeleton (`loadingSkeletonCount=1`,
+  `canvasShowsBodyText=false`).
+- **Cause:** `js/src/builder/tierBOptimistic.ts` — the `visit` closure in `applyPreview`
+  (was non-recursive).
+- **Fix:** `visit` recurses into every array-valued prop holding Puck items (the same
+  slot shape `fromPuck` reads), so a Tier-B child in ANY slot (adopted or owned) gets
+  its SSR preview. After: `loadingSkeletonCount=0`, body text inside the teaser,
+  survives reload. Film: film-wc79-01-canvas / -02-reload / -03-page.
+
+### WC#80 — bind teaser.content to a View → cards on the page, empty zone on the canvas
+- **Symptom (Arun):** "Bind Content to data" → View → display → Card → map Title. The
+  page (node 994) shows 3 bare cards inside the teaser; the CANVAS shows the empty
+  Puck slot zone + a spurious "Requires at least 1 item — 0/1" banner.
+- **Mechanism (proven):** `MosaicAdoptedPreview`/`htmlToReactSlots` rendered
+  `MosaicSlotZone` at every `<mosaic-slot>` marker and never consulted
+  `_mosaic_slot_binding`. Owned Columns already swaps in `MosaicBoundSlot`
+  (`buildColumnsRenderer`), but the adopted path was never given the binding. The
+  SERVER page render was already correct (MosaicRenderer union loop over static+bound
+  slot names, children bare for a `provider:id` type). Live: page `cardsInTeaser=3`;
+  canvas `slotZoneCount=5, cardsInTeaser=0, boundSlotCount=0`, no bound-slot fetch.
+- **Cause:** `js/src/builder/fields/htmlToReactSlots.tsx` (the `mosaic-slot` case) +
+  `MosaicAdoptedPreview.tsx` + `MosaicPuckAdapter.buildAdoptedRenderer` (no binding
+  threaded).
+- **Fix:** thread bindings + basePath `buildAdoptedRenderer(manifest, basePath)` →
+  `MosaicAdoptedPreview` (memo keyed on a stable bindings JSON) → `htmlToReactSlots`;
+  a bound slot renders `MosaicBoundSlot` (**bare:true**, SO-1 — the library owns the
+  look) instead of the static zone. After: canvas `cardsInTeaser=3`, `boundSlotCount=1`,
+  result line **"3 of 4 · CPVE1 recent articles"**, min banner gone. **SO-5 donut:**
+  card font == teaser font (system-ui…), `data-mosaic-foreign` wraps them. Film:
+  film-wc80-01-canvas / -03-page; WC80-SO5.json.
+
+### Standing matrix (child inside adopted slot × {canvas, reload, page})
+`cp-adopt-5r-slot-child-matrix.spec.ts` — 4 kinds × 3 states, all green:
+plain content (993) · owned Tier-A heading (995) · owned Tier-B html (996) · bound rows (994).
+
+### Cells
+- `tierBOptimistic.test.ts` +1: SSR write-back reaches a Tier-B child nested in a slot prop.
+- `htmlToReactSlots.test.tsx` +3: bound→MosaicBoundSlot; rows requested **bare** (SO-1);
+  unbound→MosaicSlotZone (no fetch).
+- Oracle-change: `Sprint66SmokeTest.php:120` `buildAdoptedRenderer(manifest)` →
+  `buildAdoptedRenderer(manifest,` (a regression I introduced by adding basePath, caught
+  by the full Kernel+Unit gate + fixed).
+
+### Gates FULL
+Kernel+Unit **3017/0** (the single failure was my Sprint66 oracle → fixed + re-verified) ·
+mosaic_views Kernel **62/0** (964 assertions; incl. SlotBindingRenderTest) ·
+Vitest **599 pass / 1 fail** (B-101 boolean→radio, pre-existing) ·
+phpcs ship-surface (35 files) **clean** (70 errors are older committed files, untouched) ·
+phpstan ship-surface = **3 documented MosaicRenderer drift lines** ·
+REGION **14e6cb9c…3954** IDENTICAL · STYLE **b7756795…ca982 4354 10** IDENTICAL ·
+BUMP-LIBS **1.0.52**. SHIP-45-PLAN regen **66→68**. WALK step 5 rewritten.
+
+### Reds that stayed red (pre-existing, tracked)
+- Vitest B-101 (boolean→radio) · one tsc line in the shadow-DOM code · three phpstan
+  lines in MosaicRenderer · a module-wide baseline of ~70 phpcs / ~70 phpstan findings
+  in OLDER committed files outside this ship's surface (unchanged by this JS-only pass).
