@@ -13564,3 +13564,38 @@ The server-side vertical is complete; the AUTHORING UI is not:
   (`BoundSlotResult{shown,total,label}` already carries the data).
 Deferred as unverified canvas UI whose real proof is the headed journey (P1d) — the SO-2-CONT lesson.
 Data hooks in place: model+config round-trip; `BoundSlotResult` carries the line data.
+
+---
+
+## CP-ADOPT-5 PASS 6 (P1d-A) — WC#73 + LEDGER — CHECKPOINT-5 — DONE (report: reports/REPORT-CP-ADOPT-5.md)
+
+**LEDGER FIRST:** reports/DELIVERY-PLAN-1.0.md scaffold filed (§0–§7 + §1.1 await the reviewer's
+VERBATIM ruling for Arun's line-by-line ratification). Ratified now: **D1 amendment** (builder
+design system is admin-theme-agnostic — Claro/Gin/custom, never depends on admin theme classes);
+**ACT 2 = full 1.0 design (not minimal), timeline late January 2027**; **WC#73 tally 73**.
+
+**§A WC#73 (witnessed headed → fixed):** viewport switch (Desktop→Mobile) with an adopted
+olivero:teaser placed WIPED the canvas (node count 2→1, SSR re-fire 0; owned-only 780 survived).
+**Cause: `js/src/builder/BuilderApp.tsx` switchEditingTo — the mobile/tablet no-state else-branch
+rebuilt via toPuck(fullLayout), dropping adopted components' preview-only `_renderedHtml` (never
+saved) → buildAdoptedRenderer falls to its loading skeleton → slot zones + children vanish.** The
+Desktop branch already guarded the rebuild on `editingBreakpoint !== null`; the else-branch did not.
+**Fix:** same guard on the else-branch (BuilderApp.tsx:430) — on the default canvas, keep it as-is,
+only switch preview width + re-measure geometry. Secondary defensive guard tierBOptimistic.ts:98
+(short-circuit only when a preview RESULT exists). AFTER: node count 2→2, not wiped (headed spec
+e2e/journeys/wc73-viewport-witness.spec.ts asserts before==after). Matrix row added: "viewport
+switch with an adopted component present".
+
+**Gates:** tsc 0-from-slice (1 pre-existing dsdShadow) · Vitest 575/1-B101 (+2 WC#73 cells) ·
+WC#73 headed green · Kernel+Unit unchanged 3016/0 (no PHP touched) · REGION 14e6cb9c / STYLE
+b7756795 both IDENTICAL (admin-canvas-only fix) · **BUMP-LIBS 1.0.45→1.0.46**.
+
+### FOLLOW-UP — P1d-A-CONT (TODO; now UNBLOCKED by the WC#73 fix)
+- **B** H9 bind panel (slot-zone Bind-to-data + field map + result line + Tier-B SSR + admin/FE
+  parity) + Vitest + Kernel. (Server-side vertical shipped CHECKPOINT-4; this is its UI.)
+- **C** SO-2 enforcement: never-top-level (server H5 reject + client root.render disallow) +
+  offered-first custom add-picker. Cells + film.
+- **D** headed journeys (bind→3 Cards+result line→viewport survives→plain-content-first in teaser→
+  save→page) + album cp-adopt-5/ + geometry.json. "result-line text captured" belongs here.
+Deferred as a large React+E2E build requiring PROOF-CONDITIONS-LAW real-drag film (a focused
+session), not a tail-end rush.

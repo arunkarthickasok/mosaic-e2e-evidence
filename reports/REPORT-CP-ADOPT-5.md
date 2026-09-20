@@ -735,3 +735,118 @@ ruling proven, and a clean core↔submodule boundary (no statics; graceful degra
 without mosaic_views). PANEL + SSR honestly ledgered to H9-PANEL-CONT rather than
 shipped as unverified canvas UI. STOP for audit. NEXT: P1d (owned panel gating +
 SO-2 enforcement + H9-PANEL-CONT + headed journeys + walk).
+
+---
+
+# CHECKPOINT-5 — PASS 6 (P1d-A): WC#73 canvas regression (witness → fix) + LEDGER
+
+Front-loaded per the charter: LEDGER FIRST, then WC#73 MECHANISM (no fix until
+witnessed). WC#73 was the BLOCKER for the P1d journeys (you cannot prove
+"viewport switch survives" until the switch stops wiping the canvas), so it lands
+first; the bind-panel / SO-2 / journeys UI (B/C/D) builds on top and is
+honest-checkpointed to P1d-A-CONT below.
+
+## LEDGER FIRST
+- `reports/DELIVERY-PLAN-1.0.md` filed (SCAFFOLD): §0–§7 + §1.1 skeleton awaiting
+  the reviewer's VERBATIM ruling for Arun's line-by-line ratification (the AI did
+  not hold that text). The three items ratified in the charter are recorded now:
+  **D1 amendment** (Mosaic's builder design system is admin-theme-agnostic —
+  Claro/Gin/custom — never depends on the admin theme's classes); **ACT 2 = full
+  1.0 design (not minimal), timeline of record late January 2027**; **WC#73** (tally 73).
+
+## §A — WC#73 MECHANISM (witnessed headed, then fixed)
+
+**Claim:** switching the canvas to the Mobile viewport with an adopted
+(olivero:teaser) component placed WIPES the canvas.
+
+**Witness (headed Chrome, `e2e/journeys/wc73-viewport-witness.spec.ts`, adopted
+node 988 vs owned-only control 780), BEFORE fix:**
+| node | before | after | wiped | ssrRefired | htmlLen before→after |
+|---|---|---|---|---|---|
+| 988 (adopted) | 2 | **1** | **true** | **0** | 5562 → 1275 |
+| 780 (owned-only) | 10 | 10 | false | 1 | 8972 → 8972 (survives) |
+
+**Cause (named): `js/src/builder/BuilderApp.tsx` — `switchEditingTo`, the
+mobile/tablet "no breakpoint state" else-branch (was ~line 417).** On a viewport
+switch it unconditionally rebuilt the canvas via `MosaicPuckAdapter.toPuck(fullLayout)`,
+re-deriving from the SAVED layout — which never carries an adopted component's
+preview-only `_renderedHtml` (that key is applied by the background SSR and is
+never persisted, so `toPuck` cannot restore it). With `_renderedHtml` gone,
+`buildAdoptedRenderer` (`MosaicPuckAdapter.ts`) falls through to its LOADING
+SKELETON, and the Puck slot zones (with their children) are never rendered — the
+adopted node + its slot child vanish (count 2→1). The SSR never re-fires
+(ssrRefired 0) because nothing re-requests it. Owned Tier-A components have no
+`_renderedHtml` dependency, so an owned-only page survives the identical switch.
+
+The Desktop/Wide branch of the SAME function already guarded its rebuild with
+`if (editingBreakpoint !== null)`; the mobile/tablet else-branch did not — that
+asymmetry is the bug.
+
+**Fix:** guard the else-branch rebuild on `editingBreakpoint !== null`
+(BuilderApp.tsx:430), mirroring the Desktop branch. When we are already on the
+default canvas (editingBreakpoint === null) the current canvas IS the default —
+keep it as-is, only switch the preview width + re-measure geometry
+(`resetMetrics()` already runs at the top of the switch). The adopted component
+keeps its `_renderedHtml` across the switch, so it never re-renders and never
+wipes. Secondary defensive guard: `tierBOptimistic.ts:98` — a Tier-B `resolveData`
+now only short-circuits when a preview RESULT is present (`_renderedHtml` or
+`_ssrError`), so ANY remount-without-preview path (e.g. a collab re-key) re-fetches
+instead of rendering blank (prevents the re-entry + error-retry loops).
+
+**Witness AFTER fix (same spec, now a permanent regression guard):**
+| node | before | after | wiped | ssrRefired |
+|---|---|---|---|---|
+| 988 (adopted) | 2 | **2** | **false** | **0** (no remount → no re-fetch; ≤ 1) |
+| 780 (owned-only) | 10 | 10 | false | 0 |
+
+**Cells:** `e2e/journeys/wc73-viewport-witness.spec.ts` asserts count before == after
++ ssrRefired ≤ 1 (headed). Vitest `tierBOptimistic.test.ts` +2 cells: a remount
+with no `_renderedHtml` RE-FETCHES; an `_ssrError` result still short-circuits
+(no retry loop). 5/5.
+
+### DERIVED matrix — new row
+| scenario | oracle | smoke-alarm |
+|---|---|---|
+| **viewport switch with an adopted component present** | every node survives (Puck node count before == after); SSR re-render ≤ 1; geometry re-measured at the new breakpoint | adopted node count drops after a Desktop→Mobile switch (WC#73) |
+
+## Gates
+- **tsc** 0 from this slice (1 pre-existing `dsdShadow.ts:17` DOM-lib drift).
+- **Vitest 575 / 1** (the 1 = pre-existing B-101; +2 WC#73 tierBOptimistic cells).
+- **WC#73 headed spec** green (adopted survives).
+- **Kernel+Unit unchanged 3016/0** — NO PHP touched this slice (JS + libs + docs only).
+- **REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL** — the
+  fix is admin-canvas-only; the frontend render is untouched.
+- **BUMP-LIBS 1.0.45 → 1.0.46** (builder + frontend-editor dist rebuilt).
+
+## HONEST — B (bind panel) + C (SO-2 enforcement) + D (journeys) → P1d-A-CONT
+NOT built this slice. WC#73 was the blocker for D (the viewport-survival journey)
+and is now CLEARED, so B/C/D are unblocked but remain a LARGE React + headed-E2E
+build that the PROOF-CONDITIONS LAW requires be delivered with real-drag film — a
+focused session's work, not a tail-end rush (the SO-2-CONT / H9-PANEL-CONT lesson):
+- **B — H9 bind panel:** slot-zone "Bind to data" (View → display → child type →
+  field map, reusing CP-VE3's picker) → saves `slots_binding`; static children
+  hidden with a notice; canvas Tier-B result line ("N of M · View · display" from
+  `BoundSlotResult`). Vitest on the form + Kernel on save. (Server-side vertical
+  already shipped in CHECKPOINT-4 — this is its authoring UI.)
+- **C — SO-2 enforcement:** `mosaic_plain_content` never top-level (server H5
+  reject + client root `disallow` via a `root.render` override) + offered FIRST in
+  free-content foreign slots (a custom per-zone add-picker — Puck's palette has no
+  per-zone order). Cells + film.
+- **D — headed journeys:** bind owned Columns → 3 Cards + result line → viewport
+  switch survives (WC#73, now green) → teaser slot Plain-content-first → save →
+  page. Album cp-adopt-5/ + geometry.json.
+
+The paste field "result-line text captured" belongs to B and is part of P1d-A-CONT.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `js/src/builder/BuilderApp.tsx` (WC#73 else-branch guard),
+  `js/src/builder/tierBOptimistic.ts` (defensive preview-result guard),
+  `js/src/builder/__tests__/tierBOptimistic.test.ts` (+2 cells),
+  `js/e2e/journeys/wc73-viewport-witness.spec.ts` (NEW, regression guard),
+  `mosaic.libraries.yml` (1.0.46), `js/dist/*` (rebuilt).
+
+## Honest status
+CHECKPOINT-5 = LEDGER FIRST + WC#73 witnessed→fixed→headed-proven (the P1d blocker
+cleared), both byte-identical gates held. B/C/D (bind panel + SO-2 enforcement +
+journeys) honest-checkpointed to P1d-A-CONT — now unblocked. STOP for audit. NEXT:
+P1d-A-CONT (B/C/D) then P1d-B (owned panel gating + CKE5 sheet + walk).
