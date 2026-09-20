@@ -13526,3 +13526,41 @@ ENFORCEMENT is NOT wired (declined as unverified canvas surface):
 - **offered-first:** Puck's palette is global/category-ordered — no native per-zone ordering;
   needs a custom per-slot add-picker (`allow` is a filter, not an order).
 Build + verify with a canvas journey. `config.slotOnly` is the data hook already in place.
+
+---
+
+## CP-ADOPT-5 PASS 5 (P1c) — H9 SLOT BINDING — CHECKPOINT-4 — DONE (report: reports/REPORT-CP-ADOPT-5.md)
+
+**Delivered (MOSAIC uncommitted — Arun commits): the full SERVER-SIDE H9 vertical.**
+- MODEL: `SlotBinding` VO + `ComponentInstance.slotsBinding` + schema `slots_binding`/`SlotBinding` def
+  (`{source: views_result, child_type, field_map}`), round-trips clean (Unit 4/4).
+- VALIDATION (H5): child_type allowed by slot rules (H7) + every mapped field targets a bindable-kind
+  child descriptor (P0 table; enum/toggle/raw never mappable) + **required-vs-bound RULING** (a bound
+  slot satisfies `required` at save; empty View = runtime state, not a save error) — enforced at BOTH
+  the save validator AND the renderer WC#70 net. Kernel 5/5.
+- RENDER: clean core↔submodule boundary — core `SlotBindingRowProviderInterface` + NULL provider
+  (graceful degrade); `mosaic_views` OVERRIDES it with `ViewsSlotBindingRowProvider` (execute View →
+  per-row field values → one synthetic child_type instance per row → rendered through the SAME hybrid
+  path, bare-aware SO-1; cacheability: view config tag + query context + arg sources + per-row entity
+  tags + field bubble). MosaicRenderer slot loop intercepts bound slots (static children hidden, not
+  deleted). Kernel 3/3 (3 nodes→3 Cards; bare-in-teaser; empty→empty slot + parent renders).
+
+**Invariant HELD:** REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL after the
+whole slice + `drush cr` (node/780 owned-only, no bindings — H9 is purely additive).
+
+**Gates:** Kernel+Unit **3016/0** (1 pre-existing warning) · mosaic_views submodule **60/60** ·
+PHPCS 0 err · PHPStan (DDEV) all H9 code clean (only the 3 pre-existing MosaicRenderer errors) ·
+**NO dist/CSS/JS → no BUMP-LIBS**. Oracle-changes: MosaicRendererTest + MosaicRendererCacheTest
+(14th constructor arg = NullSlotBindingRowProvider).
+
+**Field→prop note:** a View field that renders a link, mapped to a text prop, is ESCAPED by Twig
+(H5 security-safe). Production binds use a plain-text field config or a link-kind prop for clean text.
+
+### FOLLOW-UP — H9-PANEL-CONT (TODO, → P1d)
+The server-side vertical is complete; the AUTHORING UI is not:
+- **PANEL:** a slot-zone "Bind to data" control (View → display → child type → field map, reusing the
+  CP-VE3 data-source picker) + Vitest.
+- **SSR result line:** bound-slot canvas Tier-B render with "N of M · View · display" under the zone
+  (`BoundSlotResult{shown,total,label}` already carries the data).
+Deferred as unverified canvas UI whose real proof is the headed journey (P1d) — the SO-2-CONT lesson.
+Data hooks in place: model+config round-trip; `BoundSlotResult` carries the line data.

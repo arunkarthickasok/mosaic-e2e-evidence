@@ -596,3 +596,142 @@ deviation (additive donut vs full owned-CSS `@scope` refactor — same outcome, 
 hash-safe). SO-2 enforcement (never-top-level + offered-first) is honestly ledgered to
 SO-2-CONT rather than shipped as unverified canvas surface. STOP for audit. NEXT: P1c
 (H9 slot binding).
+
+---
+
+# CHECKPOINT-4 — PASS 5 (P1c): H9 SLOT BINDING (Views-into-slots, typed)
+
+The full SERVER-SIDE H9 vertical — MODEL + VALIDATION + RENDER — delivered and
+Kernel/Unit-proven, byte-identical invariant held (node/780 is owned-only, no
+bindings, so H9 is purely additive). No JS/CSS/dist changed → no BUMP-LIBS.
+
+## 1 MODEL (core mosaic)
+- `src/Value/SlotBinding.php` (NEW) — `{source: DataSourceBinding(views_result),
+  child_type, field_map:{viewFieldId => descriptorId}}`. The View source REUSES
+  DataSourceBinding, so a slot binding and a prop binding share one source model.
+- `src/Value/ComponentInstance.php` — `slotsBinding` (keyed by zone), round-trips
+  via from/toArray (emitted only when present → default-clean).
+- `schema/mosaic_layout_value.schema.json` — `slots_binding` on ComponentInstance
+  (additionalProperties:false required the declaration) + a `SlotBinding` $def.
+- Unit `SlotBindingTest` (4 cells): round-trip, empty field_map => {}, full
+  layout-JSON round-trip, unbound node emits no slots_binding.
+
+## 2 VALIDATION (H5) — `src/Service/MosaicPropValidator.php`
+- child_type must be a registered plugin ALLOWED by the slot's rules (H7,
+  SlotDescriptor::fromMetadata()->withRules(); [] = any). Slot metadata resolved
+  plugin-canonically (getSlotDefinitions() covers dynamic slots like column_N).
+- every mapped field must target a BINDABLE-kind child descriptor (the P0 table
+  via PropShape::capabilities — enum/toggle/raw are never mappable).
+- **required-vs-bound RULING (recorded):** *a bound slot SATISFIES `required` at
+  save; an empty View result is a RUNTIME state (shown by empty_display), never a
+  save error.* Enforced at BOTH the save validator AND the renderer's WC#70
+  safety net.
+- Kernel `SlotBindingValidationTest` (5 cells): valid passes; non-bindable field
+  (enum variant) rejected; unknown child prop rejected; unregistered child_type
+  rejected; empty required slot refused BUT bound required slot passes.
+
+## 3 RENDER — the core↔submodule boundary (no `\Drupal::` statics)
+- `src/Render/SlotBindingRowProviderInterface.php` + `BoundSlotResult.php` +
+  `NullSlotBindingRowProvider.php` (NEW, core) — core ships a NULL provider (a
+  bound slot renders empty when no source integration is present).
+- `modules/mosaic_views/src/Render/ViewsSlotBindingRowProvider.php` (NEW) —
+  OVERRIDES the interface service id when mosaic_views is enabled. Executes the
+  View (viewer access via the View's own access plugin; R-V6 argument sources via
+  the shared ViewsArgumentResolver; limit ≤ 100), extracts each row's mapped
+  field values (`$view->getStyle()->getField()` inside a render context), and
+  builds ONE synthetic `child_type` ComponentInstance per row. Cacheability
+  folded into the parent's metadata: `config:views.view.<id>`, url.query_args
+  when the display reads ?query (CP-VE3 lesson), argument-source cacheability,
+  each row entity's tags, + the field render's bubbled metadata.
+- `src/Service/MosaicRenderer.php` — the slot loop iterates the UNION of static +
+  bound slot names; a bound slot calls `renderBoundSlot()` (its static children
+  are HIDDEN, never deleted — mutual exclusion). Synthetic children are added to
+  a TRANSIENT layout and rendered through the SAME hybrid path (cache, bare-aware
+  SO-1, owned/adopted) so bound rows are indistinguishable from hand-placed
+  children. The WC#70 required-slot safety net exempts a bound slot.
+- Kernel `SlotBindingRenderTest` (3 cells, mosaic_views): 3 nodes → 3 Cards;
+  bare-in-teaser; empty View → empty slot + parent still renders.
+
+### The 3-rows → 3-Cards render (captured live, ddev Kernel)
+```html
+<div  data-mosaic-component="mosaic_columns" data-mosaic-instance="root-1" … class="mosaic-columns mosaic-columns--2 mosaic-columns--gap-md">
+  <div class="mosaic-columns__col mosaic-columns__col--1">
+    <article  data-mosaic-component="mosaic_card" data-mosaic-instance="mosaic-bound-mosaic_h9_articles-block_1-0" … class="mosaic-card mosaic-card--default">
+      <div class="mosaic-card__body">
+        <h3 … class="mosaic-card__title">&lt;a href=&quot;/node/1&quot; …&gt;Bound Title 1&lt;/a&gt;</h3>
+      </div>
+    </article>
+    <article … data-mosaic-instance="mosaic-bound-mosaic_h9_articles-block_1-1" … class="mosaic-card …">…Bound Title 2…</article>
+    <article … data-mosaic-instance="mosaic-bound-mosaic_h9_articles-block_1-2" … class="mosaic-card …">…Bound Title 3…</article>
+  </div>
+  <div class="mosaic-columns__col mosaic-columns__col--2"></div>
+</div>
+```
+Three rows → three owned Cards, each with its mapped title. (The title shows
+ESCAPED because the View field rendered a link and the Card's `title` is a text
+prop — Twig autoescape = H5 security-safe, no raw injection. A production bind
+uses a plain-text field config or a link-kind prop for clean text; noted below.)
+
+### Required-vs-bound ruling line
+> A bound slot satisfies `required` at save; an empty View result is a runtime
+> state shown by empty_display, not a save error. — enforced in
+> MosaicPropValidator (save) AND MosaicRenderer's WC#70 net (render).
+
+## Evidence — byte-identical invariant HELD
+| Gate | Baseline | After P1c |
+|---|---|---|
+| REGION | `14e6cb9c…3954` | `14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954` |
+| STYLE | `b7756795…ca982 4354 10` | `b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10` |
+
+Both IDENTICAL after the whole H9 slice + `drush cr` (new MosaicRenderer arg +
+null→views service override + new component code — owned rendering unchanged).
+
+## Gates (FULL, in-env)
+- **Kernel+Unit 3016 / 0** (1 pre-existing warning; +9 H9 cells: SlotBindingTest 4,
+  SlotBindingValidationTest 5).
+- **mosaic_views submodule 60 / 60** (931 assertions — the service override +
+  provider break nothing; SlotBindingRenderTest 3 included).
+- **PHPCS 0 errors** on all changed/new PHP (line-length warnings only).
+- **PHPStan L6 (DDEV)** — all H9 code clean; only the 3 PRE-EXISTING
+  MosaicRenderer errors remain (property.notFound + parameter.phpDocType ×2 for
+  $cacheable/$entityMeta — shifted to 221/654 by my `use`/arg additions, NOT my
+  renderBoundSlot).
+- **No dist/CSS/JS change → no BUMP-LIBS** (this slice is PHP + schema + services
+  + tests only). Oracle-changes: MosaicRendererTest + MosaicRendererCacheTest
+  (the new 14th constructor arg — NullSlotBindingRowProvider double).
+
+## HONEST — PANEL (item 3) + canvas SSR result line (item 4) NOT built (H9-PANEL-CONT)
+Delivered: the full server-side vertical (model round-trips, validation gates,
+render produces per-row children with cacheability). NOT built this pass:
+- **PANEL** — a slot-zone "Bind to data" control (View → display → child type →
+  field map, reusing the CP-VE3 data-source picker) + Vitest.
+- **SSR result line** — a bound slot's canvas Tier-B render with an "N of M ·
+  View · display" line under the zone (the data is already carried on
+  `BoundSlotResult{shown,total,label}`).
+Why deferred: both are a LARGE Puck slot-zone / canvas UI surface whose real
+proof is the headed author journey — which the charter itself defers to **P1d**.
+Building an unverified canvas UI at the tail is exactly the SO-2-CONT risk the
+arc has repeatedly declined. The data hooks are all in place (the model + config
+round-trip; `config.slotOnly`-style plumbing; `BoundSlotResult` carries the line
+data), so H9-PANEL-CONT is a self-contained UI build + Vitest + the P1d journey.
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- Core: `src/Value/SlotBinding.php` (NEW), `src/Value/ComponentInstance.php`,
+  `schema/mosaic_layout_value.schema.json`, `src/Service/MosaicPropValidator.php`,
+  `src/Service/MosaicRenderer.php`, `src/Render/{SlotBindingRowProviderInterface,
+  NullSlotBindingRowProvider,BoundSlotResult}.php` (NEW), `mosaic.services.yml`.
+- mosaic_views: `src/Render/ViewsSlotBindingRowProvider.php` (NEW),
+  `mosaic_views.services.yml`.
+- Tests: `tests/src/Unit/Value/SlotBindingTest.php` (NEW),
+  `tests/src/Kernel/Adopt/SlotBindingValidationTest.php` (NEW),
+  `modules/mosaic_views/tests/src/Kernel/SlotBindingRenderTest.php` (NEW),
+  `tests/src/Unit/Service/MosaicRendererTest.php` +
+  `MosaicRendererCacheTest.php` (14th-arg oracle).
+
+## Honest status
+CHECKPOINT-4 = the server-side H9 vertical (typed Views-into-slots), delivered
+with both byte-identical gates held, the 3-rows→3-Cards render + required-vs-bound
+ruling proven, and a clean core↔submodule boundary (no statics; graceful degrade
+without mosaic_views). PANEL + SSR honestly ledgered to H9-PANEL-CONT rather than
+shipped as unverified canvas UI. STOP for audit. NEXT: P1d (owned panel gating +
+SO-2 enforcement + H9-PANEL-CONT + headed journeys + walk).
