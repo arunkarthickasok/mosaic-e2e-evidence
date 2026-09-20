@@ -1,66 +1,51 @@
-# WALK-CP-ADOPT-5 — the ADOPT-5 acceptance walk (Arun)
+# WALK-CP-ADOPT-5 — the acceptance walk (plain words)
 
-> WALK-SCRIPT LAW: one story, numbered steps, each with a DROP-PROOF (the exact
-> thing to see) and a PROOF-CONDITION (pass/fail). Arun creates the pages; the AI
-> does not. Automated coverage per step is noted `[auto: …]`; steps marked
-> `[manual]` are not yet in a headed spec (their code lands in a later slice).
+You (Arun) create the pages; walk the steps; each step says what you should see.
 
-## Story
-An author builds a page with Mosaic's own components and an adopted Olivero
-teaser. The panels tell the truth about what each component can do; a slot can be
-driven by a View; the library keeps its own look inside its slots; and a viewport
-switch never loses work.
+## The story
+You build a page with Mosaic's own blocks and an Olivero teaser. The panels only
+show controls that actually do something. A column can be filled from a View. The
+teaser keeps its own look inside its slots. Switching to the phone size never
+wipes your work.
 
 ## Steps
 
-1. **Honest Card panel (owned gating).**
-   Create a page, drop a **Card**, select it.
-   - DROP-PROOF: the rail shows **Data Sources** + **Breakpoint overrides** +
-     Spacing + Style + Visibility. Select a **Tabs** (or **View**) instead.
-   - PROOF-CONDITION: Tabs shows its "Tab sets" field but **NO Data, NO
-     Breakpoint**; View shows **NO Data**. Card keeps Data.
-     `[auto: cp-adopt-5-owned-panel.spec.ts — tabs/view drop Data, columns keeps]`
+1. **The panels tell the truth.**
+   Drop a **Card** and click it. You see Data, Breakpoint, Spacing, Style,
+   Visibility. Now drop a **Tabs** and click it: you see its "Tab sets" field but
+   **no Data and no Breakpoint** — Tabs has nothing to bind or to change per
+   screen size. A **View** block shows **no Data**. A block with no colour tokens
+   shows **no Style section** (not an empty "no tokens" message).
+   *Pass:* Tabs/View lose Data; empty sections simply aren't there.
 
-2. **Bind a column to a View + result line (H9).**
-   Drop a **Columns**, select it, open **Data binding** → **Bind Column 1 to
-   data** → pick a View + display → child type **Card** → map the View's title
-   field → the Card title.
-   - DROP-PROOF: the column fills with one **Card per row**, and a line under the
-     zone reads **"{shown} of {total} · {View} · {display}"**.
-   - PROOF-CONDITION: N cards == N rows; the result line matches the View.
-     `[auto: cp-adopt-5-bind-journey.spec.ts — 3 Cards + "3 of 4 · J8 Articles"]`
+2. **Fill a column from a View.**
+   Drop a **Columns**, click it, tick **Bind Column 1 to data**. You now see a
+   **Data binding** panel: pick the **View**, pick the **display**, pick **Card**
+   as the row component, then under "Fill the row from View fields" **choose which
+   View field fills the Card title** (a dropdown of the View's fields, already
+   guessing "Title"). Watch the column fill with **one Card per row**, and a line
+   under it: **"3 of 4 · J8 Articles"**.
+   *Pass:* the cards appear as you pick; the line matches the View.
 
-3. **Mobile switch keeps everything (WC#73).**
-   With the bound Columns (and any adopted teaser) on the canvas, switch the
-   viewport **Desktop → Mobile → Desktop**.
-   - DROP-PROOF: every component is still there after the switch (nothing blanks).
-   - PROOF-CONDITION: node count before == after; the adopted teaser still shows
-     its library markup (not a skeleton).
-     `[auto: wc73-viewport-witness.spec.ts + cp-adopt-5-bind-journey.spec.ts]`
+3. **The phone size keeps everything.**
+   With that bound Columns (and a teaser) on the page, switch the size to
+   **Mobile** and back to **Desktop**.
+   *Pass:* nothing disappears — the cards and the teaser are still there.
 
-4. **Teaser slot: Plain content offered first, Olivero look, ownership line.**
-   Drop an **olivero:teaser**. Open its **content** slot's add control.
-   - DROP-PROOF: **Plain content** is offered **first** in the slot's picker; add
-     it and type a sentence — it renders in **Olivero's** typography, not Mosaic's.
-     Drop a **Heading** in the same slot: it renders **bare** and its panel shows
-     the **ownership line** ("Styling is owned by Olivero Teaser") with **no Style
-     sections**.
-   - PROOF-CONDITION: plain content inherits the library font/colour; the bare
-     Heading has no `data-mosaic-component` and no Style/Spacing sections.
-     `[manual: SO-2 client add-picker is P1d-B-CONT; the FONT inheritance is
-      proven by the SO-5 donut computed-style cell (CHECKPOINT-3) + the bare-render
-      Kernel cell]`
+4. **The teaser owns its slots.**
+   Drop an **Olivero teaser**. In its content slot, **Plain content** is offered
+   **first**; type a sentence — it looks like **Olivero's** text, not Mosaic's.
+   Drop a **Heading** in the same slot: it renders plain and its panel says the
+   **styling is owned by Olivero** (no Style controls).
+   *Pass:* your text takes Olivero's look; the heading shows the ownership note.
+   *(The "Plain content first" picker is P1d-B-CONT; the Olivero look + ownership
+   note are already proven by the SO-5 font cell + the bare-render cell.)*
 
-5. **Save → page matches.**
-   Save the node, view the published page.
-   - DROP-PROOF: the bound rows render as Cards; the teaser renders with Olivero's
-     own markup; the plain content inherits the library look.
-   - PROOF-CONDITION: the page byte-identical invariant holds for the owned-only
-     regions (region-shasum `14e6cb9c…`, style-shasum `b7756795…`); bound rows +
-     adopted markup render server-side.
-     `[auto: bind-journey page cards + SlotBindingRenderTest + region/style shasums]`
+5. **Save and look at the page.**
+   Save, then view the published page.
+   *Pass:* the cards show, the teaser shows Olivero's own markup, the plain content
+   looks like Olivero. The owned parts of the page are unchanged to the byte.
 
-## Pre-existing reds (known, not walk failures)
-- Vitest B-101 (`maps boolean props to checkbox fields`) — pre-existing drift.
-- tsc `dsdShadow.ts:17` — DOM-lib drift in the SO-7 shadow code.
-- phpstan 3× `MosaicRenderer` (property.notFound + parameter.phpDocType ×2).
+## Known reds (not walk failures)
+- One Vitest cell (boolean→checkbox, B-101), one tsc line in the shadow-DOM code,
+  three phpstan lines in MosaicRenderer — all pre-existing drift, tracked separately.

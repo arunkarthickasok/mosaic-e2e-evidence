@@ -13676,3 +13676,31 @@ IDENTICAL · BUMP-LIBS 1.0.49.
 - **§4 teaser-slot journey leg** (Plain-content-first, Olivero-look, bare Heading + ownership line) —
   depends on §3. Rest of §4 already proven (owned panel headed; bind→cards+result+viewport CHECKPOINT-7;
   ownership/font SO-5 donut + bare-render CHECKPOINT-3). WALK step 4 = [manual/P1d-B-CONT].
+
+---
+
+## CP-ADOPT-5R (rider) — WC#74 + WC#75 + breakpoint ruling + design repo — CHECKPOINT-9 — DONE
+
+**Tally 75.** WC#74 (empty sections rendered headers/messages) + WC#75 (bind panel unusable).
+**Breakpoint RULING (recorded, P0 amended):** breakpoint only for layout-affecting select/toggle/number
+(sidecar layout:true); text/etc never; grandfather saved overrides. CODE deferred → CP-ADOPT-5R-CONT
+(couples to the CKE5 enum rider; a half-landing strips Breakpoint from ~every component).
+
+**WC#75 fix (a)(b)(c):** (a) added "Data binding" heading + help; (b) Row component = allowed∩bindable,
+owned-only when any, Card default (was: every component when slot allows any); (c) field map = SELECT of
+the View display's fields (new endpoint GET /api/mosaic/views/fields), auto-matched, "— not mapped —".
+Vitest 6 + headed cp-adopt-5r-bindform.spec.ts (heading+help+Row+field-map selects present). FE parity.
+
+**WC#74 fix:** Style section absent when no style_tokens (no field, no message); SpacingControl gains
+`breakpointable` (hides All/Mobile/Tablet tabs when false); Breakpoint already gated by showBp. Vitest +1.
+
+**Gates:** Vitest 593/1-B101 · tsc 0-from-slice · mosaic_views Kernel 62/62 · phpcs/phpstan clean ·
+REGION 14e6cb9c / STYLE b7756795 both IDENTICAL · BUMP-LIBS 1.0.50. SHIP-45-PLAN regen (57 files,
+esc-probe.config.ts EXCLUDED, SdcComponentPlugin pristine). WALK rewritten plain-words.
+
+**DESIGN REPO:** mosaic_ui_ux/ init as own repo (toplevel verified), commit 582983d 'design system
+export 2026-09-20' (35 files), push REFUSED (egress/auth). 3 commands handed to Arun.
+
+### FOLLOW-UP — CP-ADOPT-5R-CONT
+- Breakpoint rule code: PropShape text→not-breakpointable + descriptor `layout` flag + layout:true
+  sidecar rollout + grandfather + after-rule PANEL-DIFF regen. Lands WITH the CKE5 enum rider.

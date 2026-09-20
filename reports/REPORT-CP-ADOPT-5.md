@@ -1091,3 +1091,113 @@ NOT built this slice:
 CHECKPOINT-8 = owned panels go honest (3 components lose a section, headed-proven,
 page byte-identical) + the CKE5 sheet + SHIP-45-PLAN + the acceptance walk. SO-2
 client + the teaser-slot journey leg → P1d-B-CONT. STOP for audit.
+
+---
+
+# CHECKPOINT-9 — CP-ADOPT-5R (rider): WC#74 + WC#75 + breakpoint ruling + design repo
+
+Ship #45 was BLOCKED on two walk-catches. Both fixed + headed-proven.
+
+## LEDGER (tally 75)
+- **WC#74** — empty meta sections rendered a header/message with no fields: the
+  Breakpoint header + the spacing "All/Mobile/Tablet" tabs showed for a
+  non-breakpointable component (Tabs), and the Style section printed "No style
+  tokens defined for this component." instead of nothing.
+- **WC#75** — the bind panel was not usable by a human: no section heading, the Row
+  component list showed *every* component, and the field map was empty text boxes
+  ("I only saw labels").
+- **Breakpoint RULING (recorded, P0 table amended):** breakpoint overrides apply
+  ONLY to **layout-affecting select/toggle/number** props (sidecar `layout: true`);
+  text/formatted_text/link/media/entity_ref/repeatable **never**. Saved overrides on
+  a now-ineligible prop are grandfathered ("Legacy override — remove to edit") and
+  listed in the capability audit.
+
+## WC#75 mechanism (a)(b)(c) + fix
+- **(a) missing heading** — `MosaicSlotBindField` rendered straight into a bare box;
+  the Puck field's own label never surfaced, so the section had no title.
+  **Fix:** an explicit **"Data binding"** heading + one-line help ("Each row of the
+  View becomes one {Row component}; choose which View field fills each of its fields").
+- **(b) "every component appears"** — the adapter built `childOptions` as
+  `allowed.length ? allowed : [...ALL bindableIndex keys]`, so a slot that allows any
+  child offered the entire palette. **Fix:** Row component = the slot's allowed
+  children **∩ components with ≥1 bindable prop**; when the slot allows any, **owned**
+  bindable components only (adopted appears only if the slot explicitly allows it);
+  **Card is the default** (sorted first).
+- **(c) "labels only" field map** — the map rows were free **text inputs** with no
+  hint of what to type. **Fix:** one **SELECT per bindable row-prop**, its options the
+  **View display's fields** (new read-only endpoint `GET /api/mosaic/views/fields`),
+  **auto-matched by name** (title → Title), **"— not mapped —"** default; a saved
+  mapping to a missing field stays visible.
+- **Vitest:** `MosaicSlotBindField.test.tsx` 6 cells (heading, help, selects,
+  choosing writes field_map, unbind, no-bindable). **Headed:** `cp-adopt-5r-bindform.spec.ts`
+  — heading + help + Row component + field-map selects all present in the real panel.
+  **FE parity:** the FE dialog uses the same field component + endpoint (by construction).
+
+## WC#74 fix
+- **Style section ABSENT when no tokens:** the `_mosaic_style_overrides` field is only
+  added when the component exposes `style_tokens` (no field, no "No style tokens" message).
+- **Spacing per-breakpoint tabs gated:** `SpacingControl` takes `breakpointable`; when
+  false, the All/Mobile/Tablet tabs are hidden — plain spacing only.
+- **Breakpoint section:** already gated by `showBp` (P1d-B) — no empty header.
+- **Vitest:** capability test +1 ("no style tokens → no Style section"); the "all five"
+  cell now supplies style_tokens.
+
+## PANEL-DIFF summary (current — P1d-B + WC#74)
+`reports/PANEL-DIFF.md` (P1d-B capability gate) stands: **`mosaic_spacer` −Data**,
+**`mosaic_tabs` −Data/−Breakpoint**, **`mosaic_view` −Data**; 12 unchanged. WC#74 adds:
+**the Style section is absent on every component that declares no `style_tokens`**, and
+the spacing breakpoint tabs are hidden on non-breakpointable components.
+**HONEST:** the **breakpoint RULE application** (text → not breakpointable + the
+per-prop `layout: true` sidecar gate + grandfather) is **NOT applied in code this
+slice** — it is a coupled 5-part capability change (PropShape amend + a descriptor
+`layout` flag + sidecar rollout across components + grandfather + audit) that depends
+on the CKE5 **enum rider** (e.g. `variant`/`size` are classified `text` today, not
+`select`, so they can't be layout-gated selects until the enum declarations land).
+Applying it half-way (text→false only, no `layout` gate) would strip Breakpoint from
+nearly every component AND leave select/toggle/number ungated — worse than today. So
+the **ruling is recorded + the P0 table amended**; the code + the after-rule PANEL-DIFF
+are **CP-ADOPT-5R-CONT**, to land WITH the enum rider.
+
+## DESIGN REPO
+`<root>/mosaic_ui_ux/` initialised as its own git repo (toplevel verified = that
+folder, NOT the mosaic tree; node_modules + .DS_Store + *.bundle + PUSH-TO-GITHUB.md
+excluded; credential-scan clean). One commit **`582983d`** 'design system export
+2026-09-20', 35 files, branch main, remote `https://github.com/arunkarthickasok/mosaic_ui_ux.git`.
+**Push REFUSED** (`could not read Username for github.com` — the egress/auth block
+PUSH-TO-GITHUB.md documents: the git proxy injects credentials only for
+session-connected repos). Three commands for Arun (from the `mosaic_ui_ux/` folder):
+```
+git remote set-url origin https://github.com/arunkarthickasok/mosaic_ui_ux.git
+git branch -M main
+git push -u origin main    # authenticate with your GitHub token when prompted
+```
+
+## Gates
+- **Vitest 593 / 1** (the 1 = pre-existing B-101; WC#74 + WC#75 cells green).
+- **tsc** 0 from this slice; **mosaic_views Kernel 62 / 62** (new fields endpoint);
+  **PHPCS 0 err**, **PHPStan** clean on the endpoint.
+- **Headed:** WC#75 form + bind journey ("3 of 4 · J8 Articles", 3 cards, viewport
+  kept) + owned-panel gating all green.
+- **REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` both IDENTICAL.**
+- **BUMP-LIBS 1.0.49 → 1.0.50.**
+- Docs regenerated: `SHIP-45-PLAN.md` (57 files, **esc-probe.config.ts EXCLUDED**,
+  SdcComponentPlugin pristine), `WALK-CP-ADOPT-5.md` (plain words, step 2 = the human
+  bind path).
+
+## Files changed (MOSAIC, uncommitted — Arun commits)
+- `js/src/builder/fields/MosaicSlotBindField.tsx` (WC#75 rebuild),
+  `js/src/builder/MosaicPuckAdapter.ts` (Row-component filter + WC#74 style/spacing),
+  `js/src/builder/fields/SpacingControl.tsx` (breakpointable),
+  `modules/mosaic_views/src/Controller/ViewsBrowserController.php` +
+  `modules/mosaic_views/mosaic_views.routing.yml` (fields endpoint),
+  `js/src/builder/__tests__/MosaicPuckAdapterCapability.test.ts` +
+  `js/src/builder/fields/__tests__/MosaicSlotBindField.test.tsx`,
+  `js/e2e/journeys/cp-adopt-5r-bindform.spec.ts` (NEW), `mosaic.libraries.yml` (1.0.50),
+  `js/dist/*`.
+
+## Honest status
+CHECKPOINT-9 = both ship-blockers fixed (WC#74 empty sections gone; WC#75 bind panel
+now a real form — heading, filtered Row list, View-field selects), headed-proven, page
+byte-identical. The breakpoint ruling is recorded; its coupled code lands with the enum
+rider (CP-ADOPT-5R-CONT). Design repo committed (582983d) — push handed to Arun (egress).
+STOP.
