@@ -13879,3 +13879,29 @@ labelled (not 1.0).
 
 ### Ship #46 carries the .gitignore lines
 `*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/` (the ship-#45-plan EXCLUDE cruft).
+
+---
+
+## CP-ADOPT-6 P1 (Pillar H graceful degradation) — CHECKPOINT-1 — BUILT (MOSAIC uncommitted, Arun commits ship #46)
+
+Baseline ship #45 8209f1c. Oracle REGION 14e6cb9c + STYLE b7756795 HELD before+after. libs 1.0.54.
+1) FALLBACK RENDERER: MosaicRenderer.renderNode unknown/governance-off adopted → renderFallback (stored
+   values by value-shape, _type sentinels access-checked, formatted-text check_markup, scalars escaped
+   R4, children recursed, data-mosaic-missing + visually-hidden note, library config cache tag R6). New
+   MosaicComponentGovernance::isAvailable (library ON + component enabled; no-entity=TRUE so ungoverned
+   installed components render normally; owned no-colon untouched → byte-identical). governance injected
+   into MosaicRenderer (ctor + services.yml, drush cr). governance.libraries() de-memoised (mid-request
+   toggle reflected).
+2) BUILDER CARD: toConfig(...missingTypes) + buildMissingCardRenderer — read-only "Library missing" card
+   (colon-free key, no fields = props round-trip untouched, not in palette, bounded box). Wired index.tsx
+   + FrontendBuilderDialog.tsx (FE parity).
+3) REPORT: /admin/reports/mosaic/library-changes (mosaic.administer) + MosaicLibraryChangesController —
+   queries mosaic_layout fields, groups unavailable types by library + counts + links.
+CELLS: Kernel FallbackRenderTest 3/33 (disable→fallback, re-enable→byte-identical R6, unknown R12, R4);
+Functional MosaicLibraryChangesReportTest 17 (anon/author 403, admin 200 — Permission-Parity); Vitest
+MosaicPuckAdapterMissing 3 (card + save-untouched round-trip). Fixed 2 self-inflicted: MosaicRenderer
+ctor arg in RendererCacheTest/RendererTest; @group→#[Group] on the 2 new tests.
+Gates: Kernel+Unit 3020/0, Vitest 607/1-B101, phpcs changed-surface clean, REGION+STYLE identical, 1.0.54.
+JOURNEY blocked: adopt_fixture won't drush en (test module); olivero toggle would violate "dev libs
+untouched" → proof is the Functional BrowserTest (real HTTP) + Kernel + live dev fallback-markup capture.
+NEXT: P2 (Pillar G behaviour-keys hash + drift classes + report).

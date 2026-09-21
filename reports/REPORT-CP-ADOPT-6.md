@@ -419,3 +419,70 @@ Legend surfaces: **Cv** canvas · **Pg** page · **Bc** builder card · **Rp** r
 ## Report status
 CP-ADOPT-6 P0 = DERIVATION complete (report-only). Every "today" is quoted from source at ship #45
 `8209f1c`. No code written; MOSAIC tree clean. **STOP for Arun's audit** before any build pass (§6.3).
+
+---
+
+## CHECKPOINT-1 — CP-ADOPT-6 P1 (Pillar H, graceful degradation) — BUILT
+
+Baseline ship #45 `8209f1c`. MOSAIC git READ-ONLY (files edited, Arun commits at ship #46).
+Oracle-before + after both HELD: REGION `14e6cb9c…3954`, STYLE `b7756795…ca982 4354 10`. libs **1.0.54**.
+
+### What shipped (P1)
+1. **Fallback renderer (page).** `MosaicRenderer::renderNode` no longer returns an empty
+   `<div data-mosaic-missing>`; an UNAVAILABLE adopted component (its governing library OFF via the
+   new `MosaicComponentGovernance::isAvailable`, or its SDC gone → `PluginNotFoundException`) renders
+   `renderFallback()` — the STORED values by value-shape (`_type` sentinels resolved access-checked;
+   formatted-text via `check_markup`; every scalar escaped — R4), children recursed, wrapped with
+   `data-mosaic-missing` + a visually-hidden note. The render is cache-tagged on the library config
+   (`config:mosaic.component_library.<provider>`) so a toggle invalidates it (R6). Owned components
+   (no `:`) are untouched → byte-identical.
+2. **Builder card.** `MosaicPuckAdapter.toConfig(…, missingTypes)` registers a read-only
+   "Library missing" card (`buildMissingCardRenderer`) for any layout type absent from the manifest —
+   colon-free key, NO fields (props round-trip untouched → save-untouched), not in any palette
+   category (governance still hides it), bounded non-zero box (GEOMETRY). Wired in the admin mount
+   (`index.tsx`) AND the FE dialog (`FrontendBuilderDialog.tsx`) — parity.
+3. **Affected-pages report.** New route `/admin/reports/mosaic/library-changes`
+   (`_permission: mosaic.administer`) + `MosaicLibraryChangesController` — queries every
+   `mosaic_layout` field, lists pages using unavailable types grouped by library with counts + links.
+
+### The real fallback markup (dev, unknown type `ghost_lib:ghost`)
+```html
+<section class="mosaic-fallback" data-mosaic-missing="ghost_lib:ghost" data-mosaic-instance="g"
+  role="group" aria-label="Unavailable component">
+  <span class="visually-hidden">Component ghost_lib:ghost is unavailable; showing its content.</span>
+  <dl class="mosaic-fallback__values">
+    <div class="mosaic-fallback__row"><dt class="mosaic-fallback__key">title</dt>
+      <dd class="mosaic-fallback__val">Kept title</dd></div>
+    <div class="mosaic-fallback__row"><dt class="mosaic-fallback__key">body</dt>
+      <dd class="mosaic-fallback__val">&lt;b&gt;kept&lt;/b&gt; body</dd></div>
+  </dl>
+</section>
+```
+R4 proven live: the `<b>kept</b>` body is escaped to `&lt;b&gt;kept&lt;/b&gt;`, never raw.
+
+### Cells (proof)
+- **Kernel** `FallbackRenderTest` (3 tests / 33 assertions): disable → fallback (values + child, no
+  empty div, no white page); **re-enable → the original returns byte-identical** (`assertSame`, R6);
+  unknown type (R12) → fallback; **R4** XSS escaped.
+- **Functional (real HTTP)** `MosaicLibraryChangesReportTest` (17 assertions): **anonymous 403 · author
+  403 · admin 200** with the affected page + library listed — Permission-Parity.
+- **Vitest** `MosaicPuckAdapterMissing.test.ts` (3): the card registers (colon-free key, no fields, not
+  in palette); a real manifest component is not overridden; an unknown-type node **round-trips
+  UNTOUCHED** (save-untouched).
+
+### Journey note (honest)
+The headed-on-DEV disable journey is **blocked**: `adopt_fixture` is a test-only module `drush en`
+refuses to enable, and toggling a REAL dev library (olivero) would violate the "dev library entities
+untouched" constraint. The mechanism is instead proven by the Functional **BrowserTestBase** (real HTTP
+browser: the report page + 403/200) + the Kernel disable/re-enable/byte-identical cells + the live dev
+fallback-markup capture above. Fallback-page shasum baseline: the fallback is markup-stable per the
+Kernel `assertSame` re-enable invariant; a dedicated committed baseline node is a P1-follow-up once a
+non-test adopted library is available on dev.
+
+### Gates
+Kernel+Unit **3020/0** (after fixing the 2 self-inflicted: MosaicRenderer's new governance ctor arg in
+2 Unit tests, and `@group`→`#[Group]` on the 2 new tests) · Vitest **607 pass / 1 fail** (B-101
+boolean→radio pre-existing) · phpcs changed-surface **clean** · REGION + STYLE **IDENTICAL** ·
+BUMP-LIBS **1.0.54**.
+
+**STOP — P2 (Pillar G hash/diff/report) next.**
