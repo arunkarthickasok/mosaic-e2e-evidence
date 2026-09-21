@@ -13854,3 +13854,28 @@ group). Acceptance journey cp-adopt-5r-wc81 (adopted teaser + owned Columns) = t
 (B-101 boolean→radio pre-existing) · phpcs ship-surface clean (no PHP touched) · phpstan ship-surface
 3 MosaicRenderer drift · REGION 14e6cb9c IDENTICAL · STYLE b7756795 IDENTICAL · BUMP-LIBS 1.0.53.
 SHIP-45-PLAN regen 68→70. WALK step 5 rewritten (tick bind → rows appear at once, no flicker).
+
+---
+
+## SHIP #45 SHIPPED — 8209f1c (2026-09-21) — CP-ADOPT-5 + riders — tally 82
+
+Commit **8209f1c** (parent 0bcc2ab). **70 files.** Walk **PASS** (Arun). Ledger `ledger-live/SHIP-45.md`.
+Closes WC#73–#81 (viewport-wipe, empty sections, usable bind panel, field-map, visible bound rows,
+node-save crash, slotted-hourglass, bound-adopted-blank, binding-flicker). Gates: Kernel+Unit 3017/0,
+Smoke 2112/0, Vitest 604/1-B101, REGION 14e6cb9c + STYLE b7756795 identical, libs 1.0.53.
+
+### WC#82 (NEW, Arun) — deferred to ACT 2
+The optimistic refresh **flashes per keystroke with a visible purple bar**. INTERACTION-CHOREOGRAPHY
+debt (not correctness — WC#81's frame no longer remounts). → ACT 2, under the SMOOTHNESS LAW. Tally 82.
+
+### SMOOTHNESS LAW (standing — in EVERY directive)
+An optimistic refresh NEVER flashes: crossfade in; a stale preview is quietly DIMMED (never blanked /
+bar-flashed); no layout jump; ONE refresh after typing PAUSES, never per keystroke. WC#82 = first debt.
+
+### BREAKPOINT / CONTENT RULING (Arun)
+No content per breakpoint; no permission for it. Layout / style / VISIBILITY per breakpoint stay. The
+visibility panel gains "Hidden content is still downloaded and indexed." Per-breakpoint REORDER = 1.1,
+labelled (not 1.0).
+
+### Ship #46 carries the .gitignore lines
+`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/` (the ship-#45-plan EXCLUDE cruft).
