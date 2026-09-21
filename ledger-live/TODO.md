@@ -13808,3 +13808,49 @@ adding the basePath arg, caught by the full Kernel+Unit gate + fixed).
 mosaic_views Kernel 62/0 · Vitest 599/1 (B-101 boolean→radio pre-existing) · phpcs ship-surface
 (35 files) clean · phpstan ship-surface = 3 documented MosaicRenderer drift lines · REGION 14e6cb9c
 IDENTICAL · STYLE b7756795 IDENTICAL · BUMP-LIBS 1.0.52. SHIP-45-PLAN regen 66→68. WALK step 5 rewritten.
+
+---
+
+## CP-ADOPT-5R PASS 4 — WC#81 (binding change flickers the frame + no live update) — CHECKPOINT-12 — DONE (tally 81)
+
+Arun: "clicked Prefix bind, added the view, in 2–3 s the whole Mosaic frame flickered, no change on the
+teaser on the canvas; unchecked → another flicker, no change; after save and reopen the view shows
+inside the teaser." MECHANISM FIRST, headed Chrome. Reproduced live on node 997 (unbound teaser).
+
+**Two causes (both proven live):**
+1. `js/src/builder/tierBOptimistic.ts` `stripPreview` (SSR authoring) INCLUDED `_mosaic_slot_binding`,
+   so a binding change re-fetched the teaser's whole SSR chrome (probe: bind fired ssrCount 2,
+   `["olivero:teaser","olivero:teaser"]`). NOT a puckKey remount (sameNode=true).
+2. `js/src/builder/useA11yAudit.ts` emitted a NEW `violationsByComponent` Map on EVERY audit, and
+   `BuilderApp.tsx` `puckOverrides` (useMemo) depended on it — so every edit gave puckOverrides a new
+   identity → Puck received a NEW `preview` override function → REMOUNTED the whole canvas subtree =
+   the flicker; the remounted adopted teaser lost its preview-only `_renderedHtml` → re-fired SSR
+   (the 2–3 s) + re-mounted the bound slot (probe: canvasRecreations 2, boundSlotRequests 5).
+
+**Fix (a binding change is an ordinary optimistic commit — no config regen, no remount):**
+- tierBOptimistic: `SSR_AUTHORING_EXCLUDE = [...TIER_B_PREVIEW_KEYS, '_mosaic_slot_binding']` so the
+  binding is not part of the SSR key/body (kept OUT of TIER_B_PREVIEW_KEYS → still saved). View-pick
+  now fires 0 SSR.
+- useA11yAudit: emit a new map ONLY when the violations actually changed (signature compare).
+- BuilderApp: read violations via `violationsRef`; drop `violationsByComponent` from the puckOverrides
+  deps → puckOverrides referentially STABLE → the canvas is never remounted on a violations change.
+- Result (proven, node 997 + owned Columns 998): remounted=false, **canvasRecreations 0**,
+  **boundSlotRequests 3** (one per binding-shape change), rows appear LIVE; unbind reverts live;
+  save→reopen persists. Owned Columns identical.
+
+**Rider (bind panel):** group heading "Data binding" + help "Fill an area from a View instead of
+placing components in it. Tick an area to choose the View." (in MosaicPuckAdapter); bound checkbox
+reads "{slot} — bound to {View}" (MosaicSlotBindField resolves the View label via /api/mosaic/views/
+list). FE dialog inherits (shared adapter config). The per-slot "Data binding" heading (WC#75) removed
+to avoid a duplicate.
+
+**Cells:** tierBOptimistic +2 (binding-only change → no SSR; contrast: a real prop change → SSR);
+useA11yAudit +2 (unchanged violations → stable reference; changed → new map); MosaicSlotBindField +1
+(bound label "{slot} — bound to {View}"); existing WC#75 heading cell retargeted (heading now on the
+group). Acceptance journey cp-adopt-5r-wc81 (adopted teaser + owned Columns) = the standing matrix row
+"binding change: frame stable + live update".
+
+**Gates FULL:** Kernel+Unit 3017/0 · Unit Smoke 2112/0 (no source-grep oracle broke) · Vitest 604/1
+(B-101 boolean→radio pre-existing) · phpcs ship-surface clean (no PHP touched) · phpstan ship-surface
+3 MosaicRenderer drift · REGION 14e6cb9c IDENTICAL · STYLE b7756795 IDENTICAL · BUMP-LIBS 1.0.53.
+SHIP-45-PLAN regen 68→70. WALK step 5 rewritten (tick bind → rows appear at once, no flicker).

@@ -1,0 +1,9 @@
+{
+  "unbindContentCount": 2,
+  "ancestries": [
+    "input < label < div < div._InputWrapper_bsxfo_1 < div._PuckFields-field_10bh7_32 < form._PuckFields_10bh7_1._PuckFields--wrapFields_10bh7_36",
+    "input < label < div < div._InputWrapper_bsxfo_1 < div._PuckFields-field_10bh7_32 < form._PuckFields_10bh7_1._PuckFields--wrapFields_10bh7_36"
+  ],
+  "fieldsPanels": 10,
+  "sidebarSections": 5
+}

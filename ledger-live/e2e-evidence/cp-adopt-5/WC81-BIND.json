@@ -1,0 +1,24 @@
+{
+  "nBinds": 2,
+  "boundFormShown": 2,
+  "pickedView": true,
+  "afterTick": {
+    "ssr": 1,
+    "canvas": 0
+  },
+  "afterView": {
+    "ssr": 1,
+    "canvas": 0
+  },
+  "remounted": false,
+  "canvasRecreations": 0,
+  "ssrDuringChange": [
+    "olivero:teaser"
+  ],
+  "ssrCount": 1,
+  "boundSlotRequests": 3,
+  "liveUpdate": {
+    "boundSlotOnCanvas": 1,
+    "cardsOnCanvas": 2
+  }
+}

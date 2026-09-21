@@ -18,10 +18,21 @@ modules/mosaic_views/src/Render/ (Views provider):
 ```
 
 ## Counts
-- Tracked-modified (M): 43
+- Tracked-modified (M): 45
 - Untracked code files (NEW, enumerated -uall): 25  (esc-probe.config.ts excluded)
-- Ship total: 68 files
+- Ship total: 70 files
 - Untracked .log cruft to EXCLUDE: 170
+
+PASS 4 delta (WC#81 + rider, +2 files vs 68):
+- M +2: `js/src/builder/useA11yAudit.ts` (emit violations only on change — no canvas
+  remount / flicker) + `js/src/builder/__tests__/useA11yAudit.test.ts` (no-churn cells).
+- Also re-touched (already in M): tierBOptimistic.ts (`_mosaic_slot_binding` excluded
+  from SSR authoring), BuilderApp.tsx (puckOverrides stable via violationsRef),
+  MosaicPuckAdapter.ts (bind-group heading + help), MosaicSlotBindField.tsx (bound
+  label "{slot} — bound to {View}"), tierBOptimistic.test.ts (WC#81 cells),
+  MosaicSlotBindField.test.tsx (rider cell), mosaic.libraries.yml (1.0.53),
+  js/dist/{builder,frontend-editor}.js (rebuilt).
+- e2e journeys (cp-adopt-5r-wc81, wc81-bind-repro) are gitignored (harness, not shipped).
 
 PASS 3 delta (WC#79/#80, +2 files vs 66):
 - M +1: `js/src/builder/fields/htmlToReactSlots.tsx` (bound adopted slot → MosaicBoundSlot)
@@ -51,6 +62,8 @@ js/src/builder/fields/MosaicDataSourceField.tsx
 js/src/builder/fields/SpacingControl.tsx
 js/src/builder/fields/htmlToReactSlots.tsx
 js/src/builder/tierBOptimistic.ts
+js/src/builder/useA11yAudit.ts
+js/src/builder/__tests__/useA11yAudit.test.ts
 js/src/shared/types/schema.ts
 modules/mosaic_views/mosaic_views.routing.yml
 modules/mosaic_views/mosaic_views.services.yml
@@ -115,5 +128,5 @@ js/esc-probe.config.ts   ← throwaway probe config
 ```
 ## Commit message (single-quoted)
 ```
-git commit -m 'ship #45: CP-ADOPT-5 adopt-any-SDC style ownership + typed slot binding + honest panels - Pillar E capability rules; SO cascade keeps adopted libraries owning their look; H9 Views-into-slots (model + validation + server render + canvas bound-render + result line + human bind panel with View-field selects, auto-mapped, clean text); mosaic_plain_content; WC#73 viewport-wipe + WC#74 empty sections + WC#75 usable bind panel + WC#77 visible bound rows + WC#78 node-form-save crash + WC#79 slotted Tier-B child stuck on hourglass + WC#80 bound adopted slot blank on canvas all fixed; children inside adopted slots preview via the same path as top level (Tier-B SSR write-back recurses into nested slot props; bound adopted slot renders bare View rows); byte-identical frontend 14e6cb9c/b7756795, libs 1.0.52'
+git commit -m 'ship #45: CP-ADOPT-5 adopt-any-SDC style ownership + typed slot binding + honest panels - Pillar E capability rules; SO cascade keeps adopted libraries owning their look; H9 Views-into-slots (model + validation + server render + canvas bound-render + result line + human bind panel with View-field selects, auto-mapped, clean text); mosaic_plain_content; WC#73 viewport-wipe + WC#74 empty sections + WC#75 usable bind panel + WC#77 visible bound rows + WC#78 node-form-save crash + WC#79 slotted Tier-B child stuck on hourglass + WC#80 bound adopted slot blank on canvas + WC#81 binding change flickered the frame / no live update all fixed; children inside adopted slots preview via the same path as top level; a slot-binding change is an ordinary optimistic commit (excluded from the SSR authoring; the a11y audit emits only on change; puckOverrides referentially stable) so the affected zone alone swaps to/from bound rows with no canvas remount; bind panel gains a Data-binding heading + help + a "{slot} — bound to {View}" label; byte-identical frontend 14e6cb9c/b7756795, libs 1.0.53'
 ```

@@ -1382,3 +1382,69 @@ BUMP-LIBS **1.0.52**. SHIP-45-PLAN regen **66→68**. WALK step 5 rewritten.
 - Vitest B-101 (boolean→radio) · one tsc line in the shadow-DOM code · three phpstan
   lines in MosaicRenderer · a module-wide baseline of ~70 phpcs / ~70 phpstan findings
   in OLDER committed files outside this ship's surface (unchanged by this JS-only pass).
+
+---
+
+## CHECKPOINT-12 — CP-ADOPT-5R PASS 4 — WC#81 (tally 81)
+
+**Arun:** "clicked Prefix bind, added the view, in 2–3 s the whole Mosaic frame flickered,
+no change on the teaser on the canvas; unchecked → another flicker, no change; after save
+and reopen the view shows inside the teaser."
+
+Reproduced live (headed Chrome, node 997 unbound teaser); the fix validated on the same path.
+
+### Two causes (file:line)
+1. **`js/src/builder/tierBOptimistic.ts` — `stripPreview` (the SSR authoring snapshot)** kept
+   `_mosaic_slot_binding`, so a binding change re-fetched the teaser's whole SSR chrome
+   (probe: bind fired **ssrCount 2** = `["olivero:teaser","olivero:teaser"]`). This is NOT a
+   `key` remount — the Puck root DOM node is the SAME across the change (`sameNode: true`).
+2. **`js/src/builder/useA11yAudit.ts` (setViolationsByComponent) + `BuilderApp.tsx` (puckOverrides
+   useMemo dep `violationsByComponent`)** — every 2 s audit emitted a NEW Map, so `puckOverrides`
+   got a new identity on every edit → Puck received a new `preview` override function → **REMOUNTED
+   the whole canvas subtree = the flicker**; the remounted adopted teaser lost its preview-only
+   `_renderedHtml` → re-fired its SSR (the 2–3 s) + re-mounted its bound slot
+   (probe: **canvasRecreations 2**, **boundSlotRequests 5**).
+
+### Remount proof (before → after)
+| metric | before fix | after fix |
+|---|---|---|
+| Puck root remounted | `false` (never a key-remount) | `false` |
+| canvasRecreations (adopted) | **2** | **0** |
+| canvasRecreations (owned Columns) | **≥1** | **0** |
+| ssr on view-pick | 1 | **0** |
+| bound-slot requests / bind | **5** (thrash) | **3** (one per binding-shape change) |
+| bound rows appear live | flaky / "no change" | **yes (cardsOnCanvas = 2)** |
+
+### Fix (a binding change is an ordinary optimistic commit — no config regen, no remount)
+- **tierBOptimistic:** `SSR_AUTHORING_EXCLUDE = [...TIER_B_PREVIEW_KEYS, '_mosaic_slot_binding']` so a
+  binding change is not part of the SSR key/body (kept OUT of `TIER_B_PREVIEW_KEYS` → still SAVED).
+- **useA11yAudit:** emit a new violations map only when the violations actually changed (signature).
+- **BuilderApp:** read violations via `violationsRef`; drop `violationsByComponent` from the
+  puckOverrides deps → puckOverrides referentially STABLE → the canvas is never remounted.
+- The affected zone alone swaps to/from `MosaicBoundSlot` and requests its own bound render (shimmer
+  on that zone only); the rest of the frame is untouched. Owned Columns behave identically.
+
+### Rider (bind panel)
+Group heading **"Data binding"** + help **"Fill an area from a View instead of placing components in
+it. Tick an area to choose the View."** (MosaicPuckAdapter); a bound area's checkbox reads
+**"{slot} — bound to {View}"** (MosaicSlotBindField resolves the View label from
+`/api/mosaic/views/list`). Same in the FE dialog (shared adapter config). The redundant per-slot
+"Data binding" heading (WC#75) was removed.
+
+### Film
+`film-wc81-01-bind.png` (rows appear, no flicker) · `-02-unbind.png` (static area returns) ·
+`-03-reopen.png` (persists after save) · `-04-panel.png` (group heading + help + bound label) ·
+`-05-owned.png` (owned Columns bound live). Measurements: `WC81-BIND.json`, `WC81-PROBE.json`.
+Standing matrix row: `cp-adopt-5r-wc81.spec.ts` — adopted + owned, both frame-stable + live.
+
+### Gates FULL
+Kernel+Unit **3017/0** · Unit Smoke **2112/0** (no source-grep oracle broke) · Vitest **604 / 1**
+(B-101 boolean→radio pre-existing) · phpcs ship-surface **clean** (no PHP touched) · phpstan
+ship-surface = **3 MosaicRenderer drift** · REGION **14e6cb9c…3954** IDENTICAL · STYLE
+**b7756795…ca982 4354 10** IDENTICAL · BUMP-LIBS **1.0.53**. SHIP-45-PLAN **68→70**. WALK step 5 rewritten.
+
+### Reds that stayed red (pre-existing, tracked)
+Vitest B-101 (boolean→radio) · one tsc line in the shadow-DOM code · three phpstan lines in
+MosaicRenderer · the module-wide baseline phpcs/phpstan in OLDER committed files outside this ship.
+Note (not a red): the adopted teaser's FIRST bind still triggers one benign teaser SSR (the tick), but
+it no longer remounts/flickers (canvasRecreations 0); a View-pick fires zero SSR.

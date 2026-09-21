@@ -1,0 +1,33 @@
+{
+  "boundBeforeChange": 1,
+  "panelCheckboxes": [
+    "Unbind Content",
+    "Bind Image to data",
+    "Bind Meta to data",
+    "Bind Prefix to data",
+    "Bind Title content to data",
+    "Unbind Content",
+    "Bind Image to data",
+    "Bind Meta to data",
+    "Bind Prefix to data",
+    "Bind Title content to data"
+  ],
+  "markResult": {
+    "marked": true,
+    "tag": "DIV",
+    "cls": "Puck _Puck_1dd16_19"
+  },
+  "unbindPresent": 1,
+  "remount": {
+    "oldStillConnected": true,
+    "nowMarkPresent": true,
+    "sameNode": true
+  },
+  "remountHappened": false,
+  "ssrDuringChange": [],
+  "boundSlotDuringChange": 0,
+  "liveRevert": {
+    "boundSlotAfter": 1,
+    "staticZoneAfter": 4
+  }
+}

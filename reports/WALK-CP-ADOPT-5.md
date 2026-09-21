@@ -54,14 +54,20 @@ wipes your work.
      Reload the edit form: still there. This also holds for any child the canvas has
      to render from the server (an **HTML** block, an **Image**) and for a plain
      **Heading** (which draws instantly).
-   - **A View into the teaser (WC#80).** Click the teaser, open **Data binding**, and
-     **Bind Content to data**: pick the View, the display by its name, **Card** as the
-     row component, map **Title**. The teaser fills with **one Card per row on the
-     canvas** — the cards look like **Olivero's** text (the library owns the look) —
-     and a line under them reads e.g. **"3 of 4 · CPVE1 recent articles"**. No
-     "Requires at least 1 item" warning on a bound slot.
+   - **A View into the teaser (WC#80 + WC#81).** Click the teaser. The panel now shows a
+     **Data binding** area with a one-line help ("Fill an area from a View instead of
+     placing components in it. Tick an area to choose the View."). **Tick "Bind Content
+     to data", choose the View** (display by its name, **Card** as the row component,
+     map **Title**) and **watch the rows appear inside the teaser at once — no flicker**:
+     the whole builder does NOT flash or reload, only that one area fills with **one Card
+     per row**, the cards look like **Olivero's** text (the library owns the look), and a
+     line under them reads e.g. **"3 of 4 · CPVE1 recent articles"**. The ticked area's
+     checkbox now reads **"Content — bound to {View name}"**. Untick it and the ordinary
+     drop area returns at once, again with no flicker. The same holds for an **owned
+     Columns** column.
    *Pass:* the child's content is visible inside the teaser on the canvas (never a
-   stuck spinner), survives a reload, and matches the page.
+   stuck spinner), the bind/unbind updates that area live with **no frame flicker**,
+   survives a reload, and matches the page.
 
 6. **Save and look at the page.**
    Save, then view the published page.
