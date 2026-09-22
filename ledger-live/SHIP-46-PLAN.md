@@ -12,6 +12,8 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
+> **PASS 5 (WC#88 insert FIXED+PROVEN headed):** count 62 -> **63** (+1 WC88InsertIntoSlot.test.ts). dist 1.0.60->1.0.61. The picker is whole (click+open+choose+insert). WC#86+87+88 all fixed; ship #46 awaits Arun re-walk.
+>
 > **PASS 4 (WC#86 real-click FIXED+PROVEN headed; WC#88 insert flagged):** count 62 (no new file; WC#86 fix modified MosaicZonePicker.tsx). dist 1.0.59->1.0.60. Ship #46 stays BLOCKED on WC#88 (picker insert does not land).
 >
 > **PASS 3 (WC#87 fixed; WC#86 UNPROVEN):** count 60 -> **62** (+2 WC#87 files: mosaicPickerCatalog.ts + MosaicPickerCatalog.test.tsx). dist 1.0.58->1.0.59. WC#86 no fix shipped (UNPROVEN). Ship #46 stays BLOCKED on WC#86.

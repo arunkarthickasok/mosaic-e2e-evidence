@@ -14070,3 +14070,20 @@ issue (WC#88 candidate), NOT a click regression. GATES: tsc clean; Vitest 637/1-
 oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.59->1.0.60 (builder
 5ce2823a->0a0ba0ea, frontend-editor facb3ff2->eafb9b82, renderer byte-identical). Ship 62. Ship #46 still
 blocked pending WC#88 (insert) + Arun re-walk of the now-working click.
+
+=== CP-ADOPT-6R PASS 5 — WC#88 picker insert LANDS (headed proof). Tally 88. WC#86 debt ledgered. ===
+MECHANISM headed node/993: zone ids MATCH (not the charter's colon hypothesis) — insertIntoSlot computed
+mosaic_columns-<uuid>:column_2 == Puck data-puck-dropzone mosaic_columns-<uuid>:column_2. Real failure:
+Puck's `insert` action doesn't land in a compound/inline slot (data unchanged, no error) + the picker's
+option-click detection (WC#86 document-capture) used elementsFromPoint which MISSED the option (pick never
+fired, picker stayed open). FIX (root, shared mechanism): (1) insertIntoSlot -> setData deep-clone append
+(same as bind + optimistic SSR write-back) with the component's defaultProps (toConfig setComponentDefaults)
++ colon-free id ${type}-${uuid}; findItemById recurses content+zones+nested. (2) option detection by option
+RECT (not elementsFromPoint). PROOF (real page.mouse.click): click "+ Add" -> picker opens -> choose
+mosaic_button -> layout JSON nodes 4->5 (dataGrew true), picker closed. Vitest WC88InsertIntoSlot 4 (owned +
+adopted + no-dup + nested). WC#86 DEBT: the click fix = document-capture-listener workaround for Puck's
+DropZone eating the click -> debt item for 1.1 Puck-extension review.
+GATES: tsc clean; Vitest 642/1-B101; Kernel 3050/0 unchanged; oracles REGION 14e6cb9c..3954 + STYLE
+b7756795..ca982 4354 10 IDENTICAL; dist 1.0.60->1.0.61 (builder 0a0ba0ea->2deffd63, frontend-editor
+eafb9b82->7f56106d, renderer byte-identical). Ship 63. THE PICKER IS WHOLE (click+open+choose+insert).
+Ship #46: WC#86+WC#87+WC#88 all fixed+proven; awaits Arun's re-walk of the full add-flow.

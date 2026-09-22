@@ -985,3 +985,55 @@ Kernel+Unit **3050/0** (unchanged — no PHP) · Vitest **637 / 1** (B-101; pick
 click PROVEN; insert flagged as WC#88).
 
 **STOP — WC#86 real-click FIXED + PROVEN headed. New WC#88 (picker insert does not land) flagged. Ship #46 stays BLOCKED on WC#88 + Arun's re-walk.**
+
+---
+
+## CHECKPOINT-10 (RIDER PASS 5) — WC#88 picker insert LANDS (headed) — the picker is whole
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### The two zone-id strings side by side (they MATCH — not the charter's mismatch hypothesis)
+```
+insertIntoSlot computed:   mosaic_columns-c9a5f65a-010d-4d6d-92c1-1103723b2ba5:column_2
+Puck data-puck-dropzone:   mosaic_columns-c9a5f65a-010d-4d6d-92c1-1103723b2ba5:column_2
+```
+The colon-free node id already keeps the zone id correct (WC#69). The real failure: **Puck's `insert`
+action does not land in a compound/inline slot** (data unchanged, no error) — PLUS the picker's
+option-click detection (in the WC#86 document-capture) used `elementsFromPoint`, which missed the option
+(so `pick` never fired and the picker stayed open).
+
+### The fix (root, shared mechanism)
+1. `insertIntoSlot` → **setData deep-clone append** (the same mechanism bind + the optimistic SSR
+   write-back use): find the parent by id (recurses content + zones + nested slots), append a fresh Puck
+   item with the component's **defaultProps** (`toConfig` publishes them via `setComponentDefaults`) and a
+   colon-free `${componentType}-${uuid}` id.
+2. Option detection by which option's **rect** contains the click (robust vs the overlay), not
+   `elementsFromPoint`.
+
+### PROOF (real trusted `page.mouse.click`, node/993)
+```
+click "+ Add" → picker opens (listbox) → choose mosaic_button
+layout JSON nodes:  4 → 5   (the child LANDED under the slot)
+picker closed:      true
+```
+Screenshots in `pass5-wc88-insert/`. The add-flow is whole: **click → open → choose → insert**. Vitest
+`WC88InsertIntoSlot` (4: owned, adopted, no-duplicate, nested).
+
+### WC#86 debt (ledgered)
+The WC#86 click fix is a document-capture-listener WORKAROUND for Puck's DropZone eating the click — a
+deliberate **debt item for the 1.1 Puck-extension review** (the clean solution is a Puck plugin/overlay
+integration, not a document-level capture listener).
+
+### Gates
+Kernel+Unit **3050/0** (unchanged — no PHP) · Vitest **642 / 1** (B-101; +WC#88 4 cells) · tsc **clean** ·
+oracles **IDENTICAL** · dist **1.0.60 → 1.0.61** (builder `0a0ba0ea→2deffd63`, frontend-editor
+`eafb9b82→7f56106d`, renderer byte-identical; served==built). Ship count **63**. WALK step 7 rewritten
+(insert PROVEN).
+
+**STOP — WC#86 + WC#87 + WC#88 all fixed + proven headed; the per-zone picker is whole (click → open → choose → insert). Ship #46 awaits Arun's re-walk of the full add-flow.**

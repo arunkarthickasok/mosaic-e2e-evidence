@@ -91,9 +91,10 @@ slot with a keyboard, not just by dragging.
    Puck's DropZone stopped the click in the capture phase before React's onClick (invoking
    onClick directly always worked); the fix is a document-capture listener that drives the
    picker + a z-index lift above the overlay. Keyboard path unchanged.
-   *Known follow-up — WC#88 (insert):* choosing an option does **not yet insert** the
-   component (`insertIntoSlot` slot-zone id); the picker opens + is selectable, but the
-   inserted component does not land. Do not sign off the full add-flow until WC#88. **STOP.**
+   *WC#88 (fixed):* choosing an option now **inserts** the component into the slot
+   (proven headed on node/993: layout JSON nodes 4 → 5, the child lands under the slot,
+   picker closes). The add-flow is whole: click → open → choose → the component appears.
+   Type in its rail; on a foreign teaser slot the text takes Olivero's look. **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,
