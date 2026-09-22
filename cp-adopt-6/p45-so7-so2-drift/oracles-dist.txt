@@ -1,0 +1,11 @@
+CP-ADOPT-6 P4+P5 — oracles + dist (verbatim)
+
+REGION before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE  before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE  after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+
+dist 1.0.55 -> 1.0.56:
+  builder.js         6d075ee3 -> 1859113d  (drift + slotOnly)
+  frontend-editor.js 9519a01a -> a37cbf67
+  renderer.js        9c7f9320 -> 9c7f9320  (byte-identical)

@@ -649,3 +649,80 @@ gap (B-102)**, not introduced here · libs **1.0.54 → 1.0.55**; `builder.js`
 `9c7f9320…` **byte-identical** (no builder-attach import).
 
 **STOP — P4 (SO-7 global-styles flag) next.**
+
+---
+
+## CHECKPOINT-4 — CP-ADOPT-6 P4 + P5 (SO-7 global-styles · SO-2 slot-only · client drift notices) — BUILT
+
+### Oracles (run BEFORE and AFTER — verbatim, no "by construction")
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+IDENTICAL — P4/P5 are additive (metadata reason, panel-only notices, validator + drawer);
+no node-render path changed.
+
+### P4 — SO-7 global-styles flag
+`MosaicGlobalStylesScanner` (`src/Sdc/`) — a pure heuristic + file reader. After stripping comments
+AND `@layer` block bodies, **a selector carrying no class (`.`), id (`#`) or attribute (`[`) hook can
+only match by element type — an unlayered such rule restyles the page globally**; `!important`
+occurrences counted. `MosaicComponentLibrariesForm` surfaces a per-library reason on ADOPTED libraries
+only (owned Mosaic libraries scope every rule → never scanned), cached under
+`config:mosaic.component_library.<provider>`. **No grade change.** R7 (false-positive) documented in the
+scanner docblock: a low-specificity `:where()`/`@scope` reset left unlayered still flags — the reason
+says the library "may" restyle (a review prompt), and moving resets into `@layer` clears it.
+
+Fixture pair (real CSS files scanned via Kernel):
+- **`adopt_widget/adopt_widget.css`** → FLAGGED — `*`, `body`, `h1..h3`, `a` (unlayered) + 1 `!important`.
+- **`adopt_widget_v2/adopt_widget_v2.css`** → NOT flagged — every rule `.adopt-widget-v2`-scoped; its one
+  `h2`/`p` reset lives inside `@layer adopt.reset`.
+
+Tests: Unit `MosaicGlobalStylesScannerTest` (5) · Kernel `GlobalStylesFlagTest` (2 — real fixtures +
+the form reason + the library cache tag).
+
+### P5 — client drift notices
+`MosaicSchemaDrift::driftByNode(raw)` → per-node-id map (reuses P2's `diff()`). Delivered two ways:
+admin `MosaicLayoutWidget` → `drupalSettings.mosaic[$fieldId].drift`; FE dialog POSTs its layout to the
+new `POST /api/mosaic/canvas/drift` (`CanvasPreviewController::drift`). Threaded as the 8th `toConfig`
+param; `resolveFieldsWithDrift` (the only field seam Puck feeds the item id, `data.props.id`) PREPENDS a
+`_mosaic_drift` field for the SELECTED drifted instance only. The three panel notice texts (authored
+server-side, styled client-side):
+- **removed** → `⚠ Removed: heading was removed by the library; the saved value is kept` (the removed
+  prop's editor is already absent → value round-trips via the instance props = "hidden field, value kept").
+- **type-changed** → `⚑ Type changed: variant changed type in the library; the saved value is flagged`.
+- **required-added** → `! Attention: title is now required by the library`.
+
+Tests: Vitest `MosaicDriftNotices` (3 — the three classes render with `data-mosaic-drift-class`, `role=status`;
+resolveFields prepends only for the drifted instance; the notice carries no editor input) · Kernel
+`SchemaDriftTest::testDriftByNodeKeysOnlyDriftedNodes`. FE parity: same `toConfig` → same panel.
+
+### P5 — SO-2 slot-only (safety core shipped; picker UX deferred)
+- **Dormant-feature FIX**: `slot_only` was never in `ComponentDefinition::SIDECAR_KEYS`, so the sidecar
+  key was dropped and `config.slotOnly` was ALWAYS empty. Added it → the whole slot-only path is live.
+- **Server root-reject** (authoritative): `MosaicPropValidator` rejects a slot-only component (
+  `mosaic_plain_content`) placed at the top level (root node + its direct slot children); a placement
+  deeper inside a library slot is allowed. Kernel `SlotOnlyPlacementTest` (3 — definition is slot_only,
+  top-level rejected, nested allowed).
+- **Client root-disallow**: slot-only components are OMITTED from every drawer category (Puck's one
+  drawer has no per-zone disallow) so they can never be dragged to the root or any slot; they stay
+  registered (picker + toPuck). Vitest `MosaicSlotOnlyDrawer` (2) + retargeted `MosaicPuckAdapterSlotOnly` (4).
+- **DEFERRED (honest, → P6)**: the per-zone add-picker UX (a keyboard-operable "+" listing "Plain content"
+  first then the slot's allowed components, dispatching a Puck slot-insert) + its headed film. Puck's
+  inline-slot model makes a reliable programmatic slot-insert a substantial greenfield build; the
+  root-disallow SAFETY is fully shipped + tested server-side and client-side, so the picker is a UX
+  enhancement that deserves its own focused pass rather than a rushed one here. This is a scope note, not
+  a red.
+
+### Gates
+Kernel+Unit **3044/0** (8446 assertions; +11 P4/P5 cells — SO-7 Unit 5 / Kernel 2, +driftByNode cell,
++SlotOnly 3; the widget-constructor Unit helper needed the new `MosaicSchemaDrift` arg — an oracle-change
+for the added dependency, fixed) · Vitest
+**619 pass / 1 fail** (B-101 boolean→radio pre-existing; retargeted `MosaicPuckAdapterSlotOnly` +
+`MosaicPuckAdapter.test:148` unchanged) · tsc **clean** · phpcs P4/P5 surface **clean** (errors-only) ·
+phpstan P4/P5 changed surface **No errors** (7 src files; the module's 77 pre-existing = B-102 drift,
+untouched) · libs **1.0.55 → 1.0.56**; `builder.js` `6d075ee3…` → `1859113d…`, `frontend-editor.js`
+`9519a01a…` → `a37cbf67…`, `renderer.js` `9c7f9320…` **byte-identical**.
+
+**STOP — P6 (journeys + SO-2 per-zone picker + walk + SHIP-46-PLAN) next.**

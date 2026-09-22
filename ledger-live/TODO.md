@@ -13958,3 +13958,20 @@ surface clean; phpstan P3 new methods 0 errors (MosaicRenderer 3 PRE-EXISTING @2
 full-module 77 pre-existing = phpstan-drupal rules drift → B-102 ledgered); libs 1.0.54→1.0.55
 (builder 471be1ca→6d075ee3, frontend-editor 57b0c8dd→9519a01a, renderer 9c7f9320 byte-identical).
 NEXT: P4 (SO-7 global-styles flag).
+
+=== CP-ADOPT-6 CHECKPOINT-4 (P4 SO-7 + P5 drift notices + SO-2 slot-only) — BUILT ===
+ORACLES BEFORE==AFTER verbatim: REGION 14e6cb9c…3954 (both), STYLE b7756795…ca982 4354 10 (both).
+P4 SO-7: MosaicGlobalStylesScanner (unlayered no-.#[ selector = global restyle; @layer exempt;
+!important counted; R7 note) → libraries-form reason on adopted libs, cached config:mosaic.component_library.<p>.
+Fixtures adopt_widget.css FLAGGED / adopt_widget_v2.css NOT (scoped+@layer). Unit 5 + Kernel 2.
+P5 DRIFT: MosaicSchemaDrift::driftByNode → admin drupalSettings.drift + FE POST /api/mosaic/canvas/drift;
+toConfig driftMap + resolveFieldsWithDrift prepends _mosaic_drift per selected instance. Notices:
+removed⚠(value kept)/type-changed⚑(flagged)/required-added!(Attention). Vitest 3 + Kernel driftByNode cell.
+P5 SO-2: FIXED dormant feature — slot_only added to ComponentDefinition::SIDECAR_KEYS (was dropped →
+config.slotOnly always empty). Server reject MosaicPropValidator top-level slot-only (Kernel 3). Client
+drawer exclusion (slot_only omitted from categories, still registered) Vitest 2 + retargeted SlotOnly 4.
+DEFERRED→P6: per-zone add-picker UX + headed film (Puck slot-insert = greenfield; safety core shipped).
+GATES: Kernel+Unit 3044/0 (8446 assertions; +11 cells; 10 errors were MosaicLayoutWidgetTest ctor helper needing the new MosaicSchemaDrift arg, fixed); Vitest 619/1-B101; tsc clean; phpcs surface clean; phpstan 7
+changed src files NO ERRORS (module 77 pre-existing = B-102); libs 1.0.55→1.0.56 (builder 6d075ee3→1859113d,
+frontend-editor 9519a01a→a37cbf67, renderer 9c7f9320 byte-identical).
+NEXT: P6 (journeys + SO-2 picker + walk + SHIP-46-PLAN).
