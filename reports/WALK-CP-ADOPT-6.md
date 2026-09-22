@@ -84,13 +84,16 @@ slot with a keyboard, not just by dragging.
    foreign), and on a free-content slot it lists **every** authorable component (owned
    first, grouped by library) after Plain content.
    *Keyboard PASS:* the full keyboard path opens the picker and inserts.
-   *Mouse — WC#86 STILL OPEN (UNPROVEN):* a **real mouse click** still does not open the
-   picker. The mechanism is now **proven** (headed, node/993): Puck's
-   **`_DropZone--isRootZone`** overlay sits above the "+" (the button is not the top
-   element at its own centre), AND the "+" in the SSR-injected adopted preview is **not
-   wired to React's live event system** (a native click never flips `aria-expanded`). A
-   z-index lift alone does not open it, so **no partial fix shipped**. Treat the
-   real-mouse-click as **UNPROVEN**; do not sign off this step. **STOP.**
+   *Mouse — WC#86 FIXED (PROVEN headed):* a **real mouse click** now **opens** the picker.
+   Proven on node/993 (headed): `elementsFromPoint` at the "+" returns the button wrapper
+   (the `_DropZone--isRootZone` overlay now sits below), and the click flips
+   `aria-expanded` **false → true**, opening the list. The cause was pure event delivery —
+   Puck's DropZone stopped the click in the capture phase before React's onClick (invoking
+   onClick directly always worked); the fix is a document-capture listener that drives the
+   picker + a z-index lift above the overlay. Keyboard path unchanged.
+   *Known follow-up — WC#88 (insert):* choosing an option does **not yet insert** the
+   component (`insertIntoSlot` slot-zone id); the picker opens + is selectable, but the
+   inserted component does not land. Do not sign off the full add-flow until WC#88. **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,

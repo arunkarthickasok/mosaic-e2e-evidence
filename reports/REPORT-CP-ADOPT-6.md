@@ -941,3 +941,47 @@ Kernel+Unit **3050/0** (unchanged — no PHP this pass) · Vitest **637 / 1** (B
 7 rewritten (picker appears on owned zones; real mouse click still UNPROVEN with the proven mechanism).
 
 **STOP — WC#87 fixed; WC#86 mechanism PROVEN (DropZone overlay + button not React-wired) but real click still cannot open the picker → UNPROVEN, no fix shipped. Ship #46 stays BLOCKED on WC#86.**
+
+---
+
+## CHECKPOINT-9 (RIDER PASS 4) — WC#86 real-click FIXED + PROVEN (headed); insert flagged (WC#88)
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### The truth (headed, node/993/edit)
+The pass-3 "not React-wired" hypothesis was WRONG: the "+" **has a live React fiber**, on an OWNED Columns
+zone. A native `el.click()` didn't flip `aria-expanded` and the button did **not** remount — but invoking
+`props.onClick(...)` **directly opened the picker** (`aria → true`, `listbox: 1`). **So the bug is purely
+event DELIVERY:** Puck's DropZone stops the DOM click in the **capture phase** before React's delegated
+onClick, and the `_DropZone--isRootZone` overlay is the hit-target at the "+".
+
+### The fix (`MosaicZonePicker.tsx`)
+A **document-level CAPTURE listener** (fires before the DropZone's) detects the "+"/option by **coordinates**
+(rect hit-test — immune to the overlay being `e.target`) and drives the picker directly + `stopPropagation`
+(no drag); degenerate rects fall through to the React onClick path (keyboard + jsdom unchanged). A
+`z-index: 30` lifts the "+" above the overlay.
+
+### PROOF (real trusted `page.mouse.click`)
+- `elementsFromPoint` top-3: **`div.mosaic-zone-picker`** (top) · `div` · `_DropZone--isRootZone` (below).
+- `aria-expanded`: **`false` → `true`**.
+- `listboxOpen`: **1** (14 catalog options; owned zone → owned first). Screenshots in `pass4-wc86-fix/`.
+
+### Honest flag — WC#88 (insert does not land)
+After the real click opened the list, choosing `mosaic_button` did NOT add a component
+(`zoneChildrenBefore=0 → After=0`). The picker OPENS + is selectable by real mouse (WC#86 fixed), but
+`insertIntoSlot` does not land on this owned Columns zone — a **new separate issue (WC#88)**, not a click
+regression. The full add-flow ("choose → typed text") awaits WC#88.
+
+### Gates
+Kernel+Unit **3050/0** (unchanged — no PHP) · Vitest **637 / 1** (B-101; picker suite 16/16) · tsc
+**clean** · oracles **IDENTICAL** · dist **1.0.59 → 1.0.60** (builder `5ce2823a→0a0ba0ea`, frontend-editor
+`facb3ff2→eafb9b82`, renderer byte-identical; served==built). Ship count **62**. WALK step 7 rewritten (mouse
+click PROVEN; insert flagged as WC#88).
+
+**STOP — WC#86 real-click FIXED + PROVEN headed. New WC#88 (picker insert does not land) flagged. Ship #46 stays BLOCKED on WC#88 + Arun's re-walk.**

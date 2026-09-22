@@ -14053,3 +14053,20 @@ still cannot open -> per charter UNPROVEN, NO partial fix shipped (z-index rever
 Evidence: wc86-button-under-dropzone-overlay.png, wc86-still-closed-after-click.png.
 GATES: tsc clean; Vitest 637/1-B101; Kernel unchanged 3050/0 (no PHP); oracles REGION 14e6cb9c..3954 +
 STYLE b7756795..ca982 4354 10 IDENTICAL. Ship #46 stays BLOCKED on WC#86 (UNPROVEN). Ship count 62.
+
+=== CP-ADOPT-6R PASS 4 — WC#86 real-click FIXED + PROVEN (headed); insert-landing flagged (WC#88). ===
+FULL DIAGNOSIS headed on node/993/edit: the "+" button HAS a live React fiber (not injected HTML), on an
+OWNED Columns zone (WC#87 made it show). Native el.click() didn't flip aria + no remount; but invoking
+props.onClick() DIRECTLY opened the picker (aria->true, listbox 1). => bug is PURELY event DELIVERY: Puck's
+DropZone stops the DOM click in the CAPTURE phase before React's delegated onClick, AND _DropZone--isRootZone
+overlay is the hit-target at the "+". FIX (MosaicZonePicker.tsx): document-level CAPTURE listener (fires
+first) that detects the +/option by COORDINATES (rect hit-test, immune to overlay-as-target) and drives the
+picker directly + stopPropagation (no drag); degenerate rects fall through to React onClick (keyboard+jsdom
+unchanged); z-index:30 lifts the + above the overlay. PROOF (real page.mouse.click): elementsFromPoint top =
+div.mosaic-zone-picker (button wrapper on top, _DropZone below); aria-expanded false->true; listbox opens
+(14 catalog options). Screenshots 1-picker-closed.png, 2-real-click-opened-list.png. Keyboard 16/16.
+FLAG: picker INSERT does not land (choose mosaic_button -> zone children 0->0) = separate insertIntoSlot
+issue (WC#88 candidate), NOT a click regression. GATES: tsc clean; Vitest 637/1-B101; Kernel 3050/0 unchanged;
+oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.59->1.0.60 (builder
+5ce2823a->0a0ba0ea, frontend-editor facb3ff2->eafb9b82, renderer byte-identical). Ship 62. Ship #46 still
+blocked pending WC#88 (insert) + Arun re-walk of the now-working click.
