@@ -850,3 +850,53 @@ WALK steps rewritten (fallback bound rows + card "bound to" line + picker mouse/
 regenerated (**60** files, +1 rider test).
 
 **STOP — WC#83 + WC#84 fixed; ship #46 unblocked, awaits Arun's re-walk + commit.**
+
+---
+
+## CHECKPOINT-7 (RIDER PASS 2) — WC#85 fixed · WC#86 UNPROVEN · WC#87 deferred
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### WC#85 — fallback slot order = declared order (FIXED)
+`renderFallback` iterated `array_merge(keys(slots), keys(slotsBinding))` — an arbitrary static-then-bound
+union. **Fix:** it now pulls the DECLARED order from `componentManager->getDefinition($type, FALSE)['slots']`
+(available for a governance-OFF library — the common fallback case), renders declared-order slots first
+(static children or bound rows per slot), and puts unknown-slot leftovers last. Kernel
+`FallbackRenderTest::testFallbackRendersSlotsInDeclaredOrder`: Olivero teaser STORED image-first, DECLARED
+content-first → the fallback renders **content before image**. Live markup excerpt:
+`mosaic-fallback__children"><h4 …data-mosaic-instance="c"…>CONTENT-CHILD` (content slot first).
+
+### WC#86 — "+ Add" real mouse click still dead — UNPROVEN (charter escape hatch invoked)
+I attempted the REAL-conditions proof (Playwright, trusted mouse events, `elementsFromPoint`, CDP) against
+the live builder via a `drush uli` login. The builder **loads** at node/780/edit (**3 owned slot zones**),
+but there are **0 picker buttons and 0 adopted boxes**: node/780 has **no adopted component**, and its
+owned zones have **no allowed list**, so per the current picker gate **no picker renders** — there was
+**nothing to real-click**, and placing an adopted teaser via drag-automation is not reliably achievable
+this session (evidence: `pass2-wc85-86-87/node780-builder-no-picker.png`). Per the charter I mark WC#86
+**UNPROVEN** and applied **no blind fix** (WC#84's stopPropagation already failed a real click; a second
+guess would repeat the mistake). **Strongest hypothesis (confirm headed next):** Puck's **`_DropZone-hitbox`**
+overlay (`@puckeditor/core/dist/index.css`) sits ABOVE the "+", so `elementsFromPoint` returns the hitbox
+and the click never reaches the button — exactly why `stopPropagation` on the button did nothing.
+Secondary: the memoised adopted-preview tree (`MosaicAdoptedPreview.tsx:60-64`) re-mounting on an SSR
+between pointerdown and click.
+
+### WC#87 — picker list — DEFERRED, and it is the PREREQUISITE for the WC#86 headed proof
+The probe surfaced the link: node/780's owned free-content zones show **no picker** because they have **no
+allowed list** — which is exactly what WC#87 fixes (no allowed list → Plain content + every authorable
+component grouped by library). WC#87 makes the picker appear on those zones, so a headed real-click on
+WC#86 becomes runnable. Deferred here (context-bounded); recommended as the immediate next step.
+
+### Gates
+Kernel+Unit **3050/0** (8507 assertions; +1 declared-order cell; 1 pre-existing risky-test warning) ·
+Vitest **632 / 1** (B-101; **unchanged** — no
+JS this pass) · phpcs **clean** · phpstan `renderFallback` **0 new** · oracles **IDENTICAL** · **dist
+UNCHANGED** (WC#85 is PHP-only — libs stays 1.0.58, no rebuild). SHIP-46-PLAN count unchanged (**60**;
+WC#85 modified existing tracked files). WALK steps 2 + 7 rewritten (step 7 marks the mouse click UNPROVEN).
+
+**STOP — WC#85 fixed; WC#86 UNPROVEN (no blind fix); WC#87 is the prerequisite for the headed WC#86 proof. Ship #46 stays BLOCKED.**

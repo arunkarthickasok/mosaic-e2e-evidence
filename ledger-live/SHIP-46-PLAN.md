@@ -12,6 +12,11 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
+> **PASS 2 (WC#85/86/87):** count unchanged at **60**. WC#85 (fallback declared slot order) modified
+> already-tracked files (`src/Service/MosaicRenderer.php`, `tests/.../FallbackRenderTest.php`); no new
+> file, no JS/dist change (PHP-only). WC#86 UNPROVEN (no code change). WC#87 deferred. **Ship #46 stays
+> BLOCKED on WC#86 (unproven) + WC#87 (deferred).**
+
 ## Counts (updated after CP-ADOPT-6R rider — WC#83 + WC#84)
 - Tracked-modified (M): **33**
 - Untracked NEW (`-uall`): **27** (rider added `js/src/builder/__tests__/WC83BindingRoundtrip.test.ts`)

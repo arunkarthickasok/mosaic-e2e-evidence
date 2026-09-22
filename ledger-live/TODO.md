@@ -14011,3 +14011,26 @@ renderFallback 0 new (renderNode/check_markup pre-existing). Oracles REGION 14e6
 b7756795..ca982 4354 10 IDENTICAL before==after. libs 1.0.57->1.0.58 (builder 2746840f->0b6cb0e8,
 frontend-editor 55f30bcf->a772c8f8, renderer 9c7f9320 byte-identical). Ship #46 -> 60 files.
 STANDING MATRIX: "missing card keeps bindings" + "picker opens by mouse and keyboard on adopted+owned".
+
+=== CP-ADOPT-6R PASS 2 — WC#85 (fixed) + WC#86 (UNPROVEN) + WC#87 (deferred). Tally 87. Ship #46 BLOCKED. ===
+WC#85 (Arun: fallback slot order wrong): renderFallback iterated array_merge(keys(slots),keys(slotsBinding))
+= arbitrary static-then-bound union. FIX: pull DECLARED order from componentManager->getDefinition(type,
+FALSE)['slots'] (present for a governance-OFF library), render declared-order slots first, unknown
+leftovers last. Kernel FallbackRenderTest declared-order cell (teaser stored image-first, declared
+content-first -> content renders first). Live markup: mosaic-fallback__children"><h4 ...instance="c"...
+CONTENT-CHILD (content before image). PHP-only, no dist change, oracles identical.
+WC#86 (Arun: "'+ Add' mouse click still dead; keyboard works"): UNPROVEN. Attempted the REAL headed proof
+(Playwright trusted mouse + elementsFromPoint + CDP via drush uli). Builder LOADS at node/780/edit (3
+owned slot zones) but 0 picker buttons + 0 adopted boxes: node/780 has no adopted component + its owned
+zones have no allowed list -> NO picker renders -> nothing to real-click; placing a teaser via drag
+automation not achievable this session. NO blind fix (charter forbids; WC#84 stopPropagation already
+failed a real click). HYPOTHESIS to confirm headed: Puck's _DropZone-hitbox overlay
+(node_modules/@puckeditor/core/dist/index.css) sits ABOVE the "+" so elementsFromPoint returns the
+hitbox and the click never reaches the button (why stopPropagation did nothing); secondary:
+MosaicAdoptedPreview.tsx:60-64 memoised tree remount on SSR. Evidence: node780-builder-no-picker.png.
+WC#87 (Arun: picker list): DEFERRED — and it is the PREREQUISITE to prove WC#86 (no-allowed-list zones
+show no picker today; WC#87 makes the picker appear on owned free-content zones so a headed click is
+testable). Recommended immediate next step.
+GATES: Kernel+Unit 3050/0 (8507 assertions; +1 declared-order cell; 1 pre-existing warning); Vitest 632/1-B101 unchanged (no JS); phpcs clean; phpstan
+renderFallback 0 new; oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist
+UNCHANGED (PHP-only, libs stays 1.0.58). Ship #46 stays BLOCKED on WC#86 (UNPROVEN) + WC#87 (deferred).

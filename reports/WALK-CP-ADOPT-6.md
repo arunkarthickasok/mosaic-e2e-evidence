@@ -32,9 +32,12 @@ slot with a keyboard, not just by dragging.
    author's content (the Plain content text is still there), with a small "content kept"
    note — the page never blanks. **WC#83:** if the teaser had a slot **bound to a View**,
    the fallback shows the **View's rows** (as bare cards), not an empty gap — a bound slot
-   survives the library going away. Capture the **fallback-page shasum** now (the
-   *fallback baseline*; mechanical proof `FallbackRenderTest`, incl. the bound-slot cell).
-   *Film:* the fallback block (with the bound rows). **STOP.**
+   survives the library going away. **WC#85:** the fallback renders the teaser's slots in
+   the component's **declared order** (Olivero teaser: content, then image), regardless of
+   the order they were stored in. Capture the **fallback-page shasum** now (the
+   *fallback baseline*; mechanical proof `FallbackRenderTest`, incl. the bound-slot + the
+   declared-order cells).
+   *Film:* the fallback block (bound rows, declared slot order). **STOP.**
 
 3. **The builder keeps your content — including bindings (WC#83).**
    Edit the node. On the canvas, where the teaser was, a **"Library missing: olivero"**
@@ -77,13 +80,14 @@ slot with a keyboard, not just by dragging.
    click it; type a sentence.
    **Keyboard:** on another zone, Tab to the "+", Enter opens, ↑/↓ move, Enter chooses,
    Esc closes.
-   *Pass:* a **real mouse click** opens the picker (WC#84 — the click is no longer eaten
-   by the drag sensor); the text appears in **Olivero's** look with **no flash** on the
-   first render; dragging still works (the picker never replaced the drop zone). **Owned
-   Columns** zones behave the same. (Mechanical proof: `MosaicZonePicker` +
-   `MosaicSlotZonePicker` Vitest, incl. the pointerdown-stopPropagation cell.)
-   *Film:* the mouse click opening the picker → Plain content → typed text; AND the
-   keyboard path (Tab, Enter, arrows, Esc). **STOP.**
+   *Keyboard PASS:* the full keyboard path opens the picker and inserts.
+   *Mouse — WC#86 OPEN (UNPROVEN):* a **real mouse click** opening the picker is **not yet
+   proven**. The WC#84 stopPropagation fix did not survive a real click; the working
+   hypothesis is Puck's `_DropZone-hitbox` overlay sitting above the "+" (the click never
+   reaches the button). This needs a headed `elementsFromPoint` proof — which needs a
+   picker present, which needs **WC#87** (the picker must appear on owned free-content
+   zones too). Until then, treat the real-mouse-click as **UNPROVEN**; do not sign off
+   this step. **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,
