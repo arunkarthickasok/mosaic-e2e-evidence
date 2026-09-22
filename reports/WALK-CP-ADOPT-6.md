@@ -80,14 +80,17 @@ slot with a keyboard, not just by dragging.
    click it; type a sentence.
    **Keyboard:** on another zone, Tab to the "+", Enter opens, ↑/↓ move, Enter chooses,
    Esc closes.
+   **WC#87 (fixed):** the picker now appears on **owned** free-content zones too (not just
+   foreign), and on a free-content slot it lists **every** authorable component (owned
+   first, grouped by library) after Plain content.
    *Keyboard PASS:* the full keyboard path opens the picker and inserts.
-   *Mouse — WC#86 OPEN (UNPROVEN):* a **real mouse click** opening the picker is **not yet
-   proven**. The WC#84 stopPropagation fix did not survive a real click; the working
-   hypothesis is Puck's `_DropZone-hitbox` overlay sitting above the "+" (the click never
-   reaches the button). This needs a headed `elementsFromPoint` proof — which needs a
-   picker present, which needs **WC#87** (the picker must appear on owned free-content
-   zones too). Until then, treat the real-mouse-click as **UNPROVEN**; do not sign off
-   this step. **STOP.**
+   *Mouse — WC#86 STILL OPEN (UNPROVEN):* a **real mouse click** still does not open the
+   picker. The mechanism is now **proven** (headed, node/993): Puck's
+   **`_DropZone--isRootZone`** overlay sits above the "+" (the button is not the top
+   element at its own centre), AND the "+" in the SSR-injected adopted preview is **not
+   wired to React's live event system** (a native click never flips `aria-expanded`). A
+   z-index lift alone does not open it, so **no partial fix shipped**. Treat the
+   real-mouse-click as **UNPROVEN**; do not sign off this step. **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,

@@ -12,6 +12,8 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
+> **PASS 3 (WC#87 fixed; WC#86 UNPROVEN):** count 60 -> **62** (+2 WC#87 files: mosaicPickerCatalog.ts + MosaicPickerCatalog.test.tsx). dist 1.0.58->1.0.59. WC#86 no fix shipped (UNPROVEN). Ship #46 stays BLOCKED on WC#86.
+>
 > **PASS 2 (WC#85/86/87):** count unchanged at **60**. WC#85 (fallback declared slot order) modified
 > already-tracked files (`src/Service/MosaicRenderer.php`, `tests/.../FallbackRenderTest.php`); no new
 > file, no JS/dist change (PHP-only). WC#86 UNPROVEN (no code change). WC#87 deferred. **Ship #46 stays

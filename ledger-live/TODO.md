@@ -14034,3 +14034,22 @@ testable). Recommended immediate next step.
 GATES: Kernel+Unit 3050/0 (8507 assertions; +1 declared-order cell; 1 pre-existing warning); Vitest 632/1-B101 unchanged (no JS); phpcs clean; phpstan
 renderFallback 0 new; oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist
 UNCHANGED (PHP-only, libs stays 1.0.58). Ship #46 stays BLOCKED on WC#86 (UNPROVEN) + WC#87 (deferred).
+
+=== CP-ADOPT-6R PASS 3 — WC#87 FIXED + WC#86 mechanism PROVEN but UNPROVEN (no fix shipped). Tally 87. ===
+WC#87 picker list: mosaicPickerCatalog.ts (setPickerCatalog from toConfig, owned-first grouped by library,
+slot_only excluded) + buildPickerOptions: allowed-list => Plain(foreign)+allowed; no-list => Plain(foreign)
++every authorable. Owned free-content zones now get the picker. Vitest MosaicPickerCatalog 5 (16 picker
+total). Headed on node/993: pickerButtons went 0->1. dist 1.0.58->1.0.59 (builder 0b6cb0e8->5ce2823a,
+frontend-editor a772c8f8->facb3ff2, renderer byte-identical); served==built.
+WC#86 real click: MECHANISM PROVEN on node/993/edit (headed Playwright trusted events + CDP). PRIMARY:
+elementsFromPoint at the "+" centre returns _DropZone--isRootZone overlay (isHitbox) above the button —
+button NOT in top 5; button click listener IS bound (getEventListeners) yet the overlay eats the click
+(why WC#84 stopPropagation did nothing). z-index lift raised the wrapper above the overlay (verified) but
+picker STILL didn't open; native el.click() never flips aria-expanded (t0/t50/t350 false) + getEventListeners
+shows a DIRECT click listener (not React delegation) + teaser data-mosaic-foreign:0 => SECOND cause: the
+picker button in the SSR-injected adopted preview is NOT wired to React's live event system. Real click
+still cannot open -> per charter UNPROVEN, NO partial fix shipped (z-index reverted). Cause named
+(@puckeditor/core dist _DropZone--isRootZone overlay + DsdPreview-vs-MosaicAdoptedPreview render path).
+Evidence: wc86-button-under-dropzone-overlay.png, wc86-still-closed-after-click.png.
+GATES: tsc clean; Vitest 637/1-B101; Kernel unchanged 3050/0 (no PHP); oracles REGION 14e6cb9c..3954 +
+STYLE b7756795..ca982 4354 10 IDENTICAL. Ship #46 stays BLOCKED on WC#86 (UNPROVEN). Ship count 62.

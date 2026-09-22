@@ -900,3 +900,44 @@ UNCHANGED** (WC#85 is PHP-only — libs stays 1.0.58, no rebuild). SHIP-46-PLAN 
 WC#85 modified existing tracked files). WALK steps 2 + 7 rewritten (step 7 marks the mouse click UNPROVEN).
 
 **STOP — WC#85 fixed; WC#86 UNPROVEN (no blind fix); WC#87 is the prerequisite for the headed WC#86 proof. Ship #46 stays BLOCKED.**
+
+---
+
+## CHECKPOINT-8 (RIDER PASS 3) — WC#87 fixed · WC#86 mechanism PROVEN, still UNPROVEN
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### WC#87 — picker list (FIXED)
+`mosaicPickerCatalog.ts` — `toConfig` publishes the authorable-component catalog (owned-first, grouped by
+library, slot_only excluded). `buildPickerOptions`: allowed-list → Plain (foreign) + allowed; no-list →
+Plain (foreign) + **every** authorable component. This makes the picker **appear on owned free-content
+zones** (the headed probe on node/993 showed `pickerButtons` go 0 → 1). Vitest `MosaicPickerCatalog` (5;
+16 picker total). dist **1.0.58 → 1.0.59** (builder `0b6cb0e8→5ce2823a`, frontend-editor
+`a772c8f8→facb3ff2`, renderer byte-identical; served==built, deterministic rebuild).
+
+### WC#86 — real click still dead — mechanism PROVEN, UNPROVEN overall
+Headed probe on **node/993/edit** (olivero:teaser; `drush uli`, Playwright trusted events + CDP).
+**PRIMARY cause PROVEN:** `elementsFromPoint` at the "+" centre returns Puck's **`_DropZone--isRootZone`**
+overlay (isHitbox) — the button is **not in the top 5** at its own centre — so the click lands on the
+overlay, never the button (why WC#84's stopPropagation did nothing). `getEventListeners`: the button DOES
+carry a `click` listener. **SECOND cause (blocks a simple fix):** a z-index lift raised the picker above the
+overlay (verified) but the picker **still did not open**; a native `el.click()` **never flips
+`aria-expanded`** (false at t0/t50/t350), `getEventListeners` shows a **direct** click listener (not React
+delegation), and the teaser renders with **`data-mosaic-foreign: 0`** → the "+" in the SSR-injected preview
+is **not wired to React's live event system**. Since the real click **still cannot open** the picker, per
+the charter WC#86 is **UNPROVEN** and **no partial fix ships** (the z-index lift was reverted — it does not
+alone open it). Evidence: `pass3-wc87-wc86/wc86-*.png`. Next: re-wire the picker into the live React tree of
+the adopted preview (DsdPreview ↔ MosaicAdoptedPreview render path) + clear the overlay.
+
+### Gates
+Kernel+Unit **3050/0** (unchanged — no PHP this pass) · Vitest **637 / 1** (B-101; +WC#87 5 cells) · tsc
+**clean** · oracles **IDENTICAL** · dist **1.0.59** (WC#87). Ship count **62** (+2 WC#87 files). WALK step
+7 rewritten (picker appears on owned zones; real mouse click still UNPROVEN with the proven mechanism).
+
+**STOP — WC#87 fixed; WC#86 mechanism PROVEN (DropZone overlay + button not React-wired) but real click still cannot open the picker → UNPROVEN, no fix shipped. Ship #46 stays BLOCKED on WC#86.**
