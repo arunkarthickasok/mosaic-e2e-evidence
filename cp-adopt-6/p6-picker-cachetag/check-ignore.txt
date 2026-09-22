@@ -1,0 +1,14 @@
+check-ignore: cruft ignored, all 59 ship paths tracked
+
+cruft (ignored):
+  IGNORED  x.log
+  IGNORED  js/e2e.zip
+  IGNORED  js/esc-probe.config.ts
+  IGNORED  assets/x.png
+  IGNORED  js/assets/y.png
+
+ship files (tracked, sample):
+  tracked  js/dist/assets/axe-results-worker-BeW6KaW6.js
+  tracked  js/dist/builder.js
+  tracked  src/Plugin/MosaicComponent/SdcComponentPlugin.php
+  tracked  mosaic.libraries.yml

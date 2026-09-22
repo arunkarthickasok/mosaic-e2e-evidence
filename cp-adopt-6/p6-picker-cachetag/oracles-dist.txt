@@ -1,0 +1,13 @@
+CP-ADOPT-6 P6 — oracles (verbatim) + dist
+
+REGION before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE  before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE  after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+
+Fallback-page baseline: walk step 2 (Arun's Olivero OFF); mechanical = FallbackRenderTest.
+
+dist 1.0.56 -> 1.0.57:
+  builder.js         1859113d -> 2746840f  (picker)
+  frontend-editor.js a37cbf67 -> 55f30bcf
+  renderer.js        9c7f9320 -> 9c7f9320  (byte-identical)

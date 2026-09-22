@@ -13975,3 +13975,17 @@ GATES: Kernel+Unit 3044/0 (8446 assertions; +11 cells; 10 errors were MosaicLayo
 changed src files NO ERRORS (module 77 pre-existing = B-102); libs 1.0.55→1.0.56 (builder 6d075ee3→1859113d,
 frontend-editor 9519a01a→a37cbf67, renderer 9c7f9320 byte-identical).
 NEXT: P6 (journeys + SO-2 picker + walk + SHIP-46-PLAN).
+
+=== CP-ADOPT-6 CHECKPOINT-5 (P6: cache-tag unification + per-zone picker + walk + SHIP-46-PLAN) — BUILT ===
+ORACLES BEFORE==AFTER verbatim: REGION 14e6cb9c…3954 (both), STYLE b7756795…ca982 4354 10 (both).
+P6.1 CACHE-TAG: MosaicComponentLibrary::cacheTagFor()/LIST_CACHE_TAG; 6 sites unified (renderer×2,
+form×2, widget, controller); FIXED latent widget dot-variant bug (never invalidated). Kernel 4/4.
+P6.2 PICKER: MosaicZonePicker (kbd "+" header+empty zone, Plain content first, owned Columns allowed
+list) + insertIntoSlot→Puck insert <parentId>:<slot>; DROP-PROOF (SlotComp still renders). Vitest 6+4.
+P6.3 WALK-CP-ADOPT-6.md (Arun toggles Olivero, 8 steps, one STOP each). P6.4 .gitignore (*.log,
+js/e2e.zip, js/esc-probe.config.ts, /assets/, js/assets/ anchored; 59 ship paths tracked, cruft ignored).
+P6.5 SHIP-46-PLAN.md (33 M + 26 untracked = 59; 0 ignored; single-quoted P1–P6 msg).
+GATES: Kernel+Unit 3048/0 (8487 assertions; +4 CacheTag cells; 1 pre-existing risky-test warning); Vitest 629/1-B101; tsc clean; phpcs surface clean; phpstan P6
+cache-tag edits 0 new (renderNode/check_markup pre-existing shifted +1); libs 1.0.56→1.0.57 (builder
+1859113d→2746840f, frontend-editor a37cbf67→55f30bcf, renderer 9c7f9320 byte-identical).
+ARC COMPLETE: CP-ADOPT-6 P1–P6 done; ship #46 awaits Arun's walk + commit.

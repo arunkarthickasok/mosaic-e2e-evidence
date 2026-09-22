@@ -726,3 +726,75 @@ untouched) · libs **1.0.55 → 1.0.56**; `builder.js` `6d075ee3…` → `185911
 `9519a01a…` → `a37cbf67…`, `renderer.js` `9c7f9320…` **byte-identical**.
 
 **STOP — P6 (journeys + SO-2 per-zone picker + walk + SHIP-46-PLAN) next.**
+
+---
+
+## CHECKPOINT-5 — CP-ADOPT-6 P6 (cache-tag unification · per-zone picker · walk · SHIP-46-PLAN) — BUILT
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+IDENTICAL — the cache-tag change is behaviour-identical for node/780; the picker is
+admin-only; `.gitignore` doesn't touch render.
+**Fallback-page baseline:** captured in the walk (step 2, Arun's Olivero-OFF toggle);
+the deterministic mechanical baseline is `FallbackRenderTest` (Kernel).
+
+### P6.1 — cache-tag unification
+One source: `MosaicComponentLibrary::cacheTagFor($provider)` →
+`config:mosaic.component_library.<provider>` (the config-object tag), and
+`MosaicComponentLibrary::LIST_CACHE_TAG` = `config:mosaic_component_library_list` (the
+entity type's real list tag). **6 sites unified** — `MosaicRenderer` (fallback + component
+meta ×2), `MosaicComponentLibrariesForm` (reason + scan-cache ×2), `MosaicLayoutWidget`
+(widget cache tag), `MosaicLibraryChangesController` (report cache tag). **Latent bug
+fixed**: the widget used `config:mosaic.component_library_list` (dot) — NOT what Drupal
+invalidates — so its cache never cleared on a library toggle; now the correct constant.
+Kernel `CacheTagUnificationTest` (4): the constant, the save invalidates the per-provider
+tag, `LIST_CACHE_TAG` equals the entity's real list tag, and a toggle clears a tagged
+entry (one tag → page + manifest + report together).
+
+### P6.2 — per-zone add-picker (SO-2 UX)
+`MosaicZonePicker` (`js/src/builder/fields/`) — a keyboard-operable "+" on the zone header
+AND the empty zone. Options in order: **Plain content first** on a foreign free-content
+slot, then the slot's allowed components; **owned Columns** (+ generic owned scaffolds) get
+the same picker for their allowed list (no Plain content). Choosing calls
+`insertIntoSlot(parentId, slotName, type)` → Puck's native `insert` action into the inline
+slot zone `<parentId>:<slotName>` (defaultProps + id auto-applied). Keyboard: Tab→"+",
+Enter/Space/↓ opens, ↑/↓ move, Enter/Space choose, Esc closes + refocuses. **DROP-PROOF**:
+the Puck drop zone (`SlotComp`) still renders alongside — a drag still lands. Vitest:
+`MosaicZonePicker` (6 — open/order/keyboard/Esc/click) + `MosaicSlotZonePicker` (4 —
+DROP-PROOF, Plain-content-first, drag-only-when-no-owner, owned allowed list). The live
+insert + no-flash-on-first-SSR is walk step 7 (`MosaicZonePicker` is the mechanical proof).
+
+### P6.3 — journeys → WALK-CP-ADOPT-6.md (Arun's hands)
+The filmed journeys require toggling Olivero (a dev-config write = Arun's hands) — written
+as `reports/WALK-CP-ADOPT-6.md` (story: "pages survive library changes and removals"; 8
+steps, one STOP each, films named). The mechanical proofs are in the suite: fallback
+(`FallbackRenderTest`), drift (`SchemaDriftTest`), picker (`MosaicZonePicker`/`MosaicSlotZonePicker`),
+attach-once (the `mosaicAttach` 20-edit leak-guard cell).
+
+### P6.4 — .gitignore
+Added `*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `/assets/`, `js/assets/` (anchored so
+`js/dist/assets/` — the shipped worker chunk — can never be caught). `git check-ignore`
+verified: the cruft is ignored; all **59** ship paths (incl `SdcComponentPlugin.php`,
+`js/dist/assets/…`, `js/dist/builder.js`, every src/test) stay tracked.
+
+### P6.5 — SHIP-46-PLAN.md
+`ledger-live/SHIP-46-PLAN.md`: full `git status --short -uall` (33 M + 26 untracked = **59**),
+check-ignore verdict (0 of 59 ignored → all ship; cruft classes absent), and the
+single-quoted commit message covering P1–P6.
+
+### Gates
+Kernel+Unit **3048/0** (8487 assertions; +CacheTagUnification 4; 1 pre-existing risky-test
+warning, not a failure) · Vitest **629 pass / 1 fail**
+(B-101 boolean→checkbox pre-existing; +MosaicZonePicker 6 +MosaicSlotZonePicker 4) · tsc
+**clean** · phpcs P6 surface **clean** · phpstan P6 changed surface: my cache-tag edits add
+**0 errors** (`MosaicRenderer` carries the same pre-existing renderNode/check_markup lines,
+shifted +1 by the added import; B-102 module drift untouched) · libs **1.0.56 → 1.0.57**;
+`builder.js` `1859113d…` → `2746840f…`, `frontend-editor.js` `a37cbf67…` → `55f30bcf…`,
+`renderer.js` `9c7f9320…` **byte-identical**.
+
+**STOP — the CP-ADOPT-6 arc (P1–P6) is complete; ship #46 awaits Arun's walk + commit.**
