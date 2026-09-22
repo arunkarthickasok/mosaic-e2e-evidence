@@ -798,3 +798,55 @@ shifted +1 by the added import; B-102 module drift untouched) · libs **1.0.56 �
 `renderer.js` `9c7f9320…` **byte-identical**.
 
 **STOP — the CP-ADOPT-6 arc (P1–P6) is complete; ship #46 awaits Arun's walk + commit.**
+
+---
+
+## CHECKPOINT-6 (RIDER) — CP-ADOPT-6R WC#83 + WC#84 (Arun's walk; ship #46 was BLOCKED) — FIXED
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+REGION  after:  14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+STYLE   after:  b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### WC#83 — binding lost in the Library-missing card / fallback
+**(a) Mechanism.** `MosaicRenderer::renderFallback` iterated only `$instance->slots` (static
+children) and **never** `$instance->slotsBinding` / `renderBoundSlot` — so a bound slot's View rows
+vanished when the library went off (the static children are hidden because the slot is bound). The
+**saved-layout diff** is clean: a pure `toPuck → fromPuck` of a bound missing component keeps
+`slots_binding` **byte-identical** (`after === before`, not undefined) — so a no-change save does NOT
+strip the binding. The loss was render-only, plus the card never named the binding.
+**(b) Fix.** `renderFallback` now iterates the union of static + bound slot names and renders a bound
+slot through `renderBoundSlot` (bare rows) + the "unavailable component" note (Kernel
+`FallbackRenderTest::testFallbackRendersBoundSlotNotStaticChildren`: static child hidden, no crash).
+The missing card adds a **"{Slot} — bound to {View}"** line per bound slot (Vitest). The missing card's
+`defaultProps` now carry `_mosaic_slot_binding` (+ the panel props) so Puck's live runtime can't prune
+them — the round-trip Vitest proves `slots_binding` survives byte-identical.
+
+### WC#84 — the "+" did nothing on click
+**(a) Mechanism.** The picker `<button>` had `onClick` but **no `onPointerDown`/`onMouseDown`
+stopPropagation**. The picker lives inside Puck's draggable slot component; dnd-kit's pointer sensor on
+the ancestor captured the real `pointerdown` and suppressed the click. jsdom's `userEvent.click`
+dispatches a click directly (no pointer→drag sequence), which is why the keyboard + unit tests passed
+while a real mouse click failed.
+**(b) Fix.** `stopPropagation` on the "+" and the list `pointerdown`+`mousedown` (the drag sensor never
+sees the press → the native click fires). **One affordance per zone**: a compact header "+" only when
+the zone HAS children; the roomy **"+ Add"** in the empty area otherwise — never both. Owned Columns
+zones behave the same. Vitest **11** (incl. the pointerdown-doesn't-bubble cell).
+
+### Standing matrix (regression rows, added to WALK-CP-ADOPT-6.md)
+- **missing card keeps bindings** — round-trip byte-identical + fallback renders View rows + card names it.
+- **picker opens by mouse and keyboard on adopted + owned zones** — real click + full keyboard; one affordance; drag intact.
+
+### Gates
+Kernel+Unit **3049/0** (8497 assertions; +1 fallback bound-slot cell; 1 pre-existing risky-test
+warning) · Vitest **632 pass / 1 fail** (B-101; +WC83BindingRoundtrip 2,
++picker click cell) · tsc **clean** · phpcs surface **clean** · phpstan `renderFallback` **0 new**
+(same pre-existing renderNode/check_markup lines) · libs **1.0.57 → 1.0.58**; `builder.js`
+`2746840f…` → `0b6cb0e8…`, `frontend-editor.js` `55f30bcf…` → `a772c8f8…`, `renderer.js` byte-identical.
+WALK steps rewritten (fallback bound rows + card "bound to" line + picker mouse/keyboard); SHIP-46-PLAN
+regenerated (**60** files, +1 rider test).
+
+**STOP — WC#83 + WC#84 fixed; ship #46 unblocked, awaits Arun's re-walk + commit.**

@@ -30,16 +30,23 @@ slot with a keyboard, not just by dragging.
    Reload node/780 (anonymous).
    *Pass:* the teaser is gone; in its place a bounded **fallback block** shows the
    author's content (the Plain content text is still there), with a small "content kept"
-   note — the page never blanks. Capture the **fallback-page shasum** now (this is the
-   *fallback baseline*; the mechanical proof is `FallbackRenderTest`).
-   *Film:* the fallback block. **STOP.**
+   note — the page never blanks. **WC#83:** if the teaser had a slot **bound to a View**,
+   the fallback shows the **View's rows** (as bare cards), not an empty gap — a bound slot
+   survives the library going away. Capture the **fallback-page shasum** now (the
+   *fallback baseline*; mechanical proof `FallbackRenderTest`, incl. the bound-slot cell).
+   *Film:* the fallback block (with the bound rows). **STOP.**
 
-3. **The builder keeps your content.**
+3. **The builder keeps your content — including bindings (WC#83).**
    Edit the node. On the canvas, where the teaser was, a **"Library missing: olivero"**
    card shows the stored values, read-only, with "your content is Kept and returns when
-   the library is re-enabled." Nothing was lost; you can still save.
-   *Pass:* the card shows the kept values; the save is not blocked.
-   *Film:* the card. **STOP.**
+   the library is re-enabled." For every **bound** slot the card adds a line
+   **"{Slot} — bound to {View}"** so you can see the binding is still there. Save the node
+   with **no changes**: the saved layout's `slots_binding` is **byte-identical** — a save
+   while the library is off never strips the binding (mechanical proof: the
+   toPuck→fromPuck round-trip cell).
+   *Pass:* the card shows the kept values AND the "bound to" line; a no-change save keeps
+   the binding.
+   *Film:* the card with the "bound to" line. **STOP.**
 
 4. **The report names the affected pages.**
    Visit **Reports → Mosaic library changes** (`/admin/reports/mosaic/library-changes`).
@@ -63,15 +70,20 @@ slot with a keyboard, not just by dragging.
    changes** section lists the same. (Mechanical proof: `SchemaDriftTest`.)
    *Film:* the panel notices + the report section. **STOP.**
 
-7. **Add into a library slot with the keyboard (the picker).**
-   Place a fresh Olivero **teaser**. Focus its **content** zone's **"+"** with Tab;
-   press **Enter** to open. The list shows **Plain content first**. Press **Enter** to
-   choose it; type a sentence.
-   *Pass:* the text appears in **Olivero's** look, and there is **no flash** on the first
-   render (the optimistic SSR crossfades, it never blinks). Dragging still works too —
-   the picker never replaced the drop zone. (Mechanical proof: `MosaicZonePicker` +
-   `MosaicSlotZonePicker` Vitest.)
-   *Film:* the picker open with Plain content first, then the typed text. **STOP.**
+7. **Add into a library slot — by mouse AND keyboard (the picker, WC#84).**
+   Place a fresh Olivero **teaser**. Its **content** zone (empty) shows one **"+ Add"**
+   affordance (a zone with children shows a single compact header "+"; never two).
+   **Mouse:** click "+ Add" — the picker opens; the list shows **Plain content first**;
+   click it; type a sentence.
+   **Keyboard:** on another zone, Tab to the "+", Enter opens, ↑/↓ move, Enter chooses,
+   Esc closes.
+   *Pass:* a **real mouse click** opens the picker (WC#84 — the click is no longer eaten
+   by the drag sensor); the text appears in **Olivero's** look with **no flash** on the
+   first render; dragging still works (the picker never replaced the drop zone). **Owned
+   Columns** zones behave the same. (Mechanical proof: `MosaicZonePicker` +
+   `MosaicSlotZonePicker` Vitest, incl. the pointerdown-stopPropagation cell.)
+   *Film:* the mouse click opening the picker → Plain content → typed text; AND the
+   keyboard path (Tab, Enter, arrows, Esc). **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,
@@ -83,4 +95,12 @@ slot with a keyboard, not just by dragging.
 ## What this walk proves
 Pages survive a library going away (fallback + card + report), come back byte-identical
 when it returns (one cache tag), tell you when a library's schema drifts, and let you add
-into a library's slot by keyboard — all without ever losing your content.
+into a library's slot by mouse OR keyboard — all without ever losing your content.
+
+## Standing matrix (regression rows)
+- **missing card keeps bindings** — a bound slot on a missing component keeps its
+  `slots_binding` byte-identical across a no-change save, the fallback renders its View
+  rows, and the card names it "{Slot} — bound to {View}". (WC#83)
+- **picker opens by mouse and keyboard on adopted + owned zones** — a real mouse click and
+  the full keyboard path both open the per-zone picker; one affordance per zone; drag still
+  works. (WC#84)

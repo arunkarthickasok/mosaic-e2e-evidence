@@ -13989,3 +13989,25 @@ GATES: Kernel+Unit 3048/0 (8487 assertions; +4 CacheTag cells; 1 pre-existing ri
 cache-tag edits 0 new (renderNode/check_markup pre-existing shifted +1); libs 1.0.56→1.0.57 (builder
 1859113d→2746840f, frontend-editor a37cbf67→55f30bcf, renderer 9c7f9320 byte-identical).
 ARC COMPLETE: CP-ADOPT-6 P1–P6 done; ship #46 awaits Arun's walk + commit.
+
+=== CP-ADOPT-6R RIDER — WC#83 + WC#84 (Arun's walk; ship #46 BLOCKED) — FIXED. Tally 84. ===
+WC#83 (Arun: "binding lost in the Library-missing card / fallback"): MECHANISM — renderFallback
+iterated only $instance->slots (static children) and NEVER $instance->slotsBinding/renderBoundSlot,
+so a bound slot's View rows vanished when the library went off. The pure toPuck->fromPuck round-trip
+PRESERVES slots_binding byte-identical (proven), so NO client save-strip — the loss was render-only.
+FIX: renderFallback iterates union(static, bound) slots + renders bound via renderBoundSlot (bare) +
+note (Kernel FallbackRenderTest bound-slot cell: static child hidden, no crash); missing card shows
+"{Slot} — bound to {View}" per bound slot; missing-card defaultProps carry _mosaic_slot_binding (+
+panel props) so Puck's live runtime can't prune it; round-trip Vitest keeps slots_binding identical.
+WC#84 (Arun: "'+' does nothing on click"): MECHANISM — the picker <button> had onClick but NO
+onPointerDown/onMouseDown stopPropagation; dnd-kit's pointer sensor on the ancestor draggable captured
+the real pointerdown and suppressed the click. jsdom userEvent.click dispatches click directly, so the
+keyboard/unit tests passed while a real mouse click failed. FIX: stopPropagation on the +/list
+pointerdown+mousedown (native click fires); ONE affordance per zone (compact header "+" only when the
+zone HAS children; roomy "+ Add" in the empty area otherwise); owned Columns same. Vitest 11 incl. the
+pointerdown-doesn't-bubble cell.
+GATES: Kernel+Unit 3049/0 (8497 assertions; +1 fallback bound-slot cell; 1 pre-existing warning); Vitest 632/1-B101; tsc clean; phpcs surface clean; phpstan
+renderFallback 0 new (renderNode/check_markup pre-existing). Oracles REGION 14e6cb9c..3954 + STYLE
+b7756795..ca982 4354 10 IDENTICAL before==after. libs 1.0.57->1.0.58 (builder 2746840f->0b6cb0e8,
+frontend-editor 55f30bcf->a772c8f8, renderer 9c7f9320 byte-identical). Ship #46 -> 60 files.
+STANDING MATRIX: "missing card keeps bindings" + "picker opens by mouse and keyboard on adopted+owned".

@@ -12,10 +12,15 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
-## Counts
+## Counts (updated after CP-ADOPT-6R rider — WC#83 + WC#84)
 - Tracked-modified (M): **33**
-- Untracked NEW (`-uall`): **26**
-- **Ship total: 59 files**
+- Untracked NEW (`-uall`): **27** (rider added `js/src/builder/__tests__/WC83BindingRoundtrip.test.ts`)
+- **Ship total: 60 files** (was 59; +1 rider test)
+- Rider also re-touched (already in M): `src/Service/MosaicRenderer.php` (renderFallback
+  renders bound slots), `js/src/builder/MosaicPuckAdapter.ts` (missing-card "{Slot} — bound
+  to {View}" + defaultProps hardening), `js/src/builder/fields/MosaicZonePicker.tsx` +
+  `MosaicSlotZone.tsx` (WC#84 click fix + one affordance), `tests/.../FallbackRenderTest.php`
+  (bound-slot cell), `mosaic.libraries.yml` (1.0.58), the two rebuilt dist bundles.
 - Cruft excluded (gitignored, not in the set): `*.log`, `js/e2e.zip`,
   `js/esc-probe.config.ts`, `assets/` — 0 present.
 
