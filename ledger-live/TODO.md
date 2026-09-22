@@ -13905,3 +13905,31 @@ Gates: Kernel+Unit 3020/0, Vitest 607/1-B101, phpcs changed-surface clean, REGIO
 JOURNEY blocked: adopt_fixture won't drush en (test module); olivero toggle would violate "dev libs
 untouched" → proof is the Functional BrowserTest (real HTTP) + Kernel + live dev fallback-markup capture.
 NEXT: P2 (Pillar G behaviour-keys hash + drift classes + report).
+
+---
+
+## CP-ADOPT-6 P2 (Pillar G library updates) — CHECKPOINT-2 — BUILT (MOSAIC uncommitted, Arun commits ship #46)
+
+Baseline 8209f1c. Oracles REGION 14e6cb9c + STYLE b7756795 HELD before+after. PHP-only → no dist / no
+BUMP-LIBS (1.0.54). NOTE: hit a usage quota mid-pass; on resume read the full Kernel (3030/0), ran the
+remaining gates, FOUND+FIXED 2 phpstan array_values-no-ops in MosaicBehaviourKeys (no-op for the hash),
+re-quoted oracles identical, filed CHECKPOINT-2. Nothing papered over.
+1) MosaicBehaviourKeys::signature — type/enum/required/$ref/format/contentMediaType/items/properties +
+   slot ids/required; EXCLUDES title/description/examples/default. R2 cell: cosmetic edit → hash unchanged.
+2) _mosaic_schema_sig per instance (additive ComponentInstance + schema file); entity_presave
+   MosaicHooks::signLayout signs every known node with the current sig (R3 first-save-signs, silent).
+3) mosaic.schema_drift (MosaicSchemaDrift): fast sig gate + per-field classify; reads LIVE defs each
+   diff() (no memo) → R6 (schema change + drush cr → drift appears). Unsigned = grandfathered.
+4) Report /admin/reports/mosaic/library-changes gains a "Schema changes" table + "Legacy bindings &
+   overrides" list; mosaic.administer (Permission-Parity 403/403/200).
+CELLS: Unit MosaicBehaviourKeysTest 4/7 (R2 + enum/type/required/slot); Kernel SchemaDriftTest 6/45
+(4 classes named below + R3 + fast-gate); Functional SchemaSignPresaveTest 4 (first-save signs);
+report Functional 403/403/200 21. Four classes + notices:
+  removed→"heading was removed by the library; the saved value is kept";
+  type-changed→"variant changed type in the library; the saved value is flagged" (error);
+  required-added→"title is now required by the library" (attention); added-optional→silent (no entry).
+Fixture: adopt_fixture:adopt_widget_v2 (drifted schema).
+DEFERRED: client panel notices + manifest schema_sig emission → P5/P6 journeys pass (server
+classification + notices authoritative + tested; report surfaces them; no new logic in the panel).
+Gates: Kernel+Unit 3030/0, Vitest 607/1-B101, phpcs+phpstan P2 surface clean, REGION+STYLE identical, 1.0.54.
+NEXT: P3 (R5/R10 SSR attach-once + behaviors).

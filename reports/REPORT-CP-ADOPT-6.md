@@ -486,3 +486,77 @@ boolean→radio pre-existing) · phpcs changed-surface **clean** · REGION + STY
 BUMP-LIBS **1.0.54**.
 
 **STOP — P2 (Pillar G hash/diff/report) next.**
+
+---
+
+## CHECKPOINT-2 — CP-ADOPT-6 P2 (Pillar G, library updates / drift) — BUILT
+
+Baseline ship #45 `8209f1c`. MOSAIC git READ-ONLY (files edited, Arun commits at ship #46).
+Oracles before + after both HELD: REGION `14e6cb9c…3954`, STYLE `b7756795…ca982 4354 10`.
+P2 is PHP-only — no JS touched, so no dist rebuild / no BUMP-LIBS (libs stay 1.0.54).
+
+**Interruption (honest):** this pass hit a usage quota mid-flight. Before the limit: the behaviour-keys
+signature + drift service + presave signing + report section were BUILT and their cells passed
+(behaviour 4/7, drift 6/45, presave-sign 4, report Functional 2/21); the full Kernel+Unit had been
+launched. After resume: the full Kernel+Unit result was read (**3030/0**), the remaining gates
+(Vitest, phpcs, phpstan) were run, **two phpstan `array_values`-no-op errors were found and fixed**
+(MosaicBehaviourKeys — a no-op for the hash, cells re-confirmed green), oracles re-quoted identical,
+and this checkpoint filed. Nothing was papered over.
+
+### What shipped (P2)
+1. **Behaviour-keys signature** — `Drupal\mosaic\Sdc\MosaicBehaviourKeys::signature(schema, slots)`
+   hashes ONLY type/enum/required/$ref/format/contentMediaType/items/properties + slot ids + slot
+   `required`; excludes title/description/examples/default (R2).
+2. **`_mosaic_schema_sig` stored per instance at save** — additive on `ComponentInstance`
+   (`toArray` emits only when signed → unsigned layouts byte-identical) + the JSON schema file; the
+   `entity_presave` hook (`MosaicHooks::signLayout`) stamps every known non-region node with its
+   component's current signature (R3: first save signs, silently).
+3. **Drift classifier** — `mosaic.schema_drift` (`MosaicSchemaDrift`): a fast gate on the stored vs
+   current signature, then per-field classification. Reads LIVE definitions each `diff()`
+   (createInstance + getPropDefinitions/getSlotDefinitions — no memo) so a schema change + `drush cr`
+   surfaces drift with no edit (R6). An UNSIGNED instance is grandfathered (never drift).
+4. **Report** — `/admin/reports/mosaic/library-changes` gains a **"Schema changes"** table (component ·
+   change notices · page count · linked pages) + a **"Legacy bindings & overrides"** list (a bound
+   slot whose child_type is now unavailable). Same `mosaic.administer` gate (Permission-Parity).
+
+### The four drift-class cells + their notices (`SchemaDriftTest`, 6 cells / 45 assertions)
+| cell | class | severity | notice |
+|---|---|---|---|
+| `testRemovedPropIsKeptWithNotice` | removed | warning | **"heading was removed by the library; the saved value is kept"** |
+| `testTypeChangedIsFlagged` | type-changed | error | **"variant changed type in the library; the saved value is flagged"** |
+| `testRequiredAddedIsAttention` | required-added | attention | **"title is now required by the library"** |
+| `testAddedOptionalIsSilent` | added-optional | — | **(no entry — silent)** |
+| `testUnsignedInstanceNeverDrifts` | R3 grandfather | — | (unsigned → [] , no notice) |
+| `testSignedUnderCurrentSchemaNoDrift` | fast gate | — | (sig == current → []) |
+
+The DRIFTED "current" schema is a real fixture, `adopt_fixture:adopt_widget_v2` (heading removed,
+title now required, variant now integer, subtitle added); a v1-signed instance (`heading`, string
+`variant`) is diffed against it.
+
+### R2 proof
+`MosaicBehaviourKeysTest::testCosmeticChangesDoNotMoveTheHash` — changing a prop's `title`,
+`description`, `examples` AND `default` (and another prop's title) → `assertSame($base, $sig(...))`:
+**the signature is unchanged** (a docs/label/default edit is never drift). Positive cells confirm
+type / enum / required / slot-required DO move the hash; an enum REORDER does not.
+
+### Presave signing (R3 storage) — `SchemaSignPresaveTest` (4 assertions)
+A node saved with an UNSIGNED layout: `assertStringNotContainsString('_mosaic_schema_sig', $input)`
+then `assertStringContainsString('_mosaic_schema_sig', $stored)` + the authored value preserved —
+the presave signs it on first save, silently.
+
+### Permission-Parity — `MosaicLibraryChangesReportTest` (21 assertions, real HTTP)
+anonymous → **403** · author (no mosaic.administer) → **403** · admin → **200** (with the affected
+page + library) — unchanged after the P2 controller extension.
+
+### Deferred (recorded)
+**Client panel notices + the manifest `schema_sig` emission that feeds them → deferred to the P5/P6
+journeys pass.** The server classification + notice TEXT are authoritative and fully Kernel-tested, and
+the report surfaces them today; the panel is the client consumption of the same drift data (no new
+logic), best built with the SO-2 picker + headed journeys in P5/P6. This is a scope note, not a red.
+
+### Gates
+Kernel+Unit **3030/0** (8367 assertions; +10 P2 cells) · Vitest **607 pass / 1 fail** (B-101
+boolean→radio pre-existing; no JS touched) · phpcs P2 surface **clean** · phpstan P2 surface **clean**
+(2 array_values no-ops fixed) · REGION + STYLE **IDENTICAL** before==after · libs **1.0.54** (no dist).
+
+**STOP — P3 (R5/R10 SSR attach-once + behaviors) next.**
