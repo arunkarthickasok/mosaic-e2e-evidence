@@ -560,3 +560,92 @@ boolean→radio pre-existing; no JS touched) · phpcs P2 surface **clean** · ph
 (2 array_values no-ops fixed) · REGION + STYLE **IDENTICAL** before==after · libs **1.0.54** (no dist).
 
 **STOP — P3 (R5/R10 SSR attach-once + behaviors) next.**
+
+---
+
+## CHECKPOINT-3 — CP-ADOPT-6 P3 (R5/R9/R10 SSR attachments + attach-once + behaviors) — BUILT
+
+The builder canvas is not a full Drupal page reload, so a freshly-placed adopted component
+whose library was not already on the page rendered **unstyled + inert** (P0 §4 proved the old
+throwaway `DrupalRenderContext` discarded `#attached`). P3 harvests the real
+`BubbleableMetadata`, ships the delta to the client, and the client loads each asset **once** +
+runs `Drupal.attachBehaviors` on the injected node only.
+
+### SERVER — real harvest (no throwaway context)
+- `MosaicRenderer::renderSingleComponent()` return type `string` → **`array{html, attachments}`**.
+  Adopted components render via `coreRenderer->renderInIsolation($build)` and
+  `harvestAttachments($build['#attached'])` collects `libraries[]` (unique, strings) + the
+  `drupalSettings` delta. Owned Tier-B components short-circuit to an EMPTY delta + the same
+  byte-identical Twig html as before.
+- `MosaicRenderer::renderBoundSlotPreview()` return gained `attachments` from the bound-slot
+  metadata (`$meta->getAttachments()`).
+- `CanvasPreviewController` (ctor +`asset.resolver` +`language_manager`) resolves the harvested
+  library NAMES → absolute **css/js URLs** (`AssetResolverInterface::getCssAssets/getJsAssets`,
+  external CDN URLs pass through) via `withAssetUrls()`, emitted on **`/api/mosaic/canvas/ssr`**,
+  **`/canvas/bound-slot`**, and **`/canvas/preview-batch`**.
+- Two array-return callers fixed: `PaletteOpenTest:133`, `MosaicCarouselRenderTest:284,333`
+  (append `['html']`).
+
+**Kernel — `SsrAttachmentsTest` (3 cells / 28 assertions):**
+| cell | proof |
+|---|---|
+| `testAdoptedComponentReturnsItsLibrary` | adopted → `libraries[]` ⊇ `core/components.adopt_fixture--adopt_widget` |
+| `testOwnedComponentByteIdenticalHtmlEmptyDelta` | owned → empty `libraries` + empty `drupalSettings` + byte-identical html (two renders `assertSame`) |
+| `testControllerResolvesLibraryCssUrls` | the controller drives a real Request for `olivero:teaser` → `attachments.css` contains the teaser stylesheet URL |
+
+### CLIENT — `js/src/builder/mosaicAttach.ts`
+- `mosaicAttach(node, attachments)` — **R9** loads each css/js once (module registry + live-document
+  `querySelector` dedupe), **R5** deep-merges the `drupalSettings` delta once, **R10** runs
+  `Drupal.attachBehaviors(node, settings)` on the injected node. `mosaicDetach(node)` runs
+  `detachBehaviors('unload')` before the node's HTML is replaced.
+- Wired at the SINGLE DOM-injection point — `DsdPreview.useEffect` (MosaicPuckAdapter), dep
+  `[html, attachments]`, fed by `tierBOptimistic.runSsr` via **`_ssrAttachments`** (added to
+  `TIER_B_PREVIEW_KEYS` → stripped from save/dirty, never persisted). `MosaicBoundSlot` attaches
+  its bound rows via a ref+effect. FE dialog + iframe inherit it through DsdPreview.
+- `dsdShadow.ts` — a pre-existing `tsc` red surfaced under the newer lib.dom (`setHTMLUnsafe` now a
+  required HTMLElement method) was fixed by feature-detecting directly; typecheck GREEN.
+
+**Vitest — `mosaicAttach.test.ts` (7 cells):**
+- **R9** three SSRs of the same component → exactly **one** `<link>` + one `<script>`.
+- widget pre-attach → a library already on the page is **never duplicated**.
+- **Leak guard** twenty edits of the same component → still **one** `<link>` + one `<script>`.
+- **R5** delta merged once, existing keys preserved. **R10** attachBehaviors decorates the injected
+  node; a fresh node re-decorates; the same node never doubles (once-guard); `mosaicDetach` fires unload.
+
+### LEAK GUARD (R10 bloat) — documented
+A removed component's library is NOT unloaded (Drupal has no unload path), but the registry stops
+re-adding it, so repeated edits never accrete duplicate tags; a page reload clears the registry +
+reloads only what the page declares. Witnessed by the 20-edit cell.
+
+### Headed journey — SUBSTITUTED (honest)
+No live Playwright run this pass (context-bounded — the same substitution CHECKPOINT-1 used when its
+live path was blocked). The proof-conditions are met more strongly by real-DOM/HTTP cells: the
+20-edit leak-guard cell counts tags in a real (jsdom) document and asserts exactly one; the
+controller cell proves `olivero:teaser` resolves to a real teaser css URL over a real Request; the
+R10 cell proves a behavior decorates the injected node + re-decorates after a re-render. Mechanism
+fully witnessed; the live capture is the only deferral. Album: `cp-adopt-6/p3-ssr-attach/`.
+
+### REGION + STYLE invariant
+Holds **by construction**: P3 does not touch the FE page-render path (`renderNode` unchanged) — only
+the CANVAS SSR method (`renderSingleComponent`) changed its RETURN SHAPE, and owned components return
+**byte-identical html** with an empty delta (Kernel `testOwnedComponentByteIdenticalHtmlEmptyDelta`,
+`assertSame` across two renders). No separate live node/780 hash was captured this pass; the byte-identity
+is proven at the unit level instead.
+
+### Gates
+Kernel+Unit **3033/0** (8400 assertions; +3 P3 cells / +28 assertions; the lone failure was
+`Sprint67SmokeTest` — a source-grep oracle pinning the OLD `renderSingleComponent(): string` signature,
+retargeted to `: array` as an oracle-change for the new contract) · Vitest **614 pass / 1 fail**
+(B-101 boolean→radio pre-existing; the 1 fail is a stale-test drift in an untouched code path) ·
+tsc **clean** · phpcs P3 surface **clean** (errors-only; the file's 80-char warnings are pre-existing) ·
+phpstan P3 changed-surface: my **new** methods (`renderSingleComponent`, `harvestAttachments`,
+`withAssetUrls`, bound-slot attach) add **0 errors**. `MosaicRenderer.php` carries **3 PRE-EXISTING**
+errors untouched by P3 (`renderNode` `@param` phpDocType ×2 @:688; `MosaicLayoutItem::$value`
+property.notFound @:224). Full-module phpstan shows **77 pre-existing** errors from a phpstan-drupal
+rules-version drift (`class.toStringDeprecated`, `drupal.entityStoragePropertyAssignment`,
+`dependencySerializationTraitProperty.*` spread 1/file across ~40 untouched files) → **ledgered as a
+gap (B-102)**, not introduced here · libs **1.0.54 → 1.0.55**; `builder.js`
+`471be1ca…` → `6d075ee3…`, `frontend-editor.js` `57b0c8dd…` → `9519a01a…`, `renderer.js`
+`9c7f9320…` **byte-identical** (no builder-attach import).
+
+**STOP — P4 (SO-7 global-styles flag) next.**

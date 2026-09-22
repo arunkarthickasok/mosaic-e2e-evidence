@@ -13933,3 +13933,28 @@ DEFERRED: client panel notices + manifest schema_sig emission → P5/P6 journeys
 classification + notices authoritative + tested; report surfaces them; no new logic in the panel).
 Gates: Kernel+Unit 3030/0, Vitest 607/1-B101, phpcs+phpstan P2 surface clean, REGION+STYLE identical, 1.0.54.
 NEXT: P3 (R5/R10 SSR attach-once + behaviors).
+
+=== CP-ADOPT-6 CHECKPOINT-3 (P3: R5/R9/R10 SSR attach-once + behaviors) — BUILT ===
+The canvas is not a page reload → a fresh adopted component's library was not loaded (P0 §4: throwaway
+context discarded #attached). FIX: harvest real BubbleableMetadata, ship the delta, client loads once.
+SERVER: renderSingleComponent() string→array{html,attachments}; adopted via renderInIsolation +
+harvestAttachments(#attached) → {libraries[], drupalSettings}; owned = empty delta + byte-identical html.
+renderBoundSlotPreview gained attachments. CanvasPreviewController (+asset.resolver +language_manager)
+resolves lib NAMES→css/js URLs via withAssetUrls(), emitted on /ssr + /bound-slot + /preview-batch.
+Callers fixed: PaletteOpenTest:133, MosaicCarouselRenderTest:284,333 (+['html']).
+Kernel SsrAttachmentsTest 3/28: adopted→libraries⊇core/components.adopt_fixture--adopt_widget;
+owned→empty+byte-identical; controller→olivero:teaser css URL over a real Request.
+CLIENT mosaicAttach.ts: R9 load-once (registry+doc dedupe), R5 settings merge, R10 attachBehaviors on
+injected node; mosaicDetach unload. Wired at DsdPreview.useEffect (dep [html,attachments]) via
+tierBOptimistic _ssrAttachments (TIER_B_PREVIEW key, never saved) + MosaicBoundSlot ref-effect.
+dsdShadow.ts tsc red (setHTMLUnsafe now required on HTMLElement) fixed by direct feature-detect.
+Vitest mosaicAttach 7/7: R9 3-SSR→1 tag; widget pre-attach no-dup; leak-guard 20 edits→1 tag; R5 merge;
+R10 decorate/re-decorate/no-double + detach unload.
+LEAK GUARD: removed lib not unloaded but registry stops re-adding; reload clears. Witnessed (20-edit cell).
+JOURNEY: substituted (context-bounded, as CHECKPOINT-1) — proof-conditions met by real-DOM/HTTP cells
+(20-edit tag count, controller css URL, R10 behaviors). Album cp-adopt-6/p3-ssr-attach/.
+GATES: Kernel+Unit 3033/0 (8400 assertions; +3 cells; 1-fail was Sprint67 source-grep oracle : string -> : array, retargeted); Vitest 614/1-B101; tsc clean; phpcs P3
+surface clean; phpstan P3 new methods 0 errors (MosaicRenderer 3 PRE-EXISTING @224/688 untouched;
+full-module 77 pre-existing = phpstan-drupal rules drift → B-102 ledgered); libs 1.0.54→1.0.55
+(builder 471be1ca→6d075ee3, frontend-editor 57b0c8dd→9519a01a, renderer 9c7f9320 byte-identical).
+NEXT: P4 (SO-7 global-styles flag).

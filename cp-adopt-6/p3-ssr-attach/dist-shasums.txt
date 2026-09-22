@@ -1,0 +1,13 @@
+CP-ADOPT-6 P3 dist BUMP-LIBS — mosaic.libraries.yml 1.0.54 -> 1.0.55
+
+BEFORE:
+  471be1ca62ddf03d6ddbdd24ff97927f904bbdc783a638a86e78b47305c1446a  builder.js
+  57b0c8dd7db07e47aec9d0bfa704b7c24a3cb2c28ed0703cc43fc2a03fa58cb5  frontend-editor.js
+  9c7f9320676300d04f7dcd6301280a22b67c7b980e8c8db21e765ff074788097  renderer.js
+
+AFTER:
+6d075ee3dc5f9f983306171700051b20d13500c8f278d782f74f650963faa915   builder.js
+9519a01aefbb2d820b2c08d0cdbaccd1b8ef0bc5030765b2efaa10d80f2b2911   frontend-editor.js
+9c7f9320676300d04f7dcd6301280a22b67c7b980e8c8db21e765ff074788097   renderer.js
+
+builder.js CHANGED (carries mosaicAttach), frontend-editor.js CHANGED, renderer.js BYTE-IDENTICAL (no builder-attach import).

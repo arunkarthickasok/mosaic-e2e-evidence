@@ -1,0 +1,9 @@
+
+ RUN  v4.1.5 /Users/arun/projects/Drupal/drupalak/web/modules/custom/mosaic/js
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  08:18:41
+   Duration  867ms (transform 52ms, setup 153ms, import 28ms, tests 21ms, environment 514ms)
+
