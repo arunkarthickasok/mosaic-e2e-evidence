@@ -32,12 +32,14 @@ slot with a keyboard, not just by dragging.
    author's content (the Plain content text is still there), with a small "content kept"
    note — the page never blanks. **WC#83:** if the teaser had a slot **bound to a View**,
    the fallback shows the **View's rows** (as bare cards), not an empty gap — a bound slot
-   survives the library going away. **WC#85:** the fallback renders the teaser's slots in
-   the component's **declared order** (Olivero teaser: content, then image), regardless of
-   the order they were stored in. Capture the **fallback-page shasum** now (the
-   *fallback baseline*; mechanical proof `FallbackRenderTest`, incl. the bound-slot + the
-   declared-order cells).
-   *Film:* the fallback block (bound rows, declared slot order). **STOP.**
+   survives the library going away. **WC#89:** the fallback renders the teaser's slots in
+   the component's **template render order** (Olivero teaser: prefix, meta, image, title,
+   **content last**), regardless of storage order. **Notice ruling:** as an editor you see a
+   VISIBLE "This component's library is unavailable; showing its content" notice; an
+   anonymous visitor sees only the content (the note is visually-hidden). Capture the
+   **fallback-page shasum** now (mechanical proofs `FallbackRenderTest`: bound-slot,
+   template-order, permission-gated-notice cells).
+   *Film:* the fallback block (bound rows, template slot order, visible editor notice). **STOP.**
 
 3. **The builder keeps your content — including bindings (WC#83).**
    Edit the node. On the canvas, where the teaser was, a **"Library missing: olivero"**
@@ -93,8 +95,12 @@ slot with a keyboard, not just by dragging.
    picker + a z-index lift above the overlay. Keyboard path unchanged.
    *WC#88 (fixed):* choosing an option now **inserts** the component into the slot
    (proven headed on node/993: layout JSON nodes 4 → 5, the child lands under the slot,
-   picker closes). The add-flow is whole: click → open → choose → the component appears.
-   Type in its rail; on a foreign teaser slot the text takes Olivero's look. **STOP.**
+   picker closes). **WC#90 (fixed):** the list opens **fully above** the blue selection
+   overlay (portaled to the page). **WC#91 (fixed):** opening the picker at a **bottom**
+   zone and inserting does **not** scroll or shift the top of the canvas (the top zone
+   stays put — the list is portaled out of the canvas, so it never changes its height).
+   The add-flow is whole: click → open → choose → the component appears. Type in its rail;
+   on a foreign teaser slot the text takes Olivero's look. **STOP.**
 
 8. **Attach-once — one stylesheet, many edits.**
    With the teaser placed, edit its Plain content five times. In the builder document,

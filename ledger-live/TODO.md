@@ -14087,3 +14087,23 @@ GATES: tsc clean; Vitest 642/1-B101; Kernel 3050/0 unchanged; oracles REGION 14e
 b7756795..ca982 4354 10 IDENTICAL; dist 1.0.60->1.0.61 (builder 0a0ba0ea->2deffd63, frontend-editor
 eafb9b82->7f56106d, renderer byte-identical). Ship 63. THE PICKER IS WHOLE (click+open+choose+insert).
 Ship #46: WC#86+WC#87+WC#88 all fixed+proven; awaits Arun's re-walk of the full add-flow.
+
+=== CP-ADOPT-6R PASS 6 — WC#89 + WC#90 + WC#91 + fallback-notice ruling. Tally 91. ===
+RULING: fallback note visually-hidden for anonymous; VISIBLE notice ("This component's library is
+unavailable; showing its content") only for users with mosaic.use_builder (permission-gated, cache keyed
+by fb-edit|anon + user.permissions context). Keyboard picker NOT configurable (WCAG) — recorded.
+WC#89 fallback order: WC#85 used DESCRIPTOR order (content,image,meta,prefix,title) but teaser TEMPLATE
+renders prefix,meta,image,title,content (content LAST). FIX: MosaicRenderer::slotRenderOrder derives order
+from the SDC's own marker render (renderSingleComponent, governance-independent), cached; gone-plugin keeps
+descriptor order. Kernel testFallbackRendersSlotsInTemplateOrder (stored content-first -> prefix..image..
+content). + testFallbackNoticeIsPermissionGated.
+WC#90 picker list under selection overlay: list was inside the DropZone stacking. FIX: portal the list to
+document.body, position:fixed at the button rect, z-index 2147483000; WC#86 rect-based capture works on the
+portal. Headed node/993: elementFromPoint at the option = {role:option} (above the blue overlay).
+WC#91 canvas top eaten after insert from a bottom "+ Add": the list changed canvas height/scroll. FIX: same
+portal (list out of the canvas DOM). Headed node/993: top zone boundingBox.top -219 -> -219 (unchanged)
+across insert-from-last-zone; nodes 4->5 (insert intact). Vitest portal cell (list child of body, not canvas).
+GATES: tsc clean; Vitest 643/1-B101; Kernel+Unit 3051/0 (8523 assertions; +1 notice cell; 1 pre-existing warning); phpcs clean; phpstan MosaicRenderer 4
+pre-existing (0 new); oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist
+1.0.61->1.0.62 (builder 2deffd63->a9cf2a9c, frontend-editor 7f56106d->93103f23, renderer byte-identical).
+Ship 63. WC#86 debt (capture-listener workaround) still open for 1.1 Puck-extension review.

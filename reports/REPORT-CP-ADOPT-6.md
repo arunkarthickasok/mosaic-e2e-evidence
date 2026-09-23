@@ -1037,3 +1037,46 @@ oracles **IDENTICAL** · dist **1.0.60 → 1.0.61** (builder `0a0ba0ea→2deffd6
 (insert PROVEN).
 
 **STOP — WC#86 + WC#87 + WC#88 all fixed + proven headed; the per-zone picker is whole (click → open → choose → insert). Ship #46 awaits Arun's re-walk of the full add-flow.**
+
+---
+
+## CHECKPOINT-11 (RIDER PASS 6) — WC#89 · WC#90 · WC#91 + fallback-notice ruling
+
+### Oracles (BEFORE == AFTER, verbatim)
+```
+REGION  before/after: 14e6cb9c17dc61b90a86dd97d8957ae462d789ff854d3523ae581010a43e0dec 3954
+STYLE   before/after: b7756795ff2234b5793c3533f48c3a70b34c37989b946756f20b78aa9aaca982 4354 10
+```
+
+### Ruling
+Fallback note: **visually-hidden for anonymous**; a **VISIBLE** notice ("This component's library is
+unavailable; showing its content") **only for users with `mosaic.use_builder`** — permission-gated, cache
+keyed by `fb-edit|anon` + the `user.permissions` context. Keyboard picker is **not configurable** (WCAG) — recorded.
+
+### WC#89 — fallback slot order (the two lists)
+```
+DESCRIPTOR order (WC#85 used):        content, image, meta, prefix, title
+ENABLED template render marker order: prefix, meta, image, title, content     ← content is LAST
+```
+`MosaicRenderer::slotRenderOrder()` now derives the true order from the SDC's own marker render
+(`renderSingleComponent`, governance-independent), cached per request; a gone plugin keeps descriptor
+order. Kernel `testFallbackRendersSlotsInTemplateOrder` + `testFallbackNoticeIsPermissionGated`.
+
+### WC#90 + WC#91 — portal the picker list
+The list is **portaled to `document.body`** (`position: fixed` at the button rect, `z-index 2147483000`),
+so it sits above Puck's overlays (WC#90) AND is out of the canvas DOM, so opening it can't change the
+canvas height/scroll (WC#91). Headed proof (node/993):
+```
+WC#90  elementFromPoint at the option centre → {role: "option", isOption: true}   (above the blue overlay)
+WC#91  top zone boundingBox.top:  -219 (before open) → -219 (after insert)         (topUnchanged)
+       layout JSON nodes: 4 → 5   (insert from the LAST "+ Add" still lands)
+```
+Vitest: the open list is a child of `document.body`, not the canvas subtree.
+
+### Gates
+Kernel+Unit **3051/0** (8523 assertions; +1 notice-ruling cell; 1 pre-existing risky-test warning) · Vitest **643 / 1** (B-101; +portal cell) · tsc **clean** · phpcs
+**clean** · phpstan MosaicRenderer **4 pre-existing** (0 new) · oracles **IDENTICAL** · dist **1.0.61 →
+1.0.62** (builder `2deffd63→a9cf2a9c`, frontend-editor `7f56106d→93103f23`, renderer byte-identical;
+served==built). Ship count **63**. WALK steps 2/5/7 rewritten.
+
+**STOP — WC#89 + WC#90 + WC#91 fixed + proven; fallback-notice ruling implemented. WC#86 capture-listener debt remains for the 1.1 Puck-extension review. Ship #46 awaits Arun's re-walk.**

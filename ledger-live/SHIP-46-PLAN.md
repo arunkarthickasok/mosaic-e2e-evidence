@@ -12,6 +12,74 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
+> **PASS 6 (WC#89 + WC#90 + WC#91 + fallback-notice ruling):** count **63** (33 M + 30 untracked; no new
+> file — all modified existing). dist 1.0.61→1.0.62. Full verbatim `git status --short -uall` (63):
+> ```
+>  M .gitignore
+>  M js/dist/builder.js
+>  M js/dist/frontend-editor.js
+>  M js/src/builder/MosaicPuckAdapter.ts
+>  M js/src/builder/__tests__/MosaicPuckAdapterSlotOnly.test.ts
+>  M js/src/builder/dsdShadow.ts
+>  M js/src/builder/fields/MosaicBoundSlot.tsx
+>  M js/src/builder/fields/MosaicSlotZone.tsx
+>  M js/src/builder/fields/htmlToReactSlots.tsx
+>  M js/src/builder/index.tsx
+>  M js/src/builder/tierBOptimistic.ts
+>  M js/src/frontend-editor/FrontendBuilderDialog.tsx
+>  M js/src/shared/types/schema.ts
+>  M mosaic.libraries.yml
+>  M mosaic.routing.yml
+>  M mosaic.services.yml
+>  M schema/mosaic_layout_value.schema.json
+>  M src/Controller/CanvasPreviewController.php
+>  M src/Entity/MosaicComponentLibrary.php
+>  M src/Form/MosaicComponentLibrariesForm.php
+>  M src/Hook/MosaicHooks.php
+>  M src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php
+>  M src/Sdc/ComponentDefinition.php
+>  M src/Service/MosaicComponentGovernance.php
+>  M src/Service/MosaicPropValidator.php
+>  M src/Service/MosaicRenderer.php
+>  M src/Value/ComponentInstance.php
+>  M tests/src/Kernel/Adopt/PaletteOpenTest.php
+>  M tests/src/Kernel/Component/MosaicCarouselRenderTest.php
+>  M tests/src/Unit/Plugin/Field/MosaicLayoutWidgetTest.php
+>  M tests/src/Unit/Service/MosaicRendererCacheTest.php
+>  M tests/src/Unit/Service/MosaicRendererTest.php
+>  M tests/src/Unit/Smoke/Sprint67SmokeTest.php
+>  ?? js/src/builder/__tests__/MosaicDriftNotices.test.ts
+>  ?? js/src/builder/__tests__/MosaicPuckAdapterMissing.test.ts
+>  ?? js/src/builder/__tests__/MosaicSlotOnlyDrawer.test.ts
+>  ?? js/src/builder/__tests__/WC83BindingRoundtrip.test.ts
+>  ?? js/src/builder/__tests__/WC88InsertIntoSlot.test.ts
+>  ?? js/src/builder/__tests__/mosaicAttach.test.ts
+>  ?? js/src/builder/fields/MosaicZonePicker.tsx
+>  ?? js/src/builder/fields/__tests__/MosaicPickerCatalog.test.tsx
+>  ?? js/src/builder/fields/__tests__/MosaicSlotZonePicker.test.tsx
+>  ?? js/src/builder/fields/__tests__/MosaicZonePicker.test.tsx
+>  ?? js/src/builder/fields/mosaicPickerCatalog.ts
+>  ?? js/src/builder/mosaicAttach.ts
+>  ?? src/Controller/MosaicLibraryChangesController.php
+>  ?? src/Sdc/MosaicBehaviourKeys.php
+>  ?? src/Sdc/MosaicGlobalStylesScanner.php
+>  ?? src/Service/MosaicSchemaDrift.php
+>  ?? tests/modules/adopt_fixture/components/adopt_widget/adopt_widget.css
+>  ?? tests/modules/adopt_fixture/components/adopt_widget_v2/adopt_widget_v2.component.yml
+>  ?? tests/modules/adopt_fixture/components/adopt_widget_v2/adopt_widget_v2.css
+>  ?? tests/modules/adopt_fixture/components/adopt_widget_v2/adopt_widget_v2.twig
+>  ?? tests/src/Functional/Adopt/MosaicLibraryChangesReportTest.php
+>  ?? tests/src/Functional/Adopt/SchemaSignPresaveTest.php
+>  ?? tests/src/Kernel/Adopt/CacheTagUnificationTest.php
+>  ?? tests/src/Kernel/Adopt/FallbackRenderTest.php
+>  ?? tests/src/Kernel/Adopt/GlobalStylesFlagTest.php
+>  ?? tests/src/Kernel/Adopt/SchemaDriftTest.php
+>  ?? tests/src/Kernel/Adopt/SlotOnlyPlacementTest.php
+>  ?? tests/src/Kernel/Adopt/SsrAttachmentsTest.php
+>  ?? tests/src/Unit/Sdc/MosaicBehaviourKeysTest.php
+>  ?? tests/src/Unit/Sdc/MosaicGlobalStylesScannerTest.php
+> ```
+>
 > **PASS 5 (WC#88 insert FIXED+PROVEN headed):** count 62 -> **63** (+1 WC88InsertIntoSlot.test.ts). dist 1.0.60->1.0.61. The picker is whole (click+open+choose+insert). WC#86+87+88 all fixed; ship #46 awaits Arun re-walk.
 >
 > **PASS 4 (WC#86 real-click FIXED+PROVEN headed; WC#88 insert flagged):** count 62 (no new file; WC#86 fix modified MosaicZonePicker.tsx). dist 1.0.59->1.0.60. Ship #46 stays BLOCKED on WC#88 (picker insert does not land).
