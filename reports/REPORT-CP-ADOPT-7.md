@@ -381,3 +381,87 @@ oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL be
 byte-identical; served==built; deterministic rebuild). Ship count 63 (rider/build-pass; Arun commits).
 
 **STOP — CHECKPOINT-1 filed. P2 (G9 canvas-hydration proof) next.**
+
+---
+
+## CHECKPOINT-2 — CP-ADOPT-7 P2: G9 canvas hydration for shadow-DOM web components (BUILT)
+
+**Baseline** ship #46 `a36f028`. Mosaic git READ-ONLY (edits uncommitted for Arun); the external
+library NOT enabled in Mosaic. Page hydration proven headed in a page context WITHOUT dev writes; the
+builder-canvas headed film needs the library in the palette (dev) → flagged for Arun's walk (§ below).
+
+### §1 — MECHANISM (quoted, redacted)
+The external library ships **one ES module per component** (plus a full bundle). Each component's
+`*.component.yml` carries `libraryOverrides: { js: { <comp>.js: { attributes: { type: module } } } }`,
+so core auto-generates the SDC library `core/components.«ext»--<comp>` whose JS is the component's ESM
+with `type: module`. There are **no `Drupal.behaviors`** anywhere — each ESM `customElements.define(...)`s
+a shadow-DOM custom element that self-upgrades on load. On a PAGE, core attaches that library when the
+component renders (bubbled `#attached['library'] = ["core/components.«ext»--card"]`, confirmed). The
+per-component ESM is **self-contained** — its only import is a *relative* shared chunk
+(`../shared/decorators-*.js`), **no bare specifiers** — so it loads standalone with no import map.
+
+### §2 — PAGE hydration (headed, no dev writes)
+A standalone harness navigates to a public dev page (read-only — used only to serve the STATIC ESM
+same-origin), injects `<script type="module" src=…/card.js>` + `<«ext»-card>` with a light-DOM
+`<div slot="footer">` CLIENT-SIDE (nothing persisted), and waits for upgrade:
+```
+scriptState = loaded · defined = true · hasShadowRoot = true · display = block (shadow CSS)
+box = 1280×62 (non-zero) · slotAssigned = true (light-DOM slot content projects)
+```
+Film: `cp-adopt-7/p2-g9-hydration/hydrated.png`. The custom element upgrades for real in Chromium from
+its per-component static ESM — shadow root built, shadow CSS applied, non-zero box.
+
+### §3 — SLOTS inside shadow DOM
+**Projection works — no fix needed.** The headed proof shows a light-DOM `slot="footer"` child is
+**assigned** to the shadow `<slot>` (`slotAssigned=true`). Mechanism: the library's own twig wraps slot
+content in `<div slot="X">{{ X }}</div>`, and Mosaic renders the adopted component with its
+`<mosaic-slot data-mosaic-slot="X">` marker (and the portaled zone) INSIDE that wrapper — so our zone
+chrome rides in the light DOM at the named slot and projects into the shadow `<slot>`. Projected content
+stays in the light DOM (visible + hittable; our zone CSS applies; the library styles it only via
+`::slotted(...)`). The **drop-zone chrome + banner geometry inside the live builder canvas** needs the
+library in the Puck palette (dev) → verified in Arun's headed walk (§ below), not guessed.
+
+### §4 — CANVAS hydration (the G9 fix)
+Two bugs found + fixed:
+- **Server** (`MosaicRenderer::renderSingleComponent`): it rendered the adopted element with
+  `renderInIsolation`, which **discards** bubbled metadata — the canvas never learned the library. Fixed
+  to render in a **captured render context** and pop the `BubbleableMetadata`. `harvestAttachments` now
+  **resolves each bubbled library name → asset URLs** (via `library.discovery` + `file_url_generator`)
+  and carries the ESM flag. An «ext» card SSR now returns:
+  `js: [ { src: "…/card.js", module: true } ]` (was `libraries=[]`). Kernel cell
+  `testExternalSsrHarvestsEsmLibraryG9` (env-gated).
+- **Client** (`mosaicAttach`): `ensureJs` now injects `<script type="module">` for `module:true`
+  assets (ESM will not evaluate otherwise), deduped by src (registry + live-document). A bare-string
+  asset stays a classic script. Vitest: inject-once + `type=module` + classic-stays-classic +
+  re-render once-guard (12/12).
+- **The builder document also loads the library's global bundle** if a component declares one — the
+  harvest resolves every bubbled library, not just the per-component one.
+
+### §5 — SMOOTHNESS (no flash)
+`mosaicAttach` installs a one-time hydration style: a node containing a web component gets
+`data-mosaic-hydrating`; `[data-mosaic-hydrating] :not(:defined){opacity:0}` hides the un-upgraded
+element and `:defined{opacity:1;transition:opacity .18s}` crossfades it in on upgrade — no
+unstyled-then-styled pop. A 3 s safety timeout + `customElements.whenDefined` lift the guard so a
+component whose ESM never loads is revealed, never hidden forever. Vitest: guard set for a web-component
+node, absent for a built-ins-only node (2 cells). The **crossfade film on the live builder canvas**
+needs the library in the palette (dev) → Arun's walk.
+
+### § What Arun must enable for the builder-canvas headed walk (dev — not done here)
+The page hydration + slot projection are proven headed above without dev writes. The remaining headed
+proofs run **inside the Puck builder**, which needs the external library in the palette:
+1. Admin → **Component libraries** → tick the external library → Save (runs the library sync + enable).
+2. Open a page in the builder, place an external **card**; observe on the canvas: it hydrates (shadow
+   styling, non-zero box), no flash on first render (crossfade), and its slot shows the Mosaic drop
+   zone (hittable, banner inside the zone). Repeat in the **iframe preview** and the **FE dialog**.
+These are the P3 oracle-walk's Pillar-D steps — the mechanism (server harvest + client ESM inject +
+anti-flash) is landed + unit/kernel/headed-page proven here.
+
+### Gates
+Kernel+Unit **3104 / 0 (8638 assertions; 3 skipped = env-gated «ext» cells; 1 pre-existing warning + 7 D11.3 deprecations)** · Vitest **654 / 1** (B-101, pre-existing; +5 G9 cells) · tsc **clean** ·
+phpcs **0 errors** (changed) · phpstan MosaicRenderer **4 pre-existing** (0 new) · oracles **REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL before==after · dist **1.0.65 → 1.0.66**
+(builder `ca887186`, frontend-editor `161614c8`, renderer `9c7f9320` byte-identical; served==built).
+Ship count 63 (build pass; Arun commits).
+
+**STOP — CHECKPOINT-2 filed. P3 (Arun's oracle walk script by pillar) next; builder-canvas headed
+hydration + slot-chrome + crossfade films are the walk's Pillar-D steps (need the library enabled).**

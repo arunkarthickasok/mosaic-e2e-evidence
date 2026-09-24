@@ -1,0 +1,11 @@
+{
+  "scriptState": "loaded",
+  "defined": true,
+  "hasShadowRoot": true,
+  "display": "block",
+  "box": {
+    "w": 1280,
+    "h": 62
+  },
+  "slotAssigned": true
+}

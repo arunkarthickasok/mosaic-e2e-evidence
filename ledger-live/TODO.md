@@ -14164,3 +14164,21 @@ configs; npm run build deterministic (builder 5845c8db, frontend-editor e5d4d604
 GATES: phpcs 0 errors + phpstan 0 errors (changed); Kernel+Unit 3103/0 (8632 assertions; F-109 Sprint50 smoke updated to real configs); oracles REGION 14e6cb9c..3954
 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.64→1.0.65 (bundles byte-identical, renderer 9c7f9320).
 Mosaic READ-ONLY (edits uncommitted for Arun). STOP — P2 (G9 canvas hydration proof) next.
+
+=== CP-ADOPT-7 P2 (CHECKPOINT-2) — G9 canvas hydration (shadow-DOM web components). ===
+Ledger: CKE5 sheet ACCEPTED-with-corrections + design v2 due 2026-11-24 (ACT2 2026-12-01) pushed d694ebd.
+MECHANISM: «ext» ships per-component ESM (libraryOverrides type:module), core auto-lib core/components.«ext»--<c>,
+no Drupal.behaviors; per-comp ESM self-contained (relative shared import, no bare specifiers).
+G9 SERVER fix (MosaicRenderer): renderInIsolation DISCARDED bubbled meta (bug) → captured render context + pop
+BubbleableMetadata; harvestAttachments resolves lib names→css/js URLs (library.discovery+file_url_generator)
+w/ ESM module flag. «ext» card SSR now js:[{src:.../card.js,module:true}] (was []). +2 ctor deps.
+G9 CLIENT fix (mosaicAttach): ensureJs injects <script type=module> for module:true, deduped. SMOOTHNESS:
+:not(:defined) hide + :defined crossfade + 3s safety reveal (guardHydration). Vitest mosaicAttach 12 (ESM once/
+dedupe/classic-stays/once-guard/anti-flash x2). Kernel testExternalSsrHarvestsEsmLibraryG9 (env-gated).
+PAGE headed (standalone harness, NO dev writes): «ext»-card upgrades defined+shadowRoot+box1280x62+display:block,
+slotAssigned=true (light-DOM slot projects). SLOTS §3: projection works (twig wraps <div slot=X>), no fix.
+DEV-NEEDED (flagged for Arun): builder-canvas headed films (hydrate on canvas, no-flash crossfade, slot chrome
++ banner geometry, iframe + FE dialog) need «ext» enabled in Mosaic palette = Arun's walk = P3 Pillar-D.
+GATES: tsc clean; Vitest 654/1-B101; Kernel+Unit 3104 / 0 (8638 assertions; 3 skipped = env-gated «ext» cells; 1 pre-existing warning + 7 D11.3 deprecations); phpcs 0; phpstan MosaicRenderer 4-pre-existing(0 new);
+oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.65→1.0.66 (builder ca887186,
+frontend-editor 161614c8, renderer byte-identical). Mosaic READ-ONLY (uncommitted for Arun). STOP — P3 oracle walk next.
