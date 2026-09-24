@@ -308,3 +308,76 @@ enables the library.**
   the linchpin.**
 
 **STOP — P0 is report-only. No build until Arun reads this and rules CP-ADOPT-7 scope.**
+
+---
+
+## CHECKPOINT-1 — CP-ADOPT-7 P1: gap fixes G1/G2/G3/G5/G8 + R9 + F-109 (BUILT)
+
+**Baseline** ship #46 `a36f028`. Mosaic git READ-ONLY (edits left uncommitted for Arun); the external
+library NOT enabled in Mosaic — the re-grade Kernel cell reads its definitions read-only, gated on the
+`MOSAIC_EXT_PROVIDER` env var so the provider name never enters committed code (naming ban).
+
+### G1 — nullable-union classifier (the linchpin)
+`PropShape::classify()` now unwraps a nullable union to its single real type BEFORE classifying:
+`type: [X, "null"]`, an `anyOf`/`oneOf` with a `{type: null}` branch, and `nullable: true`. A genuine
+multi-type union (null aside) is left as an array → still raw. H4: a `default: null` is treated as
+absent (falls through to `examples[0]` → type-empty), never seeding null.
+
+**Re-grade of the external library (Kernel cell, recorded 2026-09-23):**
+```
+props total = 412     raw BEFORE = 353  →  raw AFTER = 9      (344 reclassified, 85.7% → 2.2%)
+components  = 47      grade BEFORE = 0 Ready / 47 Attention / 0 Blocked
+                      grade AFTER  = 38 Ready / 9 Attention / 0 Blocked
+```
+**Remaining 9 Attention** — every one is a single **typeless prop** (declared with NO `type` key at
+all — genuinely unclassifiable, not a nullable union), so raw is correct:
+`drupalbutton.value, button.value, toggle.value, textinput.value, checkbox.value, radiobutton.value,
+select.value, combobox.value` (a `value` prop) and `card.media` (a `media` prop). Advice: a
+library-schema fix (type those props) or accept — classed **library schema advice / accepted**, size S.
+
+### G2 — never-blank labels
+`PropShape::humanizeName()` humanises snake/kebab/**camelCase**/acronym-runs → Title Case
+(`userActionsMenuHtml` → "User Actions Menu Html", `HTMLContent` → "HTML Content"). The prop-descriptor
+label uses it; the component label (`MosaicManifestBuilder::componentLabel`) is `label` → SDC `name` →
+humanised local id — so a blank palette entry is impossible.
+
+### G3 — palette category
+`buildComponentEntry` category = explicit `category` → SDC `group` → **provider** (an adopted library
+groups under its provider, not the "Other" bucket).
+
+### G5 — media-object → media field
+`PropShape` maps an object with a `src` (or a `url` + an image corroborator alt/width/height/srcset), or
+a `$ref` naming image/media, to the **media** kind. On the external library: `card.image` → media
+(recorded). A `url`+`title` object stays raw (a link shape, not media).
+
+### G8 — SO-7 reason for CSS-in-JS / shadow DOM
+`MosaicGlobalStylesScanner::scanComponent` now returns a `reason`. A component with no co-located CSS
+but a custom-element twig (or a co-located `.js`) reports **"styles in JavaScript (shadow DOM) —
+isolated from the page"** — the libraries page reassures instead of a silent reasonless FALSE. (The
+external library is entirely shadow-DOM styled → this is its result.) The scanner remains blind to a
+global stylesheet declared via `*.libraries.yml` (gap G8 note carried; harmless for this library).
+
+### R9 — core ^11.3 (#attributes) + F-109 (build script)
+- `mosaic.info.yml`: `core_version_requirement: ^11.1 || ^12` → **`^11.3 || ^12`** (the core component
+  element merges `#attributes` from 11.3). Kernel cell renders an adopted component
+  (`olivero:teaser`) via `#type => component` with an Attribute bag and asserts the attribute reaches
+  the markup.
+- **F-109:** `js/package.json` `build` referenced a non-existent `vite.bundles.config.ts`; now
+  `vite build --config vite.builder.config.ts && vite build --config vite.frontend-editor.config.ts`.
+  `npm run build` proven: `dist/builder.js 5845c8db… · dist/frontend-editor.js e5d4d604…` — **identical
+  across two consecutive rebuilds** (deterministic); byte-identical to the served bundles (no JS source
+  changed this pass).
+
+### Cells
+Unit: `PropShapeTest` (G1 union forms, G5 media, G2 humanizeName), `MosaicPropShapeRegistryTest`
+(G2 camel label + never-blank, H4 null→type-empty), `MosaicGlobalStylesScannerTest` (G8 shadow-DOM +
+plain-no-reason). Kernel: `ExternalLibraryReadinessTest` (R9 #attributes, G2/G3 label+category,
+env-gated «ext» re-grade + G5).
+
+### Gates
+Kernel+Unit **3103 / 0** (8632 assertions; 1 pre-existing risky-test warning + 7 D11.3 deprecations; the sole failure — the `Sprint50SmokeTest` cell that ENFORCED the old phantom `vite.bundles.config.ts` build script — was updated to assert the real F-109 configs, fixed + re-verified) · phpcs **0 errors** (changed files) · phpstan **0 errors** (changed src) ·
+oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL before==after · dist
+**1.0.64 → 1.0.65** (builder `5845c8db`, frontend-editor `e5d4d604`, renderer `9c7f9320`
+byte-identical; served==built; deterministic rebuild). Ship count 63 (rider/build-pass; Arun commits).
+
+**STOP — CHECKPOINT-1 filed. P2 (G9 canvas-hydration proof) next.**

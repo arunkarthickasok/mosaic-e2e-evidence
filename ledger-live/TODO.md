@@ -14146,3 +14146,21 @@ dist 1.0.63->1.0.64 (builder 03d1afea->5845c8db, frontend-editor 43e9d9c6->e5d4d
 CP-ADOPT-7 P0: report-only readiness probe of THE EXTERNAL LIBRARY (naming ban: never its name/vendor/
 region/org anywhere) -> reports/REPORT-CP-ADOPT-7.md. Discovery + prop-shape coverage + slots + assets +
 render dry-run + GAP REGISTER. (numbers filled in the report.)
+
+=== CP-ADOPT-7 P1 (CHECKPOINT-1) — gap fixes G1/G2/G3/G5/G8 + R9 + F-109. ===
+Ledger first: DELIVERY-PLAN amendment (delegated ruling 2026-09-23) pushed ef9bc72 (§1 CKE5+breakpoint
+riders, §3 B-102 baseline, §6 ACT2 additions, §7 security/release/project; bible §13.2 timeline late Jan 2027).
+G1 PropShape::classify unwraps nullable unions (type:[X,null], anyOf/oneOf null, nullable:true) before
+classify; H4 default:null → type-empty. RE-GRADE «ext» (Kernel, env-gated MOSAIC_EXT_PROVIDER, naming-safe):
+raw 353/412 → 9; components 0→38 Ready / 47→9 Attention / 0 Blocked. Residual 9 = a typeless prop (no
+`type` key): *.value (8) + card.media — library-schema advice/accept, not a union.
+G2 PropShape::humanizeName (snake/kebab/CAMEL/acronym → Title Case); prop label + componentLabel
+(label→name→humanized id) never blank. G3 category = category→group→provider (not "Other"). G5 object
+{src | url+alt/w/h} or $ref image/media → MEDIA (card.image proven). G8 scanner reason "styles in
+JavaScript (shadow DOM) — isolated from the page" for custom-element/no-css components; libraries form shows it.
+R9 mosaic.info.yml core_version ^11.1||^12 → ^11.3||^12; Kernel #attributes proven via olivero:teaser core
+element (Attribute bag). F-109 package.json build script vite.bundles.config.ts(missing) → builder+frontend-editor
+configs; npm run build deterministic (builder 5845c8db, frontend-editor e5d4d604 identical x2), byte-identical served.
+GATES: phpcs 0 errors + phpstan 0 errors (changed); Kernel+Unit 3103/0 (8632 assertions; F-109 Sprint50 smoke updated to real configs); oracles REGION 14e6cb9c..3954
++ STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.64→1.0.65 (bundles byte-identical, renderer 9c7f9320).
+Mosaic READ-ONLY (edits uncommitted for Arun). STOP — P2 (G9 canvas hydration proof) next.
