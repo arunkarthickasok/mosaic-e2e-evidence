@@ -13,12 +13,14 @@
 ## §1 — Author-trust
 D-1, D-2, D-3-hide, F-095, D-8, D-14, WC#71 author-grade messages,
 defaults-insertion ruling, held-file rule retirement (Arun ruling).
-- **CKE5 sheet rider (amend 2026-09-23):** formatted-text props (adopted libraries ship
-  many via `contentMediaType: text/html`) get a CKE5 editor whose stylesheet is governed
-  by **Arun's sheet ruling** (which text-format / editor CSS applies inside the adopted
-  slot) — build after that ruling.
-- **Breakpoint-rule code (amend 2026-09-23):** the per-prop breakpoint capability needs
-  the breakpoint-rule code landed **after Arun's sheet ruling** (paired, same slice).
+- **CKE5 sheet rider — ACCEPTED with corrections (Arun delegated ruling 2026-09-24):** formatted-text
+  props (adopted libraries ship many via `contentMediaType: text/html`) get a CKE5 editor. Corrections:
+  (i) **Heading** `text` stays a **single-line** input (not CKE5); (ii) **Text** `text_format` is
+  **hidden / derived** (author never picks it); (iii) **ONE shared CKE5 modal + a default format** for
+  EVERY rich field (no per-field editor/format choice); (iv) the panel rows are **re-verified against the
+  live rail before code** (build only after the row audit). Paired with the breakpoint-rule code below.
+- **Breakpoint-rule code (amend 2026-09-24):** land the per-prop breakpoint-capability code **with** the
+  CKE5 slice (same slice), now that the sheet ruling is decided.
 
 ### §1.1 — Labelled (post-1.0 / parking)
 RC-A1, F-037, D-6, registry/CEM, headless, versioned upgrades, render migration,
@@ -72,8 +74,9 @@ rule-breaking drops (Save stops) vs the current native refusal.
 - **Zone-label consistency** — slot/zone labels consistent across canvas, panel, picker.
 - **Design decision 6 ruling** — Arun rules accept-and-mark vs native refusal (moved from
   candidate to a required ACT-2 ruling).
-- **design v2 due: `<Arun>`** — the refined design-system v2 (source of truth) is owed
-  from Arun before ACT 2 starts.
+- **design v2 due 2026-11-24 (Arun delegated ruling 2026-09-24)** — the refined design-system v2
+  (source of truth) is owed from Arun by **2026-11-24**. **ACT 2 starts 2026-12-01 from v2 only**; if
+  v2 slips, the **tag slips day-for-day**.
 
 ## §7 — Release
 Dev push → Arun soak → truth pass (bible, MOSAIC.md, docs, headline verified by
@@ -98,6 +101,12 @@ the oracle walk, M1 ADR) → **TAG 1.0.0**.
   (Claro / Gin / custom) — it never depends on the admin theme's classes.
 - **ACT 2 (P1d-A):** ACT 2 = the full 1.0 design (NOT minimal). Timeline of record
   late January 2027.
+
+- **CP-ADOPT-7 P2 amendment (Arun delegated ruling 2026-09-24, overrule open):** CKE5 sheet ACCEPTED
+  with corrections (Heading single-line; Text format hidden/derived; one shared CKE5 modal + default
+  format for every rich field; rows re-verified against the live rail before code); breakpoint-rule
+  code lands with the CKE5 slice. Design v2 due **2026-11-24**; ACT 2 starts **2026-12-01** from v2
+  only; tag slips day-for-day if v2 is late.
 
 ## Walk-catch tally
 - **WC#73 (P1d-A):** viewport switch with an adopted component wiped the canvas —
