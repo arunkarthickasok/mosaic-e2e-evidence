@@ -1080,3 +1080,107 @@ Kernel+Unit **3051/0** (8523 assertions; +1 notice-ruling cell; 1 pre-existing r
 served==built). Ship count **63**. WALK steps 2/5/7 rewritten.
 
 **STOP — WC#89 + WC#90 + WC#91 fixed + proven; fallback-notice ruling implemented. WC#86 capture-listener debt remains for the 1.1 Puck-extension review. Ship #46 awaits Arun's re-walk.**
+
+---
+
+## CHECKPOINT-12 (RIDER PASS 7) — WC#92 slot-only save · WC#93 picker geometry + keyboard
+
+**Charter:** Arun's walk found two blockers. **WC#92** — saving a page rejected with
+"mosaic_plain_content … slot-only … top level". **WC#93** — the picker list geometry/keyboard
+on a short window. Mosaic git READ-ONLY; nothing staged; no dev DB/config writes.
+
+### WC#92 — the mechanism (headed, node/993) + the real cause
+Reproduced Arun's two picker inserts headed on node/993 and dumped the transient serialized
+layout after each (probe `e2e/wc92-mechanism.spec.ts`). BOTH inserts land **correctly nested**,
+and BOTH pass the server validator:
+```
+CASE-A  teaser "Add to Content" → Plain content
+  olivero:teaser(9ecbc5c7) .content = [ mosaic_plain_content(e27d0a05), mosaic_plain_content(2da0b503←new) ]
+  mosaic_region(e75821ed) .items    = [ mosaic_columns(c9a5f65a), olivero--teaser(9ecbc5c7) ]   ← UNCHANGED
+  slotOnlyPlacementErrors ⇒ []  (no error)
+CASE-B  "Add to Column 2" → mosaic_button
+  mosaic_columns(c9a5f65a) .column_2 = [ mosaic_button(0a2bbddf←new) ]
+  mosaic_region(e75821ed) .items     = [ mosaic_columns, olivero--teaser ]                       ← UNCHANGED
+  slotOnlyPlacementErrors ⇒ []  (no error)
+```
+So the picker path is NOT the bug — a multi-component page has the structural `mosaic_region` as
+its root, so Plain content inside a real component is a **grandchild** and correctly allowed.
+
+**THE CAUSE (found by reading the validator against fromPuck's single-item-root rule):**
+`MosaicPropValidator::slotOnlyPlacementErrors()` walked **every slot of the root node**. On a
+multi-component page the root is the region (its slots ARE the page canvas), so this is right. But
+when a single adopted component (a lone Olivero teaser) is the ONLY top-level item, fromPuck's
+single-item-root rule makes **that teaser the root** — and walking all its slots wrongly counted
+its own `content` slot as "top level", so the Plain content the author had just placed inside it
+was rejected on save. node/993 (columns + teaser) can't reproduce it; a lone teaser can.
+
+Side-by-side (what "top level" read):
+```
+root = mosaic_region   →  topLevel = {region} ∪ region.slots.*        (page canvas)          ✓ correct
+root = olivero:teaser  →  OLD: topLevel = {teaser} ∪ teaser.slots.*   (its content slot!)    ✗ WC#92
+                          NEW: topLevel = {teaser}                     (a component root's
+                                                                        own slots are allowed) ✓
+```
+
+### WC#92 — the fix (ONE shared rule; author-grade message)
+THE ONE RULE, shared by the server validator and the client picker catalog: *a slot-only
+component (Plain content) may live inside ANY real component's slot — owned or adopted — and is
+refused ONLY at the true page root (the root node, plus the region's canvas slots).*
+- **Server** (`MosaicPropValidator::slotOnlyPlacementErrors`): the canvas = the root node + (only
+  when the root is the structural `mosaic_region`) the region's slot children. A COMPONENT-root's
+  own slots are component slots → allowed. Message is author-grade + names the component:
+  **"Plain content can only be placed inside another component's area, not directly on the page."**
+- **Client** (`MosaicSlotZone.slotAcceptsPlainContent` + both `MosaicSlotZone` call sites in
+  `MosaicPuckAdapter` now pass `offerPlainContent`): Plain content is offered in EVERY component
+  slot — owned Columns included, not just adopted — and dropped from a constrained allow-list slot
+  (which the server would reject anyway). The root drawer already excludes it.
+
+### WC#92 — proof
+- Kernel `SlotOnlyPlacementTest` (9 cells): lone-root-component slot **saves**; owned Columns slot
+  **saves**; adopted teaser slot **saves**; region-canvas **rejected**; slot-only-as-root
+  **rejected**; author-grade message (names "Plain content", never "slot-only"/a node id).
+- Kernel save-path (WC#78 precedent, real presave guard migrate→validateFull on an entity_test
+  entity): a nested Plain content **saves**; a page-canvas Plain content **throws**
+  `EntityStorageException` with the author-grade message.
+- Vitest: an OWNED free-content slot offers Plain content first; a constrained allow-list slot
+  excludes it even when the flag is on.
+
+### WC#93 — picker list geometry + keyboard
+The portal (WC#90/#91) positioned the list only BELOW the button with no height bound. Fix
+(`MosaicZonePicker`): anchor below the "+" by default; **flip ABOVE** when room below < 240px and
+there is more room above; **max-height 60vh** (also bounded by the room on the chosen side) with
+**internal scroll**; Esc closes + returns focus to the "+"; outside-click closes. No layout shift
+(the list is still portaled out of the canvas — WC#91).
+
+Headed film (800px-tall window, `e2e/wc93-picker-short-window.spec.ts`) — PASS:
+```
+chosen "+" rect.top = 431          (viewport height = 800)
+listbox: top 452 · height 344 · bottom 796  → fullyVisible = TRUE   (bottom 796 ≤ 800)
+listbox style: position:fixed · maxHeight:343.641px · overflowY:auto · top:450.359px
+after Esc: listbox count = 0       (closes; focus returns to the "+")
+```
+The first film (pre-fix) caught a real ~6px overflow (bottom 806 > 800): `max-height` bounds the
+content box, so the list's 4px padding + 1px border spilled past the cap. Fix = `box-sizing:
+border-box` on the list → box height 354 → 344, bottom 806 → 796. Films:
+`pass7-wc92-wc93/1-list-open-short-window.png`, `2-after-esc-closed.png`.
+Vitest cells: flip-above on a short window; anchor-below with room; outside-click closes; Esc
+returns focus to the "+".
+
+### Ledger — Arun's words
+- WC#92: *"save rejected 'mosaic_plain_content … slot-only … top level'"* → FIXED (lone-root cause;
+  one shared rule; author-grade message; Plain content now allowed in any slot incl. owned).
+- WC#93: *"picker list geometry + keyboard"* → FIXED (anchor/flip, 60vh scroll, Esc, outside-click,
+  focus-return; no layout shift). Keyboard picker is NOT configurable (WCAG) — recorded.
+- Tally **93**.
+
+### Gates
+Kernel+Unit **3057 / 0** (8559 assertions; +6 WC#92 cells over pass6's 3051; 1 pre-existing
+risky-test warning + 7 D11.3 deprecations, 0 failures/errors) · Vitest **647 / 1** (B-101 boolean→checkbox, pre-existing;
++6 WC#92/#93 cells) · tsc **clean** · phpcs **0 errors** (LineLength warnings pre-existing) ·
+phpstan MosaicPropValidator **0 errors** · oracles **REGION 14e6cb9c…3954** + **STYLE b7756795…ca982
+4354 10** IDENTICAL before==after ·
+dist **1.0.62 → 1.0.63** (builder `a9cf2a9c→03d1afea`, frontend-editor `93103f23→43e9d9c6`, renderer
+`9c7f9320` **byte-identical**; served==built). Ship count **63** (rider work; not a git ship).
+WC#86 capture-listener debt remains for the 1.1 Puck-extension review.
+
+**STOP — WC#92 + WC#93 fixed + proven. Ship #46 awaits Arun's re-walk.**

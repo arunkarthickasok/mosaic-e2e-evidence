@@ -14107,3 +14107,29 @@ GATES: tsc clean; Vitest 643/1-B101; Kernel+Unit 3051/0 (8523 assertions; +1 not
 pre-existing (0 new); oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist
 1.0.61->1.0.62 (builder 2deffd63->a9cf2a9c, frontend-editor 7f56106d->93103f23, renderer byte-identical).
 Ship 63. WC#86 debt (capture-listener workaround) still open for 1.1 Puck-extension review.
+
+=== CP-ADOPT-6R PASS 7 — WC#92 slot-only save + WC#93 picker geometry/keyboard. Tally 93. ===
+WC#92 "save rejected 'mosaic_plain_content … slot-only … top level'": MECHANISM (headed node/993) —
+the picker inserts land CORRECTLY NESTED (teaser.content + columns.column_2) and both pass the
+validator; the picker is NOT the bug. THE CAUSE: MosaicPropValidator::slotOnlyPlacementErrors walked
+EVERY slot of the root. Multi-component page → root is the mosaic_region (its slots ARE the canvas) →
+Plain content in a real component is a grandchild → allowed. But a LONE adopted teaser is its own root
+(fromPuck single-item-root rule); walking all its slots counted the teaser's OWN content slot as "top
+level" → rejected. FIX (ONE shared rule): canvas = root + (only if root is mosaic_region) its slot
+children; a component-root's own slots are allowed. Client mirror: MosaicSlotZone.slotAcceptsPlainContent
++ both slot-zone sites offerPlainContent → Plain content offered in ANY component slot (owned Columns
+too), dropped from constrained allow-list slots; root drawer still excludes it. Author-grade message:
+"Plain content can only be placed inside another component's area, not directly on the page." Kernel
+SlotOnlyPlacementTest 9 cells (lone-root saves, owned saves, adopted saves, canvas rejected, slot-only-
+as-root rejected, save-path presave migrate→validateFull throws w/ author-grade msg). Vitest: owned free
+slot offers Plain content first; constrained slot excludes it even with flag on.
+WC#93 picker geometry/keyboard: anchor below the "+", flip ABOVE when room below < 240px, max-height 60vh
+(bounded by room) + internal scroll, box-sizing:border-box (max-height bounds the FULL box), Esc closes +
+refocuses, outside-click closes, no layout shift (portaled). Headed film 800px: listbox top452 h344
+bottom796 fullyVisible=TRUE, after-Esc count=0. FIRST film caught a real 6px overflow (bottom806>800 —
+content-box max-height let padding+border spill); box-sizing fixed it (354→344). Vitest cells: flip,
+anchor-below, outside-click, Esc-refocus. Keyboard picker NOT configurable (WCAG) — recorded.
+GATES: tsc clean; Vitest 647/1-B101 (+6 WC#92/#93 cells); Kernel+Unit 3057/0 (8559 assertions; +6 cells; 1 pre-existing warning + 7 D11.3 deprecations); phpcs 0 errors;
+phpstan MosaicPropValidator 0; oracles REGION 14e6cb9c..3954 IDENTICAL; dist 1.0.62->1.0.63 (builder
+a9cf2a9c->03d1afea, frontend-editor 93103f23->43e9d9c6, renderer byte-identical). Ship 63 (rider work).
+WC#86 capture-listener debt still open for 1.1 Puck-extension review. Ship #46 awaits Arun's re-walk.

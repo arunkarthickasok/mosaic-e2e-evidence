@@ -12,6 +12,16 @@ classes (`*.log`, `js/e2e.zip`, `js/esc-probe.config.ts`, `assets/`, `js/e2e/`,
 The `assets/` pattern is anchored (`/assets/`, `js/assets/`) so it can NEVER catch the
 shipped `js/dist/assets/` worker chunk (verified).
 
+> **PASS 7 (WC#92 slot-only save + WC#93 picker geometry/keyboard):** count **63** — the SAME 63-path
+> set as the PASS 6 verbatim list below (`git status --short -uall | wc -l` = 63; `git check-ignore` on
+> the changed src/test/dist/libraries paths ⇒ none ignored). This pass modified paths ALREADY in the set:
+> `src/Service/MosaicPropValidator.php`, `js/src/builder/fields/MosaicSlotZone.tsx`,
+> `js/src/builder/MosaicPuckAdapter.ts`, `js/src/builder/fields/MosaicZonePicker.tsx` (+ its test),
+> `js/src/builder/fields/__tests__/MosaicSlotZonePicker.test.tsx`,
+> `tests/src/Kernel/Adopt/SlotOnlyPlacementTest.php`, `mosaic.libraries.yml`, and the two dist bundles —
+> **no new path added**. dist **1.0.62 → 1.0.63** (builder `a9cf2a9c→03d1afea`, frontend-editor
+> `93103f23→43e9d9c6`, renderer `9c7f9320` byte-identical; served==built).
+>
 > **PASS 6 (WC#89 + WC#90 + WC#91 + fallback-notice ruling):** count **63** (33 M + 30 untracked; no new
 > file — all modified existing). dist 1.0.61→1.0.62. Full verbatim `git status --short -uall` (63):
 > ```

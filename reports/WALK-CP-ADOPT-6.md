@@ -79,12 +79,20 @@ slot with a keyboard, not just by dragging.
    Place a fresh Olivero **teaser**. Its **content** zone (empty) shows one **"+ Add"**
    affordance (a zone with children shows a single compact header "+"; never two).
    **Mouse:** click "+ Add" — the picker opens; the list shows **Plain content first**;
-   click it; type a sentence.
+   click it; type a sentence. Then **Save the node** — the save **succeeds**
+   (**WC#92 fixed**: Plain content lives inside a component's slot; it is refused only on
+   the bare page canvas — even on a page whose *only* block is that adopted teaser, where
+   the teaser is its own root). The old build wrongly rejected it as "top level".
    **Keyboard:** on another zone, Tab to the "+", Enter opens, ↑/↓ move, Enter chooses,
-   Esc closes.
+   **Esc closes** and returns focus to the "+".
+   **WC#93 (fixed):** the list is anchored under the "+", **flips above** when the window is
+   short (< 240px room below), is capped at **60vh with internal scroll**, closes on Esc or
+   an outside click — so on any window height the whole list is reachable and the canvas
+   never shifts.
    **WC#87 (fixed):** the picker now appears on **owned** free-content zones too (not just
    foreign), and on a free-content slot it lists **every** authorable component (owned
-   first, grouped by library) after Plain content.
+   first, grouped by library) after Plain content. **WC#92:** Plain content is offered in
+   **owned** slots too (e.g. a Columns column), not only adopted ones.
    *Keyboard PASS:* the full keyboard path opens the picker and inserts.
    *Mouse — WC#86 FIXED (PROVEN headed):* a **real mouse click** now **opens** the picker.
    Proven on node/993 (headed): `elementsFromPoint` at the "+" returns the button wrapper
@@ -121,3 +129,10 @@ into a library's slot by mouse OR keyboard — all without ever losing your cont
 - **picker opens by mouse and keyboard on adopted + owned zones** — a real mouse click and
   the full keyboard path both open the per-zone picker; one affordance per zone; drag still
   works. (WC#84)
+- **picker insert saves (owned + adopted + root-rejected)** — Plain content added into any
+  component's slot (owned Columns or adopted teaser, including a lone-teaser page whose root
+  IS the teaser) SAVES; Plain content on the bare page canvas is refused with an author-grade
+  message. One shared rule governs the client catalog and the server validator. (WC#92)
+- **picker list fits any window + Esc** — the list anchors under the "+", flips above on a
+  short window, caps at 60vh with internal scroll, and closes on Esc (focus returns to the
+  "+") or an outside click, with no canvas layout shift. (WC#93)
