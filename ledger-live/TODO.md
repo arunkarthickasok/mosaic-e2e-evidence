@@ -14182,3 +14182,23 @@ DEV-NEEDED (flagged for Arun): builder-canvas headed films (hydrate on canvas, n
 GATES: tsc clean; Vitest 654/1-B101; Kernel+Unit 3104 / 0 (8638 assertions; 3 skipped = env-gated «ext» cells; 1 pre-existing warning + 7 D11.3 deprecations); phpcs 0; phpstan MosaicRenderer 4-pre-existing(0 new);
 oracles REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL; dist 1.0.65→1.0.66 (builder ca887186,
 frontend-editor 161614c8, renderer byte-identical). Mosaic READ-ONLY (uncommitted for Arun). STOP — P3 oracle walk next.
+
+=== WC#95 (Arun) — external library enabled after Mosaic missing from component-libraries page. ===
+CAUSE: MosaicComponentLibrarySync::sync() was invoked ONLY at mosaic.install:139 (mosaic_install, once)
++ mosaic.install:149 (mosaic_update_10003, once via drush updb). NO hook_modules_installed /
+hook_themes_installed existed, and `drush cr` never calls sync — so a provider enabled AFTER Mosaic got
+no mosaic_component_library entity and never appeared on the page.
+FIX (a) new src/Hook/MosaicLibrarySyncHooks.php: #[Hook('modules_installed')] + #[Hook('themes_installed')]
+→ clearCachedDefinitions() + sync() (FQCN service in mosaic.services.yml). (b) MosaicComponentLibrariesForm
+buildForm() runs the idempotent sync() first — the page self-heals, can never show a stale list. (c) drush
+`mosaic:sync-libraries` (alias msl) in MosaicCommands.
+CELLS Kernel MosaicLibrarySyncTest (3): (a) module_installer->install fires the hook → library created
+(adopted default OFF); (b) enableModules (no hook) leaves it missing → form buildForm creates it; (c) sync
+idempotent. Blast radius: the themes_installed hook auto-syncs olivero on theme install in setUp → 5 adopt
+tests that manually seed olivero/adopt_fixture libraries now purge auto-synced libraries in setUp (or
+load-or-create) so they control their own state; GlobalStyles/Fallback/Palette/CacheTag/LibraryChangesReport.
+ARUN (external library already enabled pre-fix, so no hook fired for it): after deploy + `ddev drush cr`,
+run `ddev drush mosaic:sync-libraries` (or just reload /admin/config/mosaic/component-libraries — it now
+self-syncs on load). Either creates the «ext» library entity (defaults OFF; tick + Save to enable).
+GATES: phpcs 0 (changed) + phpstan 0 new; Kernel+Unit 3107/0 (8659 assertions; +3 sync cells; 10 blast-radius test setUps purge auto-synced libs). No JS change → no dist bump. Mosaic
+READ-ONLY (uncommitted, folds into ship #47). Ship count 63.
