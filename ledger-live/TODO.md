@@ -14133,3 +14133,16 @@ GATES: tsc clean; Vitest 647/1-B101 (+6 WC#92/#93 cells); Kernel+Unit 3057/0 (85
 phpstan MosaicPropValidator 0; oracles REGION 14e6cb9c..3954 IDENTICAL; dist 1.0.62->1.0.63 (builder
 a9cf2a9c->03d1afea, frontend-editor 93103f23->43e9d9c6, renderer byte-identical). Ship 63 (rider work).
 WC#86 capture-listener debt still open for 1.1 Puck-extension review. Ship #46 awaits Arun's re-walk.
+
+=== SHIP #46 LEDGERED (a36f028) + WC#94 FIX + CP-ADOPT-7 P0 PROBE. Tally 94. ===
+SHIP #46 = a36f028 (Arun committed after walk PASS): CP-ADOPT-6 arc + riders P1-P7, 63 files, WC#83-#93
+closed, byte-identical 14e6cb9c/b7756795, libs 1.0.63, Kernel 3057/0, Vitest 647/1. Ledger: SHIP-46.md.
+WC#94 (Arun, post-ship walk): picker list pinned to the viewport on page scroll, detached from its "+".
+FIX (MosaicZonePicker): computePos() reads the button's CURRENT rect; while open a scroll(capture:true =
+any container)+resize listener re-anchors the list to the "+"; if the "+" leaves the viewport the list
+CLOSES + focus returns (focus preventScroll). Headed film node/993: btnBottom 409->223, listTop 413->227,
+gap held at 4 (glued). Vitest +2 (re-anchor on scroll; close when offscreen). tsc clean; oracles IDENTICAL;
+dist 1.0.63->1.0.64 (builder 03d1afea->5845c8db, frontend-editor 43e9d9c6->e5d4d604, renderer byte-identical).
+CP-ADOPT-7 P0: report-only readiness probe of THE EXTERNAL LIBRARY (naming ban: never its name/vendor/
+region/org anywhere) -> reports/REPORT-CP-ADOPT-7.md. Discovery + prop-shape coverage + slots + assets +
+render dry-run + GAP REGISTER. (numbers filled in the report.)
