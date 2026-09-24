@@ -13,6 +13,12 @@
 ## §1 — Author-trust
 D-1, D-2, D-3-hide, F-095, D-8, D-14, WC#71 author-grade messages,
 defaults-insertion ruling, held-file rule retirement (Arun ruling).
+- **CKE5 sheet rider (amend 2026-09-23):** formatted-text props (adopted libraries ship
+  many via `contentMediaType: text/html`) get a CKE5 editor whose stylesheet is governed
+  by **Arun's sheet ruling** (which text-format / editor CSS applies inside the adopted
+  slot) — build after that ruling.
+- **Breakpoint-rule code (amend 2026-09-23):** the per-prop breakpoint capability needs
+  the breakpoint-rule code landed **after Arun's sheet ruling** (paired, same slice).
 
 ### §1.1 — Labelled (post-1.0 / parking)
 RC-A1, F-037, D-6, registry/CEM, headless, versioned upgrades, render migration,
@@ -24,6 +30,9 @@ register**.
 
 ## §3 — Wave D
 Test desert, D-0 retrofits, F-096 upgrade rehearsal, M1 moderation Kernel cells.
+- **B-102 phpstan-drupal drift baseline (amend 2026-09-23):** capture the module-wide
+  phpstan-drupal drift as a baseline (`phpstan-baseline.neon` or equivalent) so new code
+  gates at 0-new while the pre-existing drift is quarantined, not blocking.
 
 ## §4 — Wave F
 D-4 translation, F-072, F-059, F-069, F-076, B-101, F-086, F-081, F-079,
@@ -54,13 +63,37 @@ for screens 7–9; and a **dark mode that is designed, not inverted**.
 **Ruling candidate (Arun rules at ACT 2):** design decision 6 — accept-and-mark
 rule-breaking drops (Save stops) vs the current native refusal.
 
+**ACT 2 additions (amend 2026-09-23):**
+- **WC#82** folded into the ACT 2 consistency list.
+- **Message-wording audit** — every author-facing string (validation, notices, banners,
+  errors) reviewed for author-grade voice (extends WC#71).
+- **Report / libraries-page / fallback-block treatment** — the three surfaces get the
+  ACT 2 design pass (currently functional-not-designed).
+- **Zone-label consistency** — slot/zone labels consistent across canvas, panel, picker.
+- **Design decision 6 ruling** — Arun rules accept-and-mark vs native refusal (moved from
+  candidate to a required ACT-2 ruling).
+- **design v2 due: `<Arun>`** — the refined design-system v2 (source of truth) is owed
+  from Arun before ACT 2 starts.
+
 ## §7 — Release
 Dev push → Arun soak → truth pass (bible, MOSAIC.md, docs, headline verified by
 the oracle walk, M1 ADR) → **TAG 1.0.0**.
+- **Security-coverage opt-in (amend 2026-09-23):** opt the project into the Drupal
+  security advisory coverage policy at tag (stable-release requirement).
+- **Release notes (amend 2026-09-23):** authored 1.0.0 release notes (headline features,
+  upgrade/compat, known limitations).
+- **Project page (amend 2026-09-23):** the drupal.org project page brought to release
+  quality (description, screenshots, docs links) at tag.
 
 ---
 
 ## Ratified amendments (recorded)
+- **CP-ADOPT-7 P1 amendment (delegated ruling 2026-09-23, overrule open):** §1 gains the
+  CKE5 sheet rider + breakpoint-rule code (both after Arun's sheet ruling); §3 Wave D
+  gains the B-102 phpstan-drupal drift baseline; §6 ACT 2 gains WC#82, the message-wording
+  audit, report/libraries-page/fallback-block treatment, zone-label consistency, the
+  design-decision-6 ruling, and "design v2 due: `<Arun>`"; §7 gains security-coverage
+  opt-in + release notes + project page. Bible P4 timeline line aligned to late Jan 2027.
 - **D1 amendment (P1d-A):** Mosaic's builder design system is admin-theme-agnostic
   (Claro / Gin / custom) — it never depends on the admin theme's classes.
 - **ACT 2 (P1d-A):** ACT 2 = the full 1.0 design (NOT minimal). Timeline of record
