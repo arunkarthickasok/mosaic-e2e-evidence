@@ -127,3 +127,30 @@ Gates: Kernel+Unit **3113/0** · Vitest **660/1** (B-101 only) · phpcs **0** (c
 
 **DEFERRED to next pass:** the repeater-UX React build (§3b); then P3 = requires-parent enforcement
 (§3c) + preview defaults (§3e).
+
+## CP-ADOPT-7R P2b addendum (CHECKPOINT-3) — folds into ship #47
+
+Repeater UX §3b — MODEL + PANEL (owned-Tabs unification + films deferred, see report).
+New/changed **mosaic** files (READ-ONLY; Arun folds into the single ship #47 ceremony):
+- `src/Sdc/SlotDescriptor.php` — `repeater` ctor field + `withRepeater()` + `toArray()` emit.
+- `src/Service/MosaicManifestBuilder.php` — injects `@mosaic.adoption_profile`; `resolveRepeater()`
+  (profile wins → single-`allowed` heuristic floor), applied last in `buildSlotDescriptors`.
+- `mosaic.services.yml` — `mosaic.manifest_builder` gains `@mosaic.adoption_profile`.
+- `mosaic.libraries.yml` — **1.0.69**.
+- `js/src/shared/types/schema.ts` — `SlotDescriptorJson.repeater`.
+- `js/src/builder/fields/MosaicRepeaterField.tsx` (NEW) — inline item list (rows/summary/+Add/
+  reorder drag+keyboard/remove min-guard/min-max banner/row→select).
+- `js/src/builder/tierBOptimistic.ts` — `readSlotItems`/`reorderInSlot`/`removeFromSlot`/`selectSlotItem`.
+- `js/src/builder/MosaicPuckAdapter.ts` — `_mosaic_repeater__<slot>` custom field beside the slot field.
+- `js/src/builder/fields/__tests__/MosaicRepeaterField.test.tsx` (NEW) +
+  `js/src/builder/__tests__/MosaicPuckAdapterRepeater.test.ts` (NEW) — 14 cells.
+- `tests/src/Kernel/Adopt/RepeaterDescriptorTest.php` (NEW, 5 cells).
+- `tests/src/Kernel/Adopt/SlotDescriptorEmissionTest.php` + `tests/src/Unit/Plugin/Field/MosaicLayoutWidgetTest.php`
+  + `tests/src/Unit/Controller/ManifestControllerTest.php` — manifest-builder construction sites (+imports).
+- `js/dist/{builder.js (3182e57f), frontend-editor.js (3c67e57e)}` rebuilt.
+
+Gates: Kernel+Unit **3118/0** · Vitest **675/1** (B-101) · phpcs **0** · phpstan **0** (changed) ·
+tsc clean · owned REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` IDENTICAL · dist **1.0.69**.
+
+DEFERRED to next pass: owned-Tabs field unification (dual backing store); headed films (need helper
+enabled = Arun's walk, or an owned slot-repeater); then P3 requires-parent (§3c) + preview defaults (§3e).

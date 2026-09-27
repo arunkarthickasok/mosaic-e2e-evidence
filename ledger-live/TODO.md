@@ -14277,3 +14277,10 @@ GATES: Kernel+Unit 3113/0 (8707 assert; +4 cells; 3 skip/1 warn) · Vitest 660/1
 NEXT: repeater UX (§3b) React build; then P3 requires-parent (§3c) + preview defaults (§3e).
 
 Attribution law: AI co-author trailer disabled 2026-09-27; 27 historical trailers pending Arun's ruling on history rewrite
+
+=== CP-ADOPT-7R CHECKPOINT-3 (P2b — repeater UX §3b: MODEL + PANEL) ===
+MODEL: manifest emits slot_descriptors[x].repeater {child,min,max} — adoption profile wins, single-allowed heuristic floor (SlotDescriptor.withRepeater + MosaicManifestBuilder.resolveRepeater + @mosaic.adoption_profile inject). Kernel RepeaterDescriptorTest 5 cells.
+PANEL: MosaicRepeaterField.tsx inline item list (rows/summary/+Add via WC#88 insertIntoSlot/reorder drag+keyboard/remove min-guard/min-max banner exact wording/row->selectSlotItem). tierBOptimistic +readSlotItems/reorderInSlot/removeFromSlot/selectSlotItem. Adapter adds _mosaic_repeater__<slot> custom field ALONGSIDE slot field = DROP-PROOF. Vitest 14 cells. FE parity by construction (same toConfig; frontend-editor bundle changed).
+GATES: Kernel+Unit 3118/0 (8732 assert) . Vitest 675/1 (B-101) . phpcs 0 . phpstan 0 (changed) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.68->1.0.69 (builder 3182e57f, frontend-editor 3c67e57e, renderer 9c7f9320 unchanged).
+DEFERRED: owned-Tabs field unification (array-prop backing store + locked-oracle re-cut); headed films (adopted needs helper=Arun walk; no owned slot-repeater exists to film); SSR crossfade smoothness (P1 ensureSsr covers child mount, not headed-verified).
+NEXT: owned-Tabs unification + films, then P3 requires-parent (3c) + preview defaults (3e).

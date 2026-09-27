@@ -525,3 +525,92 @@ Ship count 64 (build pass; folds into ship #47).
 
 **STOP — CHECKPOINT-2 filed. Next pass: repeater UX (§3b) React build; then P3 = requires-parent
 enforcement (§3c) + preview defaults (§3e).**
+
+---
+
+## CHECKPOINT-3 (P2b — repeater UX §3b: MODEL + PANEL) — folds into ship #47
+
+The §3b repeater UX, built + verified in two additive layers. Both are green; the
+owned-Tabs field-UNIFICATION and the headed films are honestly deferred (below) —
+neither is verifiable/filmable under this pass's constraints («ext» ON, helper NOT
+enabled, no config writes, no saved Arun nodes).
+
+### PART 1 — MODEL (the manifest emits a `repeater` per single-child slot)
+A slot whose rules resolve to EXACTLY ONE child type is a repeater. Resolution
+(§3a source order B): the **adoption profile** `repeaters['<component>.<slot>']`
+(child + cardinality the library declares) WINS; the **heuristic floor** is a slot
+whose `allowed` list is exactly one child type (so an owned single-child slot is a
+repeater with no helper). Applied LAST in `buildSlotDescriptors` so identity +
+sidecar rules are untouched. Storage unchanged — additive metadata only.
+- `src/Sdc/SlotDescriptor.php` — `?array $repeater` ctor field + `withRepeater()` +
+  `toArray()` emits `repeater` only when set (and `withRules()` preserves it).
+- `src/Service/MosaicManifestBuilder.php` — injects `@mosaic.adoption_profile`;
+  `resolveRepeater()` (profile → single-`allowed` heuristic) sets it per slot.
+- `mosaic.services.yml` — `mosaic.manifest_builder` gains `@mosaic.adoption_profile`.
+- `js/src/shared/types/schema.ts` — `SlotDescriptorJson.repeater?: {child,min,max}`.
+- **Kernel `RepeaterDescriptorTest` (5 cells):** profile-sourced (`adopt_widget.content`
+  → `{child: adopt_widget_v2, min:1, max:3}`); heuristic single-`allowed`; heuristic
+  honours slot min/max; multi-`allowed` is NOT a repeater; unrestricted slot is NOT a
+  repeater. The 3 `new MosaicManifestBuilder(...)` sites (2 unit, 1 kernel) updated.
+
+### PART 2 — PANEL (`MosaicRepeaterField`: inline item list in the rail)
+`js/src/builder/fields/MosaicRepeaterField.tsx` — one row per child, each showing
+its first non-empty text prop as summary (tags stripped, `id`/`*Format` skipped,
+truncated), with:
+- **+ Add item** → the WC#88 shared insert path (`insertIntoSlot` + `getComponentDefaults`),
+  the sole child type mapped to Puck's colon-free key;
+- **reorder** — ↑/↓ buttons (ends disabled at the boundaries) + **ArrowUp/ArrowDown**
+  on a focused row + an HTML5 drag handle → `reorderInSlot`;
+- **remove** — min-guarded (disabled + no-op at the floor) → `removeFromSlot`;
+- the **live min/max banner** with the EXACT existing wording (`Requires at least N
+  item(s) — c/N` · `At most N allowed — c/N`), Add disabled at the ceiling;
+- **row → canvas focus sync** — clicking a row → `selectSlotItem` (Puck `setUi`
+  itemSelector on `<parentId>:<slotName>`).
+New `tierBOptimistic` helpers mirroring `insertIntoSlot`: `readSlotItems`,
+`reorderInSlot`, `removeFromSlot`, `selectSlotItem` (all deep-clone + history-recorded
+`setData`). **DROP-PROOF:** the adapter adds the item list as a `_mosaic_repeater__
+<slot>` **custom** field ALONGSIDE the `type:'slot'` field — the slot field, the canvas
+drop zone, and the Puck data model are untouched; the synthetic key is never written
+(no `onChange`, not in defaultProps) so it adds no saved prop.
+- `js/src/builder/MosaicPuckAdapter.ts` — `repeaterFields` built beside `slotFields`
+  (`CustomFieldRender` supplies the instance `id` = parentId), spread before slots.
+- **Vitest (14 cells):** `MosaicRepeaterField.test.tsx` (rows/summary, +Add forwards
+  child+defaults, remove min-guard on/off, up/down + keyboard reorder, min & max
+  banners exact wording, Add disabled at max, row→select, empty-render guard,
+  `summaryOf` 3 cells) + `MosaicPuckAdapterRepeater.test.ts` (a repeater slot emits
+  BOTH the slot field AND the repeater field = DROP-PROOF; a non-repeater slot does not).
+- **FE-dialog parity:** automatic — `FrontendBuilderDialog` builds the panel from the
+  SAME `MosaicPuckAdapter.toConfig`, so the field flows to the FE dialog (frontend-editor
+  bundle hash changed accordingly).
+
+### DEFERRED (honest walk — not built/filmable this pass)
+- **Owned-Tabs field UNIFICATION** ("the UI is one component"): owned Tabs stores tabs
+  as an **array PROP** (`sets` via `field_types: repeatable` → Puck array field), NOT
+  slot children — so routing it through `MosaicRepeaterField` means teaching the field a
+  SECOND (array-prop) backing store + re-cutting the locked `TabsArrayUX`/`TabsPersistence`
+  oracles: a dual-backing-store refactor with real regression risk. NOT done. Owned Tabs
+  keeps its proven array field; its render is **byte-identical** (untouched) — proven by
+  the owned shasums below.
+- **Headed films** (accordion ×2 · cards ×3 · keyboard reorder): **structurally not
+  runnable under the constraints.** `MosaicRepeaterField` activates for SLOT repeaters
+  only; (a) the adopted accordion/card repeaters need the **helper enabled** (a config
+  write = Arun's walk) for their profile-sourced rules, and (b) **no owned component
+  currently has a single-child SLOT repeater** (Tabs is array-prop; columns/card are
+  multi-type/leaf), so there is no owned slot-repeater to film either. The 14 Vitest
+  cells are the mechanical proof of add/reorder/remove/min-max/keyboard/summary/focus;
+  the e2e film awaits the helper (Arun's walk) OR a future owned slot-repeater component.
+- **SMOOTHNESS (SSR-once crossfade):** +Add inserts a child whose mount triggers the P1
+  `ensureSsr` (SSR-on-insert) — only the child subtree re-renders, so the parent does not
+  re-fetch/flash. Not headed-verified this pass (tied to the film blocker).
+
+### Gates
+Kernel+Unit **3118 / 0** (8732 assertions; +5 RepeaterDescriptor cells; 3 skips, 1
+warning) · Vitest **675 / 1** (**B-101** only — the stale boolean→checkbox adapter
+oracle; +14 repeater cells) · tsc **clean** · phpcs **0** (changed) · phpstan
+MosaicManifestBuilder+SlotDescriptor **0** · owned oracles **REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10** IDENTICAL (with «ext» ON; owned render untouched) ·
+dist **1.0.68 → 1.0.69** (builder `3182e57f`, frontend-editor `3c67e57e`; renderer
+`9c7f9320` byte-identical; served==built). Ship count 65 (build pass; folds into #47).
+
+**STOP — CHECKPOINT-3 filed. Next: owned-Tabs field unification + headed films (need the
+helper / an owned slot-repeater), then P3 = requires-parent (§3c) + preview defaults (§3e).**
