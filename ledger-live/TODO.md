@@ -14227,3 +14227,25 @@ canvas styling parity. Options + author guidelines. Helper module mosaic_adopt_�
 PART 4 lifecycle top-12: 12/12 red at render (place+panel OK); 7 composition + 2 defaults; save/render not-
 run (no dev writes). Report reports/REPORT-CP-ADOPT-7R.md. Mosaic READ-ONLY (report-only; 0 code changes).
 Gates unchanged: Kernel 3107/0, Vitest 654/1. STOP for reviewer ruling on §3 before the composition build.
+
+=== CP-ADOPT-7R P1 (CHECKPOINT-1) — SSR-on-insert fix + global-asset attach. §3 ruled. ===
+LEDGER: §3 ruled (source-order B; core-vs-helper split; auto-wrap-single/refuse-ambiguous; global auto-
+attach; preview-only defaults+dirty). WC#100 closed not-reproduced (§1.2). Tag +~1wk (ADOPT-7R composition).
+SSR-ON-INSERT (§1.3): cause = only makeOptimisticResolveData→scheduleSsr (tierBOptimistic.ts:151-191)
+schedules SSR, and Puck runs resolveData ONLY on field-onChange not on mount (header:15-20) → inserted
+adopted node never scheduled its first SSR → "loading…" forever. FIX: ensureSsr(id,type,props,basePath)
+(tierBOptimistic) schedules once when no result + no in-flight (abort-map dedupe); EnsureSsr mount-effect
+component (MosaicPuckAdapter) rendered in BOTH loading skeletons (buildTierBRenderer +buildAdoptedRenderer);
+buildTierBRenderer gained basePath. Vitest +5 (tierBOptimistic 13/13). Headed RESOLVED: insert fires POST canvas/ssr 200, loading gone <500ms, nys-card renders.
+GLOBAL ASSETS (§3d): MosaicRenderer::providerGlobalLibraries reads <provider>.mosaic-adopt.yml
+(mosaic_adopt_<provider> module OR provider module), cached w/ library cache tag; renderSingleComponent
+merges resolved globals (css/js URLs, type=module, dedupe by src via mergeAttachments) into the SSR delta;
+mosaicAttach already dedupes. Kernel AdoptGlobalAssetsTest 2 (fixture adopt_fixture/adopt_base→adopt-base.css;
+owned=none). HELPER MODULE web/modules/custom/mosaic_adopt_ext (OUTSIDE mosaic tree, untracked by mosaic,
+Arun's site repo): .info.yml + .libraries.yml (base → depends nys_ds/nysds_full, copies nothing proprietary)
++ nys_ds.mosaic-adopt.yml (global_libraries:[mosaic_adopt_ext/base]). Token/font/icon brand layer ships in
+the library's example THEME not the module (C4) — install that theme or add to base when packaged.
+PARITY ORACLE §3f: scripts/qa/adopted-style-shasum.sh <url> <selector>; baseline ed0ad566…3e48b (card shape-styled by shadow CSS; font-family=system-ui fallback = C4 brand-token/theme gap).
+GATES: owned shasums 14e6cb9c/b7756795 IDENTICAL (with «ext» ON); Vitest 659/1-B101; Kernel+Unit 3109/0;
+phpcs 0; phpstan MosaicRenderer 4-pre-existing(0 new); dist 1.0.66→1.0.67 (builder 4cf870ca, frontend-editor
+05738130, renderer byte-identical). Mosaic READ-ONLY. STOP — P2 (profile reader full semantics + repeater UX).

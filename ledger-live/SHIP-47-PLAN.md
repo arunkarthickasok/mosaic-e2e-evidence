@@ -68,3 +68,31 @@ b7756795…ca982 4354 10** byte-identical · dist **1.0.66**, served==built.
 ## After the ship
 Tag stays **1.0.x-dev** (no rc). Next: **P3 oracle walk** (WALK-CP-ADOPT-7.md — Arun's hands), then the
 Delivery-Plan order (author-trust → backend audit → Wave D/F/G → ACT 2 from design v2 due 2026-11-24).
+
+---
+
+## CP-ADOPT-7R P1 addendum (CHECKPOINT-1) — folds into ship #47
+
+New/changed **mosaic** files (this pass; still READ-ONLY, Arun commits):
+- `src/Service/MosaicRenderer.php` — SSR harvest merges provider `global_libraries` (§3d) via
+  `providerGlobalLibraries` + `mergeAttachments`; reads `<provider>.mosaic-adopt.yml`.
+- `js/src/builder/tierBOptimistic.ts` — `ensureSsr()` (first SSR on mount).
+- `js/src/builder/MosaicPuckAdapter.ts` — `EnsureSsr` mount-effect in both loading skeletons;
+  `buildTierBRenderer(manifest, basePath)`.
+- `js/src/builder/__tests__/tierBOptimistic.test.ts` (+5 cells) ·
+  `tests/src/Kernel/Adopt/AdoptGlobalAssetsTest.php` (new, 2 cells) ·
+  `tests/modules/adopt_fixture/{adopt_fixture.libraries.yml, adopt_fixture.mosaic-adopt.yml, css/adopt-base.css}` (fixtures).
+- `scripts/qa/{adopted-style-shasum.sh, adopted-style-shasum.mjs}` (§3f parity oracle).
+- `js/dist/{builder.js, frontend-editor.js}` rebuilt · `mosaic.libraries.yml` → **1.0.67**.
+- `check-ignore` clean on all; `SdcComponentPlugin.php` still pristine.
+
+**Helper module — ships SEPARATELY under Arun's SITE repo, NOT the Mosaic module** (git untracked by
+mosaic; `web/modules/custom/mosaic_adopt_ext/`):
+- `mosaic_adopt_ext.info.yml` (deps: `mosaic:mosaic`, the library module)
+- `mosaic_adopt_ext.libraries.yml` (`base` → depends on the library's shipped base ES-module bundle;
+  copies nothing proprietary)
+- `nys_ds.mosaic-adopt.yml` (`global_libraries: [mosaic_adopt_ext/base]`)
+
+Arun installs the helper module on the site (a config write — the adoption profile is then read by
+Mosaic). The brand token/font/icon layer still comes from the library's example theme (install it, or
+add it to `mosaic_adopt_ext/base`).

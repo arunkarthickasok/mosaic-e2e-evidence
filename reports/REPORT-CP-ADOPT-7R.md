@@ -368,3 +368,59 @@ parent — the 7 composition reds), (3) §3e preview-defaults (the 2 defaults re
 
 **STOP — report-only. Ship #47 stays HELD. Awaiting the reviewer's ruling on the Library Composition
 Contract (§3) before the composition build; the owned regression (§1) is the only fix this pass.**
+
+---
+
+## CHECKPOINT-1 — CP-ADOPT-7R P1: SSR-on-insert fix + global-asset attach (BUILT)
+
+**Ledger:** §3 ruled (source-order B; core-vs-helper split; auto-wrap-single/refuse-ambiguous; global
+auto-attach; preview-only defaults + dirty tracking). WC#100 closed **not-reproduced** (§1.2). Tag
+impact ledgered: **+ ~1 week** for the ADOPT-7R composition work. Mosaic git READ-ONLY; «ext» stays ON;
+no nodes saved; the helper module ships OUTSIDE the mosaic tree (Arun's site repo).
+
+### 1 — SSR-ON-INSERT (§1.3 mosaic-bug) — FIXED
+**Cause (file:line):** the ONLY thing that scheduled a Tier-B/adopted component's SSR was
+`makeOptimisticResolveData` → `scheduleSsr` in `js/src/builder/tierBOptimistic.ts:151-191`, and Puck
+runs `resolveData` **only on a field-onChange, never on initial mount** (documented in the file header,
+`tierBOptimistic.ts:15-20`). So a freshly INSERTED adopted node (picker / drag / bind) never scheduled
+its first SSR → its canvas preview sat at `mosaic-ssr-preview--loading` forever.
+**Fix:** new `ensureSsr(id, type, props, basePath)` (`tierBOptimistic.ts`) schedules the first SSR
+once when there's no result AND no fetch in flight (deduped by the abort map). A tiny mount-effect
+component `EnsureSsr` (`MosaicPuckAdapter.ts`) is rendered inside BOTH loading skeletons
+(`buildTierBRenderer` props-only + `buildAdoptedRenderer` slotted) and calls it on mount — so insert,
+drag, bind AND load all resolve. `buildTierBRenderer` gained a `basePath` param (both call sites pass
+the captured base path).
+**Cells (Vitest `tierBOptimistic`, +5):** insert (no html) → exactly 1 SSR; drag path → same;
+already-has-result → no fetch; two mounts before the fetch → 1 request (in-flight dedupe); ensureSsr +
+an unchanged resolveData → no duplicate. **Headed (RESOLVED):** inserting an «ext» Card via the picker fires one `POST /api/mosaic/canvas/ssr` (200) on mount; the `mosaic-ssr-preview--loading` placeholder is gone by the first 500 ms poll and the real element renders — no "loading…" persists (film `cp-adopt-7/p1-checkpoint1/1-ssr-resolved.png`).
+
+### 2 — GLOBAL-ASSET ATTACH (§3d) — BUILT
+`MosaicRenderer::providerGlobalLibraries(provider)` reads the adoption-profile STUB
+`<provider>.mosaic-adopt.yml` (key `global_libraries`) from a helper module `mosaic_adopt_<provider>`
+or the provider's own module, **cached with the library cache tag** (a library toggle clears it; owned
+providers → none). `renderSingleComponent` merges those globals (resolved to CSS/JS URLs, ESM
+`type=module` preserved, deduped by src via `mergeAttachments`) into the SSR attachment delta, so
+`mosaicAttach` loads them ONCE on the canvas (it already dedupes css/js by URL). Full profile semantics
+(containers/repeaters/requiresParent/preview_defaults) land in P2.
+**Helper module (OUTSIDE the mosaic tree, `web/modules/custom/mosaic_adopt_ext/`, untracked by mosaic;
+Arun's site repo):** `mosaic_adopt_ext.info.yml` (deps: mosaic, the library) · `mosaic_adopt_ext.libraries.yml`
+declaring `mosaic_adopt_ext/base` (depends on the library's shipped base ES-module bundle —
+**copies nothing proprietary**) · `nys_ds.mosaic-adopt.yml` → `global_libraries: [mosaic_adopt_ext/base]`.
+**What the helper's globals point at:** `mosaic_adopt_ext/base` → the library's own shipped base
+ES-module bundle (all custom-element definitions + their shadow-DOM CSS, tokens read as
+`var(--…, fallback)`). The brand **token/font/icon** layer ships in the library's example THEME, not the
+module (§2.1/C4) — install that theme for full brand fidelity, or add it to `base` when it is packaged
+as a module asset; the helper does not copy it.
+**Cells (Kernel `AdoptGlobalAssetsTest`, 2):** an adopted component's SSR delta carries its provider
+global CSS (fixture `adopt_fixture/adopt_base` → `adopt-base.css`) + the library name; an owned component
+carries none. **Parity oracle:** new `scripts/qa/adopted-style-shasum.sh <url> <selector>` (§3f) — first baseline **`ed0ad566…3e48b`** — an «ext» Card resolved on the canvas is shape-styled by its shadow CSS (`display:block`, `box-sizing:border-box`, 16px/24px). **Caveat:** `font-family` resolves to the system-ui FALLBACK, not the brand font — the ESM globals attach but the token/font/icon layer ships in the library's example theme (C4), so full BRAND parity needs that theme (Arun's walk). Full page-vs-canvas parity with the helper enabled is Arun's walk (enabling
+the helper is a config write).
+
+### Gates
+Kernel+Unit **3109 / 0** (8673 assertions; +2 AdoptGlobalAssets cells; 3 env-gated skips) · Vitest **659 / 1** (B-101; +5 ensureSsr cells) · tsc **clean** · phpcs
+**0 errors** (changed) · phpstan MosaicRenderer **4 pre-existing** (0 new) · owned oracles **REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (with «ext» ON) · dist **1.0.66 → 1.0.67**
+(builder `4cf870ca`, frontend-editor `05738130`, renderer `9c7f9320` byte-identical; served==built).
+Ship count 63 (build pass; folds into ship #47).
+
+**STOP — CHECKPOINT-1 filed. P2 (profile reader full semantics + repeater UX) next.**

@@ -1,0 +1,44 @@
+{
+  "ssrFiredOnInsert": true,
+  "ssrRequests": [
+    {
+      "url": "https://drupalak.ddev.site:33001/api/mosaic/canvas/ssr",
+      "method": "POST",
+      "status": 200
+    }
+  ],
+  "resolved": true,
+  "finalTimeline": [
+    {
+      "t": 500,
+      "loading": 0,
+      "anyPreview": 1,
+      "nysCardPresent": true,
+      "ssrCount": 1
+    }
+  ],
+  "fingerprint": "display:block;position:static;box-sizing:border-box;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;width:136px;color:rgb(23, 23, 23);background-color:rgba(0, 0, 0, 0);text-align:start;font-size:16px;font-family:system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif;font-weight:400;line-height:24px;",
+  "fingerprintSha256": "",
+  "fingerprintValues": {
+    "display": "block",
+    "position": "static",
+    "box-sizing": "border-box",
+    "margin-top": "0px",
+    "margin-right": "0px",
+    "margin-bottom": "0px",
+    "margin-left": "0px",
+    "padding-top": "0px",
+    "padding-right": "0px",
+    "padding-bottom": "0px",
+    "padding-left": "0px",
+    "width": "136px",
+    "color": "rgb(23, 23, 23)",
+    "background-color": "rgba(0, 0, 0, 0)",
+    "text-align": "start",
+    "font-size": "16px",
+    "font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+    "font-weight": "400",
+    "line-height": "24px"
+  },
+  "styled": true
+}
