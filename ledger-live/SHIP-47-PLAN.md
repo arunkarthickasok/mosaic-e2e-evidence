@@ -286,3 +286,106 @@ Saved JSON proof (redacted): «ext»:card props = {"footer":[],"preheading_conte
 Gates: Kernel+Unit 3128/0 · Vitest 689/1 (B-101) · tsc clean · phpcs 0 · phpstan 0 new · owned REGION
 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.74.
 DEFERRED: the "example" badge UI (rail badge + dirty tracking); then §4 lifecycle greens + walk rewrite.
+
+## CP-ADOPT-7R P12 (CHECKPOINT-11) — SHIP #47 MANIFEST (the arc closes)
+
+> MOSAIC git READ-ONLY for the AI; **Arun commits**. Nothing staged by the AI. The «ext» HELPER
+> (`web/modules/custom/mosaic_adopt_ext/`) ships SEPARATELY in Arun's SITE repo (listed at the end).
+
+**Count: 75** shippable paths (all CP-ADOPT-7 + 7R). `git check-ignore`: `js/dist/*` NOT ignored
+(bundles ship); `js/e2e/`, `AI/`, `test-results/` ARE ignored (never ship). **`src/Plugin/Component/
+SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 held-file rule holds).
+
+## Full verbatim `git status --short -uall` (75, gitignored cruft excluded)
+```
+ M js/dist/builder.js
+ M js/dist/frontend-editor.js
+ M js/package.json
+ M js/src/builder/BuilderApp.tsx
+ M js/src/builder/MosaicPuckAdapter.ts
+ M js/src/builder/PaletteCard.tsx
+ M js/src/builder/__tests__/mosaicAttach.test.ts
+ M js/src/builder/__tests__/tierBOptimistic.test.ts
+ M js/src/builder/__tests__/useLighthouseScore.test.ts
+ M js/src/builder/fields/MosaicAdoptedPreview.tsx
+ M js/src/builder/fields/MosaicSlotZone.tsx
+ M js/src/builder/fields/MosaicZonePicker.tsx
+ M js/src/builder/fields/__tests__/MosaicZonePicker.test.tsx
+ M js/src/builder/mosaicAttach.ts
+ M js/src/builder/tierBOptimistic.ts
+ M js/src/builder/useLighthouseScore.ts
+ M js/src/shared/types/schema.ts
+ M mosaic.info.yml
+ M mosaic.libraries.yml
+ M mosaic.services.yml
+ M src/Controller/CanvasPreviewController.php
+ M src/Drush/MosaicCommands.php
+ M src/Form/MosaicComponentLibrariesForm.php
+ M src/Sdc/MosaicGlobalStylesScanner.php
+ M src/Sdc/MosaicPropShapeRegistry.php
+ M src/Sdc/PropShape.php
+ M src/Sdc/SlotDescriptor.php
+ M src/Service/MosaicManifestBuilder.php
+ M src/Service/MosaicPropValidator.php
+ M src/Service/MosaicRenderer.php
+ M tests/modules/adopt_fixture/components/adopt_widget/adopt_widget.component.yml
+ M tests/src/Functional/Adopt/MosaicLibraryChangesReportTest.php
+ M tests/src/Kernel/Adopt/BareRenderTest.php
+ M tests/src/Kernel/Adopt/CacheTagUnificationTest.php
+ M tests/src/Kernel/Adopt/FallbackRenderTest.php
+ M tests/src/Kernel/Adopt/GlobalStylesFlagTest.php
+ M tests/src/Kernel/Adopt/HybridRenderTest.php
+ M tests/src/Kernel/Adopt/PaletteOpenTest.php
+ M tests/src/Kernel/Adopt/RequiredSlotTest.php
+ M tests/src/Kernel/Adopt/SlotDescriptorEmissionTest.php
+ M tests/src/Kernel/Component/PlainContentRenderTest.php
+ M tests/src/Unit/Controller/ManifestControllerTest.php
+ M tests/src/Unit/Plugin/Field/MosaicLayoutWidgetTest.php
+ M tests/src/Unit/Sdc/MosaicComponentGraderTest.php
+ M tests/src/Unit/Sdc/MosaicGlobalStylesScannerTest.php
+ M tests/src/Unit/Sdc/MosaicPropShapeRegistryTest.php
+ M tests/src/Unit/Sdc/PropShapeTest.php
+ M tests/src/Unit/Service/MosaicPropValidatorTest.php
+ M tests/src/Unit/Service/MosaicRendererCacheTest.php
+ M tests/src/Unit/Service/MosaicRendererTest.php
+ M tests/src/Unit/Smoke/Sprint50SmokeTest.php
+ M tests/src/Unit/Smoke/Sprint60SmokeTest.php
+?? js/src/builder/__tests__/MosaicPuckAdapterRepeater.test.ts
+?? js/src/builder/__tests__/dragGate.test.ts
+?? js/src/builder/__tests__/previewDefaults.test.ts
+?? js/src/builder/__tests__/requiresParentClient.test.tsx
+?? js/src/builder/__tests__/requiresParentWrap.test.ts
+?? js/src/builder/fields/MosaicRepeaterField.tsx
+?? js/src/builder/fields/__tests__/MosaicAdoptedPreviewBadge.test.tsx
+?? js/src/builder/fields/__tests__/MosaicRepeaterField.test.tsx
+?? js/src/builder/mosaicToast.ts
+?? js/src/builder/requiresParentWrap.ts
+?? src/Hook/MosaicLibrarySyncHooks.php
+?? src/Sdc/MosaicAdoptionProfile.php
+?? tests/modules/adopt_fixture/adopt_fixture.libraries.yml
+?? tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml
+?? tests/modules/adopt_fixture/css/adopt-base.css
+?? tests/src/Kernel/Adopt/AdoptGlobalAssetsTest.php
+?? tests/src/Kernel/Adopt/ExternalLibraryReadinessTest.php
+?? tests/src/Kernel/Adopt/MosaicAdoptionProfileTest.php
+?? tests/src/Kernel/Adopt/MosaicLibrarySyncTest.php
+?? tests/src/Kernel/Adopt/PreviewDefaultsTest.php
+?? tests/src/Kernel/Adopt/RepeaterDescriptorTest.php
+?? tests/src/Kernel/Adopt/RequiresParentSaveTest.php
+?? tests/src/Kernel/Adopt/RequiresParentTest.php
+```
+
+## The one-line commit message (Arun pastes)
+```
+'ship #47: CP-ADOPT-7/7R adopt-any-SDC readiness + composition — P1 gap fixes (nullable-union prop classifier, never-blank labels, group->palette category, media-object, shadow-DOM SO-7 reason) + R9 core_version ^11.3||^12 + F-109 build + G9 shadow-DOM canvas hydration + WC#94/#95 (zone-picker re-anchor; external library re-grade on install) + 7R: SSR-on-insert (adopted preview resolves on mount) + global-asset attach (library base CSS/tokens in the SSR delta) + adoption-profile reader (<provider>.mosaic-adopt.yml: containers/repeaters/requiresParent/global_libraries/preview_defaults; found via any enabled module) + repeater UX (a single-child slot becomes an inline rail item-list: +Add/reorder/remove/min-max) + requires-parent (auto-wrap single / refuse several / palette needs-marker / H5 save guard) + preview defaults (library examples fill the canvas preview only + example badge, never saved content — WC#97) + the mosaic_intelligence scores-URL fix (§1.4); owned FE render byte-identical 14e6cb9c/b7756795, libs 1.0.75'
+```
+
+## The «ext» helper (SEPARATE — Arun's SITE repo, NOT the Mosaic module)
+`web/modules/custom/mosaic_adopt_ext/`: `mosaic_adopt_ext.info.yml` · `mosaic_adopt_ext.libraries.yml`
+(`base` → the library's shipped ESM bundle) · `«ext».mosaic-adopt.yml` (9 repeater families + requiresParent
++ containers + global_libraries + preview_defaults). Enabling it is a config write = Arun's action (done).
+
+## After the ship
+Tag stays **1.0.x-dev**. Arun runs **WALK-CP-ADOPT-7.md**; then tag **1.0.0** once the security advisory
+is Approved. Remaining polish (post-ship): the rail per-prop example badge; owned-Tabs field unification
+(1.0 keeps the proven array field).

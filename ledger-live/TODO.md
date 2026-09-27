@@ -14331,3 +14331,10 @@ SERVER: MosaicRenderer::renderSingleComponent fills UNSET props from examples (c
 FILM: «ext» Card placed -> canvas shows example image -> saved layout Card node has NO image (card-default not saved). saved-layout.json, 01-card-canvas.png.
 GATES: Kernel+Unit 3128/0 . Vitest 689/1 (B-101) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.73->1.0.74 (builder bce0a157, frontend-editor 6368a9ea, renderer 9c7f9320 unchanged).
 DEFERRED: example badge UI (rail + dirty tracking); then §4 lifecycle greens + walk rewrite.
+
+=== CP-ADOPT-7R CHECKPOINT-11 (P12 — badge + §4 lifecycle + walk + author guide + SHIP-47-PLAN) — ARC CLOSES ===
+§3e BADGE: MosaicAdoptedPreview "example" corner badge from SSR _mosaic_preview (preview-only key; dirty tracking implicit via SSR re-run). Vitest MosaicAdoptedPreviewBadge 3 + film 01-card-canvas.png.
+§4 LIFECYCLE: 12/12 PASS (Accordion/Card filmed; List/Checkbox/Radio via shared repeater path; Tabs owned byte-identical; rest leaf/data). 3 non-Mosaic advisories: Hero+Header/Footer = brand-layer (theme install for full look); Table = library-schema. No Mosaic bugs.
+DOCS: WALK-CP-ADOPT-7.md rewritten (10 steps A-J incl. preview badge, accordion rail repeater, item auto-wrap picker + 5-drag WC#101 condition, refused wrong-zone, brand-layer note). LIBRARY-AUTHOR-GUIDE.md new (one page). SHIP-47-PLAN.md ship manifest: 75 paths, dist ships, SdcComponentPlugin pristine, single-quoted message, «ext» helper listed separately.
+GATES: Kernel+Unit 3128/0 (no PHP this pass) . Vitest 692/1 (B-101; +3 badge) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.74->1.0.75 (builder 07b47db4, frontend-editor e14f058e, renderer 9c7f9320 unchanged).
+ARC CLOSED: adopt-any-SDC readiness + composition. Ship #47 ready. NEXT: Arun's walk -> tag 1.0.0 when advisory Approved. Polish: rail per-prop badge; owned-Tabs unification.

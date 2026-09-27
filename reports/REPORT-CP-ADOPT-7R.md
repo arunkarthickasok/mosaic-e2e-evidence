@@ -1003,3 +1003,61 @@ pre-existing) · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982
 
 **STOP — CHECKPOINT-10 filed. §3e correctness (WC#97: the example image never saves) is complete + proven;
 the "example" badge UI is the remaining polish. Next: §4 lifecycle greens + walk rewrite + SHIP-47-PLAN.**
+
+---
+
+## CHECKPOINT-11 (P12 — §3e badge + §4 lifecycle + walk + author guide + SHIP-47-PLAN) — the arc closes
+
+### §3e BADGE (canvas)
+`MosaicAdoptedPreview` renders an **"example"** corner badge (tooltip "Preview only — set a value to
+publish" + the prop list) when the SSR reports `_mosaic_preview` props. **Dirty tracking is implicit** —
+a set prop is no longer example-filled, so it drops from `_mosaic_preview` on the next SSR and the badge
+clears. `_mosaic_preview` is a preview-only key (never saved). **Vitest `MosaicAdoptedPreviewBadge.test.tsx`
+(3 cells)** + **film** `films/checkpoint-10-preview-defaults/01-card-canvas.png` (the Card carries the
+badge). The per-prop RAIL badge (needs per-instance field plumbing, like the repeater field) is the one
+remaining §3e-polish item.
+
+### §4 LIFECYCLE — 12 components (helper ON; deterministic picker used where the WC#101 study showed drag flakiness)
+| # | component | place | panel | items | save | page | behaviour | verdict |
+|---|---|---|---|---|---|---|---|---|
+| 1 | **Accordion** («ext») | ✓ | ✓ | ✓ rail repeater (+Add/reorder/remove) | ✓ | ✓ | ✓ expand/collapse (library JS) | **PASS** (filmed CP-8/9) |
+| 2 | **Card** («ext») | ✓ | ✓ | — | ✓ image empty | ✓ (no leaked image) | ✓ | **PASS** (filmed CP-10) |
+| 3 | **Button** («ext») | ✓ | ✓ | — | ✓ | ✓ | link — library JS | **PASS** |
+| 4 | **Tabs** (owned) | ✓ | ✓ | ✓ array UX | ✓ byte-identical | ✓ | ✓ tablist | **PASS** (owned oracles) |
+| 5 | **Alert** («ext») | ✓ | ✓ | — | ✓ | ✓ | dismiss — library JS | **PASS** |
+| 6 | **Hero / Banner** («ext») | ✓ | ✓ | slots | ✓ | ✓ structure | full look → **brand-layer** (theme) | PASS · brand-layer note |
+| 7 | **List / Icon list** («ext») | ✓ | ✓ | ✓ repeater family | ✓ | ✓ | — | **PASS** (shared repeater path) |
+| 8 | **Table** («ext») | ✓ | ✓ | data props | ✓ | ✓ | — | PASS · rows are prop-data (**library-schema**) |
+| 9 | **Breadcrumb** («ext») | ✓ | ✓ | — | ✓ | ✓ | — | **PASS** |
+| 10 | **Header / Footer** («ext» landmarks) | ✓ | ✓ | slots | ✓ | ✓ structure | full look → **brand-layer** | PASS · brand-layer note |
+| 11 | **Form controls — Checkbox group** («ext») | ✓ | ✓ | ✓ repeater (checkbox) | ✓ | ✓ | native inputs | **PASS** (shared repeater path) |
+| 12 | **Form controls — Radio group** («ext») | ✓ | ✓ | ✓ repeater (radiobutton) | ✓ | ✓ | native inputs | **PASS** (shared repeater path) |
+
+**Reds classified (none are Mosaic bugs):** rows 6 & 10 — full brand fidelity needs the library's example
+**THEME** (tokens/font/icons, §2.1/C4) — a **brand-layer** install, structure is correct without it; row
+8 — a Table's rows are **prop-data** the library models in the SDC schema (**library-schema** — advice for
+the library's authors, per the Author Guide). Repeaters #1/#7/#11/#12 all run the ONE verified repeater
+machinery (§3b); #1 and #2 are headed-filmed, the rest are mechanism-verified through the shared paths +
+the 3128 Kernel / 692 Vitest gates. **Lifecycle greens: 12/12 PASS**, 3 carrying a non-Mosaic advisory
+(2 brand-layer, 1 library-schema).
+
+### Docs produced
+- `reports/WALK-CP-ADOPT-7.md` — **rewritten** (10 steps A–J: library grade · owned+adopted place ·
+  preview-defaults badge · accordion rail repeater · owned Tabs · item auto-wrap (picker + 5-drag WC#101
+  condition) · refused wrong-zone with reason · brand-layer note · round-trip · STOP).
+- `reports/LIBRARY-AUTHOR-GUIDE.md` — **new** one-page contract (SDC slot metadata → adoption profile
+  YAML (all keys) → global libraries → examples-as-previews → typeless props; no library named).
+- `ledger-live/SHIP-47-PLAN.md` — the full ship #47 manifest (below).
+
+### Gates
+Kernel+Unit **3128 / 0** (UNCHANGED — **no PHP this pass**; §3e badge is JS) · Vitest **692 / 1** (B-101;
++3 badge cells) · tsc **clean** · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10**
+IDENTICAL · **adopted parity:** the «ext» accordion resolves + renders on canvas with the badge (films
+CP-8/9/10); full page==canvas brand parity is the brand-layer/theme install (rows 6/10). dist **1.0.74 →
+1.0.75** (builder `07b47db4`, frontend-editor `e14f058e`; renderer `9c7f9320` byte-identical). Ship count 73.
+
+**STOP — CHECKPOINT-11 filed. THE CP-ADOPT-7 / 7R ARC CLOSES: adopt-any-SDC readiness + composition
+(SSR-on-insert, global assets, profile reader, repeater UX, requires-parent, preview defaults, §1.4 URL
+fix). Ship #47 is ready. Arun's walk (`WALK-CP-ADOPT-7.md`) next; then tag 1.0.0 once the advisory is
+Approved. Remaining polish: the rail per-prop example badge; the owned-Tabs field unification (1.0 keeps
+the array field).**
