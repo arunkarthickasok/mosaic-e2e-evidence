@@ -154,3 +154,23 @@ tsc clean · owned REGION `14e6cb9c…3954` + STYLE `b7756795…ca982 4354 10` I
 
 DEFERRED to next pass: owned-Tabs field unification (dual backing store); headed films (need helper
 enabled = Arun's walk, or an owned slot-repeater); then P3 requires-parent (§3c) + preview defaults (§3e).
+
+## CP-ADOPT-7R P5 addendum (CHECKPOINT-4) — folds into ship #47
+
+Repeater films (owed) + two bug fixes the films caught. §3c/§3e deferred (see report).
+New/changed **mosaic** files (READ-ONLY; Arun folds into ship #47):
+- `src/Service/MosaicManifestBuilder.php` — resolveRepeater qualifies the profile's LOCAL child id
+  with the provider (→ correct Puck key for the insert path).
+- `src/Sdc/MosaicAdoptionProfile.php` — readYaml also scans ALL enabled modules for
+  `<provider>.mosaic-adopt.yml` (finds the real `mosaic_adopt_ext` helper; the file name is the contract).
+- `tests/src/Kernel/Adopt/RepeaterDescriptorTest.php` — profile child expectation now provider-qualified.
+- `js/e2e/repeater-authoring.spec.ts` (NEW) — headed «ext» accordion repeater film (frame 01).
+- NO bundled JS changed → dist unchanged (1.0.69, builder 3182e57f).
+
+RED the film caught (next pass): `+Add` for an ADOPTED-component child is a no-op — insertIntoSlot
+appends to parent.props[slot] (owned inline slots) but adopted components use the Tier-B SSR-preview
+slot machinery, so the child is not picked up. Architectural gap; unblocks the full film once fixed.
+
+Gates: Kernel+Unit 3118/0 · Vitest 675/1 (B-101; no JS change) · phpcs 0 · phpstan 0 · owned REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist unchanged.
+DEFERRED: adopted-slot insert fix → §3c requires-parent → §3e preview defaults.

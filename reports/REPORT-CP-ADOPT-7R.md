@@ -614,3 +614,64 @@ dist **1.0.68 → 1.0.69** (builder `3182e57f`, frontend-editor `3c67e57e`; rend
 
 **STOP — CHECKPOINT-3 filed. Next: owned-Tabs field unification + headed films (need the
 helper / an owned slot-repeater), then P3 = requires-parent (§3c) + preview defaults (§3e).**
+
+---
+
+## CHECKPOINT-4 (P5 — repeater films + two bug fixes the films caught) — folds into ship #47
+
+**Scope reality (stated up front):** this pass charter was three checkpoint-sized deliverables —
+the owed repeater films + §3c requires-parent + §3e preview defaults. Delivered at quality: the
+**owed films**, which (running against the now-enabled real «ext» library) drove out **two real
+CHECKPOINT-3 bugs** and caught a **third**. §3c/§3e are DEFERRED to the next pass (below) rather than
+shallow-filled. Helper `mosaic_adopt_ext` + `nys_ds` are enabled (Arun); 63 SDCs discovered.
+
+### Two bugs the film found + fixed (proof-conditions working)
+1. **Profile child not provider-qualified** (`MosaicManifestBuilder::resolveRepeater`). The adoption
+   profile's `repeaters` child id is LOCAL (`accordionitem`); the panel's insert path needs the full
+   provider-qualified id (→ Puck key `nys_ds--accordionitem`). Now qualifies `<provider>:<child>` when
+   unqualified. Without it, `+ Add` for an «ext» repeater targeted a non-existent component type.
+   `RepeaterDescriptorTest` expectation updated (child → `adopt_fixture:adopt_widget_v2`).
+2. **Reader never found the real helper's profile** (`MosaicAdoptionProfile::readYaml`). It only
+   probed modules `mosaic_adopt_<provider>` / `<provider>`, but the enabled helper is `mosaic_adopt_ext`
+   shipping `nys_ds.mosaic-adopt.yml` — so the profile was NEVER loaded for the real library (the
+   fixtures passed only because their module name matched the provider). Fixed to also scan ALL enabled
+   modules for `<provider>.mosaic-adopt.yml` (the FILE NAME is the contract, not the module name).
+   Verified live: `nys_ds:accordion` items slot now resolves `repeater={child: nys_ds:accordionitem,
+   min:1, max:null}`.
+
+Together these make the repeater field RENDER for the real «ext» accordion — **proven by the film's
+frame `01-panel-add.png`**: the panel shows "Requires at least 1 item — 0/1" (exact banner wording) +
+the "+ Add accordionitem" button.
+
+### The film (`js/e2e/repeater-authoring.spec.ts`, headed, real mouse + keyboard)
+PROVEN end-to-end: the «ext» Accordion appears in the palette → **drags onto the canvas (DROP-PROOF)**
+→ selecting it opens the panel showing the repeater inline item list (min banner + "+ Add item").
+Frame: `test-results/repeater-frames/01-panel-add.png`. Naming-ban-safe (palette matched by the
+`--accordion` suffix, never the provider machine name).
+
+### RED the film caught (a red that stays red — top of the next pass)
+**`+ Add` inserting an ADOPTED-component child is a no-op** (item count stays 0 — verified with both
+`dispatchEvent` and a real force-click, so not a harness artefact). Root cause (narrowed):
+`insertIntoSlot` appends to `parent.props[slotName]`, which works for OWNED inline slots, but an
+adopted («ext») component renders via the **Tier-B SSR preview** — its slots come from SSR markers
+(`htmlToReactSlots` / bound-slot machinery), NOT Puck's native Slots API — so an appended child is not
+picked up. This is an architectural gap in the adopted-slot insert path (shared with the WC#88 canvas
+picker, never exercised for «ext» until the helper was enabled), not a quick fix. The remove/reorder/
+canvas-render/keyboard steps of the film are blocked behind it.
+
+### DEFERRED to the next pass (stated up front)
+- **The adopted-slot insert fix** (unblocks the full +Add/reorder/remove film).
+- **§3c REQUIRES-PARENT** — auto-wrap/refuse + palette container-ordering + hide items from root +
+  Kernel save-validation (orphan item rejected, H5) + Vitest + auto-wrap film.
+- **§3e PREVIEW DEFAULTS** — examples fill the SSR preview only + per-prop dirty tracking + saved-empty
+  untouched prop + Card placeholder "example" badge + Vitest + film.
+
+### Gates
+Kernel+Unit **3118 / 0** (8732 assertions; 3 skips, 1 warning) · Vitest **675 / 1** (B-101; **no
+bundled JS changed this pass** — the fixes are PHP + an e2e spec) · phpcs **0** · phpstan
+MosaicManifestBuilder+MosaicAdoptionProfile **0** · owned oracles **REGION 14e6cb9c…3954 + STYLE
+b7756795…ca982 4354 10** IDENTICAL · dist **UNCHANGED** (1.0.69; builder `3182e57f` — no `js/src`
+change, so no bump). Ship count 66 (build pass; folds into #47).
+
+**STOP — CHECKPOINT-4 filed. Next: the adopted-slot insert fix (unblocks the full film), then §3c
+requires-parent + §3e preview defaults.**

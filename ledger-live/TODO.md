@@ -14284,3 +14284,12 @@ PANEL: MosaicRepeaterField.tsx inline item list (rows/summary/+Add via WC#88 ins
 GATES: Kernel+Unit 3118/0 (8732 assert) . Vitest 675/1 (B-101) . phpcs 0 . phpstan 0 (changed) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.68->1.0.69 (builder 3182e57f, frontend-editor 3c67e57e, renderer 9c7f9320 unchanged).
 DEFERRED: owned-Tabs field unification (array-prop backing store + locked-oracle re-cut); headed films (adopted needs helper=Arun walk; no owned slot-repeater exists to film); SSR crossfade smoothness (P1 ensureSsr covers child mount, not headed-verified).
 NEXT: owned-Tabs unification + films, then P3 requires-parent (3c) + preview defaults (3e).
+
+=== CP-ADOPT-7R CHECKPOINT-4 (P5 — repeater films + 2 bug fixes) ===
+Helper mosaic_adopt_ext ENABLED (Arun). Film e2e/repeater-authoring.spec.ts run headed vs real «ext».
+BUG1 FIXED: MosaicManifestBuilder::resolveRepeater now qualifies the profile LOCAL child id with the provider (accordionitem -> nys_ds:accordionitem) so +Add targets the right Puck key.
+BUG2 FIXED: MosaicAdoptionProfile::readYaml scans ALL enabled modules for <provider>.mosaic-adopt.yml (real helper is mosaic_adopt_ext shipping nys_ds.mosaic-adopt.yml; was never found). Verified: nys_ds:accordion items -> repeater{child:nys_ds:accordionitem,min:1,max:null}.
+PROVEN (frame 01): «ext» accordion in palette -> drops on canvas (DROP-PROOF) -> panel shows repeater field (Requires at least 1 item — 0/1 + "+ Add accordionitem").
+RED CAUGHT (next pass): +Add for an ADOPTED child is a no-op — insertIntoSlot appends parent.props[slot] (owned inline slots) but adopted comps use Tier-B SSR-preview slots (htmlToReactSlots), so child not picked up. Architectural gap.
+GATES: Kernel+Unit 3118/0 . Vitest 675/1 (B-101; no bundled JS changed) . phpcs 0 . phpstan 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.69).
+DEFERRED: adopted-slot insert fix -> §3c requires-parent -> §3e preview defaults.
