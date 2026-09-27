@@ -847,3 +847,56 @@ frontend-editor `c244dbb2`; renderer `9c7f9320` byte-identical; served==built). 
 **STOP — CHECKPOINT-7 filed. Requires-parent is ENFORCED (client drop-refusal + server H5); the auto-wrap
 CONVENIENCE (drop-interception) + palette marker are the remaining §3c-client slice. Next: §3e preview
 defaults.**
+
+---
+
+## CHECKPOINT-8 (P9 — §3c-client remainder: auto-wrap CONFIRMED + picker-wrap + palette marker) — folds into ship #47
+
+**Scope note:** this pass had two charter parts — the §3c-client remainder (picker wrap + palette
+marker) and §3e preview defaults. Delivered at quality: **the §3c-client remainder, and a correction
+that the drag→auto-wrap actually WORKS**. **§3e preview defaults is DEFERRED to the next pass** (a
+substantial SSR + dirty-tracking + save + badge feature; this session is nine passes deep — not
+shallow-filled). Ledger ruling honoured (drag interception debt → 1.1; the 4 MASTER-AUDIT refs stay).
+
+### CORRECTION to CHECKPOINT-7 — the drag→auto-wrap WORKS
+CHECKPOINT-7 deferred the drag→wrap as "needs drop-interception." **That was over-pessimistic.** With
+the observer live, dragging an external accordion ITEM at root **auto-wraps** it: frame
+`01-autowrap-toast.png` shows the **"Placed inside a new NYSDS Accordion"** toast, and the saved layout
+is the wrap (redacted `wrap-layout.json`): `«ext»:accordion` `slots.items = ["«ext»:accordionitem-…"]`
++ a nested `«ext»:accordionitem`. The nuance: Puck commits the adopted child-item drop only
+**intermittently**, so the film **retries the drag until it lands** (≤6×); the WRAP itself is
+deterministic (Vitest). So the observer-based auto-wrap is sufficient for the drag case — no
+drop-interception needed for correctness (a tighter, retry-free UX is a 1.1 polish item).
+
+### PICKER-WRAP (the shared rule, deterministic)
+`tierBOptimistic.insertWithParentRule` — every per-zone "+ Add" (`MosaicSlotZone.onPick`) now routes
+through it: an item picked into a zone whose owning component is NOT one of its containers is
+auto-wrapped (one container → insert the container in the zone with the item inside + toast; several →
+refuse with the reason); a **valid parent** or a **non-item** is an ordinary insert. **Vitest
+`requiresParentClient.test.tsx` (3 cells):** wrap into a non-parent zone (+ toast) / normal insert into
+its own container / non-item ordinary insert.
+
+### PALETTE MARKER
+`PaletteCard` shows a small **"needs {Container}"** marker on every item drawer card (via `wrapEntryFor`;
+no panel-label pollution — drawer only). **Vitest (2 cells)** + headed frame `03-palette-needs-marker.png`.
+
+### FILMS (headed, `films/checkpoint-8-requires-parent-client/`, all pass)
+- `01-autowrap-toast.png` — drag accordion item → **auto-wrapped in an Accordion + toast**.
+- `02-container-drops.png` — the Accordion container drops normally (DROP-PROOF).
+- `03-palette-needs-marker.png` — the item card shows "needs …".
+- `wrap-layout.json` — the wrapped layout (accordion → items → accordionitem).
+
+### DEFERRED — §3e PREVIEW DEFAULTS (next pass)
+Schema examples / `preview_defaults` fill the canvas SSR request ONLY; per-prop dirty tracking; untouched
+props save empty; the Card example image shows on canvas with an "example" badge and is absent on the
+page until set. Cells (Vitest dirty-tracking; Kernel save → untouched image empty; page render without
+example) + film. Not started this pass.
+
+### Gates
+Kernel+Unit **3125 / 0** (UNCHANGED — **no PHP this pass**; §3c-client is all JS) · Vitest **686 / 1**
+(B-101; +5 P9 cells) · tsc **clean** · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982
+4354 10** IDENTICAL (builder-only) · dist **1.0.71 → 1.0.72** (builder `c2a64b9b`, frontend-editor
+`5033f410`; renderer `9c7f9320` byte-identical; served==built). Ship count 70.
+
+**STOP — CHECKPOINT-8 filed. §3c is COMPLETE (auto-wrap via drag + picker-wrap + palette marker + toast,
+enforced client + server). Next: §3e preview defaults; then §4 lifecycle greens + walk rewrite.**

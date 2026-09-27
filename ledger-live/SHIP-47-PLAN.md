@@ -231,3 +231,21 @@ Puck drop-INTERCEPTION (observer can't fire — item never lands); logic is buil
 Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 681/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
 STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.71.
 DEFERRED: drop-interception (drag→wrap film) + palette marker/ordering; then §3e preview defaults.
+
+## CP-ADOPT-7R P9 addendum (CHECKPOINT-8) — folds into ship #47
+
+§3c-client remainder: auto-wrap CONFIRMED via drag + picker-wrap + palette marker. §3e deferred.
+New/changed mosaic files (READ-ONLY):
+- `js/src/builder/tierBOptimistic.ts` — insertWithParentRule (picker wrap: wrap-non-parent/refuse-several/normal) + findNodeById.
+- `js/src/builder/fields/MosaicSlotZone.tsx` — onPick routes through insertWithParentRule.
+- `js/src/builder/PaletteCard.tsx` — "needs {Container}" marker (wrapEntryFor).
+- `js/src/builder/__tests__/requiresParentClient.test.tsx` (NEW, 5) · `js/e2e/requires-parent-authoring.spec.ts` (auto-wrap + DROP-PROOF + marker, 3 frames + wrap-layout.json).
+- `mosaic.libraries.yml` → 1.0.72; `js/dist/{builder.js c2a64b9b, frontend-editor.js 5033f410}` rebuilt. NO PHP changed.
+
+CORRECTION to CHECKPOINT-7: drag→auto-wrap WORKS (observer wraps the item when Puck commits the drop;
+film retries the flaky drop; wrap deterministic). Toast "Placed inside a new NYSDS Accordion" + layout
+accordion.slots.items=[accordionitem]. No drop-interception needed for correctness (retry-free UX = 1.1).
+
+Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 686/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.72.
+DEFERRED: §3e preview defaults; then §4 lifecycle greens + walk rewrite.
