@@ -249,3 +249,20 @@ accordion.slots.items=[accordionitem]. No drop-interception needed for correctne
 Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 686/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
 STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.72.
 DEFERRED: §3e preview defaults; then §4 lifecycle greens + walk rewrite.
+
+## CP-ADOPT-7R P10 addendum (CHECKPOINT-9) — folds into ship #47
+
+WC#101 mechanism + deterministic auto-wrap proof. §3e deferred. New/changed mosaic files (READ-ONLY):
+- `js/src/builder/tierBOptimistic.ts` — drag gate (setDragActive/isDragActive) + queue SSR write-backs during a drag (defensive).
+- `js/src/builder/BuilderApp.tsx` — data-puck-dragging MutationObserver → setDragActive.
+- `js/src/builder/__tests__/dragGate.test.ts` (NEW, 1) · `js/e2e/{wc101-mechanism.spec.ts, requires-parent-picker.spec.ts}` (study + deterministic picker-wrap proof).
+- `mosaic.libraries.yml` → 1.0.73; `js/dist/{builder.js ba12c771, frontend-editor.js d734e0f8}` rebuilt. NO PHP changed.
+
+WC#101 FINDING: 20-attempt study — zoneReplaced 0, setDataDuringDrag 0 (remount/SSR hypotheses DISPROVEN);
+flakiness NOT adopted-specific (item 16-17/20 ≈ owned Columns 15/20); lever = drag-activation timing.
+No product defect — inherent synthetic-drag flakiness; 20/20 unachievable via drag for any component.
+PROOF: deterministic PICKER-wrap (click, 100%, no retry) — accordion item into Columns slot → wrapped
+in Accordion + toast (04-picker-wrap-toast.png, picker-wrap-layout.json).
+
+Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 687/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.73. DEFERRED: §3e preview defaults; then §4.

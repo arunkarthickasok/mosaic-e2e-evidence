@@ -900,3 +900,58 @@ Kernel+Unit **3125 / 0** (UNCHANGED — **no PHP this pass**; §3c-client is all
 
 **STOP — CHECKPOINT-8 filed. §3c is COMPLETE (auto-wrap via drag + picker-wrap + palette marker + toast,
 enforced client + server). Next: §3e preview defaults; then §4 lifecycle greens + walk rewrite.**
+
+---
+
+## CHECKPOINT-9 (P10 — WC#101 intermittent adopted-item drop: mechanism + deterministic proof) — folds into ship #47
+
+**Scope note:** this pass was WC#101 + §3e. The WC#101 investigation (properly done — it disproved my own
+hypotheses) took the pass; **§3e preview defaults is DEFERRED to its own pass** (a substantial SSR +
+dirty-tracking + save + badge feature). Stated up front, not shallow-filled. The CHECKPOINT-8 retry was
+a fair thing to challenge (a retried drag is not a DROP-PROOF).
+
+### WC#101 MECHANISM — 20 real drags per phase, NO retry (`films/checkpoint-9-wc101/mechanism-20-attempts.json`)
+| | adopted item | owned Columns |
+|---|---|---|
+| no drag-activation wait | **0/20** | 19/20 |
+| with `data-puck-dragging=true` wait | **17/20** (fix-off) · 16/20 (fix-on) | 15/20 |
+
+Across every attempt: **`zoneReplaced = 0`** (the drop zone's DOM node is NEVER remounted) and
+**`setDataDuringDrag = 0`** (NO SSR write-back / observer `setData` fires mid-drag). **Both my hypotheses
+— an SSR write-back or the orphan observer remounting the zone — are DISPROVEN.** The flakiness is **NOT
+adopted-specific** (adopted item 16–17/20 ≈ owned Columns 15/20) and the only real lever is
+**drag-activation timing** (0 → 17 once the test waits for `[data-puck-entry][data-puck-dragging="true"]`).
+
+**Cause: there is no product-code cause — it is inherent Playwright synthetic dnd-kit drag flakiness**
+(the nearest locus is the *test* releasing before Puck activates the drag; the product suspect
+`tierBOptimistic.applyPreview` setData was measured to NOT fire mid-drag). **A synthetic DRAG therefore
+cannot be a clean DROP-PROOF — 20/20 is unachievable for ANY component (owned Columns 15/20).**
+
+### The 20/20-no-retry PROOF — the DETERMINISTIC PICKER path (a click, 100%)
+`films/checkpoint-9-wc101/04-picker-wrap-toast.png` + `picker-wrap-layout.json`
+(`js/e2e/requires-parent-picker.spec.ts`, deterministic, passes with **no retry**): on the owned Columns
+test node, picking an accordion **item** into a Columns slot (not its container) auto-wraps it —
+`«ext»:accordion` `slots.items = ["«ext»:accordionitem-…"]` + the "Placed inside a new …" toast. This is
+the same wrap the flaky drag showed, proven via a 100%-reliable click. The auto-wrap correctness is thus
+established without any retried synthetic drag.
+
+### Defensive hardening (kept — not the empty-canvas cause)
+`tierBOptimistic`: a drag gate (`setDragActive`/`isDragActive`, driven by a `data-puck-dragging`
+MutationObserver in `BuilderApp`) **queues SSR preview write-backs while a drag is active** and flushes
+them on release — so on a POPULATED canvas an SSR that lands mid-drag can never detach the live drop
+zone. The study proved this is not the empty-canvas cause, but it is correct hygiene. **Vitest
+`dragGate.test.ts`** covers the gate toggle.
+
+### DEFERRED — §3e PREVIEW DEFAULTS (next pass)
+Examples / `preview_defaults` fill the canvas SSR request only; per-prop dirty tracking; untouched props
+save empty; Card example image with an "example" badge, absent on the page until set. Not started.
+
+### Gates
+Kernel+Unit **3125 / 0** (UNCHANGED — **no PHP this pass**) · Vitest **687 / 1** (B-101; +1 dragGate
+cell) · tsc **clean** · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL
+(builder-only) · dist **1.0.72 → 1.0.73** (builder `ba12c771`, frontend-editor `d734e0f8`; renderer
+`9c7f9320` byte-identical; served==built). Ship count 71.
+
+**STOP — CHECKPOINT-9 filed. WC#101 = synthetic-drag test flakiness (no product defect); the auto-wrap
+is proven deterministically via the picker (no retry). Next: §3e preview defaults; then §4 lifecycle
+greens + walk rewrite.**

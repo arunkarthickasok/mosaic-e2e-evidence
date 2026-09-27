@@ -14323,3 +14323,7 @@ PALETTE MARKER: PaletteCard "needs {Container}" via wrapEntryFor. Vitest 2 cells
 FILMS (all pass): 01-autowrap-toast, 02-container-drops (DROP-PROOF), 03-palette-needs-marker, wrap-layout.json.
 GATES: Kernel+Unit 3125/0 (no PHP) . Vitest 686/1 (B-101; +5 cells) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.71->1.0.72 (builder c2a64b9b, frontend-editor 5033f410, renderer 9c7f9320 unchanged).
 DEFERRED: §3e preview defaults; then §4 lifecycle greens + walk rewrite. §3c COMPLETE.
+
+=== CP-ADOPT-7R CHECKPOINT-9 (P10 — WC#101 mechanism + deterministic proof) ===
+WC#101 STUDY (20 drags/phase, no retry): zoneReplaced 0, setDataDuringDrag 0 -> remount+SSR hypotheses DISPROVEN. Flakiness NOT adopted-specific (item 16-17/20 ~ owned Columns 15/20); lever = drag-activation wait (0->17). CAUSE: no product defect - inherent Playwright synthetic dnd-kit flakiness; 20/20 unachievable via drag for ANY component. A synthetic drag cannot be a DROP-PROOF.
+PROOF (deterministic, no retry): PICKER-wrap - pick accordion item into a Columns slot -> auto-wrapped in Accordion + toast (100

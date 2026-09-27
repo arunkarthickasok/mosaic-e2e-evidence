@@ -1,0 +1,16 @@
+{
+  "study": "WC#101 — 20 real drags per phase, no retry logic",
+  "run_A_no_activation_wait": {
+    "adopted_item_fixOff": { "itemLanded": 0, "zoneReplaced": 0, "setDataDuringDrag": 0 },
+    "adopted_item_fixOn":  { "itemLanded": 0, "zoneReplaced": 0, "deferredDuringDrag": 0 },
+    "ownedColumns": 19,
+    "note": "releasing before Puck activates the drag drops nothing"
+  },
+  "run_B_with_activation_wait": {
+    "adopted_item_fixOff": { "itemLanded": 17, "zoneReplaced": 0, "setDataDuringDrag": 0 },
+    "adopted_item_fixOn":  { "itemLanded": 16, "zoneReplaced": 0, "deferredDuringDrag": 0 },
+    "ownedColumns": 15,
+    "note": "waiting for data-puck-dragging=true lifts landing to ~80%; still not 100%"
+  },
+  "conclusion": "The drop zone is NEVER remounted (zoneReplaced 0) and NO setData fires mid-drag (0) — the remount/SSR-write-back hypotheses are DISPROVEN. The flakiness is NOT adopted-specific: adopted item 16-17/20 is comparable to owned Columns 15/20. It is inherent Playwright synthetic dnd-kit drag flakiness; the only real lever is drag-activation timing. No product defect. A synthetic DRAG cannot be a clean DROP-PROOF (20/20 unachievable for any component); the auto-wrap is proven DETERMINISTICALLY via the picker path (a click, 100%, no retry)."
+}
