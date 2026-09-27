@@ -194,3 +194,22 @@ slot JSON + frames in films/checkpoint-5-repeater/.
 
 Gates: Kernel+Unit 3118/0 · Vitest 676/1 (B-101) · tsc clean · phpcs 0 · owned REGION 14e6cb9c…3954 +
 STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.70. DEFERRED: §3c requires-parent, §3e preview defaults.
+
+## CP-ADOPT-7R P7 addendum (CHECKPOINT-6) — folds into ship #47
+
+§3c requires-parent — MODEL + SERVER H5 guard (client auto-wrap UX + films deferred, see report).
+New/changed **mosaic** files (READ-ONLY):
+- `src/Service/MosaicManifestBuilder.php` — emits `requires_parent` (profile requiresParent, qualified).
+- `src/Service/MosaicPropValidator.php` — `requiresParentPlacementErrors` H5 save-guard (WC#78 precedent)
+  + `requiredParentsFor`/`componentLabel`; injects `@mosaic.adoption_profile`.
+- `mosaic.services.yml` — `mosaic.prop_validator` gains `@mosaic.adoption_profile`.
+- `js/src/shared/types/schema.ts` — `MosaicComponentManifest.requires_parent?` (types only → no bundle change).
+- `tests/src/Kernel/Adopt/RequiresParentTest.php` (NEW, 4) + `RequiresParentSaveTest.php` (NEW, 3).
+- `tests/src/Unit/Service/MosaicPropValidatorTest.php` — construction site (+ MosaicAdoptionProfile).
+- NO runtime JS / dist change → dist stays 1.0.70 (builder 6153347d).
+
+H5 message (fixture): "Adopt Widget V2 must be placed inside Adopt Widget."
+
+Gates: Kernel+Unit 3125/0 · Vitest 676/1 (B-101) · tsc clean · phpcs 0 · phpstan 0 · owned REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist unchanged.
+DEFERRED: §3c CLIENT (auto-wrap/refuse/palette/toast + drag films), then §3e preview defaults.

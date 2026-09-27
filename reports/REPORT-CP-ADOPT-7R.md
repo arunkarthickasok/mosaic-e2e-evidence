@@ -740,3 +740,56 @@ byte-identical; served==built). Ship count 67 (build pass; folds into #47).
 
 **STOP — CHECKPOINT-5 filed. The «ext» repeater UX works end-to-end (add/reorder/remove/min-max, live
 canvas). Next: §3c requires-parent, then §3e preview defaults (separate passes).**
+
+---
+
+## CHECKPOINT-6 (P7 — §3c requires-parent: MODEL + SERVER guard) — folds into ship #47
+
+**Scope (stated up front):** §3c has two enforcement surfaces — the **server save-guard** (authoritative;
+an orphan can never be persisted) and the **client drop UX** (auto-wrap / refuse / palette). This pass
+delivers the **MODEL + the SERVER guard**, both fully built and verified (7 new Kernel cells). The
+**client auto-wrap/refuse UX + palette container-ordering + "needs {Container}" marker + toast +
+no-root-highlight + the headed drag films** are a large, UI-heavy slice deferred to a focused §3c-client
+pass — NOT shallow-filled. Naming ruling honoured: the 4 MASTER-AUDIT historical refs stay, flagged.
+
+### §1 MODEL — the manifest emits `requires_parent` per component
+`MosaicManifestBuilder::buildComponentEntry` now emits `requires_parent: [containerIds]` from the
+adoption profile's requiresParent map, **qualified** (LOCAL item → full container SDC ids). Owned /
+container / anywhere components carry `[]`. `js/src/shared/types/schema.ts` gains
+`MosaicComponentManifest.requires_parent?: string[]`.
+- **Verified live:** `«ext»:accordionitem → ["«ext»:accordion"]`, `«ext»:tab → ["«ext»:tabgroup"]`,
+  `«ext»:accordion → []`, owned → `[]`.
+- **Kernel `RequiresParentTest` (4 cells):** profile item → qualified container; container → []; owned →
+  []; provider-less → [].
+
+### §2 SERVER — the H5 save-guard (authoritative)
+`MosaicPropValidator::requiresParentPlacementErrors` (mirrors the WC#78 `slotOnlyPlacementErrors`
+precedent, wired into `validate()`): an item component that declares `requires_parent` is refused at
+save unless it is a slot child of one of its container types, with an **author-grade message** —
+`"<Item> must be placed inside <Container>."` (or "A or B" when several qualify). The validator now
+injects `@mosaic.adoption_profile` (`requiredParentsFor` = the same profile-qualify logic as the
+manifest). Owned components (no profile) are never constrained → existing owned layouts unaffected.
+- **Kernel `RequiresParentSaveTest` (3 cells):** an orphan `adopt_widget_v2` at root → rejected with
+  "must be placed inside"; the same item inside its `adopt_widget` container → passes; an owned
+  component at root → passes.
+- **H5 rejection message** (fixture): `Adopt Widget V2 must be placed inside Adopt Widget.`
+
+### DEFERRED — the §3c CLIENT slice (next focused pass)
+The shared drop rule (drag / picker / bind): item at root or a non-parent → **auto-wrap** in its single
+container (insert container, place item in its `item_slot` from the profile `containers` map, select) +
+a non-blocking toast; **refuse** with the reason when several containers qualify; palette groups
+containers before their items + marks items "needs {Container}"; root drop targets don't highlight for
+items; SMOOTHNESS (one optimistic commit, one SSR). Plus the **headed drag films** (drag accordion item
+→ Accordion appears with it inside + toast; Tab → Tab group; refuse into a wrong slot). The MODEL data
+(`requires_parent` + the profile `containers` item_slot) this UX consumes is ready. Until it lands, an
+orphan drop is caught **at save** by §2 (correct, if not yet smooth).
+
+### Gates
+Kernel+Unit **3125 / 0** (8771 assertions; +7 §3c cells; 3 skips, 1 warning) · Vitest **676 / 1**
+(B-101; **no runtime JS changed** — `schema.ts` is types-only) · tsc **clean** · phpcs **0** · phpstan
+MosaicManifestBuilder+MosaicPropValidator **0** · owned oracles **REGION 14e6cb9c…3954 + STYLE
+b7756795…ca982 4354 10** IDENTICAL · dist **UNCHANGED** (1.0.70; builder `6153347d` — no bundle change
+from a types-only edit). Ship count 68 (build pass; folds into #47).
+
+**STOP — CHECKPOINT-6 filed. Next: the §3c CLIENT auto-wrap/refuse UX + palette + toast + drag films,
+then §3e preview defaults.**

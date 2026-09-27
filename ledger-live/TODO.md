@@ -14301,3 +14301,10 @@ FIX: strip _custom_<fieldKey> scope to recover instance id; shared insertIntoSlo
 FILMS GREEN: e2e/repeater-authoring.spec.ts passes — +Add x2 -> 2 items -> canvas renders 2 live «ext» accordion items -> keyboard reorder -> remove below min -> banner. Frames 01-04 in films/checkpoint-5-repeater/.
 GATES: Kernel+Unit 3118/0 (no PHP changed) . Vitest 676/1 (B-101) . tsc clean . phpcs 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.69->1.0.70 (builder 6153347d, frontend-editor 37ea9b58, renderer 9c7f9320 unchanged).
 DEFERRED: §3c requires-parent, §3e preview defaults (separate passes).
+
+=== CP-ADOPT-7R CHECKPOINT-6 (P7 — §3c requires-parent MODEL + SERVER) ===
+MODEL: MosaicManifestBuilder emits requires_parent:[containerIds] from profile requiresParent (qualified). schema.ts type. Verified «ext»:accordionitem->[«ext»:accordion], tab->[tabgroup], accordion->[]. Kernel RequiresParentTest 4 cells.
+SERVER H5: MosaicPropValidator::requiresParentPlacementErrors (WC#78 precedent, wired into validate()) rejects an orphan item at save with author-grade msg "<Item> must be placed inside <Container>"; injects @mosaic.adoption_profile. Kernel RequiresParentSaveTest 3 cells (orphan rejected / valid wrap passes / owned unconstrained). Msg: "Adopt Widget V2 must be placed inside Adopt Widget."
+DEFERRED (next pass): §3c CLIENT auto-wrap/refuse + palette container-order + "needs {Container}" marker + toast + no-root-highlight + headed drag films. MODEL data ready; until then orphan caught at save.
+GATES: Kernel+Unit 3125/0 (8771 assert) . Vitest 676/1 (B-101; no runtime JS) . tsc clean . phpcs 0 . phpstan 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.70, 6153347d).
+NEXT: §3c CLIENT UX + films, then §3e preview defaults.
