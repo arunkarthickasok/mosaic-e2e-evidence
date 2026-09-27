@@ -174,3 +174,23 @@ slot machinery, so the child is not picked up. Architectural gap; unblocks the f
 Gates: Kernel+Unit 3118/0 · Vitest 675/1 (B-101; no JS change) · phpcs 0 · phpstan 0 · owned REGION
 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist unchanged.
 DEFERRED: adopted-slot insert fix → §3c requires-parent → §3e preview defaults.
+
+## CP-ADOPT-7R P6 addendum (CHECKPOINT-5) — folds into ship #47
+
+Adopted-slot insert fix (repeater +Add no-op) + naming sweep. New/changed **mosaic** files (READ-ONLY):
+- `js/src/builder/MosaicPuckAdapter.ts` — repeater `render` recovers the instance id from Puck's
+  composite custom-field id (`<instanceId>_custom_<fieldKey>` → strip `_custom_…`); shared insertIntoSlot
+  now lands the child (was the +Add no-op the CHECKPOINT-4 film caught).
+- `js/src/builder/__tests__/MosaicPuckAdapterRepeater.test.ts` — +1 P6 parentId-derivation cell.
+- `js/e2e/repeater-authoring.spec.ts` + `js/e2e/repeater-diag.spec.ts` — headed «ext» accordion film
+  (now GREEN, 4 frames) + the diagnostic that named the cause.
+- `js/src/builder/fields/__tests__/MosaicRepeaterField.test.tsx` — tsc `rows[1]!` nullability.
+- `mosaic.libraries.yml` → **1.0.70**; `js/dist/{builder.js 6153347d, frontend-editor.js 37ea9b58}` rebuilt.
+- NO PHP changed → Kernel 3118/0 stands.
+
+Cause: Puck's CustomFieldRender `id` is field-scoped (`<instanceId>_custom_<fieldKey>`), not the bare
+instance id → findItemById never matched → insertIntoSlot no-op. Fix strips the scope. Before/after
+slot JSON + frames in films/checkpoint-5-repeater/.
+
+Gates: Kernel+Unit 3118/0 · Vitest 676/1 (B-101) · tsc clean · phpcs 0 · owned REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.70. DEFERRED: §3c requires-parent, §3e preview defaults.

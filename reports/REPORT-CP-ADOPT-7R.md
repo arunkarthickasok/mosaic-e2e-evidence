@@ -675,3 +675,68 @@ change, so no bump). Ship count 66 (build pass; folds into #47).
 
 **STOP — CHECKPOINT-4 filed. Next: the adopted-slot insert fix (unblocks the full film), then §3c
 requires-parent + §3e preview defaults.**
+
+---
+
+## CHECKPOINT-5 (P6 — adopted-slot insert fix + naming sweep) — folds into ship #47
+
+### §0 NAMING SWEEP
+Grepped the evidence repo for the provider id + org strings. **19 hits total: 14 redacted** to «ext»
+(REPORT 7 · SHIP-47-PLAN 2 · TODO 5 — all CP-ADOPT-7R arc-paste leakage), pushed as its own commit.
+The **4 remaining** (`ledger-live/MASTER-AUDIT.md`) are factual references to a **real codebase file**
+`docs/integrations/nysds.md` + ADR/story ids from a pre-«ext»-arc historical audit — redacting them
+would point the audit at a non-existent path (corruption, not sanitisation), so they are **left intact
+and flagged for Arun's ruling**. Going forward pastes write «ext»:accordionitem, never the provider id.
+
+### §1 MECHANISM — the cause (headed diagnostic)
+The repeater "+ Add" for an «ext» accordion no-opped even with a real force-click. Instrumented
+`insertIntoSlot` and captured on click:
+```
+INSERT_DIAG { parentId: "«ext»--accordion-06c4…_custom__mosaic_repeater__items",
+              found: false,
+              contentIds: ["«ext»--accordion-06c4…"] }   // ← the real instance id
+```
+**Cause (`js/src/builder/MosaicPuckAdapter.ts`, the repeater field's `render`):** it passed Puck's
+`CustomFieldRender` `id` straight through as the parent. But that `id` is the **FIELD-SCOPED composite**
+`<instanceId>_custom_<fieldKey>`, NOT the bare instance id — so `insertIntoSlot`'s `findItemById` never
+matched, returned early, and nothing was appended (`props.items` stayed `[]`). The insert function
+itself (`insertIntoSlot`, the shared WC#88 setData-deep-clone-append) was **correct** — the charter's
+hypothesised "adopted preview re-derives from stale SSR html" was NOT the blocker; the child simply
+never entered Puck data.
+
+### §2 FIX (at the shared path, minimal + correct)
+`MosaicPuckAdapter.ts` repeater `render` now recovers the instance id — strips the `_custom_<fieldKey>`
+field scope (`rawId.slice(0, rawId.lastIndexOf('_custom_'))`; Puck ids are `<type>-<uuid>`, colon-free,
+so `_custom_` only ever marks the scope). One shared `insertIntoSlot` still serves drag/picker/bind/
+repeater. With the correct parentId, the append lands, `fromPuck` serialises the child under
+`slots.items`, and the new item's mount triggers **one** `ensureSsr` so the library re-renders it — no
+MosaicAdoptedPreview rework needed. **Before/after slot JSON** (redacted, `films/checkpoint-5-repeater/
+slot-after.json`): before → accordion `slots:{}`; after → `slots:{items:["«ext»:accordionitem-…"]}` + a
+new `«ext»:accordionitem` node. **Vitest cell** (`MosaicPuckAdapterRepeater.test.ts`): the repeater
+field derives `mosaic_card-abc` from `mosaic_card-abc_custom__mosaic_repeater__items`, and passes a bare
+id through unchanged.
+
+### §3 FILMS (owed — now GREEN, headed, real mouse + keyboard)
+`js/e2e/repeater-authoring.spec.ts` passes end-to-end. Frames in `films/checkpoint-5-repeater/`:
+- `01-panel-add.png` — panel shows the repeater field ("Requires at least 1 item — 0/1" + "+ Add").
+- `02-two-items.png` — after +Add ×2, two rows in the inline list.
+- `03-canvas-two-items.png` — **the canvas renders two live library accordion items**; the panel list
+  shows "Accordionitem 1" + "Accordionitem 2" with reorder (↑/↓ + handle) + remove.
+- `04-min-floor.png` — removed to the min-1 floor: Remove disabled + the banner.
+Asserted (PROOF-CONDITIONS): +Add ×2 → `.mosaic-repeater__item` count 2; canvas child
+`[data-puck-component]` count 2; keyboard ArrowUp reorder; remove → count 1 + Remove disabled at floor;
+saved layout contains the `accordionitem` child.
+
+### DEFERRED (separate passes, as ruled)
+- **§3c REQUIRES-PARENT** (auto-wrap/refuse + palette container-ordering + Kernel save-validation + film).
+- **§3e PREVIEW DEFAULTS** (examples fill preview only + dirty tracking + Card badge + film).
+
+### Gates
+Kernel+Unit **3118 / 0** (unchanged from CHECKPOINT-4 — **no PHP changed this pass**; the fix is
+builder JS) · Vitest **676 / 1** (B-101; +1 P6 parentId cell) · tsc **clean** · phpcs **0** · owned
+oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (builder-JS fix, no FE render
+impact) · dist **1.0.69 → 1.0.70** (builder `6153347d`, frontend-editor `37ea9b58`; renderer `9c7f9320`
+byte-identical; served==built). Ship count 67 (build pass; folds into #47).
+
+**STOP — CHECKPOINT-5 filed. The «ext» repeater UX works end-to-end (add/reorder/remove/min-max, live
+canvas). Next: §3c requires-parent, then §3e preview defaults (separate passes).**

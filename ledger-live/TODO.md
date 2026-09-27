@@ -14293,3 +14293,11 @@ PROVEN (frame 01): «ext» accordion in palette -> drops on canvas (DROP-PROOF) 
 RED CAUGHT (next pass): +Add for an ADOPTED child is a no-op — insertIntoSlot appends parent.props[slot] (owned inline slots) but adopted comps use Tier-B SSR-preview slots (htmlToReactSlots), so child not picked up. Architectural gap.
 GATES: Kernel+Unit 3118/0 . Vitest 675/1 (B-101; no bundled JS changed) . phpcs 0 . phpstan 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.69).
 DEFERRED: adopted-slot insert fix -> §3c requires-parent -> §3e preview defaults.
+
+=== CP-ADOPT-7R CHECKPOINT-5 (P6 — adopted-slot insert fix + naming sweep) ===
+NAMING SWEEP: 19 hits; 14 redacted («ext») in REPORT/SHIP-47-PLAN/TODO (arc leakage), pushed; 4 MASTER-AUDIT refs to real file docs/integrations/«ext».md left intact (flagged).
+CAUSE (MosaicPuckAdapter.ts repeater render): passed Puck CustomFieldRender id (field-scoped composite <instanceId>_custom_<fieldKey>) as parentId → findItemById no match → insertIntoSlot no-op → props.items stayed []. Diagnosed by instrumenting insertIntoSlot (INSERT_DIAG found:false).
+FIX: strip _custom_<fieldKey> scope to recover instance id; shared insertIntoSlot lands child; child serialises under slots.items; new item mount triggers one ensureSsr. No MosaicAdoptedPreview rework needed. Vitest +1 cell.
+FILMS GREEN: e2e/repeater-authoring.spec.ts passes — +Add x2 -> 2 items -> canvas renders 2 live «ext» accordion items -> keyboard reorder -> remove below min -> banner. Frames 01-04 in films/checkpoint-5-repeater/.
+GATES: Kernel+Unit 3118/0 (no PHP changed) . Vitest 676/1 (B-101) . tsc clean . phpcs 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.69->1.0.70 (builder 6153347d, frontend-editor 37ea9b58, renderer 9c7f9320 unchanged).
+DEFERRED: §3c requires-parent, §3e preview defaults (separate passes).
