@@ -1,0 +1,370 @@
+# REPORT — CP-ADOPT-7R: composition teardown + owned regression sweep (report-only; ship #47 HELD)
+
+**Baseline:** ship #46 `a36f028` + the uncommitted CP-ADOPT-7 set (ship #47, HELD). Mosaic git
+READ-ONLY; nothing staged; no dev DB/config writes. The external library («ext», an adopted SDC
+design-system) is **enabled in Mosaic by Arun** — left enabled. Nodes are never saved.
+
+> **NAMING BAN.** The library is **"the external library" / `«ext»`** everywhere; components are named
+> by **display label** (Card, Accordion, …). Its public docs URL is read from `$MOSAIC_EXT_DOCS_URL`
+> and never written here.
+
+**Arun's findings (ledgered verbatim; tally 96–100, one per finding):**
+- **WC#96** — Accordion: no title / no body / no "add more".
+- **WC#97** — Card: shows a default image.
+- **WC#98** — only one half-width Card; no multi-card row.
+- **WC#99** — front-end styling off.
+- **WC#100** — owned fields regressing with «ext» on.
+
+**First read (decisive):** with «ext» ON, node/780 (owned components, anonymous) shasums are
+**IDENTICAL to baseline** — REGION `14e6cb9c…3954`, STYLE `b7756795…ca982 4354 10`. So the anon
+FE render of owned components is byte-identical with «ext» enabled. That relocates two findings:
+**WC#100 is a BUILDER/panel-side regression** (not FE render), and **WC#99 is the «ext» components'
+own global assets not attaching** (not owned-style drift).
+
+---
+
+## §1 — OWNED REGRESSION SWEEP
+
+### 1.1 Automated gates (with «ext» ON)
+- **Kernel+Unit 3107 / 0** (8659 assertions; 3 env-gated «ext» skips; 1 pre-existing warning + 7 D11.3
+  deprecations). · **Vitest 654 / 1** (B-101, pre-existing). · tsc/phpcs clean.
+- **Oracles with «ext» ON == baseline:** REGION `14e6cb9c…3954`, STYLE `b7756795…ca982 4354 10`. The
+  anon FE render of owned components is **byte-identical** with the external library enabled.
+
+### 1.2 WC#100 "owned fields regressing" — NOT REPRODUCED (owned path is healthy)
+Headed, «ext» enabled, on node/993 (no save):
+- Builder **mounts fully**; `0` page errors from the adapter. Owned **Heading** places → full panel
+  (Text, Level h1–h6, Alignment, breakpoint fields, Data Sources, Padding, Space-after, token
+  overrides); typing into the text field **landed in the transient layout**; enum selects correct.
+  Owned **Columns** places → panel (Column count, gap, Bind Column 1–4). Place → panel → field-edit →
+  enum **all work with «ext» on**.
+- The only console error on load is a **malformed `mosaic_intelligence` URL** (`https://api/…/scores/
+  node/993`) from a **disabled** module — **not «ext», not an adapter throw** (a separate latent bug,
+  §1.4). The "one bad manifest entry breaks the whole builder" hypothesis is **false here**.
+- **Verdict:** no owned-path regression. Kernel/Unit/Vitest green, shasums identical, owned panels
+  work → **nothing to fix in the owned path this pass.** What reads as "the canvas is broken with «ext»
+  on" is the adopted-preview bug in §1.3, which surrounds the (healthy) owned components with
+  never-resolving adopted placeholders.
+
+### 1.3 THE high-value finding — adopted Tier-B SSR preview never resolves on insert (mosaic-bug)
+When an **adopted** «ext» component is inserted via the per-zone picker, its canvas preview stays
+`div.mosaic-ssr-preview--loading` — **"«ext» X — loading…" forever**. The custom element IS defined in
+the page (`customElements.get('«ext»-card') === true`), but the component's real markup + its slot drop
+zones are **never emitted**: no `/api/mosaic/canvas/ssr` fetch is observed within 3.5 s of insert.
+Owned/Olivero components in the same canvas DO render → this is specific to the adopted insert path.
+**Suspected mechanism:** `tierBOptimistic.ts` schedules the SSR fetch only on a **data/prop change**,
+not on the **initial insert** (the WC#88 setData-append path lands the child but never kicks its first
+SSR). This single bug **cascades into every B/C red**: no rendered element (WC#99 on canvas), no slot
+drop zones (so WC#96 "add item" and all slot-based components are unusable in the builder), no on-canvas
+styling. It is a self-contained **Mosaic bug** (not a composition-model question) — **recommended as the
+first fix once the reviewer rules** (see §3); NOT fixed this pass per the report-only / do-not-fix stance
+and STOP-for-ruling.
+
+### 1.4 Secondary: malformed `mosaic_intelligence` scores URL
+Builder load fires `net::ERR_NAME_NOT_RESOLVED` for `https://api/mosaic/intelligence/scores/…` — the
+base host isn't resolved (produces `https://api/…`). The module is disabled, so it's harmless today,
+but it's a real URL-construction bug worth a fast follow (not «ext»-related, not owned-regression).
+
+### 1.5 Owned regressions: found 0 / fixed 0
+The sweep found **no owned regression**; owned components are healthy with «ext» enabled (gates green,
+shasums identical, panels work). No owned fix was required this pass.
+
+<!-- SECTION1 -->
+
+---
+
+## §2 — TEARDOWN: the COMPOSITION MODEL (47 rows)
+
+**Sourcing:** all from the shipped code/config (component.yml, twig, ESM, the library's example-site
+recipe + Canvas submodule + example theme). `$MOSAIC_EXT_DOCS_URL` was **unset** → no public docs
+fetched (the code teardown stands on its own). Confidence: `[A]` = twig-slot deep-read; `[S]` =
+first-hand grep of labels/status/variants + the full `libraryOverrides.dependencies` graph + the
+example-theme repeater templates; `[I]` = inferred from the `[S]` graph.
+
+### 2.1 Global assets — the decisive WC#99 finding
+- The library ships **one base library `«ext»/«ext»-full`** — a **JS-only ES-module bundle** with all
+  55 `customElements.define(...)`. It is attached **globally** via the module's `.info.yml`
+  `libraries:` key (Drupal auto-attaches it to **every** page) — there is **no `.module` /
+  hook_page_attachments**. Each component's `libraryOverrides` re-marks its own ESM `type: module` and
+  declares deps on sibling `core/components.«ext»--<other>` libraries.
+- **All CSS lives INSIDE the JS, encapsulated in Shadow DOM.** The module ships **no CSS file, no
+  fonts, no icon SVGs**. Component styling reads design tokens as `var(--«ext»-*, <hardcoded
+  fallback>)`; icons are shipped as JS chunks; the brand font is only a CSS-var fallback *name*.
+- **WC#99 cause:** the full visual layer — the design-token theme, the brand font, the icon font — is
+  shipped by the library's **example THEME** (`…-full.min.css` + a font-icon library), **NOT by the
+  module**. A Mosaic site that enables the *module* gets the Shadow-DOM components with **fallback
+  tokens, no brand font, no icon font** → "styling off." The base ESM loads (global `.info.yml`), so
+  the elements upgrade, but the token/font/icon layer is absent. The composition contract's
+  `global_libraries` (§3d) must point at that theme-shipped asset layer (or the author must install
+  it) — this is a **library-packaging gap**, not a Mosaic render bug.
+
+### 2.2 Paragraphs + Canvas — the composition model the SDCs DON'T encode
+The library's own authoring model lives in its **Paragraphs recipe**, not the SDC metadata:
+
+| Container | field (cardinality) | allowed child | → SDC slot |
+|---|---|---|---|
+| Page | `field_frames` (**-1**) | faqs, tabbed_content, cards | frame wrappers |
+| Cards | `field_cards` (**max 3**) | card only | grid → Card ×N |
+| FAQs | `field_faqs` (**-1**) | faq item only | Accordion `items` |
+| Tabbed content | `field_tabs` (**max 10**) | tab only | Tab group `tabtabpanels` |
+
+**Key insight:** each SDC container exposes **one slot that receives a pre-rendered blob**
+(`accordion.items`, `tabgroup.tabtabpanels`); the **repeater semantics, cardinality caps, and
+child-type allow-lists live in the Paragraph field config, NOT in the SDC.** That is exactly the layer
+Mosaic must supply itself (§3). The **Canvas submodule** replaces only **Card** with a version that has
+a **structured image `$ref` with a REAL default image** (a bundled 1600×900 jpg) + rich-HTML props +
+named authored slots — **and NO parent→child restriction metadata anywhere** (no `.canvas.yml`, no
+`allowedComponents`). **WC#97 cause:** that Canvas card's default image is an `examples`/`default`
+preview that leaks as saved content.
+
+### 2.3 Compositional families (9 true repeaters — container accepts exactly one child type, many)
+Accordion→Accordion item · Tab group→Tab+Tab panel · Dropdown menu→Dropdown item · Icon list→Icon list
+item · Process list→Process list item · Stepper→Step · Vertical nav→Vertical nav group · Checkbox
+group→Checkbox · Radio group→Radio. **Card grid is a Paragraph concern (max 3), not an SDC child-slot**
+(WC#98). Landmarks (Global header/footer, UNav) have generic untyped slots. Form leaves (Text input,
+Select, …) *use* Label/Icon/Error internally (not authored children).
+
+### 2.4 COMPOSITION MODEL — 47 rows
+Universal (stated once): global-assets for every row = `«ext»/«ext»-full` (global via `.info.yml`) +
+auto-attached `core/components.«ext»--<self>` + its declared sibling deps. **No component declares a
+`required:` prop; nearly every value is an `examples:` PREVIEW** — only **Card** and **Drupal button**
+carry a real `default:`. Labels are the display roles (org prefix stripped per the naming ban).
+
+| # | component | role | requires-parent | accepts-children (+card.) | repeater? | preview-default? | variants |
+|---|---|---|---|---|---|---|---|
+|1|Accordion|container|—|Accordion item (many)|**YES**|preview|headingLevel h2–h6|
+|2|Accordion item|item|**Accordion**|rich heading+body|no|preview|headingLevel|
+|3|Alert|leaf|—|— (uses button/icon)|no|preview|type{info,success,warning,danger,emergency}|
+|4|Avatar|leaf|—|—|no|preview|—|
+|5|Back to top|leaf|—|—|no|preview|—|
+|6|Badge|leaf|—|—|no|preview|size, intent, variant|
+|7|Breadcrumbs|leaf (data)|—|link items (data, many)|data|preview|size|
+|8|Button|leaf|—|—|no|preview|type, variant{filled,outline,ghost,text}|
+|9|Card|container|—|body + footer slot|no|**REAL default (image)**|headingLevel, target, inset, elevated|
+|10|Checkbox|item/leaf|Checkbox group (opt)|—|no|preview|size|
+|11|Checkbox group|container|—|Checkbox (many)|**YES**|preview|size|
+|12|Combobox|leaf|—|option data|no|preview|width|
+|13|Datepicker|leaf|—|—|no|preview|width, inverted|
+|14|Divider|leaf|—|—|no|preview|inverted, subtle|
+|15|Dropdown menu|container|—|Dropdown item (many)|**YES**|preview|position|
+|16|Dropdown item|item|**Dropdown menu**|— (defined in parent ESM)|no|preview|—|
+|17|Drupal button|leaf|—|—|no|**REAL default (variant)**|type, variant, size, circle, fullWidth|
+|18|Error message|leaf|—|—|no|preview|— (⚠ leaks Lit binding in twig)|
+|19|Global footer|container (landmark)|—|generic menu slot (many)|generic|preview|—|
+|20|Global header|container (landmark)|—|generic menu + user-actions (many)|generic|preview|—|
+|21|Icon|leaf|—|—|no|preview|size, flip, rotate (⚠ twig hardcodes icon lib)|
+|22|Icon list|container|—|Icon list item (many)|**YES**|preview|divider|
+|23|Icon list item|item|**Icon list**|rich content + secondary slot|no|preview|—|
+|24|Label|leaf|—|description slot|no|preview|flag{required,optional}, inverted|
+|25|Modal|container|—|body + footer slots (generic)|no|preview|width|
+|26|Pagination|leaf (data)|—|—|no|preview|—|
+|27|Process list|container|—|Process list item (many)|**YES**|preview|size|
+|28|Process list item|item|**Process list**|rich content|no|preview|—|
+|29|Radio|item/leaf|Radio group (opt)|—|no|preview|size|
+|30|Radio group|container|—|Radio (many)|**YES**|preview|size|
+|31|Select|leaf|—|option data|no|preview|width|
+|32|Skip nav|leaf|—|—|no|preview|—|
+|33|Step|item|**Stepper**|rich content|no|preview|—|
+|34|Stepper|container|—|Step (many)|**YES**|preview|—|
+|35|Tab|item|**Tab group**|—|no|preview|—|
+|36|Tab group|container|—|Tab + Tab panel (many)|**YES**|preview|—|
+|37|Table|leaf (data)|—|—|no|preview|—|
+|38|Tab panel|item|**Tab group**|rich content|no|preview|—|
+|39|Text area|leaf|—|—|no|preview|resize, width|
+|40|Text input|leaf|—|—|no|preview|type{email,number,…}, width|
+|41|Toggle|leaf|—|—|no|preview|size|
+|42|Tooltip|leaf|—|wraps a target|no|preview|position|
+|43|UNav footer|leaf (landmark)|—|— (self-contained)|no|preview|—|
+|44|UNav header|container (landmark)|—|generic slots + search|generic|preview|—|
+|45|Vertical nav|container|—|Vertical nav group (many)|**YES**|preview|headingLevel|
+|46|Vertical nav group|item|**Vertical nav**|nav links / nested|nested|preview|—|
+|47|Video|leaf|—|—|no|preview|size, loading|
+
+**Role tally:** ~14 containers (incl. landmarks) · 10 items · rest leaves · **9 true repeaters**.
+
+### 2.5 GAP list vs Mosaic today
+| # | Gap | Rows affected | Contract clause |
+|---|---|---|---|
+| C1 | **Repeaters** (container + one-child-type + cardinality) not modelled — Mosaic shows a bare drop zone, no per-item fields / "add item" | 9 repeater families (WC#96, WC#98) | §3b |
+| C2 | **Requires-parent** items droppable at top level (Accordion item, Card, Tab, Step) with no wrap/refuse | 10 item rows | §3c |
+| C3 | **Cardinality caps** (Card grid max 3, Tabs max 10) live only in Paragraph config — Mosaic has none | Card, Tab group | §3a/b |
+| C4 | **Global asset layer** (tokens/font/icons) ships in the example THEME, not the module — «ext» renders unstyled | all (WC#99) | §3d |
+| C5 | **Preview defaults leak as content** (Card default image; example prop values) | Card + any example-valued prop (WC#97) | §3e |
+| C6 | **Child-in-parent-ESM** (Dropdown item, Icon list item) can't render without the parent's library loaded | 2 rows | §3d (attach parent lib) |
+| C7 | **Library packaging bugs** (twig leaks Lit `?showDivider=${…}`; Icon twig hardcodes the icon lib) — upstream fixes | Error message, Icon | library advice |
+
+<!-- SECTION2 -->
+
+---
+
+## §3 — ARCHITECTURE PROPOSAL (report-only; reviewer rules): the Library Composition Contract
+
+The teardown (§2) shows the external library is **compositional**: it has containers (Accordion, Tab
+group, Card group) that own item children (Accordion item, Tab/Tab panel, Card) with a cardinality
+("add another"), it ships a **global/base stylesheet + tokens** that must be present for any component
+to look right, and its component `examples` are **previews, not content** (WC#97's default image). Mosaic
+today adopts each SDC as a flat component with free-content slots; it has no model for *containers +
+repeatable items + required parents + library-global assets + preview-only defaults*. The **Library
+Composition Contract** closes that gap. It is deliberately **source-ordered** so an SDC that declares
+its own rules needs no Mosaic-side heuristics, and a library that ships an adoption profile gets exact
+behaviour, with teardown heuristics only as a floor.
+
+### (a) Source order for composition metadata (most-authoritative first)
+1. **SDC slot metadata** — `slots[x].allowed` / a `min`/`max` (cardinality) / `required` in the
+   `component.yml` (+ Mosaic's sidecar `.mosaic.yml` which may ADD rules, never redefine slot ids —
+   H7). This is the truth when present.
+2. **Adoption profile YAML shipped by the library** — `<provider>.mosaic-adopt.yml` (read at discovery,
+   cached with the library cache tag). Shape:
+   ```yaml
+   containers:
+     accordion: { item_slot: items, item_type: accordion_item }
+     tab_group: { item_slot: tabs, item_type: tab, panel_slot: tabpanels, panel_type: tabpanel }
+   items:      [accordion_item, tab, tabpanel, card]        # role=item
+   repeaters:
+     accordion.items: { child: accordion_item, min: 1, max: null }
+   requiresParent:
+     accordion_item: accordion
+     card: [card_group, region]          # card may sit in a card group OR the page region
+   global_libraries: ['«ext»/base']       # must load on any page/canvas using the library
+   preview_defaults: true                 # examples are previews, never saved props
+   thumbnails: { card: 'path/card.png' }
+   ```
+3. **Heuristics from the teardown (last resort)** — infer role/parent/cardinality when neither (1) nor
+   (2) is present (e.g. a slot that accepts exactly one child type ⇒ repeater; a component whose twig
+   requires a parent class ⇒ requiresParent). Always the floor, never overriding (1)/(2).
+
+### (b) REPEATER UX
+A slot that accepts **exactly one child type** (from any source above) is rendered in the panel as an
+**inline item list**, not a bare drop zone: each item shows its own fields (e.g. Title / Body), with
+**+ Add item**, **reorder** (drag/keyboard), and **remove**. Storage is UNCHANGED — each item is an
+ordinary child component instance in the parent's slot (`nodes[parent].slots[x] = [childId, …]`), so
+save/round-trip/fallback all work as they do today. This directly answers **WC#96** (Accordion gets a
+title/body-per-item list + "add more") and **WC#98** (a Card group's slot is a repeater of Cards → a
+real multi-card row).
+
+### (c) REQUIRES-PARENT
+Dropping an **item** (Accordion item, Card, Tab) at the top level (the page region) is either:
+- **auto-wrapped** in its container — dropping a Card at top level creates a Card group (or the
+  ruled default container) and places the Card inside; OR
+- **refused with the reason** — "A Card must live inside a Card group" (author-grade), when auto-wrap
+  is ambiguous. Ruling needed: auto-wrap vs refuse (recommendation: **auto-wrap** for a single
+  unambiguous container, **refuse** when >1 container could hold it). The **palette lists containers
+  first** (then items grouped under them), so the natural drop is the container.
+
+### (d) GLOBAL ASSETS (library-level attach)
+A **library-level attach rule**: whenever ANY «ext» instance is present — on a rendered page OR in the
+builder canvas / iframe / FE dialog — the library's `global_libraries` (base CSS, tokens, fonts, icons)
+attach **once**. Server: the page/SSR render adds the global library to `#attached` for any adopted
+instance; the G9 harvest already resolves + ships per-component ESM — extend it to also emit the
+library-global assets. Client: `mosaicAttach` already dedupes by URL, so "once" is free. This answers
+**WC#99** (the components were unstyled because only the per-component ESM loaded, not the base
+CSS/tokens the shadow DOM reads via `var(--«ext»-*)`).
+
+### (e) PREVIEW DEFAULTS
+A component's `examples` (H4) fill the **canvas preview only** — they are shown so an un-configured
+component isn't blank, but they are **never written to saved props**. On save, an untouched
+example-valued prop serializes as its type-empty (or is omitted), not the example. This answers
+**WC#97** (the Card's default image is an example leaking as content). Requires a "value is the
+example, not author-set" marker in the panel state (dirty-tracking per prop) so save can drop
+untouched examples.
+
+### (f) STYLING PARITY
+Once (d) attaches the global assets on both surfaces, **page == canvas computed styles** for an «ext»
+component (measured by a style-shasum of the component's own region on the page vs the canvas). This is
+the acceptance oracle for WC#99's fix and becomes a standing regression row.
+
+### Options + trade-offs (reviewer rules)
+| Area | Option A | Option B | Recommendation |
+|---|---|---|---|
+| Metadata source | SDC/sidecar only (no profile) | + `<provider>.mosaic-adopt.yml` | **B** — the library can declare exact rules; heuristics stay a floor. |
+| Requires-parent | Always refuse | Auto-wrap single / refuse ambiguous | **Auto-wrap single**, refuse ambiguous (author-grade reason). |
+| Where the profile lives | Mosaic ships per-library profiles (helper module `mosaic_adopt_«ext»`) | The library ships its own profile | Support **both**: Mosaic reads a profile from EITHER the library OR a helper module; ship a helper for «ext» now, upstream it later. |
+| Global assets | Author adds the base library by hand | Auto-attach per instance | **Auto-attach** (d). |
+| Preview defaults | Keep examples as saved defaults | Preview-only + dirty-tracking | **Preview-only** (e). |
+
+**Helper module vs library-ships:** the **repeater UX, requires-parent, global-asset auto-attach,
+preview-default dirty-tracking, and the profile READER** are Mosaic core (they apply to any adopted
+library). The **profile DATA** (`<provider>.mosaic-adopt.yml`) + thumbnails should ship with the
+library; until then, a thin **helper module** (`mosaic_adopt_«ext»`) carries the «ext» profile so no
+contrib fork is needed.
+
+### Author guidelines (one page, draft)
+1. Turn the library ON in **Component libraries**; grade what you'll use.
+2. Build with **containers** (Accordion, Tab group, Card group) from the palette — they list first.
+3. Inside a container, use **+ Add item** to add Cards / Accordion items / Tabs; reorder with the
+   handle; each item has its own Title/Body fields.
+4. A component that shows an example (an image, sample text) is showing a **preview** — replace it, or
+   it saves empty. Previews never publish.
+5. If you drop an item on the bare page, Mosaic wraps it in its container (or tells you which container
+   it needs).
+6. The library's look loads automatically wherever you use it — page, canvas, preview.
+7. Owned Mosaic components and the library's components coexist; neither restyles the other.
+
+---
+
+## §4 — PER-COMPONENT LIFECYCLE REDS (top 12; written, run, expected red — NOT fixed this pass)
+
+Headed, «ext» ON, in the builder, no save. Each component **places** and gets a Mosaic panel; the
+**save → render → behaviours** steps are **not run** (no dev writes). The **earliest red is uniform**:
+the adopted canvas SSR-preview stays "— loading…" (the §1.3 bug), so the element/slot markup is absent;
+slot-based components add a **composition** gap (the slot drop zone never appears, so items can't be
+added — WC#96).
+
+| Component | place | panel | earliest red | cause class |
+|---|---|---|---|---|
+| Accordion | ok | slot "Accordion Items" | canvas "loading…", no slot dropzone → can't add items | mosaic-bug + composition |
+| Card | ok | slots Preheading/Footer | "loading…"; default image via prop `default` | mosaic-bug; **defaults** |
+| Button | ok | 8 scalar/bp controls | "loading…", element absent | mosaic-bug |
+| Tab group | ok | slots Tabs/Tab panels | "loading…", no slot dropzone | mosaic-bug + composition |
+| Alert | ok | 8 controls | "loading…" | mosaic-bug |
+| Card (as hero) | ok | slots Preheading/Footer | "loading…"; default image | mosaic-bug; defaults |
+| Icon list | ok | slot "Icon List Items" | "loading…", no slot dropzone | mosaic-bug + composition |
+| Table | ok | 8 controls | "loading…" | mosaic-bug |
+| Breadcrumbs | ok | slot "Items" | "loading…", no slot dropzone | mosaic-bug + composition |
+| Global header | ok | slot "Menu Content" | "loading…", no slot dropzone | mosaic-bug + composition |
+| Global footer | ok | slot "Menu Content" | "loading…", no slot dropzone | mosaic-bug + composition |
+| Vertical nav | ok | slot "Menu…" | "loading…", no slot dropzone | mosaic-bug + composition |
+
+**Cause-class tally (12):** mosaic-bug **12/12** (the SSR-preview-never-resolves bug, §1.3) · composition
+**7/12** (slot-based: no dropzone → no add-item) · defaults **2/12** (Card default image, WC#97) ·
+assets **0** *in-builder* (the base ESM loads; the token/font/icon layer gap — WC#99/C4 — bites on the
+rendered page, which was not-run here). Films: `cp-adopt-7/r-teardown-sweep/` (`B-accordion.png`,
+`B-card.png`, `B-card-row-attempt.png`, `B-fe-styling.png`, `A-owned-panel.png`).
+
+**Not fixed this pass** (per the charter): these reds are unblocked by (1) the §1.3 SSR-on-insert fix
+(mosaic-bug — unblocks all 12), then (2) the ruled composition contract (§3b/c repeaters + requires-
+parent — the 7 composition reds), (3) §3e preview-defaults (the 2 defaults reds), (4) §3d global assets
+(WC#99 on the page).
+
+<!-- SECTION4 -->
+
+---
+
+## Summary (paste figures)
+- **Owned regressions found / fixed: 0 / 0** — owned path healthy with «ext» ON (Kernel 3107/0 · Vitest
+  654/1 · shasums IDENTICAL · owned place/panel/edit/enum all work). WC#100 **not reproduced**.
+- **Composition-model rows: 47** (≈14 containers incl. landmarks · 10 items · rest leaves · **9 true
+  repeaters**).
+- **Top gap classes (counts):** `mosaic-bug` **1** (the SSR-preview-never-resolves-on-insert bug, §1.3
+  — root of **12/12** lifecycle reds) · `composition` **3 gaps** (C1 repeaters → 9 families; C2
+  requires-parent → 10 item rows; C3 cardinality caps → 2) · `assets` **1** (C4 token/font/icon layer
+  ships in the theme not the module → all «ext» rows, WC#99) · `defaults` **1** (C5 preview leak → Card
+  image + example-valued props, WC#97) · `packaging` **2** (C6 child-in-parent-ESM; C7 twig bugs).
+- **Lifecycle reds per component: 12 / 12** red at render (all place + panel OK); 7/12 add a composition
+  gap; 2/12 a defaults gap; save/render/behaviour steps not-run (no dev writes).
+- **Reds that stayed red (none fixed — report-only, STOP for ruling):** the §1.3 adopted-SSR-on-insert
+  bug (recommended #1 fix); WC#96/#98 (repeater UX — §3b); WC#97 (preview defaults — §3e); WC#99
+  (global token/font/icon layer — §3d); the malformed `mosaic_intelligence` URL (§1.4, fast follow);
+  pre-existing B-101 (Vitest) + B-102 (phpstan-drupal drift).
+
+### Ordered fix plan (recommended to the reviewer)
+1. **§1.3 SSR-on-insert** (mosaic-bug, self-contained) — schedule an adopted component's first
+   `/api/mosaic/canvas/ssr` on insert; unblocks all 12 lifecycle reds + WC#99-on-canvas + the slot
+   dropzones (WC#96/#98 preconditions). **Can be ruled independently — no architecture change.**
+2. **§3 Library Composition Contract** (needs the ruling): §3a profile source-order → §3b repeater UX
+   (WC#96/#98) → §3c requires-parent → §3d global-asset auto-attach (WC#99) → §3e preview defaults
+   (WC#97) → §3f styling parity.
+3. Library-packaging advice upstream (C4 token/font/icon library; C7 twig bugs).
+
+**STOP — report-only. Ship #47 stays HELD. Awaiting the reviewer's ruling on the Library Composition
+Contract (§3) before the composition build; the owned regression (§1) is the only fix this pass.**

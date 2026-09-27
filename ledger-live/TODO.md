@@ -14202,3 +14202,28 @@ run `ddev drush mosaic:sync-libraries` (or just reload /admin/config/mosaic/comp
 self-syncs on load). Either creates the «ext» library entity (defaults OFF; tick + Save to enable).
 GATES: phpcs 0 (changed) + phpstan 0 new; Kernel+Unit 3107/0 (8659 assertions; +3 sync cells; 10 blast-radius test setUps purge auto-synced libs). No JS change → no dist bump. Mosaic
 READ-ONLY (uncommitted, folds into ship #47). Ship count 63.
+
+=== CP-ADOPT-7R — composition teardown + owned regression sweep (report-only; ship #47 HELD). Tally 100. ===
+Ledger WC#96-100 (Arun): #96 Accordion no title/body/add-more; #97 Card default image; #98 only one half-
+width card no row; #99 FE styling off; #100 owned fields regressing with «ext» on.
+PART 1 SWEEP: with «ext» ON — Kernel+Unit 3107/0, Vitest 654/1-B101, shasums REGION 14e6cb9c..3954 + STYLE
+b7756795..ca982 IDENTICAL to baseline (owned FE byte-identical). Headed: owned Heading/Columns place→panel→
+edit→enum ALL WORK. WC#100 NOT REPRODUCED — owned path healthy; found 0/fixed 0. The real bug: adopted
+Tier-B SSR-preview NEVER RESOLVES on picker-insert ("«ext» X — loading…" forever; no /api/mosaic/canvas/ssr
+fetch on insert; tierBOptimistic schedules SSR only on data change) → cascades into WC#96/#98-canvas/#99-
+canvas + all §4 reds. Cause class mosaic-bug; recommended #1 fix, NOT fixed this pass (STOP for ruling).
+Also: malformed mosaic_intelligence scores URL (https://api/...) console error on load (disabled module).
+PART 2 TEARDOWN (47 rows, sourced): base lib «ext»/«ext»-full = JS-only ESM (all 55 defines) attached
+GLOBALLY via .info.yml; ALL css in shadow DOM; tokens/font/icons ship in the example THEME not the module
+(= WC#99 gap). Repeaters/cardinality/allow-lists live in the Paragraphs recipe (page.field_frames -1;
+cards.field_cards max3=WC#98; faqs→accordion; tabs max10) NOT in SDC metadata. Canvas submodule replaces
+only Card (structured image $ref w/ REAL default jpg = WC#97). 9 true repeaters. No `required:` anywhere;
+nearly all values are examples=previews. Gaps C1 repeaters, C2 requires-parent, C3 cardinality, C4 global
+assets, C5 preview leak, C6 child-in-parent-ESM, C7 twig bugs.
+PART 3 PROPOSAL: Library Composition Contract — (a) source order SDC-slot-meta → <provider>.mosaic-adopt.yml
+→ heuristics; (b) repeater UX (inline item list, +Add, reorder; storage unchanged); (c) requires-parent
+auto-wrap/refuse; (d) global-asset library-level auto-attach; (e) preview-defaults never saved; (f) page==
+canvas styling parity. Options + author guidelines. Helper module mosaic_adopt_«ext» carries the profile.
+PART 4 lifecycle top-12: 12/12 red at render (place+panel OK); 7 composition + 2 defaults; save/render not-
+run (no dev writes). Report reports/REPORT-CP-ADOPT-7R.md. Mosaic READ-ONLY (report-only; 0 code changes).
+Gates unchanged: Kernel 3107/0, Vitest 654/1. STOP for reviewer ruling on §3 before the composition build.
