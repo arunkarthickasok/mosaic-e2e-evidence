@@ -684,7 +684,7 @@ requires-parent + §3e preview defaults.**
 Grepped the evidence repo for the provider id + org strings. **19 hits total: 14 redacted** to «ext»
 (REPORT 7 · SHIP-47-PLAN 2 · TODO 5 — all CP-ADOPT-7R arc-paste leakage), pushed as its own commit.
 The **4 remaining** (`ledger-live/MASTER-AUDIT.md`) are factual references to a **real codebase file**
-`docs/integrations/nysds.md` + ADR/story ids from a pre-«ext»-arc historical audit — redacting them
+`docs/integrations/<provider>.md` (a real file) + ADR/story ids from a pre-«ext»-arc historical audit — redacting them
 would point the audit at a non-existent path (corruption, not sanitisation), so they are **left intact
 and flagged for Arun's ruling**. Going forward pastes write «ext»:accordionitem, never the provider id.
 
