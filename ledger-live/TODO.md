@@ -14326,4 +14326,8 @@ DEFERRED: §3e preview defaults; then §4 lifecycle greens + walk rewrite. §3c 
 
 === CP-ADOPT-7R CHECKPOINT-9 (P10 — WC#101 mechanism + deterministic proof) ===
 WC#101 STUDY (20 drags/phase, no retry): zoneReplaced 0, setDataDuringDrag 0 -> remount+SSR hypotheses DISPROVEN. Flakiness NOT adopted-specific (item 16-17/20 ~ owned Columns 15/20); lever = drag-activation wait (0->17). CAUSE: no product defect - inherent Playwright synthetic dnd-kit flakiness; 20/20 unachievable via drag for ANY component. A synthetic drag cannot be a DROP-PROOF.
-PROOF (deterministic, no retry): PICKER-wrap - pick accordion item into a Columns slot -> auto-wrapped in Accordion + toast (100
+PROOF (deterministic, no retry): PICKER-wrap - pick accordion item into a Columns slot -> auto-wrapped in Accordion + toast (100=== CP-ADOPT-7R CHECKPOINT-10 (P11 - §3e preview defaults / WC#97 fix) ===
+SERVER: MosaicRenderer::renderSingleComponent fills UNSET props from examples (canvas SSR only) + returns _mosaic_preview; CanvasPreviewController passes it through. MODEL: manifest preview_defaults per component (previewDefaults accessor). CLIENT: adapter skips seeding schema defaults for a preview_defaults component -> untouched prop saves EMPTY (WC#97). Kernel PreviewDefaultsTest 3 + Vitest previewDefaults.test.ts 2.
+FILM: «ext» Card placed -> canvas shows example image -> saved layout Card node has NO image (card-default not saved). saved-layout.json, 01-card-canvas.png.
+GATES: Kernel+Unit 3128/0 . Vitest 689/1 (B-101) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.73->1.0.74 (builder bce0a157, frontend-editor 6368a9ea, renderer 9c7f9320 unchanged).
+DEFERRED: example badge UI (rail + dirty tracking); then §4 lifecycle greens + walk rewrite.

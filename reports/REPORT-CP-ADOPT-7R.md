@@ -955,3 +955,51 @@ cell) · tsc **clean** · owned oracles **REGION 14e6cb9c…3954 + STYLE b775679
 **STOP — CHECKPOINT-9 filed. WC#101 = synthetic-drag test flakiness (no product defect); the auto-wrap
 is proven deterministically via the picker (no retry). Next: §3e preview defaults; then §4 lifecycle
 greens + walk rewrite.**
+
+---
+
+## CHECKPOINT-10 (P11 — §3e preview defaults: the WC#97 fix) — folds into ship #47
+
+The authoritative WC#97 fix — **the Card's example image is a preview, never saved content** — landed and
+proven. The rail "example" badge + dirty-tracking UI is the remaining §3e polish (below).
+
+### MODEL — the manifest flags a preview_defaults library
+`MosaicManifestBuilder::buildComponentEntry` emits `preview_defaults: bool` (from
+`MosaicAdoptionProfile::previewDefaults`, new accessor). Verified: `«ext»:card → true`,
+`mosaic_components:mosaic_card → false`. `js/src/shared/types/schema.ts` gains
+`MosaicComponentManifest.preview_defaults?`.
+
+### SERVER — the canvas SSR fills examples for PREVIEW only + reports them
+`MosaicRenderer::renderSingleComponent` (the canvas SSR path — NOT the page render): for a
+`preview_defaults` adopted component, an UNSET prop is filled from its `examples[0] ?? default` so the
+canvas isn't blank, and the filled prop names are returned as **`_mosaic_preview`** (passed through
+`CanvasPreviewController`). A prop the author SET is untouched and never reported; owned components never
+merge. **Kernel `PreviewDefaultsTest` (3 cells):** unset prop shows the example + is reported; a set prop
+is neither overridden nor reported; an owned component has an empty `_mosaic_preview`.
+
+### CLIENT — a preview_defaults instance never SEEDS its defaults (so it saves empty)
+`MosaicPuckAdapter.toConfig`: the schema-default seeding loop is **skipped** when
+`manifest.preview_defaults === true` — a placed instance carries NO prop defaults, so an untouched prop
+serialises EMPTY (WC#97). A normal component still seeds its defaults, byte-for-byte. **Vitest
+`previewDefaults.test.ts` (2 cells):** a preview_defaults Card seeds no `image`; a normal card seeds it.
+
+### FILM — the saved image is empty (`films/checkpoint-10-preview-defaults/`)
+`js/e2e/preview-defaults.spec.ts` (passes): an «ext» Card is placed (`01-card-canvas.png` — the canvas
+shows the example image via the SSR merge); the **saved layout** (`saved-layout.json`) is the proof —
+the Card node is `{ "footer": [], "preheading_content": [] }` with **NO `image` prop**; the asserted
+proof-condition is `not.toContain('card-default')`. The example asset never reaches saved content.
+
+### DEFERRED — the "example" badge UI (§3e polish)
+The rail "example" badge + "Preview only — set a value to publish" note beside untouched preview props,
+the canvas corner badge, and first-edit-clears-badge dirty tracking consume the `_mosaic_preview` list
+the server now returns — a follow-up UI slice. The correctness (image never saved) is complete.
+
+### Gates
+Kernel+Unit **3128 / 0** (8791 assertions; +3 §3e cells; 3 skips, 1 warning) · Vitest **689 / 1**
+(B-101; +2 §3e cells) · tsc **clean** · phpcs **0** (changed) · phpstan **0 new** (MosaicRenderer 4
+pre-existing) · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (the
+§3e merge is canvas-SSR-only; the page render is untouched) · dist **1.0.73 → 1.0.74** (builder
+`bce0a157`, frontend-editor `6368a9ea`; renderer `9c7f9320` byte-identical; served==built). Ship count 72.
+
+**STOP — CHECKPOINT-10 filed. §3e correctness (WC#97: the example image never saves) is complete + proven;
+the "example" badge UI is the remaining polish. Next: §4 lifecycle greens + walk rewrite + SHIP-47-PLAN.**

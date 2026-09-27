@@ -266,3 +266,23 @@ in Accordion + toast (04-picker-wrap-toast.png, picker-wrap-layout.json).
 
 Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 687/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
 STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.73. DEFERRED: §3e preview defaults; then §4.
+
+## CP-ADOPT-7R P11 addendum (CHECKPOINT-10) — folds into ship #47
+
+§3e preview defaults — the WC#97 fix (example image never saved). Rail badge UI = remaining polish.
+New/changed mosaic files (READ-ONLY):
+- `src/Sdc/MosaicAdoptionProfile.php` — previewDefaults() accessor.
+- `src/Service/MosaicRenderer.php` — renderSingleComponent fills UNSET props from examples (canvas only) + returns _mosaic_preview.
+- `src/Controller/CanvasPreviewController.php` — passes _mosaic_preview through.
+- `src/Service/MosaicManifestBuilder.php` — emits preview_defaults per component.
+- `js/src/shared/types/schema.ts` — MosaicComponentManifest.preview_defaults.
+- `js/src/builder/MosaicPuckAdapter.ts` — skips seeding schema defaults for a preview_defaults component (saves empty).
+- `tests/modules/adopt_fixture/components/adopt_widget/adopt_widget.component.yml` — heading example (fixture).
+- `tests/src/Kernel/Adopt/PreviewDefaultsTest.php` (NEW, 3) · `js/src/builder/__tests__/previewDefaults.test.ts` (NEW, 2) · `js/e2e/preview-defaults.spec.ts` (film).
+- `mosaic.libraries.yml` → 1.0.74; `js/dist/{builder.js bce0a157, frontend-editor.js 6368a9ea}` rebuilt.
+
+Saved JSON proof (redacted): «ext»:card props = {"footer":[],"preheading_content":[]} — NO image (card-default not saved).
+
+Gates: Kernel+Unit 3128/0 · Vitest 689/1 (B-101) · tsc clean · phpcs 0 · phpstan 0 new · owned REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.74.
+DEFERRED: the "example" badge UI (rail badge + dirty tracking); then §4 lifecycle greens + walk rewrite.
