@@ -424,3 +424,104 @@ Kernel+Unit **3109 / 0** (8673 assertions; +2 AdoptGlobalAssets cells; 3 env-gat
 Ship count 63 (build pass; folds into ship #47).
 
 **STOP — CHECKPOINT-1 filed. P2 (profile reader full semantics + repeater UX) next.**
+
+---
+
+## CHECKPOINT-2 (P2 — profile reader, full semantics) — folds into ship #47
+
+**Scope ruling (Arun, this pass): "Reader now, UX next pass."** Land the adoption-profile
+reader (full parse / validate / cache) + extend the «ext» helper profile + Kernel cells +
+the §1.4 fast-follow, fully gated. **The repeater-UX React build (§3b) is DEFERRED to its
+own focused pass** — nothing UX-facing changed here; storage/render are untouched.
+
+### §1.4 fast-follow — the malformed intelligence-scores URL (FIXED)
+`js/src/builder/useLighthouseScore.ts` fetched `` `${basePath}/api/mosaic/intelligence/scores/…` ``.
+`basePath` already ends in `/` (Drupal convention), so the extra leading slash produced
+`//api/…` — a **protocol-relative** URL the browser resolves to host `api`
+(`ERR_NAME_NOT_RESOLVED`), so the score panel silently never loaded on a root-install site.
+Fix: drop the leading slash → `` `${basePath}api/mosaic/intelligence/scores/…` `` (matches every
+other fetch in the file). **Cells:** the Vitest oracle previously used a `/drupal` (no trailing
+slash) basePath that MASKED the bug; rewritten to two cells — root `/` → `'/api/mosaic/…'` +
+`startsWith('//') === false`, and subdir `/drupal/` → `'/drupal/api/…'` (7/7). The PHP source-grep
+smoke `Sprint60SmokeTest::testUseLighthouseScoreFetchesScoreEndpoint` asserted the OLD leading-slash
+string (i.e. asserted the bug) — **retargeted** to `api/mosaic/intelligence/scores/` (the endpoint
+path, not the slash); 46/46. This is an oracle-change I introduced by the fix, caught by the gate
+and corrected — the only red in the full suite, now green.
+
+### PART 1 — the profile reader (full semantics)
+New `src/Sdc/MosaicAdoptionProfile.php` (`final`, DI: `@module_handler`, `@cache.default`,
+`@mosaic.component_manager`; registered `mosaic.adoption_profile`). It reads
+`<provider>.mosaic-adopt.yml` from the helper module `mosaic_adopt_<provider>` (or the provider's
+own module) and parses **every** key into a typed shape: `containers{item_slot,item_type,
+panel_slot?,panel_type?}`, `items[]`, `repeaters{"<component>.<slot>":{child,min:int|null,
+max:int|null}}`, `requiresParent{item:[containers]}`, `global_libraries[]`, `preview_defaults:bool`,
+`thumbnails{}`. **Source order (§3a, ruled B)** is honoured by the consumers (SDC/sidecar wins →
+profile fills → heuristics floor); the reader is the "profile fills" source. **Validation:** every
+LOCAL component id the profile names is checked against `componentManager->hasDefinition("$provider:$local")`
+— an unknown id becomes a **warning** (surfaced on the libraries page), never a crash. **Cached**
+`CACHE_PERMANENT` under `mosaic:adopt_profile:<provider>` with the library cache tag
+(`MosaicComponentLibrary::cacheTagFor`) so a library toggle clears it. Owned / profile-less
+providers return the EMPTY typed shape early (no I/O).
+
+`MosaicRenderer::providerGlobalLibraries()` now **delegates** to the reader
+(`$this->adoptionProfile->globalLibraries($provider)`) — the duplicated yaml/cache block from P1 is
+removed; output is byte-identical (same YAML → same library list), so adopted rendering is unchanged.
+
+**Kernel cells (`tests/src/Kernel/Adopt/MosaicAdoptionProfileTest.php`, 4 methods / 29 assertions):**
+`testParsesEveryKey` (containers/items/repeaters typed with a null `max` preserved / requiresParent /
+global_libraries / preview_defaults / thumbnails), `testUnknownComponentIdWarnsNotCrashes`
+(the fixture's deliberate `not_a_real_component` warns; real ids do not), `testAccessors`,
+`testOwnedProviderIsEmpty` (owned + non-existent provider → empty, no crash). Fixture
+`tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml` extended to exercise every key +
+the unknown-id path, naming-safely.
+
+**«ext» helper profile extended** (`web/modules/custom/mosaic_adopt_ext/nys_ds.mosaic-adopt.yml`,
+Arun's SITE repo — OUTSIDE the mosaic tree) with the 9 repeater families + requires-parent map:
+```yaml
+repeaters:
+  accordion.items:                     { child: accordionitem, min: 1, max: null }
+  tabgroup.tabs:                       { child: tab, min: 1, max: 10 }
+  dropdownmenu.dropdownmenuitemshtml:  { child: dropdownmenuitem, min: 0, max: null }
+  iconlist.items:                      { child: iconlistitem, min: 1, max: null }
+  processlist.items:                   { child: processlistitem, min: 1, max: null }
+  stepper.steps:                       { child: step, min: 1, max: null }
+  verticalnav.menu:                    { child: verticalnavgroup, min: 1, max: null }
+  checkboxgroup.options:               { child: checkbox, min: 1, max: null }
+  radiogroup.options:                  { child: radiobutton, min: 1, max: null }
+requiresParent:
+  accordionitem: accordion
+  tab: tabgroup
+  tabpanel: tabgroup
+  dropdownmenuitem: dropdownmenu
+  iconlistitem: iconlist
+  processlistitem: processlist
+  step: stepper
+  verticalnavgroup: verticalnav
+```
+
+### PART 2 — repeater UX (§3b) — DEFERRED (Arun's ruling)
+Film frames (Accordion → +Add ×2 items; Card group → +Add ×3 = three-card row) are **N/A this
+pass** — the React build (inline item-list panel, +Add/reorder/remove, min/max banner, owned-Tabs
+unification, FE dialog parity, smoothness, Vitest + Kernel round-trip) is the scale of the Tabs
+redesign and lands as its own focused pass. The `repeaters` + `requiresParent` data it consumes is
+now present, validated, and cached.
+
+### Gates
+Kernel+Unit **3113 / 0** (8707 assertions; +4 AdoptionProfile cells; 3 env-gated skips, 1 warning;
+the single full-run red was the §1.4 Sprint60 oracle, retargeted → re-run green) · Vitest **660 / 1**
+(**B-101** only: `MosaicPuckAdapter.test.ts` still expects boolean→`{type:'checkbox'}` but the
+adapter intentionally emits the Yes/No **radio** — Puck 0.21 has no checkbox field for props; stale
+oracle, pre-existing, unrelated to this pass; +2 §1.4 useLighthouse cells → 661 total) · phpcs
+**0 errors** (changed) · phpstan MosaicAdoptionProfile **0** + MosaicRenderer **4 pre-existing**
+(B-102, 0 new) · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL
+(with «ext» ON) · dist **1.0.67 → 1.0.68** (builder `4cf870ca` → `a298662d` [§1.4 useLighthouse
+fix]; frontend-editor `05738130` + renderer `9c7f9320` byte-identical; served==built).
+**Adopted parity oracle:** NOT re-runnable this pass — no node persists an adopted component
+(`node__field_mosaic_layout LIKE '%nys_ds:%'` → empty) and the helper is disabled (enabling it is a
+config write = Arun's walk), so there is no live subject; adopted rendering is behavior-preserved by
+construction (reader delegation returns the identical global-libraries list). Baseline `ed0ad566…3e48b`
+stands; full page-vs-canvas parity remains Arun's walk (as CHECKPOINT-1 flagged).
+Ship count 64 (build pass; folds into ship #47).
+
+**STOP — CHECKPOINT-2 filed. Next pass: repeater UX (§3b) React build; then P3 = requires-parent
+enforcement (§3c) + preview defaults (§3e).**

@@ -96,3 +96,34 @@ mosaic; `web/modules/custom/mosaic_adopt_ext/`):
 Arun installs the helper module on the site (a config write — the adoption profile is then read by
 Mosaic). The brand token/font/icon layer still comes from the library's example theme (install it, or
 add it to `mosaic_adopt_ext/base`).
+
+## CP-ADOPT-7R P2 addendum (CHECKPOINT-2) — folds into ship #47
+
+Ruling this pass: **"Reader now, UX next pass."** New/changed **mosaic** files (still READ-ONLY,
+Arun commits):
+- `src/Sdc/MosaicAdoptionProfile.php` — NEW `final` reader for `<provider>.mosaic-adopt.yml`
+  (full parse of containers/items/repeaters/requiresParent/global_libraries/preview_defaults/
+  thumbnails; id-validation → warnings not crash; cached under the library cache tag).
+- `mosaic.services.yml` — registers `mosaic.adoption_profile`; appends it to `mosaic.renderer` args.
+- `src/Service/MosaicRenderer.php` — `providerGlobalLibraries()` now delegates to the reader
+  (P1's duplicated yaml/cache block removed); removed the now-unused `Yaml` import.
+- `tests/src/Kernel/Adopt/MosaicAdoptionProfileTest.php` (NEW, 4 methods / 29 assertions) ·
+  `tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml` (extended: every key + an
+  unknown-id warning path).
+- `tests/src/Unit/Service/MosaicRendererTest.php` + `MosaicRendererCacheTest.php` — construct a REAL
+  `MosaicAdoptionProfile` (the class is `final`; `createMock` cannot double it) with mocked deps.
+- `tests/src/Unit/Smoke/Sprint60SmokeTest.php` — §1.4 oracle retargeted (endpoint path, not the
+  old leading-slash bug).
+- `js/src/builder/useLighthouseScore.ts` (§1.4 URL fix) + `js/src/builder/__tests__/useLighthouseScore.test.ts`
+  (root `/` + subdir `/drupal/` cells; `startsWith('//')` guard).
+- `js/dist/builder.js` rebuilt (`a298662d`) · `mosaic.libraries.yml` → **1.0.68**.
+
+**«ext» helper — ships SEPARATELY (Arun's SITE repo, `web/modules/custom/mosaic_adopt_ext/`):**
+- `nys_ds.mosaic-adopt.yml` EXTENDED with the 9 repeater families + requires-parent map + global_libraries.
+
+Gates: Kernel+Unit **3113/0** · Vitest **660/1** (B-101 only) · phpcs **0** (changed) · phpstan
+**0 new** (MosaicRenderer 4 pre-existing B-102) · owned oracles REGION `14e6cb9c…3954` + STYLE
+`b7756795…ca982 4354 10` IDENTICAL (with «ext» ON) · dist **1.0.67 → 1.0.68**.
+
+**DEFERRED to next pass:** the repeater-UX React build (§3b); then P3 = requires-parent enforcement
+(§3c) + preview defaults (§3e).

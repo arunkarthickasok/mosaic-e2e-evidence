@@ -14249,3 +14249,29 @@ PARITY ORACLE §3f: scripts/qa/adopted-style-shasum.sh <url> <selector>; baselin
 GATES: owned shasums 14e6cb9c/b7756795 IDENTICAL (with «ext» ON); Vitest 659/1-B101; Kernel+Unit 3109/0;
 phpcs 0; phpstan MosaicRenderer 4-pre-existing(0 new); dist 1.0.66→1.0.67 (builder 4cf870ca, frontend-editor
 05738130, renderer byte-identical). Mosaic READ-ONLY. STOP — P2 (profile reader full semantics + repeater UX).
+
+=== CP-ADOPT-7R CHECKPOINT-2 (P2 — profile reader, full) — "Reader now, UX next pass" ===
+FAST-FOLLOW §1.4: useLighthouseScore.ts fetch `${basePath}/api/...` -> `${basePath}api/...`
+  (basePath ends in '/'; leading slash made '//api/...' protocol-relative = ERR_NAME_NOT_RESOLVED).
+  Vitest: root '/' + subdir '/drupal/' cells + startsWith('//') guard (7/7).
+  PHP smoke Sprint60SmokeTest::testUseLighthouseScoreFetchesScoreEndpoint retargeted (path, not the
+  old leading-slash bug) — 46/46. This was the ONLY full-suite red (oracle-change I introduced, fixed).
+PART 1 reader: src/Sdc/MosaicAdoptionProfile.php (final; DI module_handler/cache.default/component_manager;
+  service mosaic.adoption_profile). Parses every key of <provider>.mosaic-adopt.yml
+  (containers/items/repeaters{child,min,max}/requiresParent/global_libraries/preview_defaults/thumbnails);
+  validates local ids via componentManager->hasDefinition (unknown -> warning, no crash); caches
+  CACHE_PERMANENT under mosaic:adopt_profile:<provider> w/ library cache tag. MosaicRenderer
+  providerGlobalLibraries() now delegates to it (P1 dup yaml/cache removed; Yaml import removed).
+  Kernel MosaicAdoptionProfileTest 4 methods/29 assertions (parse-every-key, unknown-id-warns,
+  accessors, owned-empty). adopt_fixture profile extended (+ not_a_real_component warning path).
+  «ext» helper nys_ds.mosaic-adopt.yml (Arun SITE repo, OUTSIDE tree) extended: 9 repeater families +
+  requiresParent map.
+PART 2 repeater UX (§3b): DEFERRED per Arun's ruling (React build = its own pass). Film frames N/A.
+GATES: Kernel+Unit 3113/0 (8707 assert; +4 cells; 3 skip/1 warn) · Vitest 660/1 (B-101 stale
+  boolean->checkbox oracle; adapter emits Yes/No radio — Puck 0.21 has no checkbox; +2 §1.4 cells) ·
+  phpcs 0 (changed) · phpstan 0 new (MosaicRenderer 4 pre-existing B-102) · owned REGION 14e6cb9c…3954
+  + STYLE b7756795…ca982 4354 10 IDENTICAL (with «ext» ON) · dist 1.0.67 -> 1.0.68 (builder 4cf870ca ->
+  a298662d; frontend-editor 05738130 + renderer 9c7f9320 byte-identical). Adopted parity oracle NOT
+  re-runnable (no persisted adopted node; helper disabled = Arun's walk); behavior-preserved by
+  construction; baseline ed0ad566…3e48b stands.
+NEXT: repeater UX (§3b) React build; then P3 requires-parent (§3c) + preview defaults (§3e).
