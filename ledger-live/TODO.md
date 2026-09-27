@@ -14275,3 +14275,5 @@ GATES: Kernel+Unit 3113/0 (8707 assert; +4 cells; 3 skip/1 warn) · Vitest 660/1
   re-runnable (no persisted adopted node; helper disabled = Arun's walk); behavior-preserved by
   construction; baseline ed0ad566…3e48b stands.
 NEXT: repeater UX (§3b) React build; then P3 requires-parent (§3c) + preview defaults (§3e).
+
+Attribution law: AI co-author trailer disabled 2026-09-27; 27 historical trailers pending Arun's ruling on history rewrite
