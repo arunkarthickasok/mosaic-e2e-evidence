@@ -861,7 +861,7 @@ shallow-filled). Ledger ruling honoured (drag interception debt → 1.1; the 4 M
 ### CORRECTION to CHECKPOINT-7 — the drag→auto-wrap WORKS
 CHECKPOINT-7 deferred the drag→wrap as "needs drop-interception." **That was over-pessimistic.** With
 the observer live, dragging an external accordion ITEM at root **auto-wraps** it: frame
-`01-autowrap-toast.png` shows the **"Placed inside a new NYSDS Accordion"** toast, and the saved layout
+`01-autowrap-toast.png` shows the **"Placed inside a new «ext» Accordion"** toast, and the saved layout
 is the wrap (redacted `wrap-layout.json`): `«ext»:accordion` `slots.items = ["«ext»:accordionitem-…"]`
 + a nested `«ext»:accordionitem`. The nuance: Puck commits the adopted child-item drop only
 **intermittently**, so the film **retries the drag until it lands** (≤6×); the WRAP itself is

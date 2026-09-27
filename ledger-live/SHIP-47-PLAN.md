@@ -243,7 +243,7 @@ New/changed mosaic files (READ-ONLY):
 - `mosaic.libraries.yml` → 1.0.72; `js/dist/{builder.js c2a64b9b, frontend-editor.js 5033f410}` rebuilt. NO PHP changed.
 
 CORRECTION to CHECKPOINT-7: drag→auto-wrap WORKS (observer wraps the item when Puck commits the drop;
-film retries the flaky drop; wrap deterministic). Toast "Placed inside a new NYSDS Accordion" + layout
+film retries the flaky drop; wrap deterministic). Toast "Placed inside a new «ext» Accordion" + layout
 accordion.slots.items=[accordionitem]. No drop-interception needed for correctness (retry-free UX = 1.1).
 
 Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 686/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +

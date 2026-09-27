@@ -14317,7 +14317,7 @@ GATES: Kernel+Unit 3125/0 (no PHP changed) . Vitest 681/1 (B-101; +5 cells) . ts
 DEFERRED: drop-interception (drag->wrap film) + palette container-order/needs-marker; then §3e preview defaults.
 
 === CP-ADOPT-7R CHECKPOINT-8 (P9 — §3c-client remainder) ===
-CORRECTION to CP-7: drag->auto-wrap WORKS. Observer wraps the item when Puck commits the (intermittent) drop; film retries until it lands; wrap deterministic. Toast "Placed inside a new NYSDS Accordion"; layout «ext»:accordion slots.items=[«ext»:accordionitem]. No drop-interception needed (retry-free UX = 1.1 polish).
+CORRECTION to CP-7: drag->auto-wrap WORKS. Observer wraps the item when Puck commits the (intermittent) drop; film retries until it lands; wrap deterministic. Toast "Placed inside a new «ext» Accordion"; layout «ext»:accordion slots.items=[«ext»:accordionitem]. No drop-interception needed (retry-free UX = 1.1 polish).
 PICKER-WRAP: tierBOptimistic.insertWithParentRule (item into non-parent zone -> wrap+toast / valid parent or non-item -> normal). Wired MosaicSlotZone.onPick. Vitest 3 cells.
 PALETTE MARKER: PaletteCard "needs {Container}" via wrapEntryFor. Vitest 2 cells + film 03.
 FILMS (all pass): 01-autowrap-toast, 02-container-drops (DROP-PROOF), 03-palette-needs-marker, wrap-layout.json.
