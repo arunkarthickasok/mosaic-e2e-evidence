@@ -14308,3 +14308,10 @@ SERVER H5: MosaicPropValidator::requiresParentPlacementErrors (WC#78 precedent, 
 DEFERRED (next pass): §3c CLIENT auto-wrap/refuse + palette container-order + "needs {Container}" marker + toast + no-root-highlight + headed drag films. MODEL data ready; until then orphan caught at save.
 GATES: Kernel+Unit 3125/0 (8771 assert) . Vitest 676/1 (B-101; no runtime JS) . tsc clean . phpcs 0 . phpstan 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.70, 6153347d).
 NEXT: §3c CLIENT UX + films, then §3e preview defaults.
+
+=== CP-ADOPT-7R CHECKPOINT-7 (P8 — §3c CLIENT auto-wrap logic + drop finding) ===
+FINDING: Puck REFUSES an adopted child-item drop at root (never commits to data; no console error; observer log content=[] across the drag). So requires-parent is enforced client-side (Puck drop-refusal) + server-side (CHECKPOINT-6 H5 guard) — no orphan via normal flow. The auto-wrap CONVENIENCE needs Puck drop-INTERCEPTION (post-drop observer cannot fire — item never lands).
+BUILT: requiresParentWrap.ts (setWrapIndex + autoWrapOrphans wrap-single/refuse-several/converge + wrapEntryFor) + mosaicToast.ts + BuilderApp observer (safety net, auto-wraps any orphan reaching data; DROP-PROOF for containers verified live) + setWrapIndex in toConfig. Vitest requiresParentWrap.test.ts 5 cells (wrap/refuse/DROP-PROOF/converge/palette-marker).
+FILM (enforcement, headed, both pass): item drag at root lands nothing (no orphan) [01]; container drops normally [02]. films/checkpoint-7-requires-parent/.
+GATES: Kernel+Unit 3125/0 (no PHP changed) . Vitest 681/1 (B-101; +5 cells) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.70->1.0.71 (builder 45a6bc6e, frontend-editor c244dbb2, renderer 9c7f9320 unchanged).
+DEFERRED: drop-interception (drag->wrap film) + palette container-order/needs-marker; then §3e preview defaults.

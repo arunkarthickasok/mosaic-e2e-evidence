@@ -793,3 +793,57 @@ from a types-only edit). Ship count 68 (build pass; folds into #47).
 
 **STOP — CHECKPOINT-6 filed. Next: the §3c CLIENT auto-wrap/refuse UX + palette + toast + drag films,
 then §3e preview defaults.**
+
+---
+
+## CHECKPOINT-7 (P8 — §3c CLIENT: auto-wrap logic + a decisive drop finding) — folds into ship #47
+
+### The finding that reshaped this pass
+Building the drag→auto-wrap film surfaced a decisive fact (headed, proven): **Puck already REFUSES an
+adopted child-item drop at the page root** — the item never commits to the canvas data (observer log:
+`content` stays `[]` across the drag; no console error), while the CONTAINER drops normally. So the
+requires-parent rule is already enforced **client-side by Puck's native drop-refusal** AND **server-side
+by the CHECKPOINT-6 H5 guard** — **an orphan cannot be created through the normal author flow.** The
+auto-wrap the charter describes (a refused item-drop *becomes* a container-with-item) is therefore a
+CONVENIENCE that needs Puck **drop-INTERCEPTION** (substitute the container mid-drag) — a post-drop
+observer cannot deliver it, because the item never lands to be observed.
+
+### What SHIPPED (built + verified)
+- **The shared auto-wrap / refuse LOGIC** — `js/src/builder/requiresParentWrap.ts`: `setWrapIndex(manifests)`
+  (item → container + item slot, derived from the container's own §3b `repeater.child`; no new server
+  data) + `autoWrapOrphans(data)` (exactly one container → wrap the orphan in a fresh container at its
+  position + select it + toast "Placed inside a new {Container}"; several → drop it + "{Item} must be
+  placed inside A or B"; converges — a nested item is not re-wrapped). `wrapEntryFor()` for the palette
+  marker. **Vitest `requiresParentWrap.test.ts` (5 cells):** wrap / refuse / DROP-PROOF (a normal
+  component at root is untouched) / converges / palette marker.
+- **The observer** — `BuilderApp.tsx` runs `autoWrapOrphans` on each data change (one optimistic
+  setData + one selection; the new item's mount fires its own SSR). It is a live SAFETY NET: any orphan
+  that reaches the data by ANY route (a migration, a hand-edited layout, or a future drop-interception)
+  is auto-wrapped. Verified live that it leaves a dropped CONTAINER untouched (DROP-PROOF).
+- **A minimal toast** — `js/src/builder/mosaicToast.ts` (`.mosaic-toast`, `role="status"`, auto-dismiss).
+
+### FILM — the enforcement, headed (`js/e2e/requires-parent-authoring.spec.ts`, both pass)
+- `01-item-refused-at-root.png` — dragging an external accordion ITEM at root lands **nothing** (`count
+  0`) and persists no `accordionitem` → **no orphan is possible via drag**.
+- `02-container-drops.png` — the Accordion CONTAINER drops normally (`count 1`) → DROP-PROOF.
+
+### Saved JSON of the wrap (Vitest-proven — the logic's output)
+The drag can't reach the wrap (item refused), but the wrap LOGIC is proven: an orphan item →
+`content[0] = { type: container, props: { …defaults, <item_slot>: [ <the item> ] } }` + `select` on the
+nested item + toast. (See `requiresParentWrap.test.ts` "AUTO-WRAP".)
+
+### DEFERRED (the §3c-client CONVENIENCE, next pass)
+- **Drop-INTERCEPTION** so a drag of an item toward root inserts its container-with-item (the charter's
+  drag→wrap film) — the wrap logic is ready to call; only the Puck drag interceptor is missing.
+- **Palette** container-before-item ordering + the "needs {Container}" marker (`wrapEntryFor` is ready).
+- Then **§3e preview defaults**.
+
+### Gates
+Kernel+Unit **3125 / 0** (UNCHANGED — **no PHP changed this pass**; §3c client is all JS) · Vitest
+**681 / 1** (B-101; +5 auto-wrap cells) · tsc **clean** · owned oracles **REGION 14e6cb9c…3954 + STYLE
+b7756795…ca982 4354 10** IDENTICAL (builder-only change) · dist **1.0.70 → 1.0.71** (builder `45a6bc6e`,
+frontend-editor `c244dbb2`; renderer `9c7f9320` byte-identical; served==built). Ship count 69.
+
+**STOP — CHECKPOINT-7 filed. Requires-parent is ENFORCED (client drop-refusal + server H5); the auto-wrap
+CONVENIENCE (drop-interception) + palette marker are the remaining §3c-client slice. Next: §3e preview
+defaults.**

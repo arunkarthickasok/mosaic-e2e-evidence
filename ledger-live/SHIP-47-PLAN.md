@@ -213,3 +213,21 @@ H5 message (fixture): "Adopt Widget V2 must be placed inside Adopt Widget."
 Gates: Kernel+Unit 3125/0 · Vitest 676/1 (B-101) · tsc clean · phpcs 0 · phpstan 0 · owned REGION
 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 IDENTICAL · dist unchanged.
 DEFERRED: §3c CLIENT (auto-wrap/refuse/palette/toast + drag films), then §3e preview defaults.
+
+## CP-ADOPT-7R P8 addendum (CHECKPOINT-7) — folds into ship #47
+
+§3c CLIENT auto-wrap LOGIC + observer + toast + a decisive drop finding. New/changed mosaic files (READ-ONLY):
+- `js/src/builder/requiresParentWrap.ts` (NEW) — setWrapIndex + autoWrapOrphans (wrap-single/refuse-several/converge) + wrapEntryFor.
+- `js/src/builder/mosaicToast.ts` (NEW) — minimal .mosaic-toast.
+- `js/src/builder/BuilderApp.tsx` — auto-wrap observer (safety net; live DROP-PROOF for containers).
+- `js/src/builder/MosaicPuckAdapter.ts` — setWrapIndex(manifests) in toConfig.
+- `js/src/builder/__tests__/requiresParentWrap.test.ts` (NEW, 5) · `js/e2e/requires-parent-authoring.spec.ts` (enforcement film, 2 frames).
+- `mosaic.libraries.yml` → 1.0.71; `js/dist/{builder.js 45a6bc6e, frontend-editor.js c244dbb2}` rebuilt. NO PHP changed.
+
+FINDING: Puck REFUSES an adopted child-item drop at root (never commits; no error) — requires-parent is
+enforced client-side (drop-refusal) + server-side (CHECKPOINT-6 H5). The auto-wrap CONVENIENCE needs
+Puck drop-INTERCEPTION (observer can't fire — item never lands); logic is built + ready to call.
+
+Gates: Kernel+Unit 3125/0 (no PHP) · Vitest 681/1 (B-101) · tsc clean · owned REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10 IDENTICAL · dist 1.0.71.
+DEFERRED: drop-interception (drag→wrap film) + palette marker/ordering; then §3e preview defaults.
