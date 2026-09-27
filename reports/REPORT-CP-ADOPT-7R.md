@@ -405,7 +405,7 @@ providers → none). `renderSingleComponent` merges those globals (resolved to C
 **Helper module (OUTSIDE the mosaic tree, `web/modules/custom/mosaic_adopt_ext/`, untracked by mosaic;
 Arun's site repo):** `mosaic_adopt_ext.info.yml` (deps: mosaic, the library) · `mosaic_adopt_ext.libraries.yml`
 declaring `mosaic_adopt_ext/base` (depends on the library's shipped base ES-module bundle —
-**copies nothing proprietary**) · `nys_ds.mosaic-adopt.yml` → `global_libraries: [mosaic_adopt_ext/base]`.
+**copies nothing proprietary**) · `«ext».mosaic-adopt.yml` → `global_libraries: [mosaic_adopt_ext/base]`.
 **What the helper's globals point at:** `mosaic_adopt_ext/base` → the library's own shipped base
 ES-module bundle (all custom-element definitions + their shadow-DOM CSS, tokens read as
 `var(--…, fallback)`). The brand **token/font/icon** layer ships in the library's example THEME, not the
@@ -475,7 +475,7 @@ global_libraries / preview_defaults / thumbnails), `testUnknownComponentIdWarnsN
 `tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml` extended to exercise every key +
 the unknown-id path, naming-safely.
 
-**«ext» helper profile extended** (`web/modules/custom/mosaic_adopt_ext/nys_ds.mosaic-adopt.yml`,
+**«ext» helper profile extended** (`web/modules/custom/mosaic_adopt_ext/«ext».mosaic-adopt.yml`,
 Arun's SITE repo — OUTSIDE the mosaic tree) with the 9 repeater families + requires-parent map:
 ```yaml
 repeaters:
@@ -517,7 +517,7 @@ oracle, pre-existing, unrelated to this pass; +2 §1.4 useLighthouse cells → 6
 (with «ext» ON) · dist **1.0.67 → 1.0.68** (builder `4cf870ca` → `a298662d` [§1.4 useLighthouse
 fix]; frontend-editor `05738130` + renderer `9c7f9320` byte-identical; served==built).
 **Adopted parity oracle:** NOT re-runnable this pass — no node persists an adopted component
-(`node__field_mosaic_layout LIKE '%nys_ds:%'` → empty) and the helper is disabled (enabling it is a
+(`node__field_mosaic_layout LIKE '%«ext»:%'` → empty) and the helper is disabled (enabling it is a
 config write = Arun's walk), so there is no live subject; adopted rendering is behavior-preserved by
 construction (reader delegation returns the identical global-libraries list). Baseline `ed0ad566…3e48b`
 stands; full page-vs-canvas parity remains Arun's walk (as CHECKPOINT-1 flagged).
@@ -623,20 +623,20 @@ helper / an owned slot-repeater), then P3 = requires-parent (§3c) + preview def
 the owed repeater films + §3c requires-parent + §3e preview defaults. Delivered at quality: the
 **owed films**, which (running against the now-enabled real «ext» library) drove out **two real
 CHECKPOINT-3 bugs** and caught a **third**. §3c/§3e are DEFERRED to the next pass (below) rather than
-shallow-filled. Helper `mosaic_adopt_ext` + `nys_ds` are enabled (Arun); 63 SDCs discovered.
+shallow-filled. Helper `mosaic_adopt_ext` + `«ext»` are enabled (Arun); 63 SDCs discovered.
 
 ### Two bugs the film found + fixed (proof-conditions working)
 1. **Profile child not provider-qualified** (`MosaicManifestBuilder::resolveRepeater`). The adoption
    profile's `repeaters` child id is LOCAL (`accordionitem`); the panel's insert path needs the full
-   provider-qualified id (→ Puck key `nys_ds--accordionitem`). Now qualifies `<provider>:<child>` when
+   provider-qualified id (→ Puck key `«ext»--accordionitem`). Now qualifies `<provider>:<child>` when
    unqualified. Without it, `+ Add` for an «ext» repeater targeted a non-existent component type.
    `RepeaterDescriptorTest` expectation updated (child → `adopt_fixture:adopt_widget_v2`).
 2. **Reader never found the real helper's profile** (`MosaicAdoptionProfile::readYaml`). It only
    probed modules `mosaic_adopt_<provider>` / `<provider>`, but the enabled helper is `mosaic_adopt_ext`
-   shipping `nys_ds.mosaic-adopt.yml` — so the profile was NEVER loaded for the real library (the
+   shipping `«ext».mosaic-adopt.yml` — so the profile was NEVER loaded for the real library (the
    fixtures passed only because their module name matched the provider). Fixed to also scan ALL enabled
    modules for `<provider>.mosaic-adopt.yml` (the FILE NAME is the contract, not the module name).
-   Verified live: `nys_ds:accordion` items slot now resolves `repeater={child: nys_ds:accordionitem,
+   Verified live: `«ext»:accordion` items slot now resolves `repeater={child: «ext»:accordionitem,
    min:1, max:null}`.
 
 Together these make the repeater field RENDER for the real «ext» accordion — **proven by the film's

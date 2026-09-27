@@ -14242,8 +14242,8 @@ GLOBAL ASSETS (§3d): MosaicRenderer::providerGlobalLibraries reads <provider>.m
 merges resolved globals (css/js URLs, type=module, dedupe by src via mergeAttachments) into the SSR delta;
 mosaicAttach already dedupes. Kernel AdoptGlobalAssetsTest 2 (fixture adopt_fixture/adopt_base→adopt-base.css;
 owned=none). HELPER MODULE web/modules/custom/mosaic_adopt_ext (OUTSIDE mosaic tree, untracked by mosaic,
-Arun's site repo): .info.yml + .libraries.yml (base → depends nys_ds/nysds_full, copies nothing proprietary)
-+ nys_ds.mosaic-adopt.yml (global_libraries:[mosaic_adopt_ext/base]). Token/font/icon brand layer ships in
+Arun's site repo): .info.yml + .libraries.yml (base → depends «ext»/«ext»_full, copies nothing proprietary)
++ «ext».mosaic-adopt.yml (global_libraries:[mosaic_adopt_ext/base]). Token/font/icon brand layer ships in
 the library's example THEME not the module (C4) — install that theme or add to base when packaged.
 PARITY ORACLE §3f: scripts/qa/adopted-style-shasum.sh <url> <selector>; baseline ed0ad566…3e48b (card shape-styled by shadow CSS; font-family=system-ui fallback = C4 brand-token/theme gap).
 GATES: owned shasums 14e6cb9c/b7756795 IDENTICAL (with «ext» ON); Vitest 659/1-B101; Kernel+Unit 3109/0;
@@ -14264,7 +14264,7 @@ PART 1 reader: src/Sdc/MosaicAdoptionProfile.php (final; DI module_handler/cache
   providerGlobalLibraries() now delegates to it (P1 dup yaml/cache removed; Yaml import removed).
   Kernel MosaicAdoptionProfileTest 4 methods/29 assertions (parse-every-key, unknown-id-warns,
   accessors, owned-empty). adopt_fixture profile extended (+ not_a_real_component warning path).
-  «ext» helper nys_ds.mosaic-adopt.yml (Arun SITE repo, OUTSIDE tree) extended: 9 repeater families +
+  «ext» helper «ext».mosaic-adopt.yml (Arun SITE repo, OUTSIDE tree) extended: 9 repeater families +
   requiresParent map.
 PART 2 repeater UX (§3b): DEFERRED per Arun's ruling (React build = its own pass). Film frames N/A.
 GATES: Kernel+Unit 3113/0 (8707 assert; +4 cells; 3 skip/1 warn) · Vitest 660/1 (B-101 stale
@@ -14287,8 +14287,8 @@ NEXT: owned-Tabs unification + films, then P3 requires-parent (3c) + preview def
 
 === CP-ADOPT-7R CHECKPOINT-4 (P5 — repeater films + 2 bug fixes) ===
 Helper mosaic_adopt_ext ENABLED (Arun). Film e2e/repeater-authoring.spec.ts run headed vs real «ext».
-BUG1 FIXED: MosaicManifestBuilder::resolveRepeater now qualifies the profile LOCAL child id with the provider (accordionitem -> nys_ds:accordionitem) so +Add targets the right Puck key.
-BUG2 FIXED: MosaicAdoptionProfile::readYaml scans ALL enabled modules for <provider>.mosaic-adopt.yml (real helper is mosaic_adopt_ext shipping nys_ds.mosaic-adopt.yml; was never found). Verified: nys_ds:accordion items -> repeater{child:nys_ds:accordionitem,min:1,max:null}.
+BUG1 FIXED: MosaicManifestBuilder::resolveRepeater now qualifies the profile LOCAL child id with the provider (accordionitem -> «ext»:accordionitem) so +Add targets the right Puck key.
+BUG2 FIXED: MosaicAdoptionProfile::readYaml scans ALL enabled modules for <provider>.mosaic-adopt.yml (real helper is mosaic_adopt_ext shipping «ext».mosaic-adopt.yml; was never found). Verified: «ext»:accordion items -> repeater{child:«ext»:accordionitem,min:1,max:null}.
 PROVEN (frame 01): «ext» accordion in palette -> drops on canvas (DROP-PROOF) -> panel shows repeater field (Requires at least 1 item — 0/1 + "+ Add accordionitem").
 RED CAUGHT (next pass): +Add for an ADOPTED child is a no-op — insertIntoSlot appends parent.props[slot] (owned inline slots) but adopted comps use Tier-B SSR-preview slots (htmlToReactSlots), so child not picked up. Architectural gap.
 GATES: Kernel+Unit 3118/0 . Vitest 675/1 (B-101; no bundled JS changed) . phpcs 0 . phpstan 0 . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.69).
