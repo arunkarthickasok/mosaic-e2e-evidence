@@ -1173,3 +1173,52 @@ adopted-only) · dist **1.0.75 → 1.0.76** (builder `4da2cd58`, frontend-editor
 **STOP — CHECKPOINT-13 filed. Adopted content-props are now real (CKE5) content fields — no more "No
 fields". Next: the component-fill "+ Add image" (Mosaic Image bound to a prop), then Part 2
 (slotted/is + patterns). Ship #47 HELD.**
+
+---
+
+## CHECKPOINT-14 (P15 — WC#104 pt2: component fill MODEL + RENDER) — ship #47 HELD
+
+Component fill — an HTML prop filled by a Mosaic child's rendered output — landed as a verified
+**server MODEL + RENDER core**. The **client rail** (the "+ Add image" flow) + its films are a
+substantial React slice, HONESTLY DEFERRED (below). Note: the CKE5 media-embed path (CHECKPOINT-13)
+already gives the author *a* way to add an image; this is the nicer component-fill UX.
+
+### §1 MODEL — `prop_fills` on the node
+`ComponentInstance` gains **`propFills`** (`prop => childId`); `fromArray` parses `prop_fills`
+(string-valued only), `toArray` emits it (additive — a fill-less node stays byte-identical). The child
+is an ordinary node in the layout. The layout schema is non-strict (unknown keys pass), so save is
+unaffected. **Value-object cells** (round-trip; byte-identical without fills).
+
+### §2 RENDER — child → Markup → prop, fill WINS
+`MosaicRenderer::renderNode` (the ONE path page + canvas SSR share): for each `prop_fills` entry it
+renders the child **BARE** (SO-1 — the library owns the wrapper) and injects its Markup into the prop,
+**overriding any saved CKE5 text** (fill and text are mutually exclusive per prop — the fill wins). So
+what the author sees on the canvas is exactly what publishes. **Kernel `PropFillsRenderTest` (3 cells):**
+the child's output (`FILLEDBYCHILD`) fills the prop and the saved text (`SAVED_TEXT_SHOULD_LOSE`) does
+NOT appear; the mapping round-trips; a fill-less node is byte-identical.
+
+### Saved JSON with `prop_fills` (from the round-trip cell)
+```json
+{ "nodes": {
+  "w":    { "type": "«ext»:card", "props": { "media": "…" }, "prop_fills": { "media": "fill" } },
+  "fill": { "type": "mosaic_image", "props": { … } }   // the child whose render fills media
+}}
+```
+
+### DEFERRED — the CLIENT rail + films (item 2/3, next pass)
+Each formatted_text prop showing its CKE5 field AND a primary **"+ Add {Preferred}"** (media/image →
+Mosaic Image picker; else Plain content) → the shared insert path creates the child + sets
+`prop_fills[prop]`; the row becomes **"Filled by Image — Edit · Remove"** (Edit selects the child;
+Remove restores the empty CKE5). Plus the headed films (Card Media "+ Add image" → picker → page;
+Content "+ Add plain content" → page) and the client-side H5 confirm on switch-to-text. The render
+foundation they drive is ready.
+
+### Gates
+Kernel+Unit **3133 / 0** (8827 assertions; +3 prop_fills cells; 3 skips, 1 warning) · Vitest **694 / 1**
+(B-101; **no JS this pass**) · phpcs **0** · phpstan **0 new** · owned oracles **REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10** IDENTICAL (a fill-less owned node renders byte-identical) · dist
+**UNCHANGED** (1.0.76; builder `4da2cd58` — no bundled JS changed). Ship count 80.
+
+**STOP — CHECKPOINT-14 filed. Component-fill MODEL + RENDER is proven server-side (a saved fill renders
+its child into the prop, fill wins over text). Next: the client rail "+ Add image" + films; then Part 3
+(slotted/is + patterns "Card row"). Ship #47 HELD.**

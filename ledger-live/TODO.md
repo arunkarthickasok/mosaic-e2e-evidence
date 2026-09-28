@@ -14353,3 +14353,10 @@ FIX: (a) field source: when properties empty (adopted), build fields from descri
 CARD RAIL before/after: "No fields" -> Preheading/Heading/Subheading/Description/Content(CKE5)/Media(CKE5)/Media accent(CKE5) + 2 slots. Film 01-card-rail-fields.png.
 DEFERRED: COMPONENT FILL item 3 ("+ Add image" -> Mosaic Image child bound to prop, prop_fills, child->Markup->prop render, H5) + its film; then Part 2 (slotted/is + patterns "Card row").
 GATES: Kernel+Unit 3130/0 . Vitest 694/1 (B-101; +2) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.75->1.0.76 (builder 4da2cd58, frontend-editor f1908130, renderer 9c7f9320 unchanged). Ship count 78.
+
+=== CP-ADOPT-7R CHECKPOINT-14 (P15 — WC#104 pt2 component fill MODEL+RENDER) ===
+MODEL: ComponentInstance.propFills (prop=>childId); fromArray parses prop_fills (string only), toArray emits (additive, byte-identical without). Child is an ordinary layout node. Schema non-strict (save unaffected).
+RENDER: MosaicRenderer::renderNode renders each fill child BARE -> Markup -> #props[prop]; fill WINS over saved CKE5 text (mutually exclusive). Page + canvas SSR same path. Kernel PropFillsRenderTest 3 (child fills prop / text loses / round-trip / byte-identical).
+SAVED JSON: nodes.w.prop_fills={media:fill} + nodes.fill (the child). 
+DEFERRED (client, next): rail "+ Add {Preferred}" (media->Image picker; else Plain content) -> insert child + set prop_fills[prop]; "Filled by Image - Edit/Remove"; films ("+ Add image"->picker->page); client H5 confirm on switch-to-text. Then Part 3 (slotted/is + patterns "Card row").
+GATES: Kernel+Unit 3133/0 (8827 assert) . Vitest 694/1 (B-101; no JS) . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.76, builder 4da2cd58). Ship count 80.
