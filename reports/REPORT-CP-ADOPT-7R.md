@@ -1324,3 +1324,64 @@ fill / edit / remove / round-trip / live-canvas / page — Vitest 713/1 + Kernel
 oracle updated (additive signature); 5 pre-existing Functional failures triaged as NOT mine. Headed films
 documented as deterministic steps, not captured. Next: Part 3 (`slotted`/`is` keys + patterns "Card row" +
 author guide + walk C/D). Ship #47 HELD.**
+
+---
+
+## CHECKPOINT-16 (P17 — PART 3 item 0: the FUNCTIONAL GATE) — ship #47 HELD
+
+The 5 pre-existing Functional reds (B-FUNC-DRIFT, triaged NOT-mine at CHECKPOINT-15) are now DIAGNOSED +
+FIXED, each with its mechanism recorded. **From this checkpoint on, Functional FULL is part of every gate
+line.** This pass changed ONLY test files (no `src/`, no JS) — so owned render, dist, and the Kernel+Unit
+count are untouched. PART 3 items 1–4 (SDC `is`/`slotted` keys, patterns "Card row", author guide, walk
+C/D) are a large body of work honestly scoped below — patterns alone is ≈ the Tabs-redesign scale.
+
+### The 5-red disposition (mechanism + old→new)
+1. **`MosaicTextSmokeTest::testUnknownComponentRendersPlaceholder` → `…TypeIsRejectedAtSave`** — RETARGET.
+   *Old:* save a `mosaic_nonexistent` layout, assert an empty `[data-mosaic-missing]` placeholder on the
+   page. *Mechanism:* the presave `validateFull` hook (`MosaicHooks.php`) now REJECTS a layout that names
+   a never-registered plugin — the node can't even save (EntityStorageException). *New:* assert the save
+   guard fires. Pillar H's *populated* fallback (a component valid-at-save that later disappears) is
+   Kernel-covered by `FallbackRenderTest::{testUnknownTypeRendersFallback,
+   testDisableRendersFallbackReenableRestores}` (which build the layout directly, past the save guard, and
+   assert the populated `data-mosaic-missing` wrapper — "not the old empty div"). *That* is the old→new for
+   the render marker; it already lives at the Kernel level.
+2. **`MosaicLibraryChangesReportTest::testReportPermissionParity`** — MECHANISM + FIX. *Mechanism:* the
+   report rendered "No pages" — the setUp seeded the DISABLED `adopt_fixture` library FIRST, then deleted
+   ALL library entities (a WC#95 auto-sync cleanup) INCLUDING it, so no OFF library remained to flag (the
+   comment even said "seeds below", but the seed sat ABOVE the delete). *Fix:* reorder — delete the
+   auto-synced entities FIRST, then seed `adopt_fixture` as DISABLED. Report now lists the Affected page
+   under "Adopt fixture".
+3. **`MosaicSchemaVersionRenderTest::testSchemaV2WithBreakpointStatesRendersDefaultLayout`** — ORACLE
+   CHANGE. *Mechanism:* the renderer now emits RESPONSIVE breakpoint variants — a v2 `breakpoint_states`
+   layout renders BOTH variants into the HTML, each wrapped in a `data-mosaic-bp="base"|"mobile"` container
+   with a media-query `<style>` (`[data-mosaic-bp="mobile"]{display:none}@media (max-width:767px){…}`)
+   switching visibility. So "Mobile Heading" IS in the HTML (CSS-hidden on desktop); Mink's text check is
+   visibility-blind. *Old:* `pageTextNotContains('Mobile Heading')` (predated responsive output). *New:*
+   assert both present, each within its `data-mosaic-bp` container.
+4. **`MosaicSchemaVersionRenderTest::testMigrationManagerUpgradesV1ToV2`** — ORACLE CHANGE. Hardcoded `4`;
+   the migration now reaches `MosaicLayoutValue::CURRENT_SCHEMA_VERSION` = **6** (V4→V5 + V5→V6 landed in
+   ships #32/#33). *Fix:* assert against the constant (never stale again).
+5. **`MosaicSchemaVersionRenderTest::testMigrationManagerIsNoOpForCurrentVersion`** — same as #4.
+
+### Gates
+Functional **FULL 76 / 0** (789 assertions, 2 skips; was 5 red; now green — the new gate member) · Kernel+Unit **3134 / 0**
+(UNCHANGED — no `src`/JS/kernel-unit-test change this pass) · Vitest **713 / 1** (B-101; no JS) · phpcs
+**0** (4 changed test files) · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10**
+IDENTICAL · dist **UNCHANGED** (1.0.77, builder `c2c99527`; no JS this pass — BUMP-LIBS applies when the
+deferred client features land). Ship count 81.
+
+### DEFERRED — PART 3 items 1–4 (the substantial remainder)
+- **Item 1 — SDC `is:` / `slots.<x>.slotted:` keys** (core #3514072, a PROPOSAL not yet merged): reading
+  them as child rules needs care because current Drupal SDC metadata validation may STRIP unknown keys
+  before `getSlotDefinitions()`, so it likely needs raw-yml access + a category-match layer + a Kernel
+  fixture. Tractable but not a one-liner.
+- **Item 2 — Patterns** (profile `patterns:` key → palette "Patterns" section → shared-insert-path tree
+  drop; «ext» helper "Card row" = owned Columns×3 each holding an «ext» Card, column repeater child = Card
+  so "+ Add card" appears; cells + headed film): a full feature ≈ the Tabs redesign.
+- **Item 3 — Author guide final** (`LIBRARY-AUTHOR-GUIDE.md`) + **Item 4 — WALK C/D rewrite + SHIP-47-PLAN
+  regen**: these DOCUMENT items 1–2, so they follow the feature builds (documenting unbuilt features would
+  mislead). The component-fill rail (CHECKPOINT-15) IS ready for the walk's step C once Part 3 lands.
+
+**STOP — CHECKPOINT-16 filed. The Functional gate is GREEN (5 reds fixed, each with mechanism) and Functional
+FULL now joins every gate line. PART 3 items 1–4 (SDC keys, patterns "Card row", author guide, walk C/D)
+scoped as the remaining work — patterns is the anchor, the docs follow it. Ship #47 HELD.**

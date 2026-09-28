@@ -385,6 +385,12 @@ SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 h
 > + modified `src/Value/ComponentInstance.php`, `src/Service/MosaicRenderer.php`, `src/Controller/CanvasPreviewController.php`,
 > `js/src/builder/{MosaicPuckAdapter,tierBOptimistic}.ts`, `js/src/shared/types/schema.ts`, `mosaic.libraries.yml` (→1.0.77),
 > `js/dist/{builder.js c2c99527, frontend-editor.js 5a64691b}` rebuilt. **Count now 84.**
+>
+> CHECKPOINT-16 (P17) delta: TEST FILES ONLY — no new paths, no `src`/JS/dist change. Modified
+> `tests/src/Functional/{MosaicTextSmokeTest,MosaicSchemaVersionRenderTest,Adopt/MosaicLibraryChangesReportTest}.php`
+> (the 5 B-FUNC-DRIFT reds; MosaicLibraryChangesReportTest was already listed, the other two are +2 to the
+> tests set). **NEW GATE LAW: Functional FULL (76/0) is now part of every gate line.** Count stays 84 code
+> paths (test-only edits to already-tracked files); dist stays 1.0.77.
 
 ## The one-line commit message (Arun pastes)
 ```
