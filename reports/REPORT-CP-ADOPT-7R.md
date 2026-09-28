@@ -1118,3 +1118,58 @@ count **76**.
 
 **STOP — CHECKPOINT-12 filed. The escaped-example-HTML regression (WC#104) is FIXED; the universal-slots /
 suggested-fills / patterns ruling is the substantial remaining WC#104 build. Ship #47 still HELD.**
+
+---
+
+## CHECKPOINT-13 (P13.5 — WC#104 pt1: HTML props ARE content fields; the "No fields" root cause) — ship #47 HELD
+
+**Corrected model (Arun right):** the Card panel really did show **"No fields — built from its slots"**
+despite `content`/`media`/`mediaAccent`. Two mechanisms compounded; both fixed. The **component-fill**
+half (the "+ Add image" → Mosaic-Image-bound-to-prop feature) is the substantial remaining piece,
+HONESTLY DEFERRED (below).
+
+### §1 MECHANISM (named)
+1. **Why "No fields".** An ADOPTED SDC returns an **empty `getPropDefinitions()`** → the manifest's
+   `propDefinitions.properties` is `{}`. The adapter's field builder
+   [MosaicPuckAdapter.ts:propsFieldsFromDescriptors, `for … of Object.entries(properties)`] iterated
+   that empty map → **zero prop fields** → `hasAuthorableFields` false → the `_mosaic_slot_info`
+   empty-state ("No fields — built from its slots"). Meanwhile `prop_descriptors` (built from the raw
+   SDC schema, not `getPropDefinitions`) carried all 14 props — never used as the field source.
+2. **Why `media` had no field even so.** `media` is typeless (`type` not a usable string) →
+   [PropShape.php:classify → RAW]. `content`/`mediaAccent` were already `formatted_text`.
+
+### §2 FIX (both, verified)
+- **Field source (the "No fields" fix)** — when `propDefinitions.properties` is empty, build fields from
+  the **descriptors** (minus the non-authorable `id`/`attributes`); owned components keep `properties` as
+  the source → **byte-identical**. The Card panel now shows Preheading · Heading · Subheading ·
+  Description · Content · **Media** · Media accent + the 2 slots. **Vitest `adoptedFieldsFromDescriptors.
+  test.ts` (2 cells)** (adopted → fields from descriptors; owned unchanged, `id` excluded).
+- **Classification heuristic (media → content field)** — a typeless/object prop whose EXAMPLE is HTML
+  classifies as `formatted_text` (→ a rich-text / CKE5 field), clearing the "Attention" grade. Verified
+  live: Card `media: kind=formatted_text` (was raw). **Unit `PropShapeTest` +1 cell.**
+- **CKE5 (item 2)** falls out for free — `formatted_text → richtext (CKE5) modal` is the existing
+  mapping, so `content`/`media`/`mediaAccent` are CKE5 fields. Enabling the **Media embed** on the text
+  format is a format config (Arun's hands — the walk step).
+
+### Card rail field list — before / after
+**Before:** "No fields — built from its slots" (0 fields). **After:** Preheading · Heading · Subheading ·
+Description · Content (CKE5) · **Media (CKE5)** · Media accent (CKE5) — + the 2 slots (Preheading Content,
+Footer). Film `films/checkpoint-13-card-fields/01-card-rail-fields.png`.
+
+### DEFERRED — COMPONENT FILL (item 3, next pass)
+Each HTML content-prop *also* offering **"+ Add {Preferred}"** — inserting a Mosaic child (Image/media
+picker) whose rendered output fills the prop (`nodes[id].prop_fills.{prop} = childId`; render child →
+Markup → prop; H5 validates), with "filled by Image" edit/remove and switch-to-CKE5. That + its film
+("+ Add image" → picker → page) is the remaining WC#104-pt1 work. §Part 2 (universal-slot `slotted`/`is`
+keys + patterns "Card row") follows.
+
+### Gates
+Kernel+Unit **3130 / 0** (8801 assertions; +1 PropShape cell) · Vitest **694 / 1** (B-101; +2 adopted-
+fields cells) · tsc **clean** · phpcs **0** · phpstan **0 new** · owned oracles **REGION 14e6cb9c…3954 +
+STYLE b7756795…ca982 4354 10** IDENTICAL (owned field production byte-identical; the change is
+adopted-only) · dist **1.0.75 → 1.0.76** (builder `4da2cd58`, frontend-editor `f1908130`; renderer
+`9c7f9320` byte-identical; served==built). Ship count 78.
+
+**STOP — CHECKPOINT-13 filed. Adopted content-props are now real (CKE5) content fields — no more "No
+fields". Next: the component-fill "+ Add image" (Mosaic Image bound to a prop), then Part 2
+(slotted/is + patterns). Ship #47 HELD.**

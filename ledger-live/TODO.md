@@ -14346,3 +14346,10 @@ FIX: §3e merge wraps HTML-string examples in Markup::create() → render as pre
 CARD ZONE before/after: 2->2 (declared slots unchanged; the fix corrects content-prop RENDERING, not zone status).
 DEFERRED (WC#104 ruling, own pass): universal slots (content-props -> zones + slotted/is core#3514072); suggested fills (media picker "+ Add image"); patterns ("Card row"); walk/author-guide updates.
 GATES: Kernel+Unit 3129/0 . Vitest 692/1 (B-101; no JS) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.75, 07b47db4). Ship count 76.
+
+=== CP-ADOPT-7R CHECKPOINT-13 (P13.5 — WC#104 pt1: HTML props are content fields) ===
+MECHANISM (Arun right, Card DID show "No fields"): (1) adopted getPropDefinitions()=[] -> manifest.propDefinitions.properties={} -> propsFieldsFromDescriptors iterated empty -> 0 fields -> "No fields" empty-state; prop_descriptors (from raw SDC schema) had all 14 props but wasn't the field source. (2) media typeless -> PropShape RAW -> no field.
+FIX: (a) field source: when properties empty (adopted), build fields from descriptors (minus id/attributes); owned keeps properties -> byte-identical. Vitest adoptedFieldsFromDescriptors 2. (b) classify heuristic: typeless/object prop w/ HTML example -> formatted_text (CKE5). PropShapeTest +1. media now formatted_text. CKE5 free (formatted_text->richtext existing); media-embed = format config (Arun walk).
+CARD RAIL before/after: "No fields" -> Preheading/Heading/Subheading/Description/Content(CKE5)/Media(CKE5)/Media accent(CKE5) + 2 slots. Film 01-card-rail-fields.png.
+DEFERRED: COMPONENT FILL item 3 ("+ Add image" -> Mosaic Image child bound to prop, prop_fills, child->Markup->prop render, H5) + its film; then Part 2 (slotted/is + patterns "Card row").
+GATES: Kernel+Unit 3130/0 . Vitest 694/1 (B-101; +2) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.75->1.0.76 (builder 4da2cd58, frontend-editor f1908130, renderer 9c7f9320 unchanged). Ship count 78.
