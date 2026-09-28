@@ -1061,3 +1061,60 @@ CP-8/9/10); full page==canvas brand parity is the brand-layer/theme install (row
 fix). Ship #47 is ready. Arun's walk (`WALK-CP-ADOPT-7.md`) next; then tag 1.0.0 once the advisory is
 Approved. Remaining polish: the rail per-prop example badge; the owned-Tabs field unification (1.0 keeps
 the array field).**
+
+---
+
+## CHECKPOINT-12 (P13 — WC#104: the escaped-example-HTML regression, fixed + mechanism) — ship #47 HELD
+
+**Arun's walk (step C) — WC#104 (tally 104):** the Card "exposes 5 slots, only 2 became zones";
+`media`/`mediaAccent`/`content` rendered as **escaped example HTML** (`&lt;img src="/example.jpg"&gt;`);
+no way to add an image; no way to make a row of cards. **This pass fixes the concrete regression (the
+escaped HTML) + names the mechanism; the full ruling (universal slots · suggested fills · patterns) is a
+substantial multi-feature reframe, HONESTLY DEFERRED (below) — stated up front, not shallow-filled.**
+
+### §1 MECHANISM (named)
+1. **Why only 2 zones for the Card.** The Card declares **2 SDC slots** (`preheading_content`, `footer`)
+   in its `*.component.yml`; `content`/`media`/`mediaAccent` are **PROPS** (typed string/Array), not
+   slots. `MosaicRenderer::renderSingleComponent` injects a `<mosaic-slot>` marker only per *declared*
+   slot (the `foreach (array_keys($definition['slots']))` loop, [MosaicRenderer.php ~L508]) → 2 markers →
+   2 zones. Arun's "5" = 2 real slots + 3 content-props. (Making content-props into zones is the deferred
+   universal-slots reframe.)
+2. **Why the example HTML was escaped.** The §3e preview merge
+   ([MosaicRenderer.php:renderSingleComponent, the `$props[$propName] = $example` line]) filled a
+   content-prop with its HTML-string example; Twig **autoescapes** `{{ media }}` / `{{ content }}` → the
+   canvas showed `&lt;img&gt;`. **This is the concrete regression §3e introduced.**
+
+### §2 FIX (verified)
+The §3e merge now wraps an HTML-string example (`str_contains($example, '<')`) in **`Markup::create()`** —
+the library's own trusted example renders as **preview markup**, not an escaped string (canvas-preview
+only, still never saved, still reported in `_mosaic_preview`). Structured/scalar values (the image
+object) pass through untouched. **Live «ext» Card verified:** `media as markup: yes` (no `&lt;img`);
+`_mosaic_preview = [content, image, media, mediaAccent]` (all four content-props now render + are badged).
+**Kernel `PreviewDefaultsTest` +1 cell** (`testHtmlExampleRendersAsMarkupNotEscaped`: the SSR html
+contains `<img src="/example.jpg"`, not `&lt;img`) · **film** `01-card-canvas.png` + an assertion that no
+escaped `<img src` text appears on the canvas.
+
+### Card zone count — before/after
+**2 → 2** (the declared SDC slots are unchanged; the fix corrects the *rendering* of the 3 content-props,
+not their zone status). Making `content`/`media`/`mediaAccent` into **zones** (target 5) is the deferred
+universal-slots reframe.
+
+### DEFERRED — the WC#104 ruling (its own pass(es))
+- **Universal slots** — every content point (real slot + HTML/media content-prop) becomes a zone + a rail
+  Slots row; read the emerging SDC `is:` / `slots.<x>.slotted:` keys (core #3514072) as child rules.
+- **Suggested fills** — per-zone `preferred` (slotted/is → those components; profile `preferred`;
+  heuristic: media/image → Mosaic Image picker, heading → Heading, else Plain content); the empty zone's
+  primary "+ Add {Preferred}" button. (The "+ Add image" film.)
+- **Patterns** — profile `patterns:` (a layout tree) in the palette; the «ext» "Card row" (3-col Columns
+  of Cards). (The "Card row" + "+ Add card" film.)
+- The Author-Guide / WALK updates for the above.
+
+### Gates
+Kernel+Unit **3129 / 0** (8797 assertions; +1 WC#104 cell) · Vitest **692 / 1** (B-101; **no JS this
+pass**) · tsc **clean** · phpcs **0** (changed) · phpstan MosaicRenderer **4 pre-existing** (0 new) · owned
+oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (the fix is canvas-SSR-only;
+page render untouched) · dist **UNCHANGED** (1.0.75; builder `07b47db4` — no bundled JS changed). Ship
+count **76**.
+
+**STOP — CHECKPOINT-12 filed. The escaped-example-HTML regression (WC#104) is FIXED; the universal-slots /
+suggested-fills / patterns ruling is the substantial remaining WC#104 build. Ship #47 still HELD.**

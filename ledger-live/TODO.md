@@ -14338,3 +14338,11 @@ DEFERRED: example badge UI (rail + dirty tracking); then §4 lifecycle greens + 
 DOCS: WALK-CP-ADOPT-7.md rewritten (10 steps A-J incl. preview badge, accordion rail repeater, item auto-wrap picker + 5-drag WC#101 condition, refused wrong-zone, brand-layer note). LIBRARY-AUTHOR-GUIDE.md new (one page). SHIP-47-PLAN.md ship manifest: 75 paths, dist ships, SdcComponentPlugin pristine, single-quoted message, «ext» helper listed separately.
 GATES: Kernel+Unit 3128/0 (no PHP this pass) . Vitest 692/1 (B-101; +3 badge) . tsc clean . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist 1.0.74->1.0.75 (builder 07b47db4, frontend-editor e14f058e, renderer 9c7f9320 unchanged).
 ARC CLOSED: adopt-any-SDC readiness + composition. Ship #47 ready. NEXT: Arun's walk -> tag 1.0.0 when advisory Approved. Polish: rail per-prop badge; owned-Tabs unification.
+
+=== CP-ADOPT-7R CHECKPOINT-12 (P13 — WC#104 escaped-example-HTML fix + mechanism) ===
+WC#104 (Arun walk C, tally 104): Card exposes 5 "slots" (2 real SDC slots preheading_content/footer + 3 content-PROPS content/media/mediaAccent with HTML examples), only 2 became zones; content-props' HTML examples rendered ESCAPED (&lt;img&gt;).
+MECHANISM: (1) renderSingleComponent injects slot markers only per DECLARED slot (2) → 2 zones; content-props aren't slots. (2) the §3e preview merge filled HTML-string examples into #props → Twig autoescape → &lt;img&gt;.
+FIX: §3e merge wraps HTML-string examples in Markup::create() → render as preview markup (canvas-only, never saved, still badged). Live «ext» Card: no &lt;img; _mosaic_preview=[content,image,media,mediaAccent]. Kernel PreviewDefaultsTest +1 (4) + film 01-card-canvas.png (no escaped <img text on canvas).
+CARD ZONE before/after: 2->2 (declared slots unchanged; the fix corrects content-prop RENDERING, not zone status).
+DEFERRED (WC#104 ruling, own pass): universal slots (content-props -> zones + slotted/is core#3514072); suggested fills (media picker "+ Add image"); patterns ("Card row"); walk/author-guide updates.
+GATES: Kernel+Unit 3129/0 . Vitest 692/1 (B-101; no JS) . tsc clean . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist UNCHANGED (1.0.75, 07b47db4). Ship count 76.
