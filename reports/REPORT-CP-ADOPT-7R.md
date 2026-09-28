@@ -1385,3 +1385,84 @@ deferred client features land). Ship count 81.
 **STOP — CHECKPOINT-16 filed. The Functional gate is GREEN (5 reds fixed, each with mechanism) and Functional
 FULL now joins every gate line. PART 3 items 1–4 (SDC keys, patterns "Card row", author guide, walk C/D)
 scoped as the remaining work — patterns is the anchor, the docs follow it. Ship #47 HELD.**
+
+---
+
+## CHECKPOINT-17 (P18 — PART 3 item 2: PATTERNS) — ship #47 HELD
+
+A **pattern** — a library-scoped component tree inserted as a unit — now lands end-to-end: the profile
+`patterns:` MODEL (validated at load), the manifest emission (server), and the palette "Patterns" panel
+(client) that inserts the tree with fresh ids via a deterministic click. Owned components are allowed in a
+pattern tree (a library pattern uses our Columns). One honest design nuance on "+ Add card" is recorded
+below; the headed film needs the «ext» helper's pattern (Arun's site config) and is documented as steps.
+
+### §1 MODEL — profile `patterns:`, validated at load
+`MosaicAdoptionProfile` gains `patterns($provider)` → `[{id, label, description, thumbnail, tree}]`. Each
+`tree` uses the layout node grammar (type/props/slots/prop_fills/children). At load, `collectUnknownPatternTypes`
+walks the tree (slots + children + prop_fills) and resolves every `type` tolerantly (as-is — owned bare or
+`provider:local` — then `<provider>:<type>`); a tree naming an unknown component is **HIDDEN with a warning**,
+never a crash. Cached with the library cache tag (a library toggle clears it). **Kernel `PatternsTest` (4
+cells):** a valid owned+adopted tree is read verbatim; an unknown-type pattern is hidden + warned; an owned
+provider has none; the manifest builder emits patterns provider-qualified + provider-tagged.
+
+### §2 MANIFEST — patterns reach both surfaces
+`MosaicManifestBuilder::buildPatterns($providers)` returns the flat list tagged with `provider` + `category`
+(= provider) and a qualified id (`<provider>:<pattern-id>`). Both surfaces emit it identically: the admin
+widget (`drupalSettings.mosaic[field].patterns`, providers derived from the governed manifest ids) and
+`ManifestController` (the `/manifest` endpoint). A pattern only appears when its library is authorable
+(providers come from the governance-filtered set).
+
+### §3 PALETTE — a "Patterns" panel, deterministic insert
+`MosaicPatternsPanel.tsx` renders each library's patterns grouped under it, wired via the Puck `components`
+override (above the component drawer). A **click** calls `insertPattern(tree)`: `patternTreeToPuckItem`
+(patterns.ts) expands the tree into Puck items with **fresh ids at every level** (slots → inline child
+arrays, prop_fills → sentinel fills), appended to `data.content` and committed ONCE (one undo step); each
+adopted node self-schedules its first Tier-B SSR on mount (§1.3). Click, not drag — the DROP-PROOF-safe
+path. **Vitest (7 new):** the converter (fresh ids, colon→Puck key, prop_fills→sentinel, adopted-node
+collection) + the panel (grouping, click→insertPattern, generic tile).
+
+### §4 The «ext» helper "Card row" (Arun's SITE config — documented, not edited)
+Naming ban + read-only Mosaic tree: I did NOT edit the real helper. The exact YAML for Arun to add to
+`«ext».mosaic-adopt.yml` (proven-equivalent to the Kernel `widget_row` fixture — owned Columns + adopted
+children):
+```yaml
+patterns:
+  - id: card_row
+    label: 'Card row'
+    description: 'Three cards side by side.'
+    tree:
+      type: mosaic_columns
+      props: { columns: 3, gap: md }
+      slots:
+        column_1: [{ type: «ext»:card, props: { heading: 'Card one' } }]
+        column_2: [{ type: «ext»:card, props: { heading: 'Card two' } }]
+        column_3: [{ type: «ext»:card, props: { heading: 'Card three' } }]
+```
+
+### HONEST NUANCE — "+ Add card" on the pattern's owned Columns
+`resolveRepeater` reads the component's OWN-provider profile and is TYPE-level. So an «ext» profile CANNOT
+make owned `mosaic_columns` show the inline "+ Add card" rail: owned has no profile, and a type-level rule
+would apply to every Columns everywhere, not just this pattern's. Making "+ Add card" appear needs an
+**instance-level repeater** (a new mechanism: the repeater rule stored on the placed node), OR the pattern
+using an «ext» container that owns its repeater instead of owned Columns. Until then the author adds more
+cards by the normal insert/drag into a column (the columns accept any child). Recorded as a follow-up
+(B-PATTERN-INSTANCE-REPEATER); the pattern INSERT itself is complete.
+
+### FILMS — deterministic steps; headed capture needs Arun's «ext» pattern
+The insert is a click (filmable reliably), but the headed capture needs the «ext» "Card row" pattern live
+(Arun's site helper). Steps: palette shows a "Patterns" group under the library → click "Card row" → three
+cards render in a row in the library's look (each an adopted Card, owned Columns wrapper) → Save → the page
+shows three cards in a row. Every step is proven at unit (`patterns.test`, `MosaicPatternsPanel.test`) +
+kernel (`PatternsTest` — the owned-Columns-plus-adopted-children tree is read + emitted).
+
+### Gates
+Kernel+Unit **3138 / 0** (8858 assert; = 3134 + 4 PatternsTest cells) · Functional **76 / 0** · Vitest **719 / 1** (712 + 7 new;
+B-101; `viewsFields` flaked once under load, passes alone) · tsc **0** · phpcs **0** · phpstan **0 new** ·
+owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (patterns never touch owned
+render) · dist **BUMPED 1.0.77 → 1.0.78** (builder `c2c99527` → `73bd949e`; FE `5a64691b` unchanged —
+patterns live in the lazily-imported builder chunk). Ship count 82.
+
+**STOP — CHECKPOINT-17 filed. Patterns land end-to-end (MODEL + manifest + palette insert), proven at
+unit+kernel; the «ext» "Card row" YAML is documented for Arun's helper and the headed film is documented as
+steps (needs that pattern live). "+ Add card" on owned Columns is an honest instance-level-repeater
+follow-up. Next: guide + walk + SHIP-47-PLAN. Ship #47 HELD.**

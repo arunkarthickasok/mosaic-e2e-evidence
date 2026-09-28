@@ -292,8 +292,8 @@ DEFERRED: the "example" badge UI (rail badge + dirty tracking); then §4 lifecyc
 > MOSAIC git READ-ONLY for the AI; **Arun commits**. Nothing staged by the AI. The «ext» HELPER
 > (`web/modules/custom/mosaic_adopt_ext/`) ships SEPARATELY in Arun's SITE repo (listed at the end).
 
-**Count: 84** shippable paths (all CP-ADOPT-7 + 7R; +6 at CHECKPOINT-15 component fill — see delta below).
-Was 75 at CHECKPOINT-11. `git check-ignore`: `js/dist/*` NOT ignored
+**Count: 89** shippable paths (all CP-ADOPT-7 + 7R; +6 at CHECKPOINT-15 component fill, +5 at CHECKPOINT-17
+patterns — see deltas below). Was 75 at CHECKPOINT-11. `git check-ignore`: `js/dist/*` NOT ignored
 (bundles ship); `js/e2e/`, `AI/`, `test-results/` ARE ignored (never ship). **`src/Plugin/Component/
 SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 held-file rule holds).
 
@@ -391,6 +391,15 @@ SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 h
 > (the 5 B-FUNC-DRIFT reds; MosaicLibraryChangesReportTest was already listed, the other two are +2 to the
 > tests set). **NEW GATE LAW: Functional FULL (76/0) is now part of every gate line.** Count stays 84 code
 > paths (test-only edits to already-tracked files); dist stays 1.0.77.
+>
+> CHECKPOINT-17 (P18) delta: PATTERNS. **+5 new paths** — `src/…/PatternsTest.php` (Kernel),
+> `js/src/builder/patterns.ts`, `js/src/builder/fields/MosaicPatternsPanel.tsx`, `js/src/builder/__tests__/patterns.test.ts`,
+> `js/src/builder/fields/__tests__/MosaicPatternsPanel.test.tsx`. Modified `src/Sdc/MosaicAdoptionProfile.php`,
+> `src/Service/MosaicManifestBuilder.php`, `src/Controller/ManifestController.php`,
+> `src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php`, `js/src/builder/{BuilderApp.tsx,index.tsx,tierBOptimistic.ts}`,
+> `js/src/shared/types/schema.ts`, `tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml`, `mosaic.libraries.yml`
+> (→1.0.78), `js/dist/builder.js 73bd949e` rebuilt (FE `5a64691b` unchanged). **Count now 89.** The «ext» "Card
+> row" pattern is Arun's SITE helper YAML (documented in the report, NOT in the module).
 
 ## The one-line commit message (Arun pastes)
 ```
