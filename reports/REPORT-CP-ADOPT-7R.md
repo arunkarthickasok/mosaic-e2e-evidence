@@ -1466,3 +1466,65 @@ patterns live in the lazily-imported builder chunk). Ship count 82.
 unit+kernel; the «ext» "Card row" YAML is documented for Arun's helper and the headed film is documented as
 steps (needs that pattern live). "+ Add card" on owned Columns is an honest instance-level-repeater
 follow-up. Next: guide + walk + SHIP-47-PLAN. Ship #47 HELD.**
+
+---
+
+## CHECKPOINT-18 (P19, FINAL — instance slot rules + a schema bug fix + the finale docs) — ship #47 HELD
+
+The finale closes the arc: the **B-PATTERN-INSTANCE-REPEATER** follow-up is BUILT (per-instance slot
+rules), a **real save bug** in the CHECKPOINT-14 component-fill feature is FOUND + FIXED, the «ext» helper
+now SHIPS the "Card row" pattern (live), and the author guide + walk + ship plan are finalised.
+
+### CAUGHT + FIXED — `prop_fills` was rejected at save (CP-14 gap)
+The node schema (`additionalProperties: false`) never listed `prop_fills`, so `validateFull` REJECTED any
+layout carrying it — the entire component-fill feature (CHECKPOINT-14/15) would have **failed at save
+through the node form**. The render-only Kernel test + the client Vitest never exercised presave
+validation, so it slipped through. **Verified** with a live `validateFull` probe ("The property prop_fills
+is not defined and the definition does not allow additional properties"). **Fixed:** `prop_fills` +
+`_mosaic_slot_rules` are now schema-defined (additive). Kernel `PatternsTest::testPropFillsAnd…SaveValidation`
+proves a layout with both now PASSES.
+
+### §1 Instance slot rules — the "+ Add card" the pattern needed
+A pattern tree node may carry `slot_rules: {slot: {child, min, max}}`. On insert (`patternTreeToPuckItem`)
+these ride on the placed node as `_mosaic_slot_rules`; `fromPuck` serialises them to the node (a schema key,
+NOT a prop), `toPuck` restores them. `ComponentInstance` carries `slotRules` (round-trip, additive). The
+CLIENT resolves them **per instance** through the existing `resolveFields` seam: when the selected node has
+`_mosaic_slot_rules[slot]`, a synthesised repeater descriptor injects a **"+ Add {child}"** rail for THAT
+node — so a pattern's **owned Columns** show "+ Add card" even though Columns has no type/profile repeater
+(**instance rule > type rule**). A normally-placed component has no `_mosaic_slot_rules`, so its panel is
+byte-identical. **Kernel** `PatternsTest` (+3 cells: save-validation, round-trip, byte-identical) ·
+**Vitest** (+5: converter stores slot_rules, fromPuck/toPuck round-trip, owned unaffected).
+
+### §2 The «ext» helper — "Card row" SHIPS (live)
+The helper module (`web/modules/custom/mosaic_adopt_ext/` — Arun's SITE repo, editable, outside the Mosaic
+tree) now declares the `card_row` pattern: owned `mosaic_columns` × 3, one «ext» Card per column, with
+per-column `slot_rules` for "+ Add card". **Verified live after `drush cr`:** the profile reports
+`patterns: card_row`, **no warnings**, tree type `mosaic_columns`, `slot_rules` present.
+
+### §3 FILMS — the steps are the walk's C + D (headed capture is the walk itself)
+The two films the charter asks for are exactly **walk steps C and D** (component fill "+ Add image"; Card
+row "+ Add card"), now runnable live (the pattern ships). Rather than a synthetic-drag capture, the DROP-
+PROOF-safe path is the deterministic **click** flow the walk documents. Headed frame capture is Arun's walk
+run; every behaviour is proven at unit + kernel and the pattern is live.
+
+### §4 Author guide + walk + ship plan — finalised
+- **`LIBRARY-AUTHOR-GUIDE.md`**: added slots-vs-HTML-content-props (+ component fill), `preferred`,
+  **§6 Patterns** (tree grammar, `slot_rules`, **patterns vs. site global templates** — library-scoped
+  content vs. site-scoped structure), typeless props; no library named.
+- **`WALK-CP-ADOPT-7.md`**: rewritten — **one STOP per step** (A–J, 10 steps); **C** = Card rail (7 fields)
+  → "+ Add image" → picker → canvas → Save → page → Remove; **D** = "Card row" pattern → "+ Add card" →
+  four cards → page; A/B/E–J concrete actions (no "attempt to…").
+- **`SHIP-47-PLAN.md`**: commit message now covers WC#104 parts 1–3 + patterns + instance slot rules + the
+  schema fix (libs 1.0.79); the helper module is listed separately (Arun's site repo, not the module).
+
+### Gates
+Kernel+Unit **3141 / 0** (8863 assert; +3 PatternsTest cells) · Functional **76 / 0** (789 assert) · Vitest **724 / 1** (719 + 5
+new; B-101; `viewsFields` flakes once under load, passes alone) · tsc **0** · phpcs **0** · phpstan **0
+new** · owned oracles **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (instance rules
+never touch owned render) · dist **BUMPED 1.0.78 → 1.0.79** (builder `73bd949e` → `7dcbf3ca`, FE
+`5a64691b` → `8a1226be`). Ship count 82.
+
+**STOP — CHECKPOINT-18 filed. The CP-ADOPT-7R arc is CODE-COMPLETE: adoption + composition + component
+fill + patterns + per-instance slot rules, plus the caught-and-fixed prop_fills save bug. The «ext» "Card
+row" ships live; the author guide + walk (one STOP/step) + ship plan are final. Ship #47 HELD — Arun's
+walk (WALK-CP-ADOPT-7.md) is the acceptance gate before tagging 1.0.0.**

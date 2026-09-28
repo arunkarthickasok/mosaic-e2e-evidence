@@ -400,10 +400,20 @@ SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 h
 > `js/src/shared/types/schema.ts`, `tests/modules/adopt_fixture/adopt_fixture.mosaic-adopt.yml`, `mosaic.libraries.yml`
 > (→1.0.78), `js/dist/builder.js 73bd949e` rebuilt (FE `5a64691b` unchanged). **Count now 89.** The «ext» "Card
 > row" pattern is Arun's SITE helper YAML (documented in the report, NOT in the module).
+>
+> CHECKPOINT-18 (P19, FINAL) delta: INSTANCE SLOT RULES + the prop_fills SCHEMA FIX. **No new paths** —
+> modifications to `schema/mosaic_layout_value.schema.json` (adds `prop_fills` + `_mosaic_slot_rules`; the
+> `prop_fills` addition FIXES a CP-14 gap where save-validation rejected the component-fill feature),
+> `src/Value/ComponentInstance.php` (slotRules round-trip), `js/src/builder/{MosaicPuckAdapter,patterns}.ts`,
+> `js/src/shared/types/schema.ts`, `tests/…/PatternsTest.php` + `js/…/__tests__/{patterns,propFillsRoundTrip}`
+> (cells), `mosaic.libraries.yml` (→1.0.79), `js/dist/{builder.js 7dcbf3ca, frontend-editor.js 8a1226be}`
+> rebuilt. **Count stays 89.** The «ext» helper now SHIPS the "Card row" pattern (with per-column
+> `slot_rules`) — that helper module (`web/modules/custom/mosaic_adopt_ext/`) is Arun's SITE repo, listed
+> separately at the end; it is NOT part of the Mosaic module.
 
 ## The one-line commit message (Arun pastes)
 ```
-'ship #47: CP-ADOPT-7/7R adopt-any-SDC readiness + composition — P1 gap fixes (nullable-union prop classifier, never-blank labels, group->palette category, media-object, shadow-DOM SO-7 reason) + R9 core_version ^11.3||^12 + F-109 build + G9 shadow-DOM canvas hydration + WC#94/#95 (zone-picker re-anchor; external library re-grade on install) + 7R: SSR-on-insert (adopted preview resolves on mount) + global-asset attach (library base CSS/tokens in the SSR delta) + adoption-profile reader (<provider>.mosaic-adopt.yml: containers/repeaters/requiresParent/global_libraries/preview_defaults; found via any enabled module) + repeater UX (a single-child slot becomes an inline rail item-list: +Add/reorder/remove/min-max) + requires-parent (auto-wrap single / refuse several / palette needs-marker / H5 save guard) + preview defaults (library examples fill the canvas preview only + example badge, never saved content — WC#97) + the mosaic_intelligence scores-URL fix (§1.4); owned FE render byte-identical 14e6cb9c/b7756795, libs 1.0.75'
+'ship #47: CP-ADOPT-7/7R adopt-any-SDC readiness + composition — P1 gap fixes (nullable-union prop classifier, never-blank labels, group->palette category, media-object, shadow-DOM SO-7 reason) + R9 core_version ^11.3||^12 + F-109 build + G9 shadow-DOM canvas hydration + WC#94/#95 (zone-picker re-anchor; external library re-grade on install) + 7R: SSR-on-insert (adopted preview resolves on mount) + global-asset attach (library base CSS/tokens in the SSR delta) + adoption-profile reader (<provider>.mosaic-adopt.yml: containers/repeaters/requiresParent/global_libraries/preview_defaults; found via any enabled module) + repeater UX (a single-child slot becomes an inline rail item-list: +Add/reorder/remove/min-max) + requires-parent (auto-wrap single / refuse several / palette needs-marker / H5 save guard) + preview defaults (library examples fill the canvas preview only + example badge, never saved content — WC#97) + the mosaic_intelligence scores-URL fix (§1.4) + WC#104 HTML content props (adopted formatted_text props are rich-text fields with a media embed) + component FILL (an HTML prop filled by a Mosaic child rendered as Markup; sentinel round-trip; fill wins over text; canvas + page) + PATTERNS (library-scoped component trees inserted as a unit from a palette "Patterns" panel; owned components allowed) + per-instance slot rules (_mosaic_slot_rules give a pattern container a "+ Add {child}" rail; instance rule > type/profile) + the schema fix so prop_fills passes save validation; owned FE render byte-identical 14e6cb9c/b7756795, libs 1.0.79'
 ```
 
 ## The «ext» helper (SEPARATE — Arun's SITE repo, NOT the Mosaic module)

@@ -18,6 +18,17 @@ clear scalar/enum/number type maps to the right field automatically. A **typeles
 a PHP-class type such as `Drupal\Core\Template\Attribute`) is graded "needs attention" — give it a
 `type` (even `type: string`) so authors get a real field instead of a raw fallback.
 
+### Slots vs. HTML content props
+A **slot** is a drop zone the library owns — authors place components into it, and the library's template
+decides where they render. An **HTML content prop** is a prop whose value is rich markup the library
+prints (a card's `media`, `content`). Mosaic tells them apart from the schema and the example: a string
+prop whose example contains HTML (`<img …>`, `<p>…</p>`) becomes a **rich-text (CKE5) field**, not a bare
+text input. Each such prop ALSO offers **"+ Add {image | plain content}"** — a *component fill*: the
+author drops a Mosaic component (an image, a block of text) INTO the prop, and its render replaces the
+prop at page time (a fill and typed text are mutually exclusive — the fill wins). So a library's HTML
+props are authorable as either rich text or a real Mosaic component, with no work by the library beyond a
+representative example.
+
 ## 2. The adoption profile — `«provider».mosaic-adopt.yml`
 Composition rules an SDC does not encode (cardinality, which container an item belongs in, the base
 asset library) live in a profile. Mosaic reads `«provider».mosaic-adopt.yml` from **any enabled
@@ -41,8 +52,24 @@ repeaters:                     # a slot that takes one child type, with cardinal
 requiresParent:                # an item must live inside its container(s)
   accordionitem: accordion
   tab:           tabgroup
+preferred:                     # the child a slot SUGGESTS first (a soft default, not a lock)
+  card.body: text
 thumbnails:
   card: assets/card.png
+patterns:                      # curated component trees the palette inserts as a unit (see §6)
+  - id: card_row
+    label: 'Card row'
+    tree:
+      type: mosaic_columns     # OWNED components are allowed in a pattern tree
+      props: { columns: 3, gap: md }
+      slot_rules:              # per-INSTANCE rail: each column shows "+ Add card"
+        column_1: { child: card, min: 0, max: null }
+        column_2: { child: card, min: 0, max: null }
+        column_3: { child: card, min: 0, max: null }
+      slots:
+        column_1: [{ type: card, props: { heading: 'Card one' } }]
+        column_2: [{ type: card, props: { heading: 'Card two' } }]
+        column_3: [{ type: card, props: { heading: 'Card three' } }]
 ```
 
 Component ids in the profile are **local** (no provider prefix) — Mosaic qualifies them. An id the
@@ -72,10 +99,34 @@ in `requiresParent`. Mosaic then auto-wraps a stray item in its container on dro
 refuses when several containers could apply (with the reason), marks the item "needs {Container}" in the
 palette, and rejects an orphaned item at save.
 
+## 6. Patterns — insert a curated tree as a unit
+A **pattern** is a ready-made arrangement the palette offers under your library, in a **"Patterns"** group.
+Clicking it inserts the whole `tree` with fresh ids in one step. The tree uses Mosaic's layout node
+grammar (`type`, `props`, `slots`, `prop_fills`) and may mix **owned** Mosaic components (a Columns
+container) with your library's components — so "a row of three cards" is a pattern of the owned Columns
+holding three of your cards, with no card-group component needed.
+
+- **Validation.** Every `type` in the tree must resolve to a known component (yours or owned). A pattern
+  that names an unknown type is hidden with a warning — never a crash.
+- **`slot_rules` (per-instance rails).** A tree node may carry `slot_rules: {slot: {child, min, max}}`.
+  These ride on the *placed* node, so that instance's slot shows a **"+ Add {child}"** rail — e.g. each
+  column of an inserted "Card row" offers "+ Add card" — even though the owned Columns type has no
+  repeater of its own. An instance rule overrides any type/profile rule for that node only; a normally
+  placed component is unaffected.
+
+### Patterns vs. site global templates
+A **pattern** is **library-scoped** and **content** — it drops editable components onto *this* page, which
+the author then changes freely. A **global template** (a site feature) is **site-scoped** and
+**structural** — a saved layout a site builder reuses across pages. Ship compositions your library wants
+to suggest as **patterns**; leave cross-library, site-wide layouts to global templates. A pattern never
+edits global templates, and enabling your library never changes a site's templates.
+
 ## Quick checklist
 - [ ] Every prop has a `type` (typeless props grade "attention").
+- [ ] HTML content props ship a representative `example` (→ rich-text field + "+ Add" component fill).
 - [ ] Required slots/props are marked `required: true`.
 - [ ] Container slots that take one child type are repeaters (or declared in `repeaters`).
-- [ ] `requiresParent` set for item-only components.
+- [ ] `requiresParent` set for item-only components; `preferred` for a slot's suggested child.
 - [ ] `global_libraries` points at the token/font/icon asset layer, shipped as a module library.
 - [ ] `preview_defaults: true` if examples/defaults are previews, not content.
+- [ ] `patterns` for curated trees; add `slot_rules` where an inserted container should offer "+ Add".
