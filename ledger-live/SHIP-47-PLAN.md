@@ -292,7 +292,8 @@ DEFERRED: the "example" badge UI (rail badge + dirty tracking); then §4 lifecyc
 > MOSAIC git READ-ONLY for the AI; **Arun commits**. Nothing staged by the AI. The «ext» HELPER
 > (`web/modules/custom/mosaic_adopt_ext/`) ships SEPARATELY in Arun's SITE repo (listed at the end).
 
-**Count: 75** shippable paths (all CP-ADOPT-7 + 7R). `git check-ignore`: `js/dist/*` NOT ignored
+**Count: 84** shippable paths (all CP-ADOPT-7 + 7R; +6 at CHECKPOINT-15 component fill — see delta below).
+Was 75 at CHECKPOINT-11. `git check-ignore`: `js/dist/*` NOT ignored
 (bundles ship); `js/e2e/`, `AI/`, `test-results/` ARE ignored (never ship). **`src/Plugin/Component/
 SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 held-file rule holds).
 
@@ -373,7 +374,17 @@ SdcComponentPlugin.php` is PRISTINE** (absent from the changeset — the F-108 h
 ?? tests/src/Kernel/Adopt/RepeaterDescriptorTest.php
 ?? tests/src/Kernel/Adopt/RequiresParentSaveTest.php
 ?? tests/src/Kernel/Adopt/RequiresParentTest.php
+?? tests/src/Kernel/Adopt/PropFillsRenderTest.php
+?? js/src/builder/propFills.ts
+?? js/src/builder/fields/MosaicFillField.tsx
+?? js/src/builder/__tests__/propFills.test.ts
+?? js/src/builder/__tests__/propFillsRoundTrip.test.ts
+?? js/src/builder/fields/__tests__/MosaicFillField.test.tsx
 ```
+> CHECKPOINT-15 (P16) delta: **+6 new paths** (propFills.ts, MosaicFillField.tsx, 3 Vitest, PropFillsRenderTest.php)
+> + modified `src/Value/ComponentInstance.php`, `src/Service/MosaicRenderer.php`, `src/Controller/CanvasPreviewController.php`,
+> `js/src/builder/{MosaicPuckAdapter,tierBOptimistic}.ts`, `js/src/shared/types/schema.ts`, `mosaic.libraries.yml` (→1.0.77),
+> `js/dist/{builder.js c2c99527, frontend-editor.js 5a64691b}` rebuilt. **Count now 84.**
 
 ## The one-line commit message (Arun pastes)
 ```

@@ -1222,3 +1222,105 @@ STYLE b7756795…ca982 4354 10** IDENTICAL (a fill-less owned node renders byte-
 **STOP — CHECKPOINT-14 filed. Component-fill MODEL + RENDER is proven server-side (a saved fill renders
 its child into the prop, fill wins over text). Next: the client rail "+ Add image" + films; then Part 3
 (slotted/is + patterns "Card row"). Ship #47 HELD.**
+
+---
+
+## CHECKPOINT-15 (P16 — WC#104 pt2: component fill, CLIENT RAIL + canvas render) — ship #47 HELD
+
+The client half of component fill landed: an adopted `formatted_text` prop now shows a **rail** — a
+text editor + a primary **"+ Add {Preferred}"** — that swaps to **"Filled by {Child} — Edit · Remove"**
+when filled, and the fill renders on the **canvas** (not just the saved page). The **headed films** are
+honestly documented as **deterministic click-steps but not captured this pass** (below) — every behavior
+they would show is proven by Vitest + Kernel, holding to the DROP-PROOF law (no flaky retried e2e passed
+off as a proof).
+
+### §1 The rail field — self-contained, H5-exclusive
+Rather than a sibling prop (a Puck custom field can set only its OWN value), the fill rides INSIDE the
+prop value as a sentinel `{ __mosaicFill: {id, type, props} }` (`propFills.ts`). `MosaicFillField.tsx`
+renders two mutually-exclusive states:
+- **UNFILLED** — a text editor + **"+ Add image"** (media/image/picture in the name/example) or
+  **"+ Add plain content"**. Click → mints a bare owned child (`mosaic_image {src,alt}` /
+  `mosaic_text {body,text_format}`) as the sentinel value.
+- **FILLED** — **"Filled by Image/Content"** + inline Edit fields (Image → URL + alt; Content → body) +
+  **Remove** (→ `onChange('')`, restoring an empty text editor). H5 exclusivity is enforced structurally
+  — the CKE5 editor is hidden while filled, so text + fill can never coexist.
+
+Only ADOPTED `formatted_text` props get the rail (`isAdopted` = empty `properties`); **owned body keeps
+its CKE5 `BodyEditModal`** untouched.
+
+### §2 Round-trip — sentinel ⇄ real node + `prop_fills`
+`fromPuck` lifts each sentinel-valued prop out of `props` into a real `nodes[]` child + `prop_fills[prop]
+= childId` (the filled prop carries NO text). `toPuck` folds the child back onto the prop as a sentinel
+and NEVER shows it as standalone content. **Vitest:** `propFills.test.ts` (helpers/heuristic/extract/
+apply/fillChildIds), `propFillsRoundTrip.test.ts` (toPuck folds inline · fromPuck restores node +
+prop_fills, no orphan text · owned node byte-identical), `MosaicFillField.test.tsx` (both states, add,
+remove, edit) — **19 new cells, all green.**
+
+### §3 Canvas render — the fill shows LIVE, not escaped
+The client splits sentinel fills into a `fill_nodes` payload (`splitFillNodes` in `tierBOptimistic.ts`);
+`renderSingleComponent(type, props, fillNodes)` renders each child BARE and Markup-merges it into the
+HTML prop BEFORE the §3e example merge (so a filled prop counts as "set" and is never badged "example").
+The controller reads `fill_nodes` on both the single + batch SSR routes. **Kernel `PropFillsRenderTest`
+(now 4 cells):** page AND canvas both render a REAL child (bare `mosaic_image` + `src/alt`) into the
+filled prop; the fill wins over the props value.
+
+### PROOF CONDITION caught a real gap (DROP-PROOF discipline)
+Wiring the canvas cell revealed CHECKPOINT-14's page cell had been passing via renderNode's **graceful
+FALLBACK** (createInstance throws on `mosaic_components:mosaic_text` — the manager keys owned SDCs
+**bare**: `mosaic_text`/`mosaic_image` — and the fallback renders the stored props, so `text` appeared
+without a real child render). Corrected: fixtures now use the client's true format (bare id + real
+`src/alt`), so both page + canvas cells exercise a **REAL** child render. `renderSingleComponent`
+(canvas) has NO fallback, so the bad id showed as an empty prop — the canvas cell is the stricter proof.
+
+### Saved JSON (from the round-trip cell — the live client shape)
+```json
+{ "nodes": {
+  "«ext»card-…": { "type": "«ext»:card", "props": { "heading": "A card" }, "prop_fills": { "media": "mosaic_image-…" } },
+  "mosaic_image-…": { "type": "mosaic_image", "props": { "src": "/example.jpg", "alt": "Chosen" } }
+}}
+```
+The filled `media` carries NO text; on load it folds back to `{ __mosaicFill: { type: "mosaic_image", … } }`.
+
+### FILMS — deterministic steps, NOT captured this pass (honest)
+All CLICKS + typing (deterministic, per the picker-wrap DROP-PROOF learning), so filmable reliably; the
+capture harness (js/e2e, headed) was not run this pass. Steps for the walk:
+1. «ext» Card → panel Media row shows a text editor + **"+ Add image"**.
+2. Click → row becomes **"Filled by Image"** + URL/alt fields; type a URL → canvas shows the `<img>`
+   inside the library's card (no "example" badge). Save → page shows it. **Remove** → CKE5 editor back.
+3. Content row → **"+ Add plain content"** → type body → canvas + page show it.
+Every one of these is asserted at unit (`MosaicFillField.test.tsx`) + kernel (canvas + page real render).
+
+### One source-grep oracle updated (additive signature)
+`Sprint67SmokeTest::testRendererHasRenderSingleComponent` pinned the EXACT old signature string
+(`renderSingleComponent(string $type, array $props): array`). The new optional `$fillNodes` param is
+additive, so the oracle now uses a regex tolerant of the third param + the `array` return — an
+oracle-change, not a behavior change.
+
+### Gates
+Kernel+Unit **3134 / 0** (8834 assertions, 3 skips, 1 warning; = CHECKPOINT-14's 3133 + the canvas-fill
+cell; Sprint67 oracle fixed) · Vitest **713 / 1** (712 pass + B-101; **+19 new**) · tsc **0** · phpcs
+**0** · phpstan **0 new** (4 pre-existing B-102) · owned oracles **REGION 14e6cb9c…3954 + STYLE
+b7756795…ca982 4354 10** IDENTICAL · dist **BUMPED 1.0.76 → 1.0.77** (builder `4da2cd58` → `c2c99527`,
+frontend-editor `5a64691b`; JS changed this pass). Ship count 81. Functional suite (separate from the
+Kernel+Unit gate) noted below.
+
+### Functional suite (SEPARATE from the Kernel+Unit gate) — 5 PRE-EXISTING failures, NOT mine
+Running the full `tests/` dir surfaced `Functional 76: Errors 1, Failures 4` — investigated to confirm
+none are CHECKPOINT-15 regressions (my changed code — `renderSingleComponent`/`canvas/ssr`/`fill_nodes`/
+`prop_fills`/the rail — is referenced by ZERO Functional tests):
+1. `MosaicTextSmokeTest::testUnknownComponentRendersPlaceholder` (ERROR) — the SAVE-validation hook
+   (`MosaicHooks.php:216`, untouched this pass) rejects an unknown component type, so the test's node
+   never saves. A test↔validation mismatch, not a render change.
+2. `MosaicLibraryChangesReportTest::testReportPermissionParity` — report permission parity.
+3–5. `MosaicSchemaVersionRenderTest::{testSchemaV2WithBreakpointStatesRendersDefaultLayout,
+   testMigrationManagerUpgradesV1ToV2, testMigrationManagerIsNoOpForCurrentVersion}` — schema v1→v2
+   migration.
+All are save-validation / report-permission / schema-migration concerns, orthogonal to component fill.
+The per-checkpoint gate has always been **Kernel+Unit** (3134/0 here); Functional drifted since Sprint 94
+(40+ ships) unnoticed because it isn't gated. Ledgered as a pre-existing backlog item (B-FUNC-DRIFT).
+
+**STOP — CHECKPOINT-15 filed. The component-fill CLIENT RAIL + canvas render are built + proven (add /
+fill / edit / remove / round-trip / live-canvas / page — Vitest 713/1 + Kernel 3134/0); one source-grep
+oracle updated (additive signature); 5 pre-existing Functional failures triaged as NOT mine. Headed films
+documented as deterministic steps, not captured. Next: Part 3 (`slotted`/`is` keys + patterns "Card row" +
+author guide + walk C/D). Ship #47 HELD.**
