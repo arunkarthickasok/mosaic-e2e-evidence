@@ -1,0 +1,92 @@
+[
+  {
+    "name": "motion-lift__f1__300ms.png",
+    "motion": "lift",
+    "frame": 1,
+    "t": 300
+  },
+  {
+    "name": "motion-lift__f2__900ms.png",
+    "motion": "lift",
+    "frame": 2,
+    "t": 900
+  },
+  {
+    "name": "motion-lift__f3__2100ms.png",
+    "motion": "lift",
+    "frame": 3,
+    "t": 2100
+  },
+  {
+    "name": "motion-refuse-snapback__f1__400ms.png",
+    "motion": "refuse-snapback",
+    "frame": 1,
+    "t": 400
+  },
+  {
+    "name": "motion-refuse-snapback__f2__1100ms.png",
+    "motion": "refuse-snapback",
+    "frame": 2,
+    "t": 1100
+  },
+  {
+    "name": "motion-refuse-snapback__f3__2000ms.png",
+    "motion": "refuse-snapback",
+    "frame": 3,
+    "t": 2000
+  },
+  {
+    "name": "motion-insert__f1__300ms.png",
+    "motion": "insert",
+    "frame": 1,
+    "t": 300
+  },
+  {
+    "name": "motion-insert__f2__700ms.png",
+    "motion": "insert",
+    "frame": 2,
+    "t": 700
+  },
+  {
+    "name": "motion-insert__f3__1400ms.png",
+    "motion": "insert",
+    "frame": 3,
+    "t": 1400
+  },
+  {
+    "name": "motion-shimmer__f1__200ms.png",
+    "motion": "shimmer",
+    "frame": 1,
+    "t": 200
+  },
+  {
+    "name": "motion-shimmer__f2__700ms.png",
+    "motion": "shimmer",
+    "frame": 2,
+    "t": 700
+  },
+  {
+    "name": "motion-shimmer__f3__1200ms.png",
+    "motion": "shimmer",
+    "frame": 3,
+    "t": 1200
+  },
+  {
+    "name": "motion-crossfade__f1__500ms.png",
+    "motion": "crossfade",
+    "frame": 1,
+    "t": 500
+  },
+  {
+    "name": "motion-crossfade__f2__1100ms.png",
+    "motion": "crossfade",
+    "frame": 2,
+    "t": 1100
+  },
+  {
+    "name": "motion-crossfade__f3__1600ms.png",
+    "motion": "crossfade",
+    "frame": 3,
+    "t": 1600
+  }
+]
