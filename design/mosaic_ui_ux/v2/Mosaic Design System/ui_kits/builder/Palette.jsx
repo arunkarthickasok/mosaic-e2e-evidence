@@ -1,0 +1,28 @@
+const MP = window.MosaicDesignSystem_9c1bff;
+
+function Palette({ onClose, query: q0 = '' }) {
+  const [q, setQ] = React.useState(q0);
+  const [closed, setClosed] = React.useState({});
+  const ql = q.trim().toLowerCase();
+  const libs = MOS_DATA.palette.map(l => ({ ...l, cats: l.cats.map(c => ({ ...c, items: c.items.filter(i => !ql || (i.name + i.blurb).toLowerCase().includes(ql)) })).filter(c => c.items.length), patterns: l.patterns.filter(i => !ql || (i.name + i.blurb).toLowerCase().includes(ql)) })).filter(l => l.cats.length || l.patterns.length);
+  return <div className="mosaic" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--mos-surface-chrome)', minHeight: 0 }}>
+    <div style={{ padding: '10px 10px 8px', borderBottom: '1px solid var(--mos-border-subtle)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span className="mos-caps" style={{ color: 'var(--mos-text-default)', paddingLeft: 4 }}>Components</span><span style={{ marginLeft: 'auto' }}>{onClose && <MP.IconButton size="sm" icon="x" label="Close palette" onClick={onClose} />}</span></div>
+      <div className="mos-control mos-control--sm"><MP.Icon name="search" size={14} style={{ color: 'var(--mos-text-faint)' }} /><input value={q} onChange={e => setQ(e.target.value)} placeholder="Search 3 libraries" aria-label="Search components" /></div>
+    </div>
+    <div style={{ overflow: 'auto', flex: 1, padding: '4px 6px 16px' }}>
+      {libs.length === 0 && <div style={{ padding: '32px 16px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}><MP.Icon name="search-x" size={20} style={{ color: 'var(--mos-text-faint)' }} /><div className="mos-label">No components match “{q}”</div><div className="mos-help">Components hidden for this content type don't appear here. A site builder can enable them in Content type › Layout.</div><MP.Button size="sm" onClick={() => setQ('')}>Clear search</MP.Button></div>}
+      {libs.map((l, li) => <div key={l.lib} style={{ marginTop: 6 }}>
+        <button className="mos-rs__head" style={{ height: 34, padding: '0 6px' }} aria-expanded={!closed[l.lib]} onClick={() => setClosed({ ...closed, [l.lib]: !closed[l.lib] })}>
+          <span className="mos-index">{String(li + 1).padStart(2, '0')}</span><span style={{ font: 'var(--mos-type-ui-strong)', color: 'var(--mos-text-strong)' }}>{l.lib}</span><span className="mos-help" style={{ marginLeft: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{l.note}</span><MP.Icon name="chevron-down" size={14} className="mos-rs__chev" style={{ marginLeft: 'auto', transform: closed[l.lib] ? 'rotate(-90deg)' : 'none' }} />
+        </button>
+        {!closed[l.lib] && <>
+          {l.cats.map(c => <div key={c.cat}><div className="mos-picker__group" style={{ padding: '8px 8px 2px' }}>{c.cat}</div>{c.items.map(i => <MP.PaletteItem key={i.name} {...i} />)}</div>)}
+          {l.patterns.length > 0 && <div><div className="mos-picker__group" style={{ padding: '8px 8px 2px' }}>Patterns</div>{l.patterns.map(i => <MP.PaletteItem key={i.name} pattern {...i} />)}</div>}
+        </>}
+      </div>)}
+    </div>
+  </div>;
+}
+
+Object.assign(window, { Palette });

@@ -1,0 +1,19 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Feedback" subtitle="Banners, toast, sync status, result line, stale shimmer" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--mos-surface-chrome)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.col{display:flex;flex-direction:column;gap:12px}.lab{font:500 10.5px/1 var(--mos-font-mono);color:var(--mos-text-faint);width:72px;flex:none;text-transform:uppercase;letter-spacing:.04em}</style></head>
+<body class="mosaic"><div id="root" style="padding:20px"></div><script type="text/babel">const M=window.MosaicDesignSystem_9c1bff;const {Banner,Toast,SyncStatus,ResultLine,Button}=M;
+function App(){return <div className="col">
+<Banner tone="error" title="Teaser (Olivero) needs content in its Content area" actions={<Button size="sm">Go to area</Button>}/>
+<Banner tone="attention" compact title="Requires at least 1 item — 0/1"/>
+<div className="row"><Banner tone="owned" compact>Styling is owned by Civic UI Card</Banner><Banner tone="data" compact>Legacy binding — remove to edit</Banner></div>
+<div className="row"><Toast icon="wrap-text" action="Undo" onClose={()=>{}}>Placed inside a new <strong>Section</strong></Toast></div>
+<div className="row"><SyncStatus state="synced" components={14} bound={2}/></div>
+<div className="row"><SyncStatus state="unsaved" onRevert={()=>{}} components={15} bound={2}/><SyncStatus state="stale"/></div>
+<div className="row"><ResultLine shown={3} total={128} view="Latest news" display="Block"/><ResultLine state="empty" view="Latest news"/><ResultLine state="failing" view="Latest news" error="View returned an error"/></div>
+<div className="mos-stale" style={{height:28,borderRadius:4,background:'var(--mos-surface-sunken)',display:'flex',alignItems:'center',padding:'0 10px',font:'var(--mos-type-help)',color:'var(--mos-text-muted)'}}>Stale shimmer — preview refreshing after optimistic commit</div>
+</div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);</script></body></html>
