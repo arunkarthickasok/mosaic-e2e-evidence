@@ -38,3 +38,9 @@ Owned oracles the gate; naming ban «ext»/«ext-canvas» in evidence; Canvas NE
   finding recorded. dist still unchanged (no JS).
 - CP-ADOPT-9 P0 blueprint filed: reports/REPORT-CP-ADOPT-9.md (14-knob table, shape_map + authoring entity
   overrides-only, precedence + H5, UI, lifecycle, 5 risks, 6-pass build order).
+
+## CP-ADOPT-9 P1 (shape_map) — new paths
+- `config/install/mosaic.shape_map.yml`, `src/Sdc/MosaicShapeMap.php`, `src/Form/MosaicShapeMapForm.php`,
+  `tests/src/Kernel/Adopt/ShapeMapTest.php`, `tests/src/Functional/Adopt/ShapeMapFormTest.php`.
+- Modified `mosaic.services.yml` (mosaic.shape_map), `mosaic.routing.yml` (mosaic.admin.field_types),
+  `config/schema/mosaic.schema.yml`. Server-only — dist unchanged. Client rail-follows = CHECKPOINT-2.

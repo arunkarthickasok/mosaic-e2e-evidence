@@ -121,3 +121,46 @@ byte-identical when no override.
 ## Sources
 All `file:line` in §1 verified this pass against the Mosaic tree at `33cd40c`. No Canvas dependency. This
 is a blueprint — no code was written.
+
+---
+
+## CHECKPOINT-1 (P1 BUILD) — `mosaic.shape_map` site config + Field types form
+
+The first CP-ADOPT-9 layer: a site admin can now set the **default widget per prop SHAPE**, for owned AND
+adopted alike, at **`/admin/config/mosaic/field-types`**. Shipped defaults reproduce today's rail exactly.
+
+### Built (Mosaic tree; Arun commits)
+- **`config/install/mosaic.shape_map.yml`** — the shipped map (`media → media_picker`, `formatted_text →
+  cke5`, `link → link`, `select → select`, `toggle → checkbox`, `number → number`, `text → text`) = the
+  widget each `PropShape` kind renders as **today**.
+- **`config/schema/mosaic.schema.yml`** — `mosaic.shape_map` config schema.
+- **`src/Sdc/MosaicShapeMap.php`** (`mosaic.shape_map`) — `widgetFor(shape)` (config or shipped default),
+  `allowedWidgets(shape)`, `shapes()`, and **`isCompatible(shape, widget)` = H5**: a widget outside a
+  shape's allowed set never wins (a saved-but-incompatible value falls back to the default).
+- **`src/Form/MosaicShapeMapForm.php`** + route `mosaic.admin.field_types` (`mosaic.administer`) — a select
+  per shape (only its compatible widgets), **`validateForm` refuses** an incompatible widget.
+
+### Proven
+- **Kernel `ShapeMapTest` (4):** shipped defaults reproduce today's rail; a valid override is honoured; an
+  incompatible widget is refused (fallback to default); shapes expose their allowed widgets.
+- **Functional `ShapeMapFormTest` (2):** anon/non-admin → **403**, admin → **200**, a valid override saves;
+  the form offers ONLY compatible widgets (Toggle offers `checkbox`, NOT `media_picker`).
+
+### Today's rail is UNCHANGED — trivially proven
+This pass added the config + service + form only; **nothing in the manifest or the rail consumes the map
+yet**, so no JS changed, the manifest is byte-for-byte the same, and the **owned oracles are IDENTICAL**.
+The owned-panel Vitest is therefore unchanged (no JS), and the manifest diff is empty by construction.
+
+### DEFERRED → CHECKPOINT-2 (the "rail follows the map" half)
+Making a **changed** map flow to the rail (client `descriptorToField` reads the map from `drupalSettings`,
+default = current so untouched libraries stay byte-identical; the cache-tag invalidation cell "change map →
+rail follows without a cache clear"; the client Vitest) is the next checkpoint — it is where the JS + dist
+bump land. The server + form + H5 (this checkpoint) are the foundation.
+
+### Gates
+Kernel+Unit **3157 / 0** (8938 assert) (+4 ShapeMapTest) · Functional **78 / 0** (+2 ShapeMapFormTest) · Vitest
+**724 / 1** (B-101; **no JS this pass**) · phpcs **0** · phpstan **0 new** · owned oracles **REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL · dist **UNCHANGED** (1.0.79).
+
+**STOP after gates — CHECKPOINT-1 filed. The shape_map config + Field types form + H5 land; today's rail is
+untouched (server-only). Next: CHECKPOINT-2 (client rail-follows + cache-tag live update).**
