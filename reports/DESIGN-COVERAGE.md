@@ -105,3 +105,36 @@ reviewer's point: the surfaces I mis-marked live in the JSX source, not the HTML
 data-binding + drift + breakpoint + data-state** cluster. Remaining gaps are narrow — the **Settings form**
 (MISSING) and a set of **PARTIAL** states/variants (per-screen tablet/mobile, specific copy, some control
 states). This matrix asserts presence/absence only; sufficiency is the reviewer's audit.
+
+---
+
+## COVERAGE v3 (re-run 2026-09-30 over HTML + JSX + data.js — the v2 lesson applied)
+Deltas from the v2-corrected matrix (DESIGNED 33 / PARTIAL 15 / MISSING 1), re-swept against v3's files:
+
+| Surface | v2-corrected | v3 | Evidence (v3) |
+|---|---|---|---|
+| Settings form | MISSING | **DESIGNED** | `ui_kits/builder/AdminSettings.jsx` "Setting" ×5 (the last v2 gap — closed) |
+| Rail states (empty / error / bind / legacy / hidden / override / required) | mixed PARTIAL | **DESIGNED** | new `ui_kits/builder/RailStates.jsx` — empty ×8, error, bind, legacy, Hidden, Override, Required |
+| Admin surfaces (libraries / reports / authoring) | DESIGNED (Admin.jsx) | **DESIGNED (split)** | v3 splits into `Admin{Libraries,Reports,Authoring}.jsx` |
+| Tablet (834 px) | PARTIAL | **DESIGNED** | `App.jsx` "834" ×12 responsive rules |
+| Mobile (390 px) | PARTIAL | **PARTIAL** | `App.jsx` "390" ×3 — present but thinner; per-screen 1–11 mobile is the reviewer audit's line item |
+| Fill rows / repeater rows / ownership line | PARTIAL | **PARTIAL** | not distinctly enumerated in `RailStates.jsx` (bind/legacy/states are; fill/repeater/ownership remain state-level PARTIAL) |
+
+**v3 counts: DESIGNED 35 / PARTIAL 13 / MISSING 0** (Settings closed; tablet promoted). Every code surface
+now has at least a PARTIAL v3 design; the remaining PARTIALs are per-screen mobile + a few specific
+rail-row variants — the reviewer audit's scope, not presence gaps.
+
+## DIFF v2 → v3
+- **Files:** 136 → **152** (+16). New: `Admin{Authoring,Libraries,Reports,Settings}.jsx`, `RailStates.jsx`,
+  `Mosaic Authoring UI Kit v3.html`, `assets/fonts/ibm-plex-{sans,mono}-*.woff2` (6 self-hosted woff2),
+  `guidelines/{contrast-audit.md,contrast-audit.json,decisions-log.md}`.
+- **Tokens:** the type scale is now explicit with a **12 px floor** (`--mos-text-xs: 12px`, sm 13, md 14,
+  lg 16, xl 18) — the quality fix; colors re-audited (152 pairs, 0 failures). (The carried-over v2
+  `Mosaic Authoring UI Kit.html` still holds 10.5/11px — stale reference, not a v3 source.)
+- **Components added/changed:** the four Admin screens + `RailStates`; self-hosted `@font-face`; a v3
+  authoring kit alongside the v2 one.
+- **Decisions D13–D22 present** (`guidelines/decisions-log.md`): D13 EXAMPLE corner badge · D14 result line
+  mono indigo under the border · D15 data-state switcher in the top bar · D16 contextual-filter single
+  select · D17 stale-shimmer 12% teal sweep · D18 save-errors summary strip above the canvas · D19
+  revert-to-saved confirm popover · D20 dark = designed not inverted (elevation) · D21 Manage authoring
+  mirrors Drupal's Manage form display · D22 library "notes" as banners.
