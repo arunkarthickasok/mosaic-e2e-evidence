@@ -71,5 +71,24 @@ markup; compact + comfortable density present. (d) palette first-run cue — pre
 "first-run cue ring"). (e) contrast audit — **152 pairs · 0 failures** (WCAG 2.2 4.5:1, after the 12 px
 floor). (f) motion — `motion.html` + `motion-{durations,easing}.card.html` present.
 
-**Status: UNDER REVIEW** — a reviewer audit follows; the coverage matrix re-run is in
-`reports/DESIGN-COVERAGE.md`.
+**Renders (pixel review):** `design/mosaic_ui_ux/v3/RENDERS/` — **215 headed-Chromium PNGs**
+(200 screen + 15 motion) with `RENDERS/INDEX.md` (one row per PNG). Every kit screen/state at
+1440·light·comfortable, then each state across 834 / 390 / dark / compact; motion key frames
+(lift, refuse snap-back, insert, shimmer, crossfade) seeked via the Web Animations API. Committed
+`ac85797`. Re-checks at render time: sub-12px in the kit **0**; hex outside `tokens/` **120** but
+**0 in the product `styles.css`** (rest = host admin-theme sim / palette-doc cards / kit scaffold);
+contrast **152 pairs · 0 failures** (ratios 3.4–17.56); fonts self-hosted (React/Babel from unpkg =
+the kit's transpile harness only).
+
+**Status: PASSED — source of truth for ALL screens** (reviewer, 2026-10-01). v3 is now the source
+of truth for the builder, rail states, admin libraries, Manage authoring, field types, reports,
+settings, missing, errors, keyboard, the three admin themes, dark, tablet and mobile — replacing v2
+as the reference for these surfaces. The coverage matrix is in `reports/DESIGN-COVERAGE.md`.
+
+**v4 = polish only** (due **2026-10-10**, then **FROZEN**):
+1. Palette 240px; one-line library headers; truncation + tooltip.
+2. Top-edge chrome rule — toolbar outside above top-right, index tab bottom-left, EXAMPLE badge
+   inside top-right, no overlap.
+3. Thumbnail slot with icon fallback.
+4. Dark follows the admin theme's mode + a manual override.
+5. Focus-mode affordance + hover labels on the palette strip.
