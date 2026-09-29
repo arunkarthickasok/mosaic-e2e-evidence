@@ -30,3 +30,11 @@ resolution is server-side).
 
 ## Standing
 Owned oracles the gate; naming ban «ext»/«ext-canvas» in evidence; Canvas NEVER enabled; no AI co-author trailer.
+
+## CHECKPOINT-2 additions
+- Modified `src/Sdc/PropShape.php` (looksLikeLink), `tests/src/Kernel/Adopt/CanvasShapesTest.php` (10 cells),
+  `tests/modules/adopt_fixture/components/adopt_shaped/{adopt_shaped.component.yml,adopt_shaped.twig}` (inline shapes + cta).
+- date-range/heading compound-shape detectors DEFERRED (sub-field descriptor infra); the `$ref`-at-render
+  finding recorded. dist still unchanged (no JS).
+- CP-ADOPT-9 P0 blueprint filed: reports/REPORT-CP-ADOPT-9.md (14-knob table, shape_map + authoring entity
+  overrides-only, precedence + H5, UI, lifecycle, 5 risks, 6-pass build order).

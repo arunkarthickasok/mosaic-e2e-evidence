@@ -222,3 +222,51 @@ becomes #48's.
 **STOP after gates — CHECKPOINT-1 filed. The resolver + bundled shapes + image/video→media + scalar-union→
 text land «ext» at 47/47; «ext-canvas» image → media without Canvas. Object-shape detectors (link/
 date-range/heading) = CHECKPOINT-2. Next charter item: CP-ADOPT-9 P0 (Manage-authoring blueprint).**
+
+---
+
+## CHECKPOINT-2 (S) — link detector + media render + honest defer of compound shapes
+
+### Delivered
+- **`looksLikeLink`** in `PropShape` — an object with a URL-ish key (`url`/`href`/`uri`) + optional
+  `text`/`title`, and NO media corroborator (`src`/`alt`/`width`/…), classifies as **LINK** (checked AFTER
+  `looksLikeMedia`, so a media object never mis-reads as a link). Kernel: `canvas.module/link` → LINK; the
+  fixture `adopt_shaped.cta` → LINK.
+- **Media render cell** — `adopt_shaped` with `image = {src, alt, width, height}` renders an `<img>` on the
+  page/SSR through the hybrid renderer (`/canvas-shape.jpg` + `Shaped image` present).
+
+### HONEST — date-range + heading DEFERRED (not a small build)
+The resolved **date-range** `{from/start, to/end}` and **heading** `{text, level}` are COMPOUND objects.
+Rendering them as real widgets (a dates picker; text + level-select) needs **sub-field descriptors** — but
+`PropDescriptor` carries only a single `items` (for REPEATABLE), no general properties/sub-field map, and
+the rail has no compound widget for adopted objects. Forcing them to a single text field would show the
+object value as garbage while claiming "Ready" — worse than honest Attention. So they **stay raw
+(Attention), never a crash**, until sub-field descriptor support lands (a genuine, non-small follow-up).
+**No adopted library in hand uses them** — only `…/image` appears. Kernel cell asserts they stay RAW.
+
+### FINDING — a `$ref` in a component schema needs Canvas's stream wrapper AT RENDER
+Rendering an SDC whose schema carries `$ref: json-schema-definitions://…` fails without Canvas:
+Drupal's SDC validates props against the schema at render and `file_get_contents(json-schema-definitions://…)`
+has no stream wrapper unless Canvas is installed. This is **not a gap for real libraries**: «ext-canvas»
+*depends on* `canvas:canvas` (wrapper present at render), and base «ext» uses **inline** shapes (0 `$ref`)
+so it renders without Canvas. **Mosaic's resolver serves the author-time panel/grade** (registry
+`describe`), where no stream wrapper is involved. So the fixture `adopt_shaped` uses **inline** shapes for
+the render cell; the resolver ($ref → shape) is proven via `resolveUri()` + `describe()` on **explicit
+`$ref` schemas** (CHECKPOINT-1 + this checkpoint's link cell).
+
+### H4 / H5
+- **H4 defaults:** unchanged — the registry's `resolveDefault` (schema `default` → `examples[0]` →
+  type-empty) already covers object shapes (the object's own default).
+- **H5 object-shape validation:** object shape VALUES are already validated at two layers — Drupal SDC prop
+  validation **at render** (strict, as the finding above shows) and the layout JSON schema **at save**. A
+  dedicated per-shape refusal (e.g. a media object missing `src`) is a small follow-up if a case appears;
+  no new mechanism was added here (the existing layers cover it).
+
+### Gates
+Kernel+Unit **3153 / 0** (8910 assert) (+3 CanvasShapes cells → 10 total) · Functional **76 / 0** · Vitest **724 / 1**
+(B-101; **no JS this pass** — detectors are server-side) · phpcs **0** · phpstan **0 new** · owned oracles
+**REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL · dist **UNCHANGED** (1.0.79).
+
+**STOP after gates — CHECKPOINT-2 filed. link → link + media renders; date-range/heading honestly deferred
+(sub-field infra); the `$ref`-at-render finding recorded. CP-ADOPT-8 is descriptor-complete for the shapes
+real libraries use (image/video/link + contentMediaType + enum + scalar-union). Next: CP-ADOPT-9.**
