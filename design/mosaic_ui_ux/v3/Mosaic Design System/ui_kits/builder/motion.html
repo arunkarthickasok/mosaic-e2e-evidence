@@ -1,0 +1,90 @@
+<!-- @dsCard group="Motion" viewport="1200x900" name="Motion spec (12)" subtitle="Lift, zone, drop, refused, insert, remove, shimmer, crossfade, toast, keyboard, first-run cue · reduced-motion" -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Mosaic — Motion spec</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+body{margin:0;background:var(--mos-surface-canvas);font:var(--mos-type-ui);color:var(--mos-text-default)}
+a{color:var(--mos-text-link)}a:hover{color:var(--mos-text-link-hover)}
+.wrap{max-width:1160px;margin:0 auto;padding:32px 24px 64px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.cell{background:var(--mos-surface-chrome);border:1px solid var(--mos-border-subtle);border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+.stage{height:150px;background:var(--mos-surface-canvas);position:relative;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--mos-border-subtle);overflow:hidden}
+.meta{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.name{display:flex;gap:8px;align-items:baseline;font:var(--mos-type-ui-strong);color:var(--mos-text-strong)}
+.spec{display:grid;grid-template-columns:86px 1fr;gap:3px 10px;font:var(--mos-type-help)}
+.spec dt{color:var(--mos-text-muted)}.spec dd{margin:0;font-family:var(--mos-font-mono);font-size:12px;color:var(--mos-text-default)}
+.blk{width:150px;padding:10px 12px;background:#fff;border:1px solid #d8dde6;border-radius:4px;font:600 13px Georgia,serif;color:#1b2a4a}
+.zone{width:220px;height:90px;border:1px dashed var(--mos-slot-line);border-radius:4px;position:relative}
+.zone i{position:absolute;top:6px;left:8px;font:500 12px var(--mos-font-mono);color:var(--mos-state-data-fg);font-style:normal}
+[data-play] .lift{animation:k-lift 2.4s var(--mos-ease-lift) infinite}
+@keyframes k-lift{0%,15%{transform:none;box-shadow:none}25%,70%{transform:scale(var(--mos-lift-scale)) translateY(-2px);box-shadow:var(--mos-lift-shadow)}85%,100%{transform:none;box-shadow:none}}
+[data-play] .hoverzone{animation:k-zone 2.4s var(--mos-ease-standard) infinite}
+@keyframes k-zone{0%,30%{border-style:dashed;background:transparent}34%,80%{border-style:solid;background:var(--mos-slot-fill)}84%,100%{border-style:dashed;background:transparent}}
+[data-play] .dropline{animation:k-line 2.4s var(--mos-ease-standard) infinite}
+@keyframes k-line{0%,34%{opacity:0;transform:scaleX(.6)}40%,80%{opacity:1;transform:none}86%,100%{opacity:0}}
+[data-play] .settle{animation:k-settle 2.4s var(--mos-ease-settle) infinite}
+@keyframes k-settle{0%{transform:translate(60px,-40px) scale(1.02);box-shadow:var(--mos-lift-shadow)}30%{transform:translate(60px,-40px) scale(1.02)}39%{transform:none;box-shadow:none}100%{transform:none}}
+[data-play] .refuse{animation:k-refuse 2.4s var(--mos-ease-settle) infinite}
+@keyframes k-refuse{0%,20%{transform:translate(0,0)}35%,55%{transform:translate(70px,0) rotate(-1.5deg)}65%,100%{transform:none}}
+[data-play] .refzone{animation:k-refzone 2.4s linear infinite}
+@keyframes k-refzone{0%,32%{border-color:var(--mos-slot-line);background:transparent;border-style:dashed}35%,56%{border-color:var(--mos-state-blocked-fg);background:var(--mos-state-blocked-bg);border-style:solid}62%,100%{border-color:var(--mos-slot-line);background:transparent;border-style:dashed}}
+[data-play] .reftip{animation:k-tip 2.4s linear infinite}
+@keyframes k-tip{0%,34%{opacity:0}38%,58%{opacity:1}64%,100%{opacity:0}}
+[data-play] .insert{animation:k-insert 2.4s var(--mos-ease-settle) infinite}
+@keyframes k-insert{0%,20%{opacity:0;transform:translateY(-4px);max-height:0}28%{max-height:60px}32%,100%{opacity:1;transform:none;max-height:60px}}
+[data-play] .remove{animation:k-remove 2.4s var(--mos-ease-exit) infinite}
+@keyframes k-remove{0%,30%{opacity:1;transform:none;max-height:60px;margin-bottom:8px}37%{opacity:0;transform:scale(.98)}46%,100%{opacity:0;max-height:0;margin-bottom:0}}
+.shim{position:relative;overflow:hidden}
+[data-play] .shim::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,var(--mos-stale-shimmer) 50%,transparent 70%);background-size:220% 100%;animation:mos-stale-shimmer var(--mos-dur-shimmer) var(--mos-ease-standard) infinite}
+[data-play] .xfade{animation:k-xf 2.4s var(--mos-ease-standard) infinite}
+@keyframes k-xf{0%,40%{opacity:.55}50%,100%{opacity:1}}
+[data-play] .toast{animation:k-toast 3s var(--mos-ease-entrance) infinite}
+@keyframes k-toast{0%,10%{opacity:0;transform:translateY(8px)}17%,80%{opacity:1;transform:none}88%,100%{opacity:0}}
+[data-play] .cuepulse{animation:mos-cue-pulse 1600ms var(--mos-ease-standard) infinite}
+[data-play] .kb{animation:k-kb 2.4s steps(1) infinite}
+@keyframes k-kb{0%{transform:translateY(0)}33%{transform:translateY(34px)}66%{transform:translateY(68px)}100%{transform:translateY(0)}}
+[data-reduced] *{animation:none!important;transition:none!important}
+.reduced-note{display:none}[data-reduced] .reduced-note{display:block}
+.tbl{width:100%;border-collapse:collapse;font:var(--mos-type-ui);background:var(--mos-surface-chrome);border:1px solid var(--mos-border-subtle);border-radius:8px;overflow:hidden}
+.tbl th{text-align:left;font:var(--mos-type-section-label);text-transform:uppercase;letter-spacing:.06em;color:var(--mos-text-muted);padding:9px 12px;border-bottom:1px solid var(--mos-border-default)}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--mos-border-subtle);vertical-align:top}
+.tbl td.m{font:var(--mos-type-mono)}
+</style></head>
+<body class="mosaic"><div class="wrap" id="w" data-play>
+<div class="top"><span style="font:600 22px/1.2 var(--mos-font-sans);color:var(--mos-text-strong);letter-spacing:-.01em">Motion spec</span><span class="mos-index">12 · CHOREOGRAPHY</span><span style="flex:1"></span>
+<div class="mos-seg" role="radiogroup" aria-label="Motion"><button class="mos-seg__opt" role="radio" aria-checked="true" id="bFull">Full motion</button><button class="mos-seg__opt" role="radio" aria-checked="false" id="bRed">Reduced motion</button></div>
+<a href="index.html">← UI kit</a></div>
+<p style="margin:0;max-width:760px;color:var(--mos-text-muted)">Motion only confirms cause and effect: where something came from, where it went, and whether the server has caught up. Nothing overshoots or springs, and nothing loops except the stale shimmer. Under <code>prefers-reduced-motion</code>, every duration token goes to 0 and each moment is shown by a static state change instead.</p>
+<div class="mos-banner mos-banner--info reduced-note" style="max-width:760px"><span></span><div class="mos-banner__body" style="grid-row:1">Reduced motion is on. Each cell shows the end state it snaps to; the "Reduced" line says what replaces the movement.</div></div>
+<div class="grid">
+<div class="cell"><div class="stage"><div class="blk lift">Card</div></div><div class="meta"><div class="name"><span class="mos-index">01</span>Drag lift</div><dl class="spec"><dt>Duration</dt><dd>140ms · --mos-dur-lift</dd><dt>Easing</dt><dd>lift (.2,.7,.3,1)</dd><dt>Change</dt><dd>scale 1.02, lift-shadow, opacity .96</dd><dt>Reduced</dt><dd>shadow only, no scale</dd></dl></div></div>
+<div class="cell"><div class="stage"><div class="zone hoverzone"><i>ZONE · FOOTER</i><div class="mos-drop-line dropline" style="position:absolute;left:12px;right:12px;top:48px;margin:0"></div></div></div><div class="meta"><div class="name"><span class="mos-index">02</span>Zone highlight + drop line</div><dl class="spec"><dt>Duration</dt><dd>100ms · --mos-dur-zone-highlight</dd><dt>Easing</dt><dd>standard</dd><dt>Change</dt><dd>dashed → solid, slot-fill; drop line fades in</dd><dt>Reduced</dt><dd>instant swap</dd></dl></div></div>
+<div class="cell"><div class="stage"><div class="zone" style="display:flex;align-items:center;justify-content:center"><i>ZONE</i><div class="blk settle" style="width:120px">Card</div></div></div><div class="meta"><div class="name"><span class="mos-index">03</span>Drop settle</div><dl class="spec"><dt>Duration</dt><dd>220ms · --mos-dur-settle</dd><dt>Easing</dt><dd>settle (.25,.9,.3,1)</dd><dt>Change</dt><dd>ghost → final slot, shadow off</dd><dt>Reduced</dt><dd>appears in place</dd></dl></div></div>
+<div class="cell"><div class="stage" style="justify-content:flex-start;padding-left:24px;gap:20px"><div class="blk refuse" style="width:90px;z-index:2">Hero</div><div class="zone refzone" style="width:160px"><i style="color:var(--mos-state-blocked-fg)">FOOTER</i></div><span class="mos-refused-tip reftip" style="position:absolute;bottom:14px;right:14px">Hero can't go in Footer</span></div><div class="meta"><div class="name"><span class="mos-index">04</span>Refused drop</div><dl class="spec"><dt>Duration</dt><dd>240ms snap-back · --mos-dur-refuse</dd><dt>Easing</dt><dd>settle</dd><dt>Change</dt><dd>zone turns red with reason; item returns to origin</dd><dt>Reduced</dt><dd>red zone + reason, item jumps back</dd></dl></div></div>
+<div class="cell"><div class="stage" style="flex-direction:column;gap:8px"><div class="blk" style="width:200px">Who is eligible?</div><div class="blk insert" style="width:200px;overflow:hidden;border-color:var(--mos-border-selected)">New item</div><div class="blk" style="width:200px">How do I apply?</div></div><div class="meta"><div class="name"><span class="mos-index">05</span>Insert</div><dl class="spec"><dt>Duration</dt><dd>200ms · --mos-dur-insert</dd><dt>Easing</dt><dd>settle</dd><dt>Change</dt><dd>height opens, item fades in from −4px</dd><dt>Reduced</dt><dd>appears; neighbours jump</dd></dl></div></div>
+<div class="cell"><div class="stage" style="flex-direction:column"><div class="blk" style="width:200px;margin-bottom:8px">Who is eligible?</div><div class="blk remove" style="width:200px;overflow:hidden">Removed item</div><div class="blk" style="width:200px">How do I apply?</div></div><div class="meta"><div class="name"><span class="mos-index">06</span>Remove</div><dl class="spec"><dt>Duration</dt><dd>160ms · --mos-dur-remove</dd><dt>Easing</dt><dd>exit (.4,0,1,1)</dd><dt>Change</dt><dd>fade + scale .98, then close gap</dd><dt>Reduced</dt><dd>gone; Undo toast confirms</dd></dl></div></div>
+<div class="cell"><div class="stage"><div class="blk shim" style="width:220px;height:84px">Road Safety 2026<div style="font:13px Georgia;font-weight:400;margin-top:6px;color:#5b6477">Preview refreshing…</div></div></div><div class="meta"><div class="name"><span class="mos-index">07</span>Stale shimmer</div><dl class="spec"><dt>Duration</dt><dd>1400ms loop · --mos-dur-shimmer</dd><dt>Easing</dt><dd>standard</dd><dt>Change</dt><dd>12% teal sweep while server renders; edits stay live</dd><dt>Reduced</dt><dd>static 6% tint + “Refreshing preview…” status</dd></dl></div></div>
+<div class="cell"><div class="stage"><div class="blk xfade" style="width:220px;height:84px">Road Safety 2026<div style="font:13px Georgia;font-weight:400;margin-top:6px;color:#5b6477">Fresh server render</div></div></div><div class="meta"><div class="name"><span class="mos-index">08</span>Refresh crossfade</div><dl class="spec"><dt>Duration</dt><dd>240ms · --mos-dur-crossfade</dd><dt>Easing</dt><dd>standard</dd><dt>Change</dt><dd>opacity .55 → 1 as the new render swaps in</dd><dt>Reduced</dt><dd>instant swap</dd></dl></div></div>
+<div class="cell"><div class="stage"><div class="mos-toast toast" style="animation-duration:3s">Placed inside a new <strong>Section</strong><button class="mos-toast__action">Undo</button></div></div><div class="meta"><div class="name"><span class="mos-index">09</span>Toast</div><dl class="spec"><dt>Duration</dt><dd>200ms in · hold 5000ms · 160ms out</dd><dt>Easing</dt><dd>entrance / exit</dd><dt>Change</dt><dd>rise 8px + fade; pauses on hover/focus</dd><dt>Reduced</dt><dd>appears/disappears; same hold</dd></dl></div></div>
+<div class="cell"><div class="stage" style="align-items:flex-start;padding-top:12px"><div style="position:relative;width:200px"><div class="blk" style="margin-bottom:8px;opacity:.5">Item 1</div><div class="blk" style="margin-bottom:8px;opacity:.5">Item 2</div><div class="blk" style="opacity:.5">Item 3</div><div class="blk kb" style="position:absolute;top:0;left:0;right:0;outline:2px solid var(--mos-keyboard-line);outline-offset:2px">Moving Card</div></div></div><div class="meta"><div class="name"><span class="mos-index">10</span>Keyboard move</div><dl class="spec"><dt>Duration</dt><dd>0 — discrete steps</dd><dt>Easing</dt><dd>—</dd><dt>Change</dt><dd>one position per keypress; live region announces position</dd><dt>Reduced</dt><dd>identical (already motionless)</dd></dl></div></div>
+<div class="cell"><div class="stage" style="justify-content:flex-start;padding-left:40px"><div style="position:relative;display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid var(--mos-border-subtle);border-radius:6px;background:var(--mos-surface-chrome)"><button class="mos-btn mos-btn--ghost mos-iconbtn mos-cue cuepulse" aria-label="Components" style="pointer-events:none"><span class="mos-icon" style="width:16px;height:16px;-webkit-mask-image:url(https://unpkg.com/lucide-static@0.460.0/icons/blocks.svg);mask-image:url(https://unpkg.com/lucide-static@0.460.0/icons/blocks.svg)"></span><span class="mos-cue-label cuelabel" style="font-size:12px"><b>Components</b><span>Drag one onto the page to start.</span></span></button><span style="width:32px;height:32px"></span><span style="width:32px;height:32px"></span></div></div><div class="meta"><div class="name"><span class="mos-index">11</span>Palette first-run cue</div><dl class="spec"><dt>Duration</dt><dd>1600ms × 3 pulses · --mos-dur-cue; label 200ms in</dd><dt>Easing</dt><dd>standard / entrance</dd><dt>Change</dt><dd>teal ring pulses 0→8px, then a static 2px ring + label; both removed after the first drop and never shown again</dd><dt>Reduced</dt><dd>static ring + label, no pulse</dd></dl></div></div>
+</div>
+<table class="tbl"><thead><tr><th>Token</th><th>Value</th><th>Reduced</th><th>Used by</th></tr></thead><tbody>
+<tr><td class="m">--mos-dur-instant</td><td class="m">80ms</td><td class="m">0</td><td>Pressed states</td></tr>
+<tr><td class="m">--mos-dur-fast</td><td class="m">120ms</td><td class="m">0</td><td>Control hover/focus colour</td></tr>
+<tr><td class="m">--mos-dur-base</td><td class="m">180ms</td><td class="m">0</td><td>Dialog/picker entrance, section chevron</td></tr>
+<tr><td class="m">--mos-dur-slow</td><td class="m">260ms</td><td class="m">0</td><td>Tablet/mobile sheets</td></tr>
+<tr><td class="m">--mos-ease-standard</td><td class="m">cubic-bezier(.2,0,.2,1)</td><td>—</td><td>Default</td></tr>
+<tr><td class="m">--mos-ease-entrance</td><td class="m">cubic-bezier(0,0,.2,1)</td><td>—</td><td>Things arriving</td></tr>
+<tr><td class="m">--mos-ease-exit</td><td class="m">cubic-bezier(.4,0,1,1)</td><td>—</td><td>Things leaving</td></tr>
+<tr><td class="m">--mos-dur-cue</td><td class="m">1600ms × 3</td><td class="m">0</td><td>Palette first-run cue</td></tr>
+<tr><td class="m">--mos-lift-scale</td><td class="m">1.02</td><td class="m">1</td><td>Drag lift</td></tr>
+</tbody></table>
+</div>
+<script>
+const w=document.getElementById('w'),f=document.getElementById('bFull'),r=document.getElementById('bRed');
+const set=red=>{if(red){w.removeAttribute('data-play');w.setAttribute('data-reduced','')}else{w.setAttribute('data-play','');w.removeAttribute('data-reduced')}f.setAttribute('aria-checked',!red);r.setAttribute('aria-checked',red);try{localStorage.setItem('mos-motion-red',red?'1':'0')}catch(e){}};
+f.onclick=()=>set(false);r.onclick=()=>set(true);
+set(matchMedia('(prefers-reduced-motion: reduce)').matches||localStorage.getItem('mos-motion-red')==='1');
+</script>
+</body></html>

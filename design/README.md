@@ -51,3 +51,25 @@ binding/drift/breakpoint/data-state cluster (`Rail.jsx`/`data.js`) are designed 
 - **Component cards:** `components/{core,navigation,feedback,surfaces,builder}/*.card.html`.
 - **Builder UI kit:** `ui_kits/builder/index.html` + `motion.html`.
 - **Authoring UI kit:** `Mosaic Authoring UI Kit.html`.
+
+---
+
+## v3 — received 2026-09-30 · status: UNDER REVIEW
+`design/mosaic_ui_ux/v3/` — Arun's third design pass. **152 files, 6.5 MB, no node_modules / build dirs,
+secret-guard clean, no library named** (grep = 0). Committed under Arun's personal identity.
+
+**Adds (v3 remit):** the admin surfaces — `ui_kits/builder/Admin{Authoring,Libraries,Reports,Settings}.jsx`
+— and **`RailStates.jsx`** (rail states); a v3 authoring kit (`Mosaic Authoring UI Kit v3.html`);
+**self-hosted fonts** (`assets/fonts/ibm-plex-{sans,mono}-*.woff2`); `guidelines/contrast-audit.{md,json}`
++ `guidelines/decisions-log.md` (D13–D22).
+
+**Mechanical checks (raw):** (a) 12 px floor — **v3 sources 0 offenders** (token scale xs = 12 px); 4
+sub-12px (10.5/11px) remain ONLY in the carried-over v2 `Mosaic Authoring UI Kit.html`. (b) self-hosted
+fonts — **0** remote refs (googleapis/gstatic), `@font-face` → local `../assets/fonts/*.woff2`. (c) index
+rule — `mos-index` ×3, all on rail-section CHROME (Content/Data/A11y); none on content fields / library
+markup; compact + comfortable density present. (d) palette first-run cue — present (`App.jsx`/`Builder.jsx`,
+"first-run cue ring"). (e) contrast audit — **152 pairs · 0 failures** (WCAG 2.2 4.5:1, after the 12 px
+floor). (f) motion — `motion.html` + `motion-{durations,easing}.card.html` present.
+
+**Status: UNDER REVIEW** — a reviewer audit follows; the coverage matrix re-run is in
+`reports/DESIGN-COVERAGE.md`.
