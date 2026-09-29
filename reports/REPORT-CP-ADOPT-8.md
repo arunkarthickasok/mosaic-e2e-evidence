@@ -158,3 +158,67 @@ resolver (disk lookup, merge, core-defer). 3. `$ref` → descriptor wiring + Att
   «ext-canvas» card `$ref` — all quoted above, verified this pass.
 - Canvas well-known shapes + core-11.3 `$ref` resolution: **convention/issue, NOT disk-verified here**
   (Canvas absent) — flagged for build-time confirmation.
+
+---
+
+## CHECKPOINT-1 (P2 BUILD) — resolver + bundled shapes + shape table (image/video) + re-grade
+
+Built + verified (report-only pass promoted to code in the Mosaic tree; Arun commits — I commit only
+evidence; Canvas NEVER enabled; «ext-canvas» read from disk only).
+
+### Built
+- **`config/schema/mosaic.canvas-shapes.json`** — bundled snapshot of the well-known shapes (image,
+  video, link, date-range, heading, icon), each marked **convention-derived** (Canvas not on disk;
+  confirm-at-build); image = `{src, alt, width, height}`.
+- **`src/Sdc/MosaicSchemaRefResolver.php`** (service `mosaic.schema_ref_resolver`) — resolves
+  `json-schema-definitions://<ext>/<def>`: locate the extension on disk via the module/theme/profile
+  extension lists (enabled OR not) → read its `schema.json` `$defs`/`definitions`; **bundled fallback** for
+  `canvas.module/*`; **merge** the shape into the prop (prop's own title/default win); **defer** when the
+  ref is already resolved or is a plain local `#/$defs/…` ref (no double-resolution); **unresolvable → keep
+  renderable via the `type` fallback + stamp `_mosaic_unresolved_ref` = the exact URI**.
+- **Wired** into `MosaicPropShapeRegistry::describe` (resolve → classify) + `rawReason` names the exact
+  unresolved URI (Attention).
+- **Scalar-union refinement** in `PropShape::unwrapNullable` — a union of ONLY scalars
+  (`string|integer|number|boolean`) collapses to `string` (a text field holds any scalar); a union with
+  object/array stays raw. (This, not the shape work, is what took «ext» from 39→47 Ready — see re-grade.)
+
+### Proven (Kernel `CanvasShapesTest`, 7 cells + `PropShapeTest` updated)
+- `canvas.module/image` resolves from the **bundled** fallback → `{src,…}`.
+- A **module-local** `$ref` (`adopt_fixture.module/local_media`) resolves from that module's **on-disk
+  `schema.json`**.
+- **Unknown** ext/def → `resolveUri` NULL + `resolve()` stamps `_mosaic_unresolved_ref` (Attention, not silent).
+- **Defer:** an already-resolved schema + a plain local `$ref` are returned unchanged.
+- **Merge:** the prop's `title`/`default` win over the resolved shape.
+- **image → MEDIA** and the module-local media shape → MEDIA (registry `describe`).
+- Fixture **`adopt_fixture:adopt_shaped`** (image + thumbnail shape-refs + heading) grades with **no raw
+  props**.
+- `PropShapeTest`: the "genuine multi-type union stays raw" oracle updated — a **scalar-only** union → TEXT
+  (new cell), a **structural** union (with object) → RAW (new cell).
+
+### RE-GRADE (live, quoted)
+- **«ext» base: 47 / 47 Ready** (was 39/47 before the scalar-union refinement — the 8 form components'
+  `value: [string,integer,number,null]` props now → text). No Canvas dependency.
+- **«ext-canvas» card `image`** (parsed from disk, module NEVER enabled) → **media** — the `$ref` was
+  `json-schema-definitions://canvas.module/image`, resolved via the bundled fallback. (Witnessed by a
+  throwaway disk probe; NOT baked into a committed test — a generic contrib module must not name a specific
+  external library. The identical `canvas.module/image` case is covered generically by the fixture.)
+
+### HONEST — shape → descriptor coverage this checkpoint
+Delivered: **image → media, video → media** (both resolve to objects with `src`, caught by the existing
+`looksLikeMedia`), **icon (string) → text**, **scalar-union → text**, **contentMediaType/enum** already
+handled. **NOT yet delivered:** **link → link, date-range → dates, heading → text** — their resolved
+objects (`{uri,title}`, `{start,end}`, `{text,level}`) currently fall to **RAW/Attention** because
+`classify` has no object-shape detector for them (only media). That is safe (Attention names the shape,
+never a crash) and is **CHECKPOINT-2** (object-shape detectors: `looksLikeLink`, `looksLikeDateRange`,
+`looksLikeHeading`). No real adopted library in hand uses those shapes yet (only `…/image` appears).
+
+### Gates
+Kernel+Unit **3150 / 0** (8900 assert) (+7 CanvasShapesTest, PropShapeTest updated) · Functional **76 / 0** · Vitest
+**724 / 1** (B-101; **no JS this pass**) · phpcs **0** · phpstan **0 new** · owned oracles **REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10** IDENTICAL (the resolver + scalar-union touch the PANEL, not
+render) · dist **UNCHANGED** (1.0.79; **no adapter/JS change** — resolution is server-side). Ship count
+becomes #48's.
+
+**STOP after gates — CHECKPOINT-1 filed. The resolver + bundled shapes + image/video→media + scalar-union→
+text land «ext» at 47/47; «ext-canvas» image → media without Canvas. Object-shape detectors (link/
+date-range/heading) = CHECKPOINT-2. Next charter item: CP-ADOPT-9 P0 (Manage-authoring blueprint).**
