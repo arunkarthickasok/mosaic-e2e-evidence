@@ -1,0 +1,14 @@
+:root{
+--mos-shadow-xs:0 1px 1px rgba(23,27,32,.04);
+--mos-shadow-sm:0 1px 2px rgba(23,27,32,.06),0 1px 1px rgba(23,27,32,.04);
+--mos-shadow-md:0 2px 4px -1px rgba(23,27,32,.08),0 4px 12px -2px rgba(23,27,32,.08);
+--mos-shadow-lg:0 8px 24px -4px rgba(23,27,32,.12),0 2px 6px -2px rgba(23,27,32,.08);
+--mos-shadow-dialog:0 16px 48px -8px rgba(23,27,32,.24);
+--mos-shadow-inset:inset 0 1px 1px rgba(23,27,32,.05)}
+[data-mosaic-theme="dark"]{
+--mos-shadow-xs:0 1px 1px rgba(0,0,0,.30);
+--mos-shadow-sm:0 1px 2px rgba(0,0,0,.36),0 1px 1px rgba(0,0,0,.24);
+--mos-shadow-md:0 2px 4px -1px rgba(0,0,0,.40),0 4px 12px -2px rgba(0,0,0,.36);
+--mos-shadow-lg:0 8px 24px -4px rgba(0,0,0,.48),0 2px 6px -2px rgba(0,0,0,.36);
+--mos-shadow-dialog:0 16px 48px -8px rgba(0,0,0,.60);
+--mos-shadow-inset:inset 0 1px 1px rgba(0,0,0,.30)}

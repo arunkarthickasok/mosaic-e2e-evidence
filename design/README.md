@@ -92,3 +92,25 @@ as the reference for these surfaces. The coverage matrix is in `reports/DESIGN-C
 3. Thumbnail slot with icon fallback.
 4. Dark follows the admin theme's mode + a manual override.
 5. Focus-mode affordance + hover labels on the palette strip.
+
+---
+
+## v4.1 — FROZEN 2026-10-01 · the ACT 2 source of truth
+`design/mosaic_ui_ux/v4.1/` — Arun's frozen design pass. **157 files** committed (the 3.2 MB
+`Mosaic Design System.zip` and `.DS_Store` excluded via `.gitignore`; **no node_modules / build dirs**,
+secret-guard clean — the README prose "secret-guard clean" is a known false positive — **no library named**,
+naming grep = 0). Committed under Arun's personal identity.
+
+**Status: FROZEN — the ACT 2 source of truth.** v4.1 **supersedes v3** for the five v4 polish items plus
+decisions **D46/D47**; **the v3 `RENDERS/` album remains the reference renders**. ACT 2 builds against v4.1
+and there are **no further design passes**.
+
+**Polish landed (decisions-log D40–D47):**
+1. **D40** — palette **240px**, one-line library headers (index · name · count, note truncates with tooltip).
+2. **D46** — top-edge chrome / toolbar-flip rule (toolbar outside above top-right, index tab bottom-left,
+   EXAMPLE badge inside top-right, no overlap).
+3. **D42** — palette **thumbnail slot** (40×28 library art) with **icon fallback**.
+4. **D47** — **Auto / Light / Dark** colour-mode override in the builder top bar (dark follows the admin
+   theme's mode, with a manual override; on mobile it moves into the ⋯ menu).
+5. **D44 / D45** — **focus-mode** affordance (labelled until first use) + **hover/focus labels** on the
+   48px palette strip.

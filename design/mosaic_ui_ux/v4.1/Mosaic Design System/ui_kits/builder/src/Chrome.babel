@@ -1,0 +1,87 @@
+// Drupal admin chrome — the SITE's theme, deliberately not Mosaic. Three themes prove Mosaic doesn't read them.
+const ADMIN_THEMES = {
+  claro: { font: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif', bg: '#fff', head: '#f3f4f9', ink: '#232429', muted: '#545560', primary: '#003ecc', border: '#8e929c', line: '#dedfe4', title: '700 32px/1.25', radius: 2, input: '1px solid #8e929c', field: '#fff', sideActive: '#e8efff' },
+  gin: { font: 'Inter,system-ui,-apple-system,"Segoe UI",sans-serif', bg: '#f6f7f9', head: '#f6f7f9', ink: '#222330', muted: '#5b5d6b', primary: '#0550e6', border: '#c3c5cf', line: '#e3e4ea', title: '600 28px/1.2', radius: 8, input: '1px solid #c3c5cf', field: '#fff', sideActive: '#e8efff' },
+  'gin-dark': { font: 'Inter,system-ui,-apple-system,"Segoe UI",sans-serif', bg: '#18191b', head: '#18191b', ink: '#e7e8eb', muted: '#a4a6ae', primary: '#7aa2ff', border: '#4b4d55', line: '#303238', title: '600 28px/1.2', radius: 8, input: '1px solid #4b4d55', field: '#232428', sideActive: '#23304d', dark: true },
+  custom: { font: 'Verdana,Geneva,sans-serif', bg: '#fbfaf6', head: '#12263f', ink: '#1d1d1b', muted: '#5a5a55', primary: '#9a6b00', border: '#8a8577', line: '#e2ded2', title: '400 30px/1.2 Georgia,serif', radius: 0, input: '2px solid #8a8577', field: '#fff', sideActive: '#efe9d8' }
+};
+
+function AdminBtn({ t, kind = 'primary', children, onClick }) {
+  const s = kind === 'primary' ? { background: t.primary, color: '#fff', border: '1px solid ' + t.primary } : kind === 'danger' ? { background: 'none', color: '#d72222', border: '1px solid transparent' } : { background: t.line, color: t.ink, border: '1px solid ' + t.line };
+  return <button onClick={onClick} style={{ ...s, font: '600 15px/1 ' + t.font, padding: '12px 20px', borderRadius: t.radius, cursor: 'pointer' }}>{children}</button>;
+}
+
+function AdminTop({ admin, t, vp }) {
+  const mob = vp === 'mobile';
+  if (admin.startsWith('gin')) return null;
+  if (admin === 'custom') return <div style={{ background: t.head, color: '#fff', height: 52, display: 'flex', alignItems: 'center', gap: 20, padding: '0 20px', borderBottom: '3px solid #c9a227', flex: 'none' }}><span style={{ font: '700 16px Georgia,serif', letterSpacing: '.02em' }}>Transport Agency CMS</span>{!mob && ['Content', 'Structure', 'People', 'Reports'].map(x => <span key={x} style={{ font: '13px ' + t.font, opacity: .85 }}>{x}</span>)}<span style={{ marginLeft: 'auto', font: '13px ' + t.font, opacity: .85 }}>j.harlow</span></div>;
+  return <div style={{ flex: 'none' }}>
+    <div style={{ background: '#0f0f0f', color: '#fff', height: 38, display: 'flex', alignItems: 'center', font: '600 13px ' + t.font }}><span style={{ background: t.field, color: '#0f0f0f', height: '100%', display: 'flex', alignItems: 'center', padding: '0 14px' }}>☰ Manage</span>{!mob && <span style={{ padding: '0 14px' }}>★ Shortcuts</span>}<span style={{ padding: '0 14px' }}>admin</span><span style={{ marginLeft: 'auto', padding: '0 14px' }}>Edit</span></div>
+    {!mob && <div style={{ height: 38, borderBottom: '1px solid #d3d4d9', display: 'flex', alignItems: 'center', font: '13px ' + t.font, color: '#333', boxShadow: '0 1px 2px rgba(0,0,0,.08)' }}>{['Content', 'Structure', 'Appearance', 'Extend', 'Configuration', 'People', 'Reports', 'Help'].map(x => <span key={x} style={{ padding: '0 14px', borderRight: '1px solid #e6e6e6' }}>{x}</span>)}</div>}
+  </div>;
+}
+
+function GinSide({ t }) {
+  return <div style={{ width: 220, flex: 'none', background: t.field, borderRight: '1px solid ' + t.line, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4, font: '500 14px ' + t.font, color: t.muted }}>
+    <div style={{ font: '700 16px ' + t.font, color: t.ink, padding: '4px 10px 16px' }}>Drupal</div>
+    {['Content', 'Structure', 'Appearance', 'Extend', 'Configuration', 'People', 'Reports'].map((x, i) => <div key={x} style={{ padding: '9px 10px', borderRadius: 8, background: i === 0 ? t.sideActive : 'none', color: i === 0 ? t.primary : t.muted }}>{x}</div>)}
+  </div>;
+}
+
+function DrupalShell({ admin = 'claro', vp, pageTitle, crumbs = ['Home', 'Content'], tabs, sidebar, children, footer, sticky }) {
+  const t = ADMIN_THEMES[admin];
+  const mob = vp === 'mobile', tab = vp === 'tablet';
+  const pad = mob ? 16 : tab ? 24 : 48;
+  const stacked = mob || tab;
+  const gin = admin.startsWith('gin');
+  const header = <div style={{ background: t.head, padding: (mob ? 16 : 24) + 'px ' + pad + 'px 0', color: admin === 'custom' ? t.ink : t.ink, borderBottom: '1px solid ' + t.line, ...(admin === 'custom' ? { background: '#f1eee4' } : {}), ...(gin ? { position: 'sticky', top: 0, zIndex: 5, background: t.head, display: 'flex', alignItems: 'flex-end', gap: 16, paddingBottom: 12 } : {}) }}>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ font: '600 12px ' + t.font, color: t.muted, marginBottom: 8 }}>{crumbs.join('  ›  ')}</div>
+      <div style={{ font: t.title + (admin === 'custom' ? '' : ' ' + t.font), fontSize: mob ? 22 : undefined, color: t.ink, marginBottom: tabs ? 12 : 20 }}>{pageTitle}</div>
+      {tabs && <div style={{ display: 'flex', gap: 4 }}>{tabs.map((x, i) => <span key={x} style={{ font: '600 14px ' + t.font, padding: '10px 14px', color: i === 1 ? t.primary : t.muted, borderBottom: i === 1 ? '3px solid ' + t.primary : '3px solid transparent' }}>{x}</span>)}</div>}
+    </div>
+    {gin && sticky && <div style={{ display: 'flex', gap: 8, paddingBottom: 8 }}>{sticky}</div>}
+  </div>;
+  const body = <div style={{ padding: (mob ? 16 : 28) + 'px ' + pad + 'px 40px', display: 'flex', flexDirection: stacked ? 'column' : 'row', gap: stacked ? 20 : 32, alignItems: 'flex-start' }}>
+    <div style={{ flex: 1, minWidth: 0, width: stacked ? '100%' : undefined }}>{children}{footer && <div style={{ display: 'flex', gap: 12, marginTop: 28, alignItems: 'center', flexWrap: 'wrap' }}>{footer(t)}</div>}</div>
+    {sidebar && <div style={{ width: stacked ? '100%' : 300, flex: 'none', background: gin ? t.field : t.bg, border: '1px solid ' + t.line, borderRadius: gin ? 8 : 0, padding: 20, font: '14px/1.5 ' + t.font, color: t.ink }}>{sidebar(t)}</div>}
+  </div>;
+  return <div style={{ font: '14px/1.5 ' + t.font, color: t.ink, background: t.bg, colorScheme: t.dark ? 'dark' : 'light', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+    <AdminTop admin={admin} t={t} vp={vp} />
+    <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+      {gin && !stacked && <GinSide t={t} />}
+      <div style={{ flex: 1, minWidth: 0 }}>{header}{body}</div>
+    </div>
+  </div>;
+}
+
+function NodeSidebar(t) {
+  return <>
+    <div style={{ font: '700 18px ' + t.font, marginBottom: 8 }}>Published</div>
+    <div><b>Last saved:</b> 27 Sep 2026 – 16:42</div>
+    <div style={{ marginBottom: 14 }}><b>Author:</b> j.harlow</div>
+    <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}><input type="checkbox" defaultChecked /> Create new revision</label>
+    <div style={{ font: '600 13px ' + t.font, marginBottom: 4 }}>Revision log message</div>
+    <div style={{ height: 64, border: t.input, borderRadius: t.radius, background: t.field }} />
+    {['Menu settings', 'URL alias', 'Authoring information'].map(x => <div key={x} style={{ borderTop: '1px solid ' + t.line, marginTop: 14, paddingTop: 12, font: '600 14px ' + t.font }}>› {x}</div>)}
+  </>;
+}
+
+function NodeForm({ admin, vp, children, onSave, title = 'Federal Highway Safety Standards 2026' }) {
+  const t = ADMIN_THEMES[admin];
+  const actions = t2 => <><AdminBtn t={t2} onClick={onSave}>Save</AdminBtn><AdminBtn t={t2} kind="secondary">Preview</AdminBtn><AdminBtn t={t2} kind="danger">Delete</AdminBtn></>;
+  return <DrupalShell admin={admin} vp={vp} pageTitle={<><i style={{ fontWeight: 400 }}>Edit Basic page</i> {title}</>} crumbs={['Home', title]} tabs={['View', 'Edit', 'Delete', 'Revisions']} sidebar={NodeSidebar} footer={admin === 'gin' ? null : actions} sticky={actions(t)}>
+    <div style={{ marginBottom: 20, maxWidth: 560 }}>
+      <div style={{ font: '600 14px ' + t.font, marginBottom: 6 }}>Title <span style={{ color: '#d72222' }}>*</span></div>
+      <div style={{ border: t.input, borderRadius: t.radius, padding: '10px 12px', background: t.field }}>{title}</div>
+    </div>
+    <div style={{ font: '600 14px ' + t.font, marginBottom: 6 }}>Layout</div>
+    {children}
+    <div style={{ marginTop: 24 }}>
+      <div style={{ font: '600 14px ' + t.font, marginBottom: 6 }}>Summary</div>
+      <div style={{ border: t.input, borderRadius: t.radius, background: t.field }}><div style={{ borderBottom: '1px solid ' + t.line, padding: '8px 10px', font: '600 13px ' + t.font, color: t.muted, display: 'flex', gap: 14 }}><b>B</b><i>I</i><span>Link</span><span>Paragraph ▾</span></div><div style={{ padding: 12, color: t.muted, minHeight: 56 }}>Standards, guidance and funding for state DOTs.</div></div>
+    </div>
+  </DrupalShell>;
+}
+
+Object.assign(window, { ADMIN_THEMES, DrupalShell, NodeForm, AdminBtn });

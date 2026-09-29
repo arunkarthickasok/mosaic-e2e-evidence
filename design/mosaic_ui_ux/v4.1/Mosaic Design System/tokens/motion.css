@@ -1,0 +1,14 @@
+:root{
+--mos-dur-instant:80ms/* @kind other */;--mos-dur-fast:120ms/* @kind other */;--mos-dur-base:180ms/* @kind other */;--mos-dur-slow:260ms/* @kind other */;--mos-dur-shimmer:1400ms/* @kind other */;
+--mos-dur-lift:140ms/* @kind other */;--mos-dur-settle:220ms/* @kind other */;--mos-dur-refuse:240ms/* @kind other */;--mos-dur-insert:200ms/* @kind other */;--mos-dur-remove:160ms/* @kind other */;--mos-dur-crossfade:240ms/* @kind other */;--mos-dur-toast-in:200ms/* @kind other */;--mos-dur-toast-hold:5000ms/* @kind other */;--mos-dur-zone-highlight:100ms/* @kind other */;--mos-dur-cue:1600ms/* @kind other */;
+--mos-ease-standard:cubic-bezier(.2,0,.2,1)/* @kind other */;--mos-ease-entrance:cubic-bezier(0,0,.2,1)/* @kind other */;--mos-ease-exit:cubic-bezier(.4,0,1,1)/* @kind other */;--mos-ease-lift:cubic-bezier(.2,.7,.3,1)/* @kind other */;--mos-ease-settle:cubic-bezier(.25,.9,.3,1)/* @kind other */;
+--mos-lift-scale:1.02/* @kind other */;--mos-lift-shadow:0 12px 28px -6px rgba(23,27,32,.22),0 2px 6px -2px rgba(23,27,32,.12);
+--mos-transition-control:background-color var(--mos-dur-fast) var(--mos-ease-standard),border-color var(--mos-dur-fast) var(--mos-ease-standard),box-shadow var(--mos-dur-fast) var(--mos-ease-standard),color var(--mos-dur-fast) var(--mos-ease-standard)}
+@media (prefers-reduced-motion:reduce){:root{--mos-dur-instant:0ms/* @kind other */;--mos-dur-fast:0ms/* @kind other */;--mos-dur-base:0ms/* @kind other */;--mos-dur-slow:0ms/* @kind other */;--mos-dur-shimmer:0ms/* @kind other */;--mos-dur-lift:0ms/* @kind other */;--mos-dur-settle:0ms/* @kind other */;--mos-dur-refuse:0ms/* @kind other */;--mos-dur-insert:0ms/* @kind other */;--mos-dur-remove:0ms/* @kind other */;--mos-dur-crossfade:0ms/* @kind other */;--mos-dur-toast-in:0ms/* @kind other */;--mos-dur-zone-highlight:0ms/* @kind other */;--mos-dur-cue:0ms/* @kind other */;--mos-lift-scale:1/* @kind other */}}
+@keyframes mos-stale-shimmer{0%{background-position:-160% 0}100%{background-position:260% 0}}
+@keyframes mos-insert{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes mos-remove{from{opacity:1}to{opacity:0;transform:scale(.98)}}
+@keyframes mos-refuse{0%{transform:translate(var(--mos-refuse-x,0),var(--mos-refuse-y,0))}100%{transform:none}}
+@keyframes mos-crossfade{from{opacity:.55}to{opacity:1}}
+@keyframes mos-toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes mos-cue-pulse{0%{box-shadow:0 0 0 0 var(--mos-accent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}

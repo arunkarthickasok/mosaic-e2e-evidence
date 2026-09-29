@@ -74,9 +74,10 @@ rule-breaking drops (Save stops) vs the current native refusal.
 - **Zone-label consistency** — slot/zone labels consistent across canvas, panel, picker.
 - **Design decision 6 ruling** — Arun rules accept-and-mark vs native refusal (moved from
   candidate to a required ACT-2 ruling).
-- **design v2 due 2026-11-24 (Arun delegated ruling 2026-09-24)** — the refined design-system v2
-  (source of truth) is owed from Arun by **2026-11-24**. **ACT 2 starts 2026-12-01 from v2 only**; if
-  v2 slips, the **tag slips day-for-day**.
+- **design FROZEN v4.1 2026-10-01** — the design system is **FROZEN at v4.1** (`design/mosaic_ui_ux/v4.1/`),
+  the ACT 2 source of truth (supersedes v3 for the five polish items + D46/D47; v3 RENDERS remain the
+  reference album). Reviewer passed v3 for all screens (2026-10-01) and v4.1 froze the polish the same day —
+  well ahead of the original 2026-11-24 due date. **ACT 2 builds against v4.1**; no further design passes.
 
 ## §7 — Release
 Dev push → Arun soak → truth pass (bible, MOSAIC.md, docs, headline verified by
@@ -145,7 +146,7 @@ MOSAIC-BIBLE.md P2 (positioning) and P4 (roadmap), and the submodule policy in R
 4. **WAVE G** = the six kept modules walked green **+ CP-DATA-FABRIC** (component index + `hook_views_data`)
    **+ moderation live walk**. `mosaic_search`'s Search-API bridge → **ROADMAP 1.1**.
 
-5. **ACT 2** = builder + FE dialog + libraries/authoring pages against **design v2** (due **2026-11-24**);
+5. **ACT 2** = builder + FE dialog + libraries/authoring pages against **design FROZEN v4.1** (2026-10-01);
    remaining admin polish → **1.1**.
 
 6. **Timeline of record:** tag **late January 2027**, soak week fixed.

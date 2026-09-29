@@ -1,0 +1,147 @@
+const MX = window.MosaicDesignSystem_9c1bff;
+const SIZES = { desktop: [1440, 1000], tablet: [834, 1112], mobile: [390, 844] };
+const ACC0 = [{ id: 'a', summary: 'Who is eligible?', meta: 'Accordion item · 1 paragraph' }, { id: 'b', summary: 'How do I apply?', meta: 'Accordion item · empty' }];
+
+const GROUPS = [
+  { g: 'Builder', items: [
+    { id: 'builder', n: '01', t: 'Builder in the node form', states: [['above', 'Toolbar above'], ['below', 'Toolbar below · first on canvas'], ['menu', 'Mobile “more” menu']], why: 'The builder is one field in the Drupal form, so the palette folds to a 48px strip and the canvas gets the width. The rail shows only the sections a Civic UI Card can use, under the line saying who owns its styling. When there is no room above, or the toolbar would cover another index tab, it flips below the frame and the tab moves to the top-left. Colour mode sits next to the viewport switch; on mobile both move into the “more” menu.' },
+    { id: 'fe', n: '02', t: 'Front-end edit dialog', why: 'The same RailCard as screen 1, docked beside the live page. It is non-modal, so the page stays readable; on mobile it becomes the bottom sheet.' },
+    { id: 'accordion', n: '03', t: 'Accordion · repeater', why: 'A single-child slot becomes a repeater list in the rail. Rows are not numbered (index rule), and reorder works by drag or keyboard. A min/max banner appears only when a rule is broken.' },
+    { id: 'bound', n: '04', t: 'Columns bound to a View', states: [['pop', 'Populated'], ['one', 'One item'], ['empty', 'Empty'], ['fail', 'Failing']], why: 'Indigo is used only for data. The result line under the area and the Data-state switcher let authors check the empty and failing cases before visitors see them.' },
+    { id: 'palette', n: '05', t: 'Palette', states: [['full', 'All libraries'], ['empty', 'No results']], why: 'Grouped by library, then category, with Patterns last in each library. DATA and Attention badges appear only where they are true, and Attention always states its reason.' },
+    { id: 'canvas', n: '06', t: 'Canvas states', states: [['all', 'Zone, picker, refused, toast'], ['empty', 'Empty canvas · first run']], why: 'Inline controls instead of overlays. On first run the 48px strip pulses three times with a “Components” label; it goes away after the first drop and never comes back.' },
+    { id: 'missing', n: '09', t: 'Library missing', states: [['visitor', 'Visitor'], ['editor', 'Editor'], ['builder', 'Builder']], why: 'Never a blank page. Visitors see the page without the component. Editors see a small notice. The builder keeps every value and binding, read-only.' },
+    { id: 'errors', n: '10', t: 'Save errors · sync', states: [['errors', 'Save error'], ['unsaved', 'Unsaved'], ['revert', 'Revert'], ['synced', 'In sync']], why: 'Errors use the product’s exact copy, one fix per line. Save moves focus to the alt-text field. Plain content left on the page is outlined where it sits.' },
+    { id: 'keyboard', n: '11', t: 'Keyboard move · admin themes', states: [['keyboard', 'Keyboard move'], ['themes', 'Claro · Gin · Custom']], why: 'Keyboard move changes the marks to indigo and states the current position aloud. The three-theme view shows the builder identical in each.' }
+  ]},
+  { g: 'Site building', items: [
+    { id: 'libraries', n: 'A', t: 'Component libraries', admin: true, states: [['full', 'Libraries'], ['docs', 'Living docs open'], ['empty', 'No libraries']], why: 'List and detail on one page. Library notes (shadow DOM, global styles, theme-bound) are banners in the detail, not badges on every row. Sync shows progress with the stale shimmer, never a blocking overlay.' },
+    { id: 'authoring', n: 'B', t: 'Manage authoring', admin: true, states: [['clean', 'With overrides'], ['error', 'Schema error']], why: 'Follows Drupal’s Manage form display (tabledrag, row weights, one widget per row), so site builders already know it. Overridden rows carry a teal dot and their own Reset; the library’s schema always wins.' },
+    { id: 'fieldtypes', n: 'C', t: 'Field types', admin: true, why: 'Each shape offers only the widgets that fit it, with one plain line explaining the shape. A shape with no default is shown as Attention, and the count tells you how many fields it affects.' },
+    { id: 'changes', n: 'D', t: 'Library changes', admin: true, states: [['report', 'Report'], ['empty', 'No changes']], why: 'Grouped by library, because that is what changed. The same badge vocabulary as the rail notices, so an admin and an author read the same words for the same event.' },
+    { id: 'usage', n: 'E', t: 'Usage · settings · governance', admin: true, states: [['usage', 'Layout usage'], ['settings', 'Settings'], ['gov', 'Content type']], why: 'Written in Drupal’s form language (fieldsets, vertical tabs, Save), with Mosaic controls inside. Governance is a library switch first, then per-component picks, with a live count of what editors will see.' }
+  ]},
+  { g: 'Rail states', items: [
+    { id: 'rail', n: 'F–K', t: 'Rail states', states: [['f-empty', 'F · HTML empty'], ['f-filled', 'F · Filled by Image'], ['f-confirm', 'F · Replace?'], ['g-empty', 'G · 0/1'], ['g-floor', 'G · At floor'], ['g-max', 'G · Max reached'], ['h', 'H · Notices'], ['i', 'I · Style · Visibility'], ['j', 'J · Palette cards'], ['k', 'K · Save errors']], why: 'Each variant is a real rail state, not a separate screen. Changing between Image and Text asks first because it drops content. Remove is disabled at the floor and says why. Visibility states plainly that hidden content still ships.' }
+  ]}
+];
+const SCREENS = GROUPS.flatMap(g => g.items);
+
+function useStored(key, init) {
+  const [v, setV] = React.useState(() => { try { const s = JSON.parse(localStorage.getItem('mos-kit') || '{}'); return s[key] ?? init; } catch (e) { return init; } });
+  React.useEffect(() => { try { const s = JSON.parse(localStorage.getItem('mos-kit') || '{}'); s[key] = v; localStorage.setItem('mos-kit', JSON.stringify(s)); } catch (e) {} }, [v]);
+  return [v, setV];
+}
+
+function ScreenBody({ id, st, vp, theme, admin, ctx }) {
+  const { acc, setAcc, accActive, setAccActive, pal, setPal, picker, setPicker, toast, setToast, stale, bump, setRich, altRef, setScreen, ds, setDs, firstRun, setFirstRun, sheet, setSheet, density, mode, setMode, focusSeen, setFocusSeen } = ctx;
+  const form = (b, title) => <NodeForm admin={admin} vp={vp} title={title} onSave={() => setScreen('errors', 'errors')}>{b}</NodeForm>;
+  const B = p => <Builder vp={vp} theme={theme} density={density} mode={mode} setMode={setMode} focusSeen={focusSeen} setFocusSeen={setFocusSeen} stale={stale} onRailChange={bump} sheet={sheet} setSheet={setSheet} sync={stale ? 'stale' : p.sync || 'synced'} {...p} />;
+  const shell = (title, crumbs, body) => <DrupalShell admin={admin} vp={vp} pageTitle={title} crumbs={crumbs}>{body}</DrupalShell>;
+  const firstDrop = () => { setFirstRun(false); setPal(false); setScreen('canvas', 'all'); setToast(true); };
+  switch (id) {
+    case 'builder': return form(B({ key: 'b-' + st, moreOpen: st === 'menu', canvas: pw => <CanvasCardRow pw={pw} compact={vp === 'mobile'} first={st === 'below'} />, rail: <RailCard onOpenRich={() => setRich(true)} />, palette: pal, setPalette: setPal, sync: 'unsaved', onRevert: () => {} }));
+    case 'fe': return <FrontEndEdit vp={vp} theme={theme} onOpenRich={() => setRich(true)} />;
+    case 'accordion': return form(B({ canvas: pw => <CanvasAccordion pw={pw} items={acc} activeId={accActive} />, rail: <RailAccordion items={acc} setItems={setAcc} activeId={accActive} setActive={setAccActive} />, sync: 'unsaved', onRevert: () => {}, counts: [6, 0] }), 'Safety grant FAQ');
+    case 'bound': return form(B({ canvas: pw => <CanvasBound pw={pw} ds={ds} />, rail: <RailColumns ds={ds} />, dataState: ds, setDataState: setDs, counts: [5, 1], wcag: ds === 'fail' ? 'AA · 0 issues · 1 data error' : 'AA · 0 issues' }), 'Road safety news');
+    case 'palette': return form(B({ canvas: pw => <CanvasCardRow pw={pw} />, palette: <Palette key={st} query={st === 'empty' ? 'carousel' : ''} />, rail: null, setPalette: () => {} }));
+    case 'canvas': {
+      if (st === 'empty') return form(B({ canvas: pw => <CanvasEmpty pw={pw} onAdd={firstDrop} />, rail: null, palette: pal, setPalette: setPal, onPick: firstDrop, firstRun, counts: [0, 0], wcag: 'AA · nothing to check yet' }), 'Grant programs');
+      return form(B({ canvas: pw => <CanvasStates pw={pw} picker={picker} setPicker={setPicker} toast={toast} setToast={setToast} />, rail: null, palette: pal, setPalette: setPal, counts: [7, 0], sync: 'unsaved', onRevert: () => {} }), 'Grant programs');
+    }
+    case 'libraries': return shell('Component libraries', ['Home', 'Administration', 'Structure', 'Mosaic'], <LibrariesPage vp={vp} theme={theme} st={st} />);
+    case 'authoring': return shell('Manage authoring: Card', ['Home', 'Structure', 'Mosaic', 'Component libraries', 'Civic UI'], <ManageAuthoring vp={vp} theme={theme} st={st} />);
+    case 'fieldtypes': return shell('Field types', ['Home', 'Structure', 'Mosaic'], <FieldTypes vp={vp} theme={theme} />);
+    case 'changes': return shell('Library changes', ['Home', 'Reports', 'Mosaic'], <ChangesReport vp={vp} theme={theme} st={st} />);
+    case 'usage':
+      if (st === 'settings') return shell('Mosaic settings', ['Home', 'Administration', 'Configuration', 'Content authoring'], <SettingsForm vp={vp} theme={theme} />);
+      if (st === 'gov') return <Governance vp={vp} theme={theme} admin={admin} />;
+      return shell('Layout usage', ['Home', 'Reports', 'Mosaic'], <UsageReport vp={vp} theme={theme} />);
+    case 'missing':
+      if (st === 'visitor' || st === 'editor') return <MissingPages vp={vp} theme={theme} mode={st} />;
+      return form(B({ canvas: pw => <CanvasMissing pw={pw} />, rail: <Rail head={<RailHead crumbs={['Page', 'Card row', 'Card']} name="Card" lib="Civic UI · missing" grade="blocked" />}><div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}><MX.Notice kind="removed" field="Civic UI library">The library isn't installed. Values and the “Latest news” binding are kept read-only. Reinstall it, or remove this component.</MX.Notice><MX.Input label="Title" readOnly defaultValue="Road Safety Initiative 2026" /><MX.Input label="Media" readOnly defaultValue="road-safety-hero.jpg" /><MX.Button variant="danger" icon="trash-2">Remove component</MX.Button></div></Rail>, wcag: 'AA · 1 component not rendering' }));
+    case 'rail':
+      if (st === 'k') return <ScreenBody id="errors" st="errors" vp={vp} theme={theme} admin={admin} ctx={ctx} />;
+      return form(<RailStatesScreen key={st} st={st} B={B} />);
+    case 'errors': {
+      const overlay = st === 'revert' ? <div style={{ position: 'absolute', left: 12, bottom: 40, zIndex: 40 }}><div className="mos-picker" style={{ width: 300, padding: 14, gap: 10 }} role="alertdialog" aria-label="Revert to saved"><div className="mos-label">Revert to the saved layout?</div><div className="mos-help">Discards 3 changes made since 16:42. This can't be undone.</div><div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}><MX.Button size="sm" onClick={() => setScreen('errors', 'unsaved')}>Keep editing</MX.Button><MX.Button size="sm" variant="primary" onClick={() => setScreen('errors', 'synced')}>Revert</MX.Button></div></div></div> : null;
+      return form(B({ canvas: pw => <CanvasCardRow pw={pw} errors={st === 'errors'} />, rail: <RailCard errors={st === 'errors'} altRef={altRef} onOpenRich={() => setRich(true)} />, errorSummary: st === 'errors' ? <ErrorSummary vp={vp} onJump={i => i.alt && altRef.current && altRef.current.focus()} /> : null, sync: st === 'synced' ? 'synced' : 'unsaved', onRevert: () => setScreen('errors', 'revert'), wcag: st === 'errors' ? 'AA · 1 issue (alt text)' : 'AA · 0 issues', overlay, counts: st === 'synced' ? [14, 2] : [15, 2] }));
+    }
+    case 'keyboard': return form(B({ canvas: pw => <CanvasCardRow pw={pw} mode="keyboard" />, keyboardBar: <KeyboardBar vp={vp} />, rail: <RailCard />, sync: 'unsaved', onRevert: () => {} }));
+  }
+  return null;
+}
+
+function Frame({ w, h, scale, children, overlay, label }) {
+  return <div style={{ width: w * scale, height: h * scale, flex: 'none', position: 'relative' }}>
+    {label && <div className="mos-count" style={{ position: 'absolute', top: -20, left: 0 }}>{label}</div>}
+    <div style={{ width: w, height: h, transform: 'scale(' + scale + ')', transformOrigin: '0 0', position: 'absolute', top: 0, left: 0, background: '#fff', boxShadow: '0 0 0 1px rgba(0,0,0,.08),0 12px 40px -12px rgba(0,0,0,.25)', borderRadius: 6, overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>{children}</div>
+      {overlay}
+    </div>
+  </div>;
+}
+
+function Ctl({ label, children }) { return <div className="mos-field"><span className="mos-caps" style={{ color: 'var(--mos-text-muted)' }}>{label}</span>{children}</div>; }
+
+function App() {
+  const [screen, setScreenId] = useStored('screen', 'builder');
+  const [states, setStates] = useStored('states', {});
+  const [vp, setVp] = useStored('vp', 'desktop');
+  const [mode, setMode] = useStored('mode', 'auto');
+  const [focusSeen, setFocusSeen] = useStored('focusSeen', false);
+  const [admin, setAdmin] = useStored('admin', 'claro');
+  const theme = mode === 'auto' ? (admin === 'gin-dark' ? 'dark' : 'light') : mode;
+  const [density, setDensity] = useStored('density', 'comfortable');
+  const [sheet, setSheet] = useStored('sheet', 'peek');
+  const [firstRun, setFirstRun] = useStored('firstRun', true);
+  const [acc, setAcc] = React.useState(ACC0);
+  const [accActive, setAccActive] = React.useState('b');
+  const [pal, setPal] = React.useState(false);
+  const [picker, setPicker] = React.useState(true);
+  const [toast, setToast] = React.useState(true);
+  const [stale, setStale] = React.useState(false);
+  const [rich, setRich] = React.useState(false);
+  const altRef = React.useRef(null);
+  const stageRef = React.useRef(null);
+  const [sz, setSz] = React.useState([1000, 800]);
+  React.useLayoutEffect(() => { const ro = new ResizeObserver(e => setSz([e[0].contentRect.width, e[0].contentRect.height])); ro.observe(stageRef.current); return () => ro.disconnect(); }, []);
+  const [present, setPresent] = React.useState(false);
+  React.useEffect(() => { window.__mosGo = (o) => { setPresent(true); if (o.vp) setVp(o.vp); if (o.theme) setMode(o.theme); if (o.admin) setAdmin(o.admin); if (o.firstRun !== undefined) setFirstRun(o.firstRun); if (o.sheet) setSheet(o.sheet); setRich(false); setScreenId(o.id); if (o.st) setStates(x => ({ ...x, [o.id]: o.st })); }; });
+  const S = SCREENS.find(s => s.id === screen) || SCREENS[0];
+  const st = states[S.id] || (S.states && S.states[0][0]);
+  const setScreen = (id, s) => { setScreenId(id); if (s) setStates(x => ({ ...x, [id]: s })); if (id === 'errors' && s === 'errors') setTimeout(() => altRef.current && altRef.current.focus(), 80); };
+  const bump = () => { setStale(true); clearTimeout(window.__mosT); window.__mosT = setTimeout(() => setStale(false), 1400); };
+  const ctx = { acc, setAcc, accActive, setAccActive, pal, setPal, picker, setPicker, toast, setToast, stale, bump, setRich, altRef, setScreen, ds: S.id === 'bound' ? st : 'pop', setDs: v => setStates(x => ({ ...x, bound: v })), firstRun, setFirstRun, sheet, setSheet, density, mode, setMode, focusSeen, setFocusSeen };
+  const three = S.id === 'keyboard' && st === 'themes';
+  const [W, H] = SIZES[three ? 'desktop' : vp];
+  const scale = three ? Math.min((sz[0] - 80) / (W * 3), (sz[1] - 80) / H) : Math.min(1, (sz[0] - 48) / W, (sz[1] - 56) / H);
+  const overlay = rich ? <RichTextModal theme={theme} vp={vp} onClose={() => setRich(false)} /> : null;
+  return <div style={{ display: 'flex', height: '100vh' }}>
+    <aside className="mosaic" data-mosaic-theme={theme} style={{ display: present ? 'none' : 'flex', width: 300, flex: 'none', background: 'var(--mos-surface-chrome)', borderRight: '1px solid var(--mos-border-subtle)', flexDirection: 'column', overflow: 'auto' }}>
+      <div style={{ padding: '16px 16px 6px', display: 'flex', alignItems: 'baseline', gap: 8 }}><span style={{ font: '600 17px/1 var(--mos-font-sans)', letterSpacing: '-.02em', color: 'var(--mos-text-strong)' }}>Mosaic</span><span className="mos-count">1.0 · authoring kit v3</span></div>
+      <nav style={{ padding: '0 8px', display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {GROUPS.map(g => <React.Fragment key={g.g}><div className="mos-caps" style={{ color: 'var(--mos-text-muted)', padding: '12px 8px 4px' }}>{g.g}</div>
+          {g.items.map(s => <button key={s.id} onClick={() => setScreen(s.id)} aria-current={s.id === S.id ? 'page' : undefined} style={{ all: 'unset', boxSizing: 'border-box', display: 'flex', gap: 10, alignItems: 'center', padding: '6px 8px', borderRadius: 4, cursor: 'pointer', background: s.id === S.id ? 'var(--mos-accent-soft)' : 'none', boxShadow: s.id === S.id ? 'inset 0 0 0 1px var(--mos-accent-soft-border)' : 'none' }}><span className="mos-count" style={{ width: 30 }}>{s.n}</span><span style={{ font: 'var(--mos-type-ui)', color: 'var(--mos-text-strong)', fontWeight: s.id === S.id ? 500 : 400 }}>{s.t}</span></button>)}</React.Fragment>)}
+        <a href="motion.html" style={{ display: 'flex', gap: 10, padding: '6px 8px', textDecoration: 'none', color: 'var(--mos-text-strong)' }}><span className="mos-count" style={{ width: 30 }}>12</span><span style={{ font: 'var(--mos-type-ui)' }}>Motion spec ↗</span></a>
+      </nav>
+      <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12, borderTop: '1px solid var(--mos-border-subtle)', marginTop: 12 }}>
+        {S.states && <Ctl label="State"><div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>{S.states.map(([k, l]) => <MX.Button key={k} size="sm" variant={st === k ? 'primary' : 'secondary'} onClick={() => { setScreen(S.id, k); if (k === 'menu') setVp('mobile'); }}>{l}</MX.Button>)}</div></Ctl>}
+        {!focusSeen && <div className="mos-help">Focus mode button shows its label until first used.</div>}{focusSeen && <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span className="mos-help">Focus mode label: seen</span><MX.Button size="sm" variant="link" onClick={() => setFocusSeen(false)}>Reset</MX.Button></div>}
+        {S.id === 'canvas' && st === 'empty' && <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span className="mos-help">First-run cue: {firstRun ? 'showing' : 'dismissed'}</span>{!firstRun && <MX.Button size="sm" variant="link" onClick={() => setFirstRun(true)}>Reset</MX.Button>}</div>}
+        {!three && <Ctl label="Viewport"><MX.Segmented label="Viewport" value={vp} onChange={setVp} options={[{ id: 'desktop', label: '1440', icon: 'monitor' }, { id: 'tablet', label: '834', icon: 'tablet' }, { id: 'mobile', label: '390', icon: 'smartphone' }]} /></Ctl>}
+        {vp === 'mobile' && !three && <Ctl label="Bottom sheet"><MX.Segmented label="Bottom sheet" value={sheet} onChange={setSheet} options={[{ id: 'peek', label: '62%' }, { id: 'expanded', label: 'Expanded' }]} /></Ctl>}
+        
+        <Ctl label="Density"><MX.Segmented label="Density" value={density} onChange={setDensity} options={[{ id: 'comfortable', label: 'Comfortable' }, { id: 'compact', label: 'Compact' }]} /></Ctl>
+        {!three && <Ctl label="Admin theme"><MX.Segmented label="Admin theme" value={admin} onChange={setAdmin} options={[{ id: 'claro', label: 'Claro' }, { id: 'gin', label: 'Gin' }, { id: 'gin-dark', label: 'Gin dark' }, { id: 'custom', label: 'Custom' }]} /></Ctl>}
+        <div style={{ borderTop: '1px solid var(--mos-border-subtle)', paddingTop: 12 }}><div className="mos-caps" style={{ color: 'var(--mos-text-muted)', marginBottom: 6 }}>{S.n} · The choice</div><p style={{ margin: 0, font: 'var(--mos-type-body)', fontSize: 13, color: 'var(--mos-text-default)', textWrap: 'pretty' }}>{S.why}</p></div>
+      </div>
+    </aside>
+    <main ref={stageRef} data-mosaic-density={density} style={{ flex: 1, minWidth: 0, background: theme === 'dark' ? '#0b0d0f' : '#e7e9ec', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24, overflow: 'hidden', padding: 24 }}>
+      {three ? ['claro', 'gin', 'custom'].map(a => <Frame key={a} w={W} h={H} scale={scale} label={a === 'custom' ? 'Custom admin theme' : a[0].toUpperCase() + a.slice(1)}><ScreenBody id="builder" vp="desktop" theme={theme} admin={a} ctx={ctx} /></Frame>)
+        : <Frame w={W} h={H} scale={scale} overlay={overlay}><ScreenBody id={S.id} st={st} vp={vp} theme={theme} admin={admin} ctx={ctx} /></Frame>}
+    </main>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);

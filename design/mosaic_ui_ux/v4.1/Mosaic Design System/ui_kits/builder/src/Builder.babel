@@ -1,0 +1,98 @@
+const MB = window.MosaicDesignSystem_9c1bff;
+
+function useWidth(ref) {
+  const [w, setW] = React.useState(800);
+  React.useLayoutEffect(() => { if (!ref.current) return; const ro = new ResizeObserver(e => setW(e[0].contentRect.width)); ro.observe(ref.current); return () => ro.disconnect(); }, []);
+  return w;
+}
+
+function Builder({ vp, theme, canvas, rail, palette, setPalette, sync = 'synced', onRevert, counts = [14, 2], wcag = 'AA · 0 issues', dataState, setDataState, errorSummary, keyboardBar, height, stale, onRailChange, overlay, firstRun, sheet: sheetProp = 'peek', setSheet, density, onPick, mode = 'auto', setMode, focusSeen = true, setFocusSeen, moreOpen }) {
+  const mob = vp === 'mobile', tab = vp === 'tablet';
+  const [focus, setFocus] = React.useState(false);
+  const [more, setMore] = React.useState(!!moreOpen);
+  React.useEffect(() => { if (!more) return; const k = e => { if (e.key === 'Escape') setMore(false); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, [more]);
+  React.useEffect(() => { if (!focus) return; const k = e => { if (e.key === 'Escape') setFocus(false); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, [focus]);
+  const [cvp, setCvp] = React.useState('d');
+  const areaRef = React.useRef(null);
+  const aw = useWidth(areaRef);
+  const pad = mob ? 12 : 24;
+  const pw = cvp === 'm' ? Math.min(375, aw - pad * 2) : cvp === 't' ? Math.min(640, aw - pad * 2) : aw - pad * 2;
+  const H = height || (mob ? 700 : tab ? 860 : 800);
+  const sheet = mob && (rail || palette);
+  const sheetMode = sheetProp;
+  return <div className="mosaic" data-mosaic-theme={theme} data-mosaic-density={density} style={{ ...(focus ? { inset: 0, zIndex: 60, borderRadius: 0 } : {}), height: focus ? 'auto' : H, display: 'flex', flexDirection: 'column', border: '1px solid var(--mos-border-default)', borderRadius: 8, overflow: 'hidden', background: 'var(--mos-surface-chrome)', position: focus ? 'absolute' : 'relative', boxShadow: 'var(--mos-shadow-sm)' }}>
+    <div style={{ height: 44, flex: 'none', display: 'flex', alignItems: 'center', gap: 8, padding: '0 8px', borderBottom: '1px solid var(--mos-border-subtle)' }}>
+      {mob ? <span style={{ position: 'relative' }}><MB.Button size="sm" variant="primary" icon="plus" className={firstRun ? 'mos-cue' : undefined} onClick={() => setPalette && setPalette(!palette)}>Add</MB.Button>{firstRun && <span className="mos-cue-label mos-cue-label--below" role="status"><b>Components</b><span>Tap Add to place your first one.</span></span>}</span> : <span style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 4 }}><span style={{ font: '600 13px/1 var(--mos-font-sans)', color: 'var(--mos-text-strong)', letterSpacing: '-.01em' }}>Mosaic</span><span className="mos-index">LAYOUT</span></span>}
+      <span style={{ display: 'flex' }}><MB.IconButton size="sm" icon="undo-2" label="Undo" /><MB.IconButton size="sm" icon="redo-2" label="Redo" /></span>
+      <span style={{ flex: 1 }} />
+      {!mob && <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><MB.Segmented label="Canvas viewport" size="sm" value={cvp} onChange={setCvp} options={[{ id: 'd', icon: 'monitor', label: 'Desktop', title: 'Desktop' }, { id: 't', icon: 'tablet', label: 'Tablet', title: 'Tablet' }, { id: 'm', icon: 'smartphone', label: 'Mobile', title: 'Mobile' }]} />{setMode && <MB.Segmented label="Builder colour mode" size="sm" value={mode} onChange={setMode} options={[{ id: 'auto', icon: 'sun-moon', title: 'Auto: match admin theme' }, { id: 'light', icon: 'sun', title: 'Light' }, { id: 'dark', icon: 'moon', title: 'Dark' }]} />}</span>}
+      <span style={{ flex: 1 }} />
+      {dataState && !mob && <MB.Segmented label="Data state" size="sm" value={dataState} onChange={setDataState} options={[{ id: 'pop', label: 'Populated' }, { id: 'one', label: 'One item' }, { id: 'empty', label: 'Empty' }, { id: 'fail', label: 'Failing' }]} />}
+            {!mob && (focusSeen || focus ? <MB.IconButton size="sm" icon={focus ? 'minimize-2' : 'maximize-2'} label={focus ? 'Exit focus mode (Esc)' : 'Focus mode'} onClick={() => setFocus(!focus)} /> : <MB.Button size="sm" icon="maximize-2" onClick={() => { setFocus(true); setFocusSeen && setFocusSeen(true); }}>Focus mode</MB.Button>)}
+      {mob && <span style={{ position: 'relative' }}><MB.IconButton size="sm" icon="ellipsis" label="More" pressed={more} onClick={() => setMore(!more)} />{more && <div className="mos-picker" role="menu" aria-label="More" style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, width: 290, zIndex: 70, maxHeight: 'none' }}>
+        <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="mos-field"><span className="mos-caps" style={{ color: 'var(--mos-text-muted)' }}>Canvas viewport</span><MB.Segmented label="Canvas viewport" size="sm" value={cvp} onChange={setCvp} options={[{ id: 'd', icon: 'monitor', label: 'Desktop' }, { id: 't', icon: 'tablet', label: 'Tablet' }, { id: 'm', icon: 'smartphone', label: 'Mobile' }]} /></div>
+          {setMode && <div className="mos-field"><span className="mos-caps" style={{ color: 'var(--mos-text-muted)' }}>Colour mode</span><MB.Segmented label="Builder colour mode" size="sm" value={mode} onChange={setMode} options={[{ id: 'auto', icon: 'sun-moon', label: 'Auto' }, { id: 'light', icon: 'sun', label: 'Light' }, { id: 'dark', icon: 'moon', label: 'Dark' }]} /><span className="mos-help">Auto matches the admin theme.</span></div>}
+        </div>
+        <div style={{ borderTop: '1px solid var(--mos-border-subtle)', padding: 4, display: 'flex', flexDirection: 'column' }}>
+          <button role="menuitem" className="mos-btn mos-btn--ghost mos-btn--full" style={{ justifyContent: 'flex-start', minHeight: 44 }} onClick={() => { setFocus(!focus); setMore(false); }}><MB.Icon name={focus ? 'minimize-2' : 'maximize-2'} size={16} />{focus ? 'Exit focus mode' : 'Focus mode'}</button>
+          <button role="menuitem" className="mos-btn mos-btn--ghost mos-btn--full" style={{ justifyContent: 'flex-start', minHeight: 44 }} onClick={() => setMore(false)}><MB.Icon name="keyboard" size={16} />Keyboard shortcuts<span className="mos-kbd" style={{ marginLeft: 'auto' }}>?</span></button>
+        </div>
+      </div>}</span>}
+    </div>
+    {dataState && mob && <div style={{ padding: '6px 8px', borderBottom: '1px solid var(--mos-border-subtle)', overflow: 'auto' }}><MB.Segmented label="Data state" size="sm" value={dataState} onChange={setDataState} options={[{ id: 'pop', label: 'Populated' }, { id: 'one', label: 'One' }, { id: 'empty', label: 'Empty' }, { id: 'fail', label: 'Failing' }]} /></div>}
+    {errorSummary}
+    <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
+      {!mob && <div style={{ width: 48, flex: 'none', borderRight: '1px solid var(--mos-border-subtle)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '8px 0' }}>
+        <div className={'mos-strip-btn' + (firstRun && !palette ? ' mos-strip-btn--quiet' : '')} data-label="Components"><MB.IconButton icon="blocks" label="Components" pressed={!!palette} className={firstRun ? 'mos-cue' : undefined} onClick={() => setPalette && setPalette(!palette)} />{firstRun && !palette && <div className="mos-cue-label" role="status"><b>Components</b><span>Drag one onto the page to start.</span></div>}</div>
+        <div className="mos-strip-btn" data-label="Outline"><MB.IconButton icon="list-tree" label="Outline" /></div>
+        <span style={{ flex: 1 }} />
+        <div className="mos-strip-btn" data-label="Keyboard shortcuts"><MB.IconButton icon="keyboard" label="Keyboard shortcuts" size="sm" /></div>
+      </div>}
+      {palette && !mob && !tab && <div style={{ width: 240, flex: 'none', borderRight: '1px solid var(--mos-border-subtle)', minHeight: 0 }}>{palette === true ? <Palette onClose={() => setPalette(false)} onPick={onPick} /> : palette}</div>}
+      <div ref={areaRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', background: 'var(--mos-surface-canvas)', padding: pad + 'px ' + pad + 'px ' + (sheet ? 380 : pad) + 'px', paddingTop: pad + 30 }}>
+        {keyboardBar}
+        <div className={stale ? 'mos-stale' : 'mos-fresh'} key={stale ? 's' : 'f'} style={{ minHeight: '100%' }}>{canvas(pw)}</div>
+      </div>
+      {rail && !mob && !tab && <div onChangeCapture={onRailChange} style={{ width: 320, flex: 'none', borderLeft: '1px solid var(--mos-border-subtle)', minHeight: 0 }}>{rail}</div>}
+      {rail && tab && <div onChangeCapture={onRailChange} style={{ position: 'absolute', top: 8, right: 8, bottom: 8, width: 320, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--mos-border-default)', boxShadow: 'var(--mos-shadow-lg)', zIndex: 10 }}>{rail}</div>}
+      {palette && tab && <div style={{ position: 'absolute', top: 8, left: 56, bottom: 8, width: 280, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--mos-border-default)', boxShadow: 'var(--mos-shadow-lg)', zIndex: 11 }}><Palette onClose={() => setPalette(false)} onPick={onPick} /></div>}
+      {sheet && <div className="mos-sheet" onChangeCapture={onRailChange} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: sheetMode === 'expanded' ? 'calc(100% - 8px)' : '62%', background: 'var(--mos-surface-chrome)', borderTop: '1px solid var(--mos-border-default)', borderRadius: '12px 12px 0 0', boxShadow: 'var(--mos-shadow-dialog)', zIndex: 12, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <button className="mos-sheet__handle" aria-label={sheetMode === 'expanded' ? 'Collapse panel to 62%' : 'Expand panel'} aria-expanded={sheetMode === 'expanded'} onClick={() => setSheet && setSheet(sheetMode === 'expanded' ? 'peek' : 'expanded')}><span /></button>
+        <div style={{ flex: 1, minHeight: 0 }}>{palette ? <Palette onClose={() => setPalette(false)} onPick={onPick} /> : rail}</div>
+      </div>}
+    </div>
+    <div style={{ height: 32, flex: 'none', display: 'flex', alignItems: 'center', gap: 12, padding: '0 12px', borderTop: '1px solid var(--mos-border-subtle)', background: 'var(--mos-surface-chrome)', overflow: 'hidden' }}>
+      <MB.SyncStatus state={stale ? 'stale' : sync} onRevert={onRevert} components={mob ? undefined : counts[0]} bound={mob ? undefined : counts[1]} />
+      <span style={{ flex: 1 }} />
+      {!mob && <span className="mos-help" style={{ display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}><MB.Icon name="accessibility" size={12} />{wcag}</span>}
+      {!mob && !tab && <span className="mos-help" style={{ whiteSpace: 'nowrap' }}><span className="mos-kbd">M</span> move · <span className="mos-kbd">?</span> shortcuts</span>}
+    </div>
+    {overlay}
+  </div>;
+}
+
+function ErrorSummary({ onJump, vp }) {
+  const items = [
+    { t: 'Teaser (Olivero) needs content in its Content area.', a: 'Go to area' },
+    { t: 'Card (Civic UI) image needs alt text.', a: 'Fix alt text', alt: true },
+    { t: 'Plain content can only be placed inside another component\u2019s area, not directly on the page.', a: 'Show me' }
+  ];
+  return <div role="alert" tabIndex={-1} style={{ padding: '10px 12px', borderBottom: '1px solid var(--mos-state-blocked-border)', background: 'var(--mos-state-blocked-bg)', flex: 'none' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><MB.Icon name="circle-alert" size={16} style={{ color: 'var(--mos-state-blocked-fg)' }} /><b style={{ font: 'var(--mos-type-ui-strong)', color: 'var(--mos-text-strong)' }}>3 things to fix before this page can be saved</b><span className="mos-help" style={{ marginLeft: 'auto' }}>{vp === 'mobile' ? '' : 'Your changes are kept.'}</span></div>
+    <ol style={{ margin: 0, paddingLeft: 24, display: 'flex', flexDirection: 'column', gap: 4 }}>{items.map(i => <li key={i.t} style={{ font: 'var(--mos-type-ui)', color: 'var(--mos-text-default)' }}><span>{i.t}</span> <button className="mos-btn mos-btn--link" style={{ fontSize: 12, marginLeft: 6 }} onClick={() => onJump && onJump(i)}>{i.a}</button></li>)}</ol>
+  </div>;
+}
+
+function KeyboardBar({ vp }) {
+  return <div className="mosaic" style={{ position: 'sticky', top: -24, zIndex: 25, margin: '-24px 0 16px', display: 'flex', justifyContent: 'center' }}>
+    <div role="status" aria-live="assertive" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 8px 7px 12px', borderRadius: 8, background: 'var(--mos-surface-inverse)', color: 'var(--mos-text-inverse)', boxShadow: 'var(--mos-shadow-lg)', font: 'var(--mos-type-ui)', flexWrap: 'wrap', maxWidth: '100%' }}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MB.Icon name="move" size={14} /><b>Moving Card</b> · before “Work-zone safety”, position 1 of 3 in Card row</span>
+      {vp !== 'mobile' && <span style={{ display: 'flex', gap: 10, opacity: .85, fontSize: 12 }}><span>↑↓ move</span><span>→ into Footer</span><span>← out of Card row</span><span>Enter drop</span><span>Esc cancel</span></span>}
+      {vp === 'mobile' && <span style={{ display: 'flex', gap: 4 }}>{['arrow-up', 'arrow-down', 'arrow-right', 'arrow-left'].map(i => <button key={i} className="mos-seltool__btn" style={{ width: 44, height: 44 }} aria-label={i.replace('arrow-', 'Move ')}><MB.Icon name={i} size={16} /></button>)}</span>}
+      <span style={{ display: 'flex', gap: 4 }}><button className="mos-toast__action">Drop</button><button className="mos-toast__action" style={{ color: 'inherit', opacity: .8 }}>Cancel</button></span>
+    </div>
+  </div>;
+}
+
+Object.assign(window, { Builder, ErrorSummary, KeyboardBar, useWidth });

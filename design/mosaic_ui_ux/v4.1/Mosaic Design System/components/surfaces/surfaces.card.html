@@ -1,0 +1,23 @@
+<!-- @dsCard group="Components" viewport="700x520" name="Surfaces" subtitle="Card, rail section, field row, dialog" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--mos-surface-chrome)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.col{display:flex;flex-direction:column;gap:12px}.lab{font:500 12px/1 var(--mos-font-mono);color:var(--mos-text-faint);width:72px;flex:none;text-transform:uppercase;letter-spacing:.04em}</style></head>
+<body class="mosaic"><div id="root" style="padding:20px"></div><script type="text/babel">const M=window.MosaicDesignSystem_9c1bff;const {Card,RailSection,FieldRow,Dialog,Badge,Button,Input,Toggle}=M;
+function App(){return <div className="row" style={{alignItems:'flex-start',gap:16}}>
+<div style={{width:300,border:'1px solid var(--mos-border-subtle)',borderRadius:6,background:'var(--mos-surface-chrome)'}}>
+<RailSection index="01" title="Content" aside={<Badge tone="example" size="sm" icon={false}>1 EXAMPLE</Badge>}>
+<Input label="Heading" required defaultValue="Road safety 2026"/>
+<FieldRow label="Summary" example badge={<Badge tone="example" size="sm" icon={false}>EXAMPLE</Badge>} machineName="summary · text_long"><div className="mos-rich mos-rich--example">A federal-state partnership to reduce…<span className="mos-rich__open">Open editor</span></div></FieldRow>
+</RailSection>
+<RailSection index="02" title="Data" defaultCollapsed aside={<Badge tone="data" size="sm">1</Badge>}/>
+<RailSection index="03" title="Accessibility" defaultCollapsed/>
+</div>
+<div className="col" style={{flex:1}}>
+<Card title="Civic UI" meta="12 components · styles in JavaScript (shadow DOM)" aside={<Toggle checked showState/>}>
+<div className="row"><Badge tone="ready">9 Ready</Badge><Badge tone="attention">2 Attention</Badge><Badge tone="blocked">1 Blocked</Badge></div></Card>
+<Dialog inline width="100%" title="Summary" subtitle="Card · Civic UI" onClose={()=>{}} footer={<><span style={{flex:1}}/><Button>Cancel</Button><Button variant="primary">Apply</Button></>}><div className="mos-help">CKEditor 5 mounts here.</div></Dialog>
+</div></div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);</script></body></html>

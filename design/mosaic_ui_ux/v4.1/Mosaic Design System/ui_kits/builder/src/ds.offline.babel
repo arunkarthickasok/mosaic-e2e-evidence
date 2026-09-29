@@ -1,0 +1,385 @@
+window.MosaicDesignSystem_9c1bff=window.MosaicDesignSystem_9c1bff||{};
+// core/Icon.jsx
+(()=>{
+
+const BASE='https://unpkg.com/lucide-static@0.460.0/icons/';
+function Icon({name,size=16,label,className,style}){
+  const local=typeof window!=='undefined'&&window.MOS_ICONS&&window.MOS_ICONS[name];
+  const url='url("'+(local||BASE+name+'.svg')+'")';
+  return <span className={'mos-icon'+(className?' '+className:'')} role={label?'img':undefined} aria-label={label} aria-hidden={label?undefined:true} style={{width:size,height:size,WebkitMaskImage:url,maskImage:url,...style}}/>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Icon});})();
+// core/Button.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function Button({variant='secondary',size='md',icon,iconRight,fullWidth,children,className,type='button',...rest}){
+  const is=size==='sm'?14:16;
+  return <button type={type} className={cx('mos-btn','mos-btn--'+variant,size!=='md'&&'mos-btn--'+size,fullWidth&&'mos-btn--full',className)} {...rest}>{icon&&<Icon name={icon} size={is}/>}{children}{iconRight&&<Icon name={iconRight} size={is}/>}</button>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Button});})();
+// core/IconButton.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function IconButton({icon,label,variant='ghost',size='md',pressed,className,...rest}){
+  return <button type="button" aria-label={label} title={label} aria-pressed={pressed===undefined?undefined:pressed} className={cx('mos-btn','mos-iconbtn','mos-btn--'+variant,size!=='md'&&'mos-btn--'+size,className)} {...rest}><Icon name={icon} size={size==='sm'?14:16}/></button>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{IconButton});})();
+// core/Input.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function Input({label,help,error,required,id,prefix,suffix,mono,readOnly,size='md',badge,inputRef,...rest}){
+  const iid=id||('mos-in-'+Math.random().toString(36).slice(2,8));
+  return <div className="mos-field">
+    {label&&<div className="mos-field__head"><label className="mos-label" htmlFor={iid}>{label}{required&&<span className="mos-req" aria-hidden="true"> *</span>}</label>{badge}</div>}
+    <div className={cx('mos-control',error&&'mos-control--error',readOnly&&'mos-control--readonly',mono&&'mos-control--mono',size==='sm'&&'mos-control--sm')}>
+      {prefix&&<span className="mos-affix">{prefix}</span>}
+      <input id={iid} ref={inputRef} readOnly={readOnly} required={required} aria-invalid={error?true:undefined} aria-describedby={(error||help)?iid+'-d':undefined} {...rest}/>
+      {suffix&&<span className="mos-affix">{suffix}</span>}
+    </div>
+    {error?<div className="mos-err" id={iid+'-d'}><Icon name="circle-alert" size={14}/>{error}</div>:help?<div className="mos-help" id={iid+'-d'}>{help}</div>:null}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Input});})();
+// core/Select.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function Select({label,help,options=[],id,size='md',badge,required,error,...rest}){
+  const iid=id||('mos-sel-'+Math.random().toString(36).slice(2,8));
+  return <div className="mos-field">
+    {label&&<div className="mos-field__head"><label className="mos-label" htmlFor={iid}>{label}{required&&<span className="mos-req" aria-hidden="true"> *</span>}</label>{badge}</div>}
+    <div className={cx('mos-control','mos-control--select',size==='sm'&&'mos-control--sm',error&&'mos-control--error')}>
+      <select id={iid} {...rest}>{options.map(o=>typeof o==='string'?<option key={o} value={o}>{o}</option>:<option key={o.value} value={o.value} disabled={o.disabled}>{o.label}</option>)}</select>
+      <Icon name="chevrons-up-down" size={14}/>
+    </div>
+    {error?<div className="mos-err"><Icon name="circle-alert" size={14}/>{error}</div>:help&&<div className="mos-help">{help}</div>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Select});})();
+// core/Toggle.jsx
+(()=>{
+
+function Toggle({checked,defaultChecked,onChange,label,description,disabled,showState,id}){
+  return <label className="mos-toggle"><input type="checkbox" role="switch" id={id} checked={checked} defaultChecked={defaultChecked} onChange={onChange} disabled={disabled}/><span className="mos-toggle__track"/>{showState&&<span className="mos-toggle__state">{checked?'On':'Off'}</span>}{(label||description)&&<span className="mos-choice__text">{label&&<span className="mos-label">{label}</span>}{description&&<span className="mos-help">{description}</span>}</span>}</label>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Toggle});})();
+// core/Checkbox.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function Checkbox({checked,defaultChecked,onChange,label,description,disabled,indeterminate,id}){
+  const ref=React.useRef(null);
+  React.useEffect(()=>{if(ref.current)ref.current.indeterminate=!!indeterminate},[indeterminate]);
+  const on=checked||indeterminate;
+  return <label className="mos-check"><input ref={ref} type="checkbox" id={id} checked={checked} defaultChecked={defaultChecked} onChange={onChange} disabled={disabled}/><span className="mos-check__box">{on&&<Icon name={indeterminate?'minus':'check'} size={12}/>}</span>{(label||description)&&<span className="mos-choice__text">{label&&<span>{label}</span>}{description&&<span className="mos-help">{description}</span>}</span>}</label>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Checkbox});})();
+// core/Badge.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const ICONS={ready:'check',attention:'triangle-alert',blocked:'ban',data:'database',restricted:'lock',example:null,neutral:null,accent:null};
+function Badge({tone='neutral',icon,size='md',children,title}){
+  const ic=icon===false?null:(icon||ICONS[tone]);
+  return <span className={'mos-badge mos-badge--'+tone+(size==='sm'?' mos-badge--sm':'')} title={title}>{ic&&<Icon name={ic} size={size==='sm'?10:12}/>}{children}</span>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Badge});})();
+// feedback/Banner.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const ICONS={info:'info',attention:'triangle-alert',error:'circle-alert',success:'circle-check',data:'database',owned:'lock'};
+function Banner({tone='info',title,children,actions,compact,icon,role}){
+  return <div className={'mos-banner mos-banner--'+tone+(compact?' mos-banner--compact':'')} role={role||(tone==='error'?'alert':undefined)}>
+    <Icon name={icon||ICONS[tone]} size={16}/>
+    {title&&<div className="mos-banner__title">{title}</div>}
+    {children&&<div className="mos-banner__body" style={title?null:{gridRow:1}}>{children}</div>}
+    {actions&&<div className="mos-banner__actions">{actions}</div>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Banner});})();
+// feedback/Notice.jsx
+(()=>{const {Banner,Button}=window.MosaicDesignSystem_9c1bff;
+
+
+
+const KINDS={
+  removed:{tone:'error',icon:'triangle-alert',label:'Removed'},
+  type:{tone:'attention',icon:'flag',label:'Type changed'},
+  attention:{tone:'attention',icon:'circle-alert',label:'Attention'},
+  'legacy-binding':{tone:'data',icon:'history',label:'Legacy binding — remove to edit'},
+  'legacy-override':{tone:'info',icon:'history',label:'Legacy override — remove to edit'}
+};
+function Notice({kind='attention',field,children,actionLabel='Remove',onAction}){
+  const k=KINDS[kind]||KINDS.attention;
+  return <Banner tone={k.tone} compact icon={k.icon} title={<span>{k.label}{field&&<span style={{fontWeight:400,color:'var(--mos-text-muted)'}}> · {field}</span>}</span>} actions={onAction&&<Button size="sm" onClick={onAction}>{actionLabel}</Button>}>{children}</Banner>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Notice});})();
+// feedback/Toast.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function Toast({icon='info',children,action,onAction,onClose}){
+  return <div className="mos-toast" role="status" aria-live="polite"><Icon name={icon} size={16}/><span>{children}</span>{action&&<button className="mos-toast__action" onClick={onAction}>{action}</button>}{onClose&&<button className="mos-toast__close" aria-label="Dismiss" onClick={onClose}><Icon name="x" size={14}/></button>}</div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Toast});})();
+// feedback/SyncStatus.jsx
+(()=>{
+
+const LABEL={synced:'In sync with the saved layout',unsaved:'Unsaved changes',stale:'Refreshing preview…'};
+function SyncStatus({state='synced',components,bound,onRevert,wcag}){
+  return <div className={'mos-sync mos-sync--'+state} role="status" aria-live="polite">
+    <span className="mos-sync__dot" aria-hidden="true"/><span className="mos-sync__label">{LABEL[state]}</span>
+    {state==='unsaved'&&onRevert&&<button className="mos-btn mos-btn--link" style={{fontSize:12}} onClick={onRevert}>Revert to saved</button>}
+    {components!=null&&<><span className="mos-sync__sep">·</span><span>{components} components</span></>}
+    {bound!=null&&<><span className="mos-sync__sep">·</span><span>{bound} bound</span></>}
+    {wcag&&<><span className="mos-sync__sep">·</span><span>{wcag}</span></>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{SyncStatus});})();
+// feedback/ResultLine.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function ResultLine({state='populated',shown,total,view,display,error}){
+  if(state==='failing')return <span className="mos-result mos-result--failing"><Icon name="circle-alert" size={12}/>{error||'View failed to load'} · {view}</span>;
+  if(state==='empty')return <span className="mos-result mos-result--empty"><Icon name="circle-dashed" size={12}/><b>0</b> of 0 · {view}{display?' · '+display:''}</span>;
+  return <span className="mos-result"><Icon name="database" size={12}/><b>{shown}</b> of {total} · {view}{display?' · '+display:''}</span>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{ResultLine});})();
+// navigation/Tabs.jsx
+(()=>{
+
+function Tabs({tabs=[],value,onChange}){
+  return <div className="mos-tabs" role="tablist">{tabs.map(t=><button key={t.id} role="tab" className="mos-tab" aria-selected={value===t.id} tabIndex={value===t.id?0:-1} onClick={()=>onChange&&onChange(t.id)}>{t.label}{t.count!=null&&<span className="mos-tab__count">{t.count}</span>}</button>)}</div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Tabs});})();
+// navigation/Segmented.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function Segmented({options=[],value,onChange,label,size='md'}){
+  return <div className={'mos-seg'+(size==='sm'?' mos-seg--sm':'')} role="radiogroup" aria-label={label}>{options.map(o=><button key={o.id} role="radio" aria-checked={value===o.id} className="mos-seg__opt" aria-label={o.label?undefined:o.title} onClick={()=>onChange&&onChange(o.id)} title={o.title}>{o.icon&&<Icon name={o.icon} size={size==='sm'?12:14}/>}{o.label}</button>)}</div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Segmented});})();
+// navigation/SelectionToolbar.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const B=({icon,label,onClick})=><button className="mos-seltool__btn" aria-label={label} title={label} onClick={onClick}><Icon name={icon} size={14}/></button>;
+function SelectionToolbar({label,index,onParent,onMoveUp,onMoveDown,onKeyboardMove,onWrap,onDuplicate,onRemove,compact}){
+  return <div className="mos-seltool" role="toolbar" aria-label={(label||'Component')+' actions'}>
+    {label&&<span className="mos-seltool__label">{index&&<span className="mos-index">{index}</span>}{label}</span>}
+    {onParent&&<B icon="arrow-up-left" label="Select parent" onClick={onParent}/>}
+    {!compact&&onMoveUp&&<B icon="arrow-up" label="Move up" onClick={onMoveUp}/>}
+    {!compact&&onMoveDown&&<B icon="arrow-down" label="Move down" onClick={onMoveDown}/>}
+    {onKeyboardMove&&<B icon="move" label="Move with keyboard (M)" onClick={onKeyboardMove}/>}
+    <span className="mos-seltool__sep"/>
+    {onWrap&&<B icon="square-dashed-bottom" label="Wrap in container" onClick={onWrap}/>}
+    {onDuplicate&&<B icon="copy" label="Duplicate" onClick={onDuplicate}/>}
+    {onRemove&&<B icon="trash-2" label="Remove" onClick={onRemove}/>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{SelectionToolbar});})();
+// surfaces/Card.jsx
+(()=>{
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function Card({title,meta,aside,children,footer,selected,interactive,onClick,style}){
+  return <div className={cx('mos-card',interactive&&'mos-card--interactive',selected&&'mos-card--selected')} onClick={onClick} style={style}>
+    {(title||meta||aside)&&<div className="mos-card__head"><div style={{flex:1,minWidth:0}}>{title&&<div className="mos-card__title">{title}</div>}{meta&&<div className="mos-card__meta">{meta}</div>}</div>{aside}</div>}
+    {children&&<div className="mos-card__body">{children}</div>}
+    {footer&&<div className="mos-card__foot">{footer}</div>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Card});})();
+// surfaces/Dialog.jsx
+(()=>{const {IconButton}=window.MosaicDesignSystem_9c1bff;
+
+
+function Dialog({title,subtitle,children,footer,onClose,width=560,inline,headAside,bodyPadding=16}){
+  React.useEffect(()=>{if(inline||!onClose)return;const k=e=>{if(e.key==='Escape')onClose()};window.addEventListener('keydown',k);return()=>window.removeEventListener('keydown',k)},[inline,onClose]);
+  const box=<div className="mos-dialog" role="dialog" aria-modal={inline?undefined:true} aria-label={typeof title==='string'?title:undefined} style={{width}}>
+    <div className="mos-dialog__head"><div style={{flex:1,minWidth:0}}><div className="mos-dialog__title">{title}</div>{subtitle&&<div className="mos-dialog__sub">{subtitle}</div>}</div>{headAside}{onClose&&<IconButton icon="x" label="Close" onClick={onClose}/>}</div>
+    <div className="mos-dialog__body" style={{padding:bodyPadding}}>{children}</div>
+    {footer&&<div className="mos-dialog__foot">{footer}</div>}
+  </div>;
+  return inline?box:<div className="mos-dialog-scrim">{box}</div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Dialog});})();
+// surfaces/RailSection.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function RailSection({index,title,aside,note,children,collapsed:ctl,defaultCollapsed=false,onToggle}){
+  const [open,setOpen]=React.useState(!defaultCollapsed);
+  const collapsed=ctl!==undefined?ctl:!open;
+  return <section className="mos-rs" data-collapsed={collapsed}>
+    <button className="mos-rs__head" aria-expanded={!collapsed} onClick={()=>{setOpen(!open);onToggle&&onToggle()}}><span className="mos-index">{index}</span><span className="mos-rs__title">{title}</span><span className="mos-rs__aside">{aside}<Icon name="chevron-down" size={14} className="mos-rs__chev"/></span></button>
+    {!collapsed&&<div className="mos-rs__body">{note&&<div className="mos-rs__note">{note}</div>}{children}</div>}
+  </section>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{RailSection});})();
+// surfaces/FieldRow.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function FieldRow({label,help,required,badge,machineName,error,children,htmlFor,example}){
+  return <div className={'mos-fieldrow'+(error?' mos-fieldrow--error':'')}>
+    <div className="mos-fieldrow__head"><label className="mos-label" htmlFor={htmlFor}>{label}{required&&<span className="mos-req" aria-hidden="true"> *</span>}</label><span className="mos-fieldrow__aside">{badge}</span></div>
+    {children}
+    {error?<div className="mos-err"><Icon name="circle-alert" size={14}/>{error}</div>:example?<div className="mos-preview-only"><Icon name="eye" size={12}/>Preview only — set a value to publish</div>:help&&<div className="mos-help">{help}</div>}
+    {machineName&&<details><summary className="mos-help" style={{cursor:'pointer'}}>Details</summary><div className="mos-fieldrow__machine">{machineName}</div></details>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{FieldRow});})();
+// builder/SelectionFrame.jsx
+(()=>{const {SelectionToolbar}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+const ROOM=46;
+function SelectionFrame({label,index,mode='selected',toolbar,children,style,placement='auto'}){
+  const ref=React.useRef(null);
+  const [below,setBelow]=React.useState(placement==='below');
+  React.useLayoutEffect(()=>{
+    if(placement!=='auto'){setBelow(placement==='below');return;}
+    const el=ref.current;if(!el)return;
+    const root=el.closest('[data-mos-canvas]')||el.parentElement;
+    const check=()=>{
+      const r=el.getBoundingClientRect(),R=root.getBoundingClientRect();
+      const k=el.offsetWidth?r.width/el.offsetWidth:1;
+      let flip=(r.top-R.top)/k<ROOM;
+      const tb={top:r.top-ROOM*k,bottom:r.top-8*k,left:r.right-260*k,right:r.right+6*k};
+      root.querySelectorAll('.mos-marks__tab').forEach(t=>{if(el.contains(t))return;const q=t.getBoundingClientRect();if(q.left<tb.right&&q.right>tb.left&&q.top<tb.bottom&&q.bottom>tb.top)flip=true;});
+      setBelow(flip);
+    };
+    check();const ro=new ResizeObserver(check);ro.observe(root);return()=>ro.disconnect();
+  },[placement]);
+  return <div ref={ref} className={cx('mos-marks',below&&'mos-marks--flip',mode==='keyboard'&&'mos-marks--keyboard',mode==='lifted'&&'mos-marks--lifted')} style={style} data-placement={below?'below':'above'}>
+    <span className="mos-marks__b"/>
+    {label&&<span className="mos-marks__tab">{index&&<span className="mos-index">{index}</span>}{label}</span>}
+    {toolbar&&<div className="mos-marks__tool">{toolbar===true?<SelectionToolbar onParent={()=>{}} onMoveUp={()=>{}} onMoveDown={()=>{}} onKeyboardMove={()=>{}} onWrap={()=>{}} onDuplicate={()=>{}} onRemove={()=>{}}/>:toolbar}</div>}
+    {children}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{SelectionFrame});})();
+// builder/Zone.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function Zone({label,index,children,empty,emptyText,addLabel='Add',onAdd,required,state,count,rule,footer,style}){
+  return <div className={cx('mos-zone',required&&empty&&'mos-zone--required',state&&'mos-zone--'+state)} style={style} role="group" aria-label={label+' area'}>
+    <div className="mos-zone__head"><span className="mos-zone__label">{index&&<span className="mos-index">{index}</span>}{label}{required&&<span aria-label="required">*</span>}</span><span className="mos-zone__meta">{rule&&<span className="mos-count">{rule}</span>}{count}{!empty&&onAdd&&<button className="mos-zone__add" aria-label={'Add to '+label} onClick={onAdd}><Icon name="plus" size={14}/></button>}</span></div>
+    {empty?<div className="mos-zone__empty">{emptyText&&<span>{emptyText}</span>}{onAdd&&<button className="mos-zone__cta" onClick={onAdd}><Icon name="plus" size={14}/>{addLabel}</button>}</div>:children}
+    {footer&&<div className="mos-zone__foot">{footer}</div>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Zone});})();
+// builder/PaletteItem.jsx
+(()=>{const {Icon,Badge}=window.MosaicDesignSystem_9c1bff;
+
+
+
+const cx=(...a)=>a.filter(Boolean).join(' ');
+function PaletteItem({name,blurb,icon='square',thumb,data,attention,restricted,needs,pattern,inserts,image,disabled,onClick}){
+  return <button className={cx('mos-pal',pattern&&'mos-pal--pattern',disabled&&'mos-pal--disabled')} onClick={onClick} aria-disabled={disabled||undefined} draggable={!disabled}>
+    <span className="mos-pal__thumb">{image?<img className="mos-pal__img" src={image} alt="" width="40" height="28"/>:thumb||<Icon name={icon} size={16}/>}</span>
+    <span style={{minWidth:0}}>
+      <span className="mos-pal__name">{name}{data&&<Badge tone="data" size="sm">DATA</Badge>}{attention&&<Badge tone="attention" size="sm">Attention</Badge>}{restricted&&<Badge tone="restricted" size="sm">Admin</Badge>}</span>
+      {blurb&&<span className="mos-pal__blurb" style={{display:'block'}}>{blurb}</span>}
+      {attention&&<span className="mos-pal__reason"><Icon name="corner-down-right" size={12}/>{attention}</span>}
+      {needs&&<span className="mos-pal__needs"><Icon name="square-dashed" size={12}/>needs {needs}</span>}
+      {inserts&&<span className="mos-pal__needs"><Icon name="layers" size={12}/>Inserts {inserts} components</span>}
+    </span>
+  </button>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{PaletteItem});})();
+// builder/Picker.jsx
+(()=>{const {Icon}=window.MosaicDesignSystem_9c1bff;
+
+
+function Picker({groups=[],title,activeId,onSelect,onClose,query='',onQuery}){
+  const flat=groups.flatMap(g=>g.items.filter(i=>!i.disabled));
+  const [act,setAct]=React.useState(activeId||(flat[0]&&flat[0].id));
+  const key=e=>{const i=flat.findIndex(x=>x.id===act);if(e.key==='ArrowDown'){e.preventDefault();setAct(flat[Math.min(flat.length-1,i+1)].id)}if(e.key==='ArrowUp'){e.preventDefault();setAct(flat[Math.max(0,i-1)].id)}if(e.key==='Enter'){onSelect&&onSelect(act)}if(e.key==='Escape'){onClose&&onClose()}};
+  return <div className="mos-picker" onKeyDown={key} role="dialog" aria-label={title||'Add to area'}>
+    <div className="mos-picker__search"><div className="mos-control mos-control--sm"><Icon name="search" size={14} style={{color:'var(--mos-text-faint)'}}/><input autoFocus placeholder={title||'Search components'} value={query} onChange={e=>onQuery&&onQuery(e.target.value)} role="combobox" aria-expanded="true" aria-activedescendant={'pk-'+act}/></div></div>
+    <div className="mos-picker__list" role="listbox">{groups.map(g=><div key={g.label} role="group" aria-label={g.label}><div className="mos-picker__group">{g.label}</div>{g.items.map(it=><div key={it.id} id={'pk-'+it.id} role="option" className="mos-picker__opt" aria-selected={act===it.id} aria-disabled={it.disabled||undefined} onMouseEnter={()=>!it.disabled&&setAct(it.id)} onClick={()=>!it.disabled&&onSelect&&onSelect(it.id)}><span className="mos-picker__ico"><Icon name={it.icon||'square'} size={14}/></span><span style={{minWidth:0,flex:1}}><span style={{display:'block',font:'var(--mos-type-ui-strong)',color:'var(--mos-text-strong)'}}>{it.name}</span>{(it.reason||it.blurb)&&<span className="mos-help" style={{display:'block',color:it.reason?'var(--mos-state-attention-fg)':undefined}}>{it.reason||it.blurb}</span>}</span>{it.preferred&&<span className="mos-badge mos-badge--accent mos-badge--sm">Preferred</span>}</div>)}</div>)}</div>
+    <div className="mos-picker__foot"><span><span className="mos-kbd">↑</span> <span className="mos-kbd">↓</span> choose</span><span><span className="mos-kbd">↵</span> insert</span><span><span className="mos-kbd">Esc</span> close</span></div>
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Picker});})();
+// builder/Repeater.jsx
+(()=>{const {Icon,IconButton,Button,Banner}=window.MosaicDesignSystem_9c1bff;
+
+
+
+
+
+function Repeater({items=[],min,max,addLabel='Add item',onAdd,onRemove,onMove,onSelect,activeId,grabbedId,showRules=true}){
+  const atFloor=min!=null&&items.length<=min;
+  const atMax=max!=null&&items.length>=max;
+  return <div style={{display:'flex',flexDirection:'column',gap:8}}>
+  <div className="mos-rep" role="list">
+    {items.length===0&&<div className="mos-rep__empty">No items yet.</div>}
+    {items.map((it,i)=><div key={it.id} className="mos-rep__row" role="listitem" aria-label={it.summary+', '+(i+1)+' of '+items.length} data-active={activeId===it.id} data-grabbed={grabbedId===it.id} onClick={()=>onSelect&&onSelect(it.id)}>
+      <span className="mos-rep__grip" aria-hidden="true"><Icon name="grip-vertical" size={14}/></span>
+      <span className="mos-rep__sum"><b>{it.summary}</b>{it.meta&&<span>{it.meta}</span>}</span>
+      <span className="mos-rep__acts"><IconButton size="sm" icon="arrow-up" label={'Move '+it.summary+' up'} disabled={i===0} onClick={e=>{e.stopPropagation();onMove&&onMove(it.id,-1)}}/><IconButton size="sm" icon="arrow-down" label={'Move '+it.summary+' down'} disabled={i===items.length-1} onClick={e=>{e.stopPropagation();onMove&&onMove(it.id,1)}}/><IconButton size="sm" icon="x" label={atFloor?'Can’t remove — at least '+min+' required':'Remove '+it.summary} disabled={atFloor} onClick={e=>{e.stopPropagation();onRemove&&onRemove(it.id)}}/></span>
+    </div>)}
+    <div className="mos-rep__foot"><Button variant="add" size="sm" icon="plus" onClick={onAdd} disabled={atMax}>{addLabel}</Button>{(min!=null||max!=null)&&<span className="mos-rep__count">{items.length}{max!=null?'/'+max:''}{min!=null?' · min '+min:''}</span>}</div>
+  </div>
+  {showRules&&min!=null&&items.length<min&&<Banner tone="attention" compact title={'Requires at least '+min+' item'+(min>1?'s':'')+' — '+items.length+'/'+min}/>}
+  {showRules&&atFloor&&items.length>=min&&min>0&&<div className="mos-help" style={{display:'flex',gap:6,alignItems:'center'}}><Icon name="lock" size={12}/>Remove is off: this area needs at least {min}.</div>}
+  {showRules&&atMax&&<Banner tone="info" compact icon="circle-slash" title={'Maximum reached — '+items.length+'/'+max}>Remove an item to add another.</Banner>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{Repeater});})();
+// builder/MissingCard.jsx
+(()=>{const {Icon,Badge}=window.MosaicDesignSystem_9c1bff;
+
+
+
+function MissingCard({library,component,values=[],binding,actions}){
+  return <div className="mos-missing" role="group" aria-label={component+' — library missing'}>
+    <div className="mos-missing__head"><Icon name="unplug" size={18} style={{color:'var(--mos-text-muted)',marginTop:1}}/><div style={{flex:1,minWidth:0}}><div style={{font:'var(--mos-type-ui-strong)',color:'var(--mos-text-strong)'}}>{component} <span style={{color:'var(--mos-text-muted)',fontWeight:400}}>· {library}</span></div><div className="mos-help">The {library} library isn't installed. Values are kept and will render again when it returns.</div></div><Badge tone="neutral" icon="eye">Read-only</Badge></div>
+    {(values.length>0||binding)&&<dl className="mos-missing__vals">{values.map(v=><React.Fragment key={v.label}><dt>{v.label}</dt><dd>{v.value}</dd></React.Fragment>)}{binding&&<><dt>Content</dt><dd style={{color:'var(--mos-state-data-fg)'}}>bound to {binding}</dd></>}</dl>}
+    {actions&&<div style={{display:'flex',gap:8,marginTop:10}}>{actions}</div>}
+  </div>;
+}
+
+Object.assign(window.MosaicDesignSystem_9c1bff,{MissingCard});})();

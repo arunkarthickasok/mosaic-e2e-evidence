@@ -1,0 +1,6 @@
+:root{
+--mos-space-0:0;--mos-space-025:2px;--mos-space-05:4px;--mos-space-075:6px;--mos-space-1:8px;--mos-space-125:10px;--mos-space-15:12px;--mos-space-2:16px;--mos-space-25:20px;--mos-space-3:24px;--mos-space-4:32px;--mos-space-5:40px;--mos-space-6:48px;--mos-space-8:64px;
+--mos-rail-width:320px;--mos-palette-width:240px;--mos-toolbar-height:40px;--mos-statusbar-height:32px;--mos-row-height:28px;--mos-control-height-sm:24px;--mos-control-height:32px;--mos-control-height-lg:40px;--mos-hit-min:44px;
+--mos-mark-size:8px;--mos-mark-weight:2px;--mos-tab-height:18px;--mos-zone-pad:12px;
+--mos-field-gap:var(--mos-space-15);--mos-section-pad:var(--mos-space-2)
+}

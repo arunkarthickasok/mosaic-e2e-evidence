@@ -1,0 +1,3 @@
+:root{
+--mos-z-canvas:0/* @kind other */;--mos-z-slot:100/* @kind other */;--mos-z-drop-indicator:200/* @kind other */;--mos-z-example:10/* @kind other */;--mos-z-selection:400/* @kind other */;--mos-z-selection-tab:420/* @kind other */;--mos-z-selection-toolbar:450/* @kind other */;--mos-z-rail:600/* @kind other */;--mos-z-toolbar:700/* @kind other */;--mos-z-strip-tip:720/* @kind other */;--mos-z-popover:800/* @kind other */;--mos-z-dialog:1000/* @kind other */;--mos-z-media-library:1100/* @kind other */;--mos-z-error-summary:1200/* @kind other */}
+@layer mos-reset,mos-library,mos-chrome,mos-author-override,mos-canvas-edit;

@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 *.bundle
 PUSH-TO-GITHUB.md
+*.zip
