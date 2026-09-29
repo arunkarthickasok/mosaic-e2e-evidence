@@ -32,12 +32,19 @@ MOSAIC-BIBLE-v1-2026-08-08.md).
   vendor, region or organization named in any ledger line.
 
 ## P2 — PRODUCT SOUL
+**Positioning (ruled 2026-09-29 — 1.0 = THE WEDGE):** "Mosaic — Canvas-style
+visual authoring for the sites you already have. Bring any component library,
+including Canvas-ready ones. No Drupal CMS required." (Goes to MOSAIC.md + the
+project page at the truth pass.)
+
 One line: a free, self-hosted, SDC-native visual page builder for
 Drupal 11/12 that ADOPTS ANY organization's component library with
 zero code — panel from the component's own schema, slots as governed
 drop zones, library styles on page AND canvas, typed data binding,
 library-level governance, pages that survive library updates and
-removals. Architecture 9/10; the campaign closes market fit.
+removals, **Canvas-dialect shapes resolved without Canvas installed
+(CP-ADOPT-8) and all rail behaviour as exportable configuration for
+owned and adopted alike (CP-ADOPT-9)**. Architecture 9/10; the campaign closes market fit.
 Personas: P1 Content Author · P2 Developer/Site Builder · P3 Client/
 Decision-Maker (unchanged from v1).
 Defensible seat (honest): graded admission not refusal; slot child
@@ -78,8 +85,27 @@ Security posture: as v1 P3 plus Wave B shipped — **SHIP #22 CP-WAVE-B,
 WAVE B CLOSED 2026-08-09** (TODO.md:10990; security & permission
 cleanup).
 
-## P4 — RATIFIED ROADMAP TO 1.0.0 (D9 order, ruled 2026-09-17)
-0 ADOPT (design packet reports/ADOPT-DESIGN.md; CP-ADOPT-1..7) →
+## P4 — RATIFIED ROADMAP TO 1.0.0 (D9 order, ruled 2026-09-17; AMENDED 2026-09-29)
+**AMENDMENT 2026-09-29 (Arun "approve word by word"), overrides §0/§5/§6 below:**
+- **§0 ADOPT** now runs CP-ADOPT-1..7 (SHIPPED #47) **+ CP-ADOPT-8** (Canvas-dialect
+  shapes: resolve `json-schema-definitions://<ext>/<def>` without Canvas installed;
+  bundled shapes; shape→descriptor) **+ CP-ADOPT-9** (Manage authoring: rail =
+  exportable config for owned + adopted; precedence SDC-limits→site-config→profile→
+  shape-table→heuristics; owned `field_types`→shipped config). **Oracle walk A–J runs
+  once, after ADOPT-9.**
+- **1.0 submodules (ship green):** core + mosaic_components + mosaic_views +
+  mosaic_media + mosaic_webform + mosaic_builder_ui. **ALL other submodules REMOVED**
+  from the 1.0 tree → `ROADMAP.md` (target 1.1+); **`mosaic_acsf` DROPPED**. Removal is
+  its own numbered ship after a read-only per-submodule EVIDENCE TABLE. Nothing kept
+  depends on a removed module. Held-file rule for `SdcComponentPlugin.php` RETIRED.
+- **§5 Wave G** = the six kept modules walked green + **CP-DATA-FABRIC** (component
+  index + `hook_views_data`) + moderation live walk. `mosaic_search` Search-API → 1.1.
+- **§6 ACT 2** = builder + FE dialog + libraries/authoring against design v2 (due
+  2026-11-24); remaining admin polish → 1.1.
+- **Timeline of record: tag late January 2027, soak week fixed** (supersedes the
+  early-mid-December line below).
+
+0 ADOPT (design packet reports/ADOPT-DESIGN.md; CP-ADOPT-1..7 SHIPPED #47; +CP-ADOPT-8/9) →
 1 author-trust slice (D-1, D-2, D-3-hide, F-095, D-8, D-14) →
 2 backend config audit (+M3 onboarding: setup-status page + three-role
   permission recipe; audit sizes them S = pre-tag else labelled post-tag) →

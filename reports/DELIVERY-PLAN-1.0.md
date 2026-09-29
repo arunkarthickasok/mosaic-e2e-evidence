@@ -111,3 +111,45 @@ the oracle walk, M1 ADR) → **TAG 1.0.0**.
 ## Walk-catch tally
 - **WC#73 (P1d-A):** viewport switch with an adopted component wiped the canvas —
   FIXED (BuilderApp switchEditingTo else-branch guard). Tally 73.
+
+---
+
+## RULED AMENDMENT — SCOPE FOR 1.0 (Arun 2026-09-29: "I completely approve word by word")
+
+This amendment is ratified and supersedes any conflicting scope note above. It also lands in
+MOSAIC-BIBLE.md P2 (positioning) and P4 (roadmap), and the submodule policy in ROADMAP.md.
+
+1. **1.0 = THE WEDGE.** Positioning line (for MOSAIC.md + the project page at the truth pass):
+   > "Mosaic — Canvas-style visual authoring for the sites you already have. Bring any component
+   > library, including Canvas-ready ones. No Drupal CMS required."
+
+2. **§0 ADOPT gains two arcs before the oracle walk:**
+   - **CP-ADOPT-8 (Canvas-dialect shapes):** resolve `json-schema-definitions://<ext>/<def>` **without
+     Canvas installed**; ship bundled well-known shapes; a shape→descriptor table. (P0 blueprint:
+     `reports/REPORT-CP-ADOPT-8.md`.)
+   - **CP-ADOPT-9 (Manage authoring):** everything in the rail is **configuration** for owned AND adopted
+     components — a per-component authoring config entity + a site-wide shape map, shipped defaults,
+     exportable. **Precedence: SDC hard limits → site config → profile → shape table → heuristics.** Owned
+     sidecar `field_types` migrate to shipped config.
+   - **The oracle walk A–J runs once, after ADOPT-9** (not after each arc).
+
+3. **SUBMODULES.** 1.0 ships **core + mosaic_components + mosaic_views + mosaic_media + mosaic_webform +
+   mosaic_builder_ui**, each walked green. **ALL other submodules are REMOVED from the 1.0 tree** and
+   recorded in `ROADMAP.md` (status, what exists, what it would take, target 1.1+). **`mosaic_acsf` is
+   DROPPED entirely.** Removal happens in its **own numbered ship** after a read-only **EVIDENCE TABLE per
+   submodule** (files, routes, config entities/schema, permissions, tests, every reference from KEPT code
+   via grep, uninstall implications for dev sites that enabled it — config/tables to clean, uninstall
+   hooks needed). **Nothing kept may depend on a removed module.** The held-file rule for
+   `SdcComponentPlugin.php` is **RETIRED** (no delta since HEAD, ledgered in SHIP-47.md).
+
+4. **WAVE G** = the six kept modules walked green **+ CP-DATA-FABRIC** (component index + `hook_views_data`)
+   **+ moderation live walk**. `mosaic_search`'s Search-API bridge → **ROADMAP 1.1**.
+
+5. **ACT 2** = builder + FE dialog + libraries/authoring pages against **design v2** (due **2026-11-24**);
+   remaining admin polish → **1.1**.
+
+6. **Timeline of record:** tag **late January 2027**, soak week fixed.
+
+7. **Standing laws unchanged:** naming ban · WALK-SCRIPT · DROP-PROOF · PROOF-CONDITIONS · SMOOTHNESS ·
+   Functional in every gate · attribution (no AI co-author trailer) · reviewer reads WALK files before
+   handoff.

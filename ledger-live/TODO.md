@@ -14402,3 +14402,19 @@ FILMS: = walk steps C (component fill "+ Add image") + D (Card row "+ Add card")
 DOCS FINAL: LIBRARY-AUTHOR-GUIDE.md (slots vs HTML props + fill; preferred; §6 patterns w/ slot_rules; patterns vs site global templates; typeless; no library named). WALK-CP-ADOPT-7.md rewritten (one STOP/step A-J 10 steps; C=card rail 7 fields+Add image; D=Card row pattern+Add card; concrete). SHIP-47-PLAN commit message += WC#104 pts1-3 + patterns + instance slot rules + schema fix, libs 1.0.79; helper listed separately.
 GATES: Kernel+Unit 3141/0 (+3 PatternsTest) . Functional 76/0 . Vitest 724/1 (719+5; B-101; viewsFields flakes-once passes-alone) . tsc 0 . phpcs 0 . phpstan 0 new . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 IDENTICAL . dist BUMPED 1.0.78->1.0.79 (builder 73bd949e->7dcbf3ca, FE 5a64691b->8a1226be). Ship count 82.
 ARC CODE-COMPLETE. Ship #47 HELD -> Arun's walk (WALK-CP-ADOPT-7.md) = acceptance gate before tag 1.0.0. B-PATTERN-INSTANCE-REPEATER CLOSED.
+
+=== SHIP #47 LEDGER (33cd40c, committed by Arun) ===
+SHIP #47 = 33cd40c (parent a36f028 = ship #46). git diff a36f028..33cd40c = 96 files, +7997/-298, 35 new. CP-ADOPT-7 P1-P3 + WC#94/#95 + 7R CHECKPOINTS 1-18. Full record: ledger-live/SHIP-47.md.
+13 CP-12..18 feature additions (git --diff-filter=A verified; charter's "14" = 13 by git): PropFillsRenderTest, propFills.ts, MosaicFillField.tsx, propFills.test, propFillsRoundTrip.test, MosaicFillField.test, patterns.ts, MosaicPatternsPanel.tsx, patterns.test, MosaicPatternsPanel.test, PatternsTest, adoptedFieldsFromDescriptors.test, MosaicAdoptedPreviewBadge.test. CP-16/CP-18 = modifications (no new paths).
+Arun 3-step sanity PASS: node/780 identical; accordion×2 round-trip; library Card saves (the CP-18 schema fix). Walk-catches to date: 104.
+GATES AT SHIP: Kernel+Unit 3141/0 . Functional 76/0 . Vitest 724/1 (B-101) . owned REGION 14e6cb9c..3954 + STYLE b7756795..ca982 4354 10 . libs 1.0.79. Ship #47 HELD -> Arun walk = acceptance gate before tag 1.0.0.
+
+=== CP-ADOPT-8 P0 (Canvas-dialect shapes) — report-only blueprint (reports/REPORT-CP-ADOPT-8.md) ===
+DISK INVENTORY «ext» 1.20.0-beta1 (47 base + «ext-canvas», Symfony YAML, Canvas NEVER enabled):
+- $ref: exactly 1 = json-schema-definitions://canvas.module/image (ONLY in «ext-canvas»/card; base «ext» = 0 $ref).
+- contentMediaType: 24 text/html (base -> CKE5); 1 image/* (nested in card.image.src). meta:enum 0, x-formatting-context 0. enum 39 (-> select).
+- TYPELESS VERDICT: "9 typeless" is STALE. Fresh parse = 0 props without type, 0 Attribute-typed, 0 object-no-properties. Remaining Attention = union-with-object/array (string|object|null ×1, array|null ×3, object ×1), handled/near-handled by CP-7 P1 classifier.
+- «ext-canvas» from disk: info deps [nys_ds:nys_ds, canvas:canvas] (canvas NOT on disk in checkout), 1 component (card), NO schema.json / .module / prop_shape_alter hook; card.image declares BOTH $ref AND type:object (fallback). Base card.image = inline {src(uri-reference,image/*),alt} = structural equivalent.
+- Canvas well-known shapes: NOT disk-verified (canvas absent) -> convention/core-11.3-issue, confirm at build. Design: bundled config/schema/mosaic.canvas-shapes.json + resolver (parse URI -> defer-to-core-if-resolved -> disk lookup extension enabled-or-not -> bundled fallback -> merge structurally-identical -> never double-resolve).
+- FORECAST: base «ext» 47/47 Ready (contentMediaType->CKE5 + enum->select + nullable-union; NO Canvas dep). «ext-canvas» card image -> media once resolver lands, Attention(naming URI) until then. adopt_fixture unchanged.
+- RISKS: 6 (def collisions; canvas co-installed double-resolve; $ref to missing ext; object-not-string examples; canvas-not-on-disk; type:object+$ref both). Build order: contentMediaType -> bundled+resolver -> $ref wiring+Attention -> fixture+matrix -> ADOPT-9 site-config. Owned oracles the gate.
