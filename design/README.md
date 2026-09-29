@@ -28,13 +28,21 @@ native refusal.
 
 ---
 
-## v2 — received 2026-09-29 · status: UNDER REVIEW (not yet source of truth)
+## v2 — received 2026-09-29 · status: ACCEPTED as source of truth (reviewer 2026-09-30)
 `design/mosaic_ui_ux/v2/` — Arun's second design pass for Mosaic 1.0. **136 files, 4.7 MB, no
 node_modules / build dirs, secret-guard clean, no library named** (grep verified). Committed under Arun's
 personal identity.
 
-**Status: UNDER REVIEW.** A reviewer coverage audit (see `reports/DESIGN-COVERAGE.md`) runs before v2
-becomes the source of truth. Until that audit passes, ACT 2 continues to reference v1 where v2 has gaps.
+**Status: ACCEPTED as the source of truth** (reviewer, 2026-09-30) for **tokens, signature, motion, dark,
+theme-independence, and the core builder + rail**. ACT 2 builds against v2 for these.
+
+- **v3 owed by 2026-10-24** — admin surfaces, rail states, per-screen tablet/mobile, and **4 quality
+  fixes**: (1) a 12 px type floor, (2) self-hosted fonts, (3) the index rule, (4) a palette first-run cue.
+- **v4 = polish only**, then the design is **frozen**.
+
+**Coverage matrix** (`reports/DESIGN-COVERAGE.md`) — DESIGNED 33 / PARTIAL 15 / MISSING 1 (Settings form).
+Corrected 2026-09-30: the first sweep read only the HTML kit; the admin screens (`Admin.jsx`) and the rail
+binding/drift/breakpoint/data-state cluster (`Rail.jsx`/`data.js`) are designed in the JSX source.
 
 **What v2 delivers (by file name):**
 - **Design language:** `Mosaic Design System/tokens/` + `guidelines/` cards — colors (semantic / surfaces

@@ -1,22 +1,30 @@
 # DESIGN COVERAGE MATRIX — code surfaces × design v2
 
+> **CORRECTION (reviewer, 2026-09-30 — my error, owned).** The first sweep read only the **HTML** kit (a
+> 1.8 KB builder stub + the authoring HTML) and therefore mis-marked a cluster of surfaces MISSING. Re-run
+> over the **JSX source + `data.js`** (`ui_kits/builder/{App,Chrome,Admin,Pages,Canvas,Rail,Palette,
+> Builder}.jsx` + `data.js` + `components/**/*.jsx`), those surfaces ARE designed. Corrected rows are
+> tagged **[corrected]** with the JSX file + count. New evidence: **`Rail.jsx`** — bind ×20, field-map ×3,
+> legacy ×6, breakpoint ×4, ownership ×1, drift notices ("Type changed"/"removed"/"flag"/"required");
+> **`Admin.jsx`** — Librar ×10, Manage/Authoring ×5, FieldType ×4, Report ×2, Allowed ×2, Hidden/visib;
+> **`Canvas.jsx`** — visib + "Still" (downloaded), required ×3; **`data.js`** — data-state ×13, fieldMap.
+>
 > **Coverage only, no quality opinions** (quality is the reviewer's audit). Each row = a user-facing
-> surface/state extracted from the CODE (with a `file:line` anchor), marked against design **v2**'s files:
-> **DESIGNED** (a v2 file addresses it), **PARTIAL** (present but a state/variant is absent), **MISSING**
-> (no v2 file). Marks are **evidence-based**: a keyword sweep of v2's `ui_kits/builder/{index,motion}.html`
-> + `Mosaic Authoring UI Kit.html` (the substantive file; the builder index is a 1.8 KB stub). Term-hit
-> counts are quoted where they drive a mark. The library is never named (v2 grep = 0).
+> surface/state extracted from the CODE (with a `file:line` anchor), marked against design **v2**:
+> **DESIGNED** / **PARTIAL** (a state/variant absent) / **MISSING**. Marks are **evidence-based** — a
+> keyword sweep of v2's HTML kit **and (corrected) the JSX + `data.js`**; hit-counts quoted where they
+> drive a mark. The library is never named (v2 grep = 0).
 
 ## A. Admin routes / forms
 | Surface | Code file:line | v2 | Note |
 |---|---|---|---|
-| Component libraries page | `mosaic.routing.yml:136` → `MosaicComponentLibrariesForm` | **PARTIAL** | v2 "librar" ×3 — mentioned, not a full screen |
-| Layout usage report | `mosaic.routing.yml:145` → `LayoutUsageController::report` | **MISSING** | v2 "report" ×0 |
-| Library-changes report (Pillar H) | `mosaic.routing.yml:156` → `MosaicLibraryChangesController::report` | **MISSING** | v2 "report" ×0 |
-| Settings form | `mosaic.routing.yml:247` → `MosaicSettingsForm` | **MISSING** | v2 "settings" ×0 |
-| **Field types form (CP-ADOPT-9 P1, this pass)** | `mosaic.routing.yml:257` → `MosaicShapeMapForm` | **MISSING** | v2 "field type" ×0 |
-| Manage authoring (CP-ADOPT-9 P0 model, unbuilt) | design in `REPORT-CP-ADOPT-9.md` | **MISSING** | v2 "Manage authoring" ×0 |
-| Node-type governance (allowed_components) | node-type form alter (`MosaicHooks`) | **MISSING** | v2 "governance"/"node type" ×0 |
+| Component libraries page | `mosaic.routing.yml:136` → `MosaicComponentLibrariesForm` | **DESIGNED** [corrected] | `Admin.jsx` "Librar" ×10 |
+| Layout usage report | `mosaic.routing.yml:145` → `LayoutUsageController::report` | **PARTIAL** [corrected] | `Admin.jsx` "Report" ×2 (generic report surface) |
+| Library-changes report (Pillar H) | `mosaic.routing.yml:156` → `MosaicLibraryChangesController::report` | **DESIGNED** [corrected] | `Admin.jsx` "Report" + "Librar" |
+| Settings form | `mosaic.routing.yml:247` → `MosaicSettingsForm` | **MISSING** | "settings" ×0 in HTML + JSX |
+| **Field types form (CP-ADOPT-9 P1, this pass)** | `mosaic.routing.yml:257` → `MosaicShapeMapForm` | **DESIGNED** [corrected] | `Admin.jsx` "FieldType" ×4 |
+| Manage authoring (CP-ADOPT-9 P0 model, unbuilt) | design in `REPORT-CP-ADOPT-9.md` | **DESIGNED** [corrected] | `Admin.jsx` "Manage"/"Authoring" ×5 |
+| Node-type governance (allowed_components) | node-type form alter (`MosaicHooks`) | **PARTIAL** [corrected] | `Admin.jsx` "Allowed" ×2 |
 | Design-tokens import | `mosaic.routing.yml:325` | **PARTIAL** | tokens designed in `guidelines/`; the import FORM is admin-native |
 
 ## B. Builder — palette + canvas
@@ -33,7 +41,7 @@
 | "example" preview badge | `fields/MosaicAdoptedPreview.tsx` | **DESIGNED** | v2 "badge" ×11, "example" ×2 |
 | Library-missing card (Pillar H) | `MosaicAdoptedPreview.tsx` / renderer fallback | **DESIGNED** | v2 "missing" ×8 |
 | Result line (SSR count) | `fields/ViewsDataSourceField.tsx` | **DESIGNED** | v2 "result" ×5 |
-| Data-state switcher | `viewPreviewStore.ts` | **MISSING** | v2 "data source" ×0 |
+| Data-state switcher | `viewPreviewStore.ts` | **DESIGNED** [corrected] | `data.js` "data-state" ×13 |
 | Viewport switch | `BuilderApp.tsx` (breakpoint tabs) | **DESIGNED** | v2 "viewport" ×4 |
 | Selection toolbar (ActionBar) | `BuilderApp.tsx` (actionBar override) | **DESIGNED** | v2 "selection" ×3, "toolbar" ×4 |
 | Keyboard-move | `fields/MosaicRepeaterField.tsx` (↑/↓) | **DESIGNED** | v2 "keyboard" ×15 |
@@ -43,20 +51,20 @@
 ## C. The rail (property panel)
 | Surface | Code file:line | v2 | Note |
 |---|---|---|---|
-| Rail sections (Style / Spacing / Visibility / Breakpoint / Data) | `MosaicPuckAdapter.ts` (resolveFields + capability gate) | **PARTIAL** | v2 "rail" ×6, "spacing" ×13 — but **"visibility" ×0, "breakpoint" ×0** (see below) |
+| Rail sections (Style / Spacing / Visibility / Breakpoint / Data) | `MosaicPuckAdapter.ts` (resolveFields + capability gate) | **DESIGNED** [corrected] | `Rail.jsx`: breakpoint ×4; `Canvas.jsx` visib; `data.js` data-state ×13 |
 | Field kinds (text/number/select/toggle/link) | `MosaicPuckAdapter.ts` descriptorToField | **DESIGNED** | covered by the rail kit |
 | CKE5 body modal | `fields/BodyEditModal.tsx` | **DESIGNED** | v2 "CKE" ×124 (heavily designed) |
 | Component-fill rows ("+ Add image"/"Filled by") | `fields/MosaicFillField.tsx` | **PARTIAL** | fill implied by picker/badge; the specific fill row not enumerated |
 | Repeater rows (inline list) | `fields/MosaicRepeaterField.tsx` | **PARTIAL** | v2 "repeater" ×1 — barely present |
 | Slot rows (allowed/preferred) | `fields/MosaicSlotZone.tsx` | **DESIGNED** | v2 "slot" ×21 |
-| Bind panel + field map | `fields/MosaicSlotBindField.tsx` | **MISSING** | v2 "bind" ×0, "field map" ×0 |
-| Drift notices (⚠ removed / ⚑ type-changed / ! required) | `MosaicPuckAdapter.ts` buildDriftField | **MISSING** | v2 "drift" ×0 |
-| Legacy binding | `fields/MosaicDataSourceField.tsx` | **MISSING** | v2 "data source" ×0 |
-| Ownership line (foreign slot) | `MosaicPuckAdapter.ts` foreignSlotResolveFields | **MISSING** | v2 "ownership" ×0 |
-| Breakpoint override | `BuilderApp.tsx` (bp state) | **MISSING** | v2 "breakpoint" ×0 |
+| Bind panel + field map | `fields/MosaicSlotBindField.tsx` | **DESIGNED** [corrected] | `Rail.jsx` "Bind" ×20, "Field map"/"fieldMap" ×3 |
+| Drift notices (⚠ removed / ⚑ type-changed / ! required) | `MosaicPuckAdapter.ts` buildDriftField | **DESIGNED** [corrected] | `Rail.jsx` "Type changed", "removed", "flag", "required" |
+| Legacy binding | `fields/MosaicDataSourceField.tsx` | **DESIGNED** [corrected] | `Rail.jsx` "legacy" ×6 |
+| Ownership line (foreign slot) | `MosaicPuckAdapter.ts` foreignSlotResolveFields | **PARTIAL** [corrected] | `Rail.jsx` "ownership" ×1 |
+| Breakpoint override | `BuilderApp.tsx` (bp state) | **DESIGNED** [corrected] | `Rail.jsx`/`Admin.jsx` "breakpoint" ×4 |
 | Spacing tokens | `fields/SpacingControl.tsx` | **DESIGNED** | v2 "spacing" ×13 |
 | Style tokens | `fields/StyleOverridesControl.tsx` | **PARTIAL** | tokens designed in guidelines; the control state not enumerated |
-| Visibility + "still downloaded" note | `MosaicPuckAdapter.ts` (visibility) | **MISSING** | v2 "visibility" ×0, "still downloaded" ×0 |
+| Visibility + "still downloaded" note | `MosaicPuckAdapter.ts` (visibility) | **PARTIAL** [corrected] | `Canvas.jsx` "visib" + "Still" (downloaded) ×1 each |
 
 ## D. FE dialog + messages + states
 | Surface | Code file:line | v2 | Note |
@@ -65,7 +73,7 @@
 | Save errors (validation) | `MosaicHooks` presave → EntityStorageException | **PARTIAL** | v2 "error" ×20 (generic error styling); specific save-error copy not enumerated |
 | Toasts / banners | `mosaicToast.ts`, lock banner CSS | **DESIGNED** | v2 "toast" ×22 |
 | Empty states | fields' empty-state markup | **DESIGNED** | v2 "empty" ×5 |
-| "unavailable component" notice | renderer Pillar-H fallback | **MISSING** | v2 "unavailable" ×0 (though "missing" ×8 covers the card) |
+| "unavailable component" notice | renderer Pillar-H fallback | **PARTIAL** [corrected] | `components/builder/MissingCard.jsx` designs the card; the exact "unavailable" copy not enumerated |
 
 ## E. Cross-cutting states
 | Surface | v2 | Note |
@@ -77,18 +85,23 @@
 | Mobile | **PARTIAL** | v2 "mobile" ×2 — same |
 | Reduced motion | **DESIGNED** | v2 "reduced motion" ×2 + "prefers-reduced" ×4 + `motion.html` |
 
-## Summary counts
-- **DESIGNED: 24** (design language + core builder/canvas/rail authoring surfaces + toast/refusal/badge/
-  missing-card/result/viewport/toolbar/keyboard/loading/error/empty + CKE5 + dark + reduced-motion).
-- **PARTIAL: 12** (rail-sections umbrella, palette needs-marker, +Add, fill rows, repeater rows, style
-  control, FE dialog, save errors, libraries page, design-tokens import, tablet, mobile).
-- **MISSING: 15** (every admin screen — usage/library-changes reports, settings, **Field types**,
-  Manage-authoring, node-type governance; and the rail's **bind panel + field map, drift notices, legacy
-  binding, ownership line, breakpoint override, visibility + "still downloaded", data-state switcher,
-  "unavailable component" notice**).
+## Summary counts (corrected 2026-09-30 — re-run over JSX + `data.js`)
+- **DESIGNED: 33** — design language + core builder/canvas/rail authoring + toast/refusal/badge/
+  missing-card/result/viewport/toolbar/keyboard/loading/error/empty + CKE5 + dark + reduced-motion, **plus
+  the [corrected] admin screens (libraries, library-changes report, Field types, Manage authoring — all in
+  `Admin.jsx`) and the rail binding cluster (bind + field map, drift notices, legacy, breakpoint,
+  data-state — all in `Rail.jsx`/`data.js`)**.
+- **PARTIAL: 15** — usage report, node-type governance, design-tokens import, palette needs-marker, +Add,
+  fill rows, repeater rows, ownership line, style control, visibility + "still downloaded", FE dialog, save
+  errors, "unavailable component" copy, tablet, mobile.
+- **MISSING: 1** — the **Settings form** only ("settings" ×0 in both the HTML kit and the JSX).
+- **N/A: 1** — three admin themes (Mosaic scopes its own design; admin themes are Drupal's).
 
-**Reading (coverage only):** v2 strongly covers the **design language** and the **core builder + rail
-authoring** experience (incl. CKE5, dark, refusal, badges, states). The consistent **gaps** are (1) **every
-admin/config screen** (v2 designs the authoring surface, not Drupal-admin forms) and (2) a cluster of
-**data-binding + drift + breakpoint + visibility** rail surfaces (0 hits each). These are the reviewer
-audit's priority areas; this matrix asserts presence/absence only, not sufficiency.
+*(Was DESIGNED 24 / PARTIAL 12 / MISSING 15 before the correction — the drop from 15 MISSING to 1 is the
+reviewer's point: the surfaces I mis-marked live in the JSX source, not the HTML kit my first sweep read.)*
+
+**Reading (coverage only):** v2 covers the **design language**, the **core builder + rail authoring**
+(incl. CKE5, dark, refusal, badges, states), the **admin screens** (`Admin.jsx`), and the **rail
+data-binding + drift + breakpoint + data-state** cluster. Remaining gaps are narrow — the **Settings form**
+(MISSING) and a set of **PARTIAL** states/variants (per-screen tablet/mobile, specific copy, some control
+states). This matrix asserts presence/absence only; sufficiency is the reviewer's audit.
