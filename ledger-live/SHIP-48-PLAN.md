@@ -44,3 +44,20 @@ Owned oracles the gate; naming ban «ext»/«ext-canvas» in evidence; Canvas NE
   `tests/src/Kernel/Adopt/ShapeMapTest.php`, `tests/src/Functional/Adopt/ShapeMapFormTest.php`.
 - Modified `mosaic.services.yml` (mosaic.shape_map), `mosaic.routing.yml` (mosaic.admin.field_types),
   `config/schema/mosaic.schema.yml`. Server-only — dist unchanged. Client rail-follows = CHECKPOINT-2.
+
+## CP-ADOPT-9 P2 (CHECKPOINT-3) — authoring entity + resolver (H5) + owned migration
+Arun-ruled scope: entity keystone + owned migration; the Manage-authoring form + client rail application (P3)
++ drift flag are the next landing.
+- New: `src/Entity/MosaicComponentAuthoring.php` + `MosaicComponentAuthoringInterface.php` (overrides-only
+  config entity), `src/Sdc/MosaicAuthoringResolver.php` (`mosaic.authoring_resolver` — the ONE resolver:
+  precedence SDC>entity>profile>shape-map>heuristic + H5 refusals + `ensure()` auto-gen),
+  `tests/src/Kernel/Adopt/AuthoringResolverTest.php` (11 cells / 61 assert).
+- Modified: `config/schema/mosaic.schema.yml` (mosaic.component_authoring.*), `mosaic.services.yml`
+  (authoring_resolver + inject into manifest_builder), `src/Service/MosaicManifestBuilder.php`
+  (applyOverrides overlay at buildComponentEntry end), `src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php`
+  (mosaic_component_authoring_list cache tag), `mosaic.install` (mosaic_update_10004 owned migration),
+  3 test instantiations updated (MosaicLayoutWidgetTest, ManifestControllerTest, SlotDescriptorEmissionTest).
+- Gates FULL: Unit 2832/0 · Kernel 336/0 (3 skip) · Functional FULL 78/0 (813 assert, 2 skip) ·
+  Vitest 731/1 (B-101; no JS) · phpcs 0 err · phpstan 0 new · owned REGION 14e6cb9c…3954 + STYLE
+  b7756795…ca982 4354 10 VERBATIM · dist UNCHANGED (server-side overlay; no BUMP-LIBS).
+- Evidence: reports/REPORT-ADOPT9-CP3.md.
