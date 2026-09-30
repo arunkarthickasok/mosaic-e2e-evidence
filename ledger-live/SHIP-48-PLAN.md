@@ -61,3 +61,23 @@ Arun-ruled scope: entity keystone + owned migration; the Manage-authoring form +
   Vitest 731/1 (B-101; no JS) · phpcs 0 err · phpstan 0 new · owned REGION 14e6cb9c…3954 + STYLE
   b7756795…ca982 4354 10 VERBATIM · dist UNCHANGED (server-side overlay; no BUMP-LIBS).
 - Evidence: reports/REPORT-ADOPT9-CP3.md.
+
+## CP-ADOPT-9 P3 (CHECKPOINT-4) — the Manage-authoring FORM (§5.5)
+Arun-ruled scope: the form first; the client rail application + headed films = CHECKPOINT-5.
+- New: `src/Form/MosaicComponentAuthoringForm.php` (route
+  /admin/config/mosaic/component-libraries/{provider}/{component}/authoring; FIELDS tabledrag +
+  compatible-widget selects + Hidden + required-lock + capabilities + SLOTS + previews + Reset;
+  validateForm = H5 refusals() as row errors + Save blocked; submitForm = overrides-only persist),
+  `tests/src/Functional/Adopt/ComponentAuthoringFormTest.php` (4 cells / 46 assert),
+  `tests/modules/adopt_fixture/components/adopt_required/` (required-prop fixture for the H5 refusal cell).
+- Modified: `mosaic.routing.yml` (mosaic.admin.component_authoring), `src/Form/MosaicComponentLibrariesForm.php`
+  ("Manage authoring →" link per component), `src/Service/MosaicManifestBuilder.php` (extract
+  buildComponentDefaults = pre-overlay entry; buildComponentEntry = defaults + P2 overlay).
+- Gates FULL: Unit 2832/0 · Kernel 336/0 (3 skip) · Functional FULL 82/0 (859 assert, 2 skip; +4
+  ComponentAuthoringFormTest) · Vitest 731/1 (B-101; no JS) · phpcs 0 err · phpstan 0 new · owned REGION
+  14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 VERBATIM · dist UNCHANGED (no adapter/JS; no BUMP-LIBS).
+- Evidence: reports/REPORT-ADOPT9-CP4.md + reports/WALK-CP-ADOPT-9.md.
+- Ship count: parent #47 = 33cd40c; the full CP-ADOPT-9 landing (P0/P1 + CP-2 + CP-3 + CP-4) is the mosaic
+  working tree, uncommitted (Arun commits). Mosaic one-line message:
+  "CP-ADOPT-9: shape_map + authoring entity + resolver (H5) + owned migration + Manage-authoring form;
+   Unit 2832/0 Kernel 336/0 Functional 82/0 Vitest 731/1; owned shasums verbatim; dist unchanged"
