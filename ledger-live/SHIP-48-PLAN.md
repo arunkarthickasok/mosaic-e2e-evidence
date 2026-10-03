@@ -229,3 +229,97 @@ VERBATIM: REGION 14e6cb9c…3954, STYLE b7756795…ca982 4354 10. BUMP-LIBS 1.0.
 Evidence: reports/REPORT-ADOPT9-CP9.md + WALK (W6-W8) + SHIP-48-PLAN. REDS: B-101 (Vitest). Arun commits the
 mosaic landing. NEW FILES: tests/modules/adopt_replacer/*, tests/src/Kernel/Adopt/{InlineImageTest,
 ComponentReplacesTest}.php.
+
+## SHIP #48 — REGENERATED STATUS at CP-ADOPT-9 CHECKPOINT-10 (2026-10-03)
+
+Parent ship #47 = `33cd40c`. The full CP-ADOPT-8 + CP-ADOPT-9 landing (all checkpoints, patterns now 14/14)
+is in the mosaic working tree (branch `fix/finding-016-validator`), **uncommitted — Arun commits**. Mosaic
+git is READ-ONLY to the AI. Drupal core 11.4.5.
+
+### FULL verbatim `git status --short` (53 files)
+```
+ M config/schema/mosaic.schema.yml
+ M js/dist/builder.js
+ M js/dist/frontend-editor.js
+ M js/src/builder/BuilderApp.tsx
+ M js/src/builder/MosaicPuckAdapter.ts
+ M mosaic.install
+ M mosaic.libraries.yml
+ M mosaic.routing.yml
+ M mosaic.services.yml
+ M src/Entity/MosaicComponentLibrary.php
+ M src/Form/MosaicComponentLibrariesForm.php
+ M src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php
+ M src/Sdc/MosaicAdoptionProfile.php
+ M src/Sdc/MosaicPropShapeRegistry.php
+ M src/Sdc/PropDescriptor.php
+ M src/Sdc/PropShape.php
+ M src/Service/MosaicComponentGovernance.php
+ M src/Service/MosaicManifestBuilder.php
+ M src/Service/MosaicPropResolver.php
+ M src/Service/MosaicPropValidator.php
+ M src/Service/MosaicRenderer.php
+ M tests/src/Kernel/Adopt/PatternsTest.php
+ M tests/src/Kernel/Adopt/SlotDescriptorEmissionTest.php
+ M tests/src/Kernel/Service/MosaicPropResolverTest.php
+ M tests/src/Unit/Controller/ManifestControllerTest.php
+ M tests/src/Unit/Plugin/Field/MosaicLayoutWidgetTest.php
+ M tests/src/Unit/Sdc/PropShapeTest.php
+?? config/install/mosaic.shape_map.yml
+?? config/schema/mosaic.canvas-shapes.json
+?? js/src/builder/MosaicFieldLabel.tsx
+?? js/src/builder/__tests__/MosaicPatternsPanel.test.tsx
+?? js/src/builder/__tests__/railApplication.test.ts
+?? js/src/builder/__tests__/shapeMap.test.ts
+?? js/src/builder/shapeMap.ts
+?? src/Entity/MosaicComponentAuthoring.php
+?? src/Entity/MosaicComponentAuthoringInterface.php
+?? src/Form/MosaicComponentAuthoringForm.php
+?? src/Form/MosaicShapeMapForm.php
+?? src/Sdc/MosaicAuthoringResolver.php
+?? src/Sdc/MosaicSchemaRefResolver.php
+?? src/Sdc/MosaicShapeMap.php
+?? tests/modules/adopt_fixture/components/adopt_required/
+?? tests/modules/adopt_fixture/components/adopt_shaped/
+?? tests/modules/adopt_fixture/schema.json
+?? tests/modules/adopt_replacer/
+?? tests/src/Functional/Adopt/ComponentAuthoringFormTest.php
+?? tests/src/Functional/Adopt/LibraryPatternsFormTest.php
+?? tests/src/Functional/Adopt/ShapeMapFormTest.php
+?? tests/src/Kernel/Adopt/AuthoringResolverTest.php
+?? tests/src/Kernel/Adopt/CanvasShapesTest.php
+?? tests/src/Kernel/Adopt/ComponentReplacesTest.php
+?? tests/src/Kernel/Adopt/InlineImageTest.php
+?? tests/src/Kernel/Adopt/ShapeMapTest.php
+```
+**Count: 53** (27 modified + 26 untracked). CP-10 delta vs CHECKPOINT-9's 49: +`MosaicPatternsPanel.test.tsx`,
++`LibraryPatternsFormTest.php`, +`ComponentReplacesTest.php`/`InlineImageTest.php` (CP-9 untracked now listed),
+and `PatternsTest.php` becomes modified.
+
+### check-ignore + exclusions
+- `git check-ignore js/node_modules` → **ignored** (build deps, never committed). ✓
+- `git check-ignore js/dist/builder.js` → **NOT ignored = TRACKED**: the built bundles (`js/dist/*`) ARE
+  committed — the shipped library (F-065 cache-bust via `mosaic.libraries.yml` versions). ✓
+- No other exclusions: `tests/modules/adopt_fixture/` + `tests/modules/adopt_replacer/` are committed test
+  modules; `config/install/` + `config/schema/` are committed config. CHECKPOINT-10 added no new ignore rule.
+
+### SdcComponentPlugin.php line
+`src/Plugin/MosaicComponent/SdcComponentPlugin.php` is **UNMODIFIED** (git diff --quiet clean) — the historical
+CP-SDC-PROPS hold is NOT in this tree. The authoring + patterns layer sits above the manifest build
+(`MosaicManifestBuilder`), never the component plugin internals.
+
+### Single-quoted commit message (covers ADOPT-8 + ADOPT-9, all checkpoints)
+```
+'CP-ADOPT-8 + CP-ADOPT-9: Canvas-dialect shape resolver + site-configurable authoring — json-schema-definitions resolver + bundled canvas-shapes (ADOPT-8); shape_map + per-component mosaic_component_authoring entity (overrides-only) + ONE H5 precedence resolver (SDC>entity>profile>shape-map>heuristic) + owned migration (mosaic_update_10004) + Manage-authoring form + rail applies every resolved knob (14/14: widget-kind/hidden/label/slot allowed+repeater/previews/capabilities/default/rail-order/open-cell/required/help-from-schema/slot-preferred/patterns); adopted inline-image media picker (Card Image, url->src render + x-allowed-schemes at save); component replaces governance (replaced hidden from palette, still renders); patterns at the library level (mosaic_component_library.patterns_hidden[], per-library Show/Hide, palette follows) with patterns_shown removed from the component entity (mosaic_update_10006); owned FE render byte-identical 14e6cb9c/b7756795, libs 1.0.85'
+```
+
+### Gates at CHECKPOINT-10 (FULL, Drupal 11.4.5)
+Unit+Kernel **3178/0** (1 warn + 3 skip pre-existing) · Functional FULL **84/0** (890 assert, 2 skip) · Vitest **759/1** (B-101;
++2 MosaicPatternsPanel) · phpcs **0 err** (mosaic.install 3 pre-existing errors auto-fixed; rest line-length
+warnings) · phpstan **0 new** (CP-10 files; 79 pre-existing 11.4 baseline B-102) · typecheck clean · owned
+**REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 VERBATIM** · dist **unchanged (1.0.85)** — server-side
+pass, no bundled client code changed, so NO rebuild / NO BUMP-LIBS.
+
+### Checkpoints (all filed in reports/)
+REPORT-CP-ADOPT-8.md · REPORT-CP-ADOPT-9.md · REPORT-ADOPT9-CP2…CP10.md · WALK-CP-ADOPT-9.md (final, W0–W10).
+**Arc closed — 14/14 knobs applied.**

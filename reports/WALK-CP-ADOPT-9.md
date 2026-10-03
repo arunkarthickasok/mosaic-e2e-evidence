@@ -4,16 +4,16 @@ Site: `https://drupalak.ddev.site:33001`. The arc: shape_map → authoring entit
 Manage-authoring form → **rail applies the overrides** (CP-5/6). One STOP line each. «ext» = the adopted
 (non-Mosaic) library whose Card you author; its real name never appears here.
 
-> **Applied (13/14):** widget kind, hidden, label, slot allowed/repeater, previews, capabilities, default,
-> rail order, open-cell, **required marker**, **help**, **slot preferred**. **Not yet applied (1)** —
-> patterns-shown (architectural blocker — see REPORT-ADOPT9-CP8.md). Steps below exercise only applied knobs.
->
-> **CHECKPOINT-9 adds (image prop + help-from-schema + `replaces`):** steps W6–W8 below.
+> **Applied — 14/14 (arc closed):** widget kind, hidden, label, slot allowed/repeater, previews,
+> capabilities, default, rail order, open-cell, required marker, help (from schema), slot preferred,
+> **patterns shown (library-level)**. CHECKPOINT-9 adds W6–W8 (image prop + help + `replaces`); CHECKPOINT-10
+> adds W9 (patterns Show/Hide at the library). One STOP per step; the reviewer reads it first.
 
 ## W0 — run the owned migration (Arun's walk)
 **W0.1** Run **`ddev drush updb`**. EXPECT: update **mosaic_update_10004** runs and logs *"generated N owned
-authoring entities"*; nothing in the builder or on any rendered page changes. → **STOP if updb errors, or
-any rendered node's Mosaic output changes.**
+authoring entities"*; **mosaic_update_10006** (patterns migration) runs and logs *"removed stale
+patterns_shown from 0 authoring entities"* (zero expected). Nothing in the builder or on any rendered page
+changes. → **STOP if updb errors, or any rendered node's Mosaic output changes.**
 
 ## W1 — Field types (site-wide shape → widget)
 **W1.1** Visit **/admin/config/mosaic/field-types**. Change **select → radios**; **Save**. EXPECT: it saves;
@@ -106,6 +106,27 @@ Open the builder: the replaced component is **absent from the palette**, the suc
 page already built with the replaced component still **renders** unchanged. → **STOP if the replaced
 component still appears in the palette, or an existing page using it breaks.**
 
-*9 steps. Backing: reports/REPORT-ADOPT9-CP9.md (image/help/replaces) + CP6 knob table; Vitest
-railApplication (26), Kernel MosaicPropResolverTest + InlineImageTest + ComponentReplacesTest +
-AuthoringResolverTest, Functional ComponentAuthoringFormTest. Patterns-shown is the one deferred knob.*
+## W9 — patterns Show/Hide at the library level → palette follows (CHECKPOINT-10)
+**W9.1** Visit **/admin/config/mosaic/component-libraries**. For the «ext» library, open its **Patterns**
+section. EXPECT: each of the library's patterns is listed (label + the components inside the tree) with a
+**"Shown in palette"** box, all ticked by default. → **STOP if the Patterns section is missing for a
+library that ships patterns.**
+
+**W9.2** **Untick** one pattern's "Shown" box; **Save libraries**. EXPECT: *"Component libraries saved."*
+Open the builder's **Patterns** palette panel — with **no cache clear** — the unticked pattern is **gone**;
+the still-ticked patterns remain. → **STOP if the hidden pattern still appears in the palette, or a visible
+one disappeared.**
+
+**W9.3** Back on the libraries page, **re-tick** the pattern; **Save**; re-open the builder. EXPECT: the
+pattern is **back** in the Patterns palette. → **STOP if it does not return.**
+
+## W10 — owned Card label round-trip (byte-identical)
+**W10.1** **Manage authoring** for the **owned** Card → change one Label → **Save** → the owned-Card node's
+rail shows it → **Reset to defaults** → re-open: the rail is **byte-identical** to before, and node/780's
+front-end render is unchanged (REGION/STYLE shasums verbatim). → **STOP if the owned rail or render differs
+after reset.**
+
+*11 steps. Backing: reports/REPORT-ADOPT9-CP10.md (patterns 14/14) + CP9 (image/help/replaces) + CP6 knob
+table; Vitest railApplication (26) + MosaicPatternsPanel (2); Kernel PatternsTest + AuthoringResolverTest +
+MosaicPropResolverTest + InlineImageTest + ComponentReplacesTest; Functional LibraryPatternsFormTest (403/200
++ round-trip) + ComponentAuthoringFormTest. **Arc closed — 14/14.***
