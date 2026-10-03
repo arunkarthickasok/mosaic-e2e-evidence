@@ -4,10 +4,10 @@ Site: `https://drupalak.ddev.site:33001`. The arc: shape_map → authoring entit
 Manage-authoring form → **rail applies the overrides** (CP-5/6). One STOP line each. «ext» = the adopted
 (non-Mosaic) library whose Card you author; its real name never appears here.
 
-> **Applied this far:** widget kind (cke5/plain/media/select/…), hidden, label, slot allowed/repeater,
-> previews. **Not yet applied** (see REPORT-ADOPT9-CP6.md knob table): capabilities section-gating (key
-> mismatch), slot preferred/open-cell, patterns-shown, rail order, help text. Steps below exercise only the
-> applied knobs, so the walk does not STOP on an un-applied one.
+> **Applied (10/14):** widget kind, hidden, label, slot allowed/repeater, previews, **capabilities
+> (reconciled)**, **default**, **rail order**, **slot open-cell**. **Not yet applied (4)** — required-marker
+> (byte-identical conflict), help text (no Puck slot), slot preferred ("+ Add {X}"), patterns-shown (palette
+> filter). See REPORT-ADOPT9-CP7.md knob table. Steps below exercise only applied knobs.
 
 ## W0 — run the owned migration (Arun's walk)
 **W0.1** Run **`ddev drush updb`**. EXPECT: update **mosaic_update_10004** runs and logs *"generated N owned
@@ -34,6 +34,21 @@ EXPECT: *"Authoring configuration saved."* → **STOP if the save errors.**
 cache clear**: **Media** now shows the **image-fill row ("+ Add image")**, **Summary** is a **one-line text
 field labelled "Teaser text"**, and the hidden field is **gone from the rail**. → **STOP if any of the three
 is not reflected.**
+
+## W2b — capabilities: untick Bindable → the Data section drops
+**W2b.1** In Manage authoring for the «ext» Card, for a bindable field (e.g. Summary) **untick Bindable**;
+**Save**. Open the «ext»-Card node in the builder and select that field. EXPECT: the field no longer offers
+**"Bind to data"** (the Data section is gone for it). → **STOP if the field still shows a Data/bind control.**
+Re-tick Bindable + Save to restore.
+
+## W2c — rail order + open cell
+**W2c.1** (rail order) In the form, use **Show row weights** to drag **Summary** above **Media** (or set its
+weight lower); **Save**. Open the node in the builder. EXPECT: the rail renders **Summary before Media**.
+→ **STOP if the order did not change.**
+
+**W2c.2** (open cell) For the **Footer** slot, tick **Open cell**; **Save**. On the canvas, open the Footer
+drop zone. EXPECT: it now accepts **plain content** (text/image) in addition to its allowed children.
+→ **STOP if plain content is still refused in Footer.**
 
 ## W3 — H5 refuses hiding a required field, and blocks Save
 **W3.1** In the form, set **Title** (required by the library) Widget to **Hidden**; **Save**. EXPECT: a row

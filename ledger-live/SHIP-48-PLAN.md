@@ -168,3 +168,17 @@ style — a CP-3/4 bug), patterns-shown + rail-order (not consumed), help (no Pu
 open-cell (rail wiring unaudited). Gates: Vitest 742/1 (+6 widget-kind), Unit 2832/0, Kernel 336/0,
 Functional FULL 82/0; owned shasums VERBATIM; dist BUMP-LIBS 1.0.81→1.0.82. The arc is NOT fully closed;
 the follow-up is bounded (1 capability reconciliation + 3 small client reads + a defaultProps tweak).
+
+## CP-ADOPT-9 CHECKPOINT-7 note (2026-10-03) — capability reconciliation + 10/14 knobs
+PHP + JS pass; file count unchanged **37** (no new files). Capability vocabulary RECONCILED to the native
+CP-ADOPT-5 shape — `capabilities.bind` (source LIST | FALSE), `.breakpoint`, `.style` — across form ↔ schema
+↔ resolver ↔ manifest ↔ client; the form's checkboxes RESTRICT (H5), never fabricate. Built: default
+(toConfig defaultProps from the resolved row), rail_order (orderFields), slot open-cell (allows plain
+content). Migration `mosaic_update_10005` renames old `bindable`/`stylable` rows (expect 0 on dev).
+KNOB COVERAGE (see reports/REPORT-ADOPT9-CP7.md): APPLIED **10/14** — widget-kind, hidden, label,
+slot-allowed, slot-repeater, previews, capabilities (FIXED), default, rail-order, open-cell. REMAINING **4**:
+required-marker (byte-identical conflict — marks schema-required fields), help (no Puck help slot → custom
+wrapper needed), slot-preferred (ADOPT-7R fill UX), patterns-shown (PaletteCard/index.tsx filter).
+Gates: Vitest 746/1 (+4), Unit 2832/0, Kernel 337/0 (+1 capability cell), Functional FULL (see paste);
+owned shasums VERBATIM; dist BUMP-LIBS 1.0.82→1.0.83. Arc NOT fully closed; the 4 follow-ups are a design
+ruling + a custom wrapper + fill-UX + a palette change.
