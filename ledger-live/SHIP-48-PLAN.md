@@ -157,3 +157,14 @@ REPORT-CP-ADOPT-8.md · REPORT-CP-ADOPT-9.md (P0 blueprint) · REPORT-ADOPT9-CP2
 REPORT-ADOPT9-CP4.md · REPORT-ADOPT9-CP5.md · WALK-CP-ADOPT-9.md. Remaining polish (recorded in CP5 report):
 capability section-gating, slot-rail, previews/patterns/order, help text, and the headed films (Arun's walk,
 config-write).
+
+## CP-ADOPT-9 CHECKPOINT-6 note (2026-10-03) — widget-kind applied; arc NOT fully closed
+JS-only pass; file count unchanged at **37** (no new files — shapeMap.ts/MosaicPuckAdapter.ts/
+railApplication.test.ts/libraries.yml/dist already in the landing). Built: widget-kind re-dispatch
+(shapeMap.fieldTypeForWidget + descriptorToPuckField). KNOB COVERAGE (see reports/REPORT-ADOPT9-CP6.md):
+APPLIED 6 — widget-kind, hidden, label, slot-allowed, slot-repeater, previews. REMAINING 8 with precise
+obstacles — default (schema-default seed), capabilities (KEY MISMATCH bindable/stylable vs native bind/
+style — a CP-3/4 bug), patterns-shown + rail-order (not consumed), help (no Puck slot), slot preferred/
+open-cell (rail wiring unaudited). Gates: Vitest 742/1 (+6 widget-kind), Unit 2832/0, Kernel 336/0,
+Functional FULL 82/0; owned shasums VERBATIM; dist BUMP-LIBS 1.0.81→1.0.82. The arc is NOT fully closed;
+the follow-up is bounded (1 capability reconciliation + 3 small client reads + a defaultProps tweak).
