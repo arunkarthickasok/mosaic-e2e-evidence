@@ -182,3 +182,19 @@ wrapper needed), slot-preferred (ADOPT-7R fill UX), patterns-shown (PaletteCard/
 Gates: Vitest 746/1 (+4), Unit 2832/0, Kernel 337/0 (+1 capability cell), Functional FULL (see paste);
 owned shasums VERBATIM; dist BUMP-LIBS 1.0.82→1.0.83. Arc NOT fully closed; the 4 follow-ups are a design
 ruling + a custom wrapper + fill-UX + a palette change.
+
+## CP-ADOPT-9 CHECKPOINT-8 note (2026-10-03) — required + help + slot preferred (13/14)
+JS-only pass; file count **37 → 39** (+ `js/src/builder/MosaicFieldLabel.tsx` new, `js/src/builder/BuilderApp.tsx`
+newly modified for the fieldLabel override). Built: required marker (markRequired, both paths), help
+(sentinel-encoded label + MosaicFieldLabel fieldLabel override reusing Puck's exported FieldLabel — help
+under the control, byte-identical when absent), slot preferred (resolved child first in `allow` → zone-picker
+primary). railApplication.test.ts 21 cells (+6). BUMP-LIBS 1.0.83→1.0.84; dist rebuilt (renderer untouched).
+KNOB COVERAGE (reports/REPORT-ADOPT9-CP8.md): APPLIED **13/14** — widget-kind, hidden, label, slot-allowed,
+slot-repeater, previews, capabilities, default, rail-order, open-cell, required, help, slot-preferred.
+REMAINING **1**: patterns-shown — architectural blocker (patterns library-grouped not component-linked;
+patterns_shown per-component + unexposed to client; ambiguous per-component→global-palette filter; needs PHP
+exposure + PaletteCard filter + a semantic ruling).
+ORACLE CHANGE: 0 owned-panel Vitest oracles changed (no owned/fixture component is required or has help →
+marker/help are no-ops on fixtures); both page shasums VERBATIM.
+Gates: Vitest 752/1 (+6), Unit 2832/0, Kernel 337/0 (no PHP delta), Functional FULL (see paste); owned
+shasums VERBATIM; dist 1.0.84. ARC: 13/14 — one knob (patterns) with a recorded architectural blocker.

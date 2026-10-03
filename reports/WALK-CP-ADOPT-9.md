@@ -4,10 +4,9 @@ Site: `https://drupalak.ddev.site:33001`. The arc: shape_map → authoring entit
 Manage-authoring form → **rail applies the overrides** (CP-5/6). One STOP line each. «ext» = the adopted
 (non-Mosaic) library whose Card you author; its real name never appears here.
 
-> **Applied (10/14):** widget kind, hidden, label, slot allowed/repeater, previews, **capabilities
-> (reconciled)**, **default**, **rail order**, **slot open-cell**. **Not yet applied (4)** — required-marker
-> (byte-identical conflict), help text (no Puck slot), slot preferred ("+ Add {X}"), patterns-shown (palette
-> filter). See REPORT-ADOPT9-CP7.md knob table. Steps below exercise only applied knobs.
+> **Applied (13/14):** widget kind, hidden, label, slot allowed/repeater, previews, capabilities, default,
+> rail order, open-cell, **required marker**, **help**, **slot preferred**. **Not yet applied (1)** —
+> patterns-shown (architectural blocker — see REPORT-ADOPT9-CP8.md). Steps below exercise only applied knobs.
 
 ## W0 — run the owned migration (Arun's walk)
 **W0.1** Run **`ddev drush updb`**. EXPECT: update **mosaic_update_10004** runs and logs *"generated N owned
@@ -49,6 +48,15 @@ weight lower); **Save**. Open the node in the builder. EXPECT: the rail renders 
 **W2c.2** (open cell) For the **Footer** slot, tick **Open cell**; **Save**. On the canvas, open the Footer
 drop zone. EXPECT: it now accepts **plain content** (text/image) in addition to its allowed children.
 → **STOP if plain content is still refused in Footer.**
+
+## W2d — help text + required marker
+**W2d.1** (help) For the **Summary** field, set **Help** to `Keep it under 200 characters.`; **Save**. Open
+the node in the builder and select Summary. EXPECT: the help line **"Keep it under 200 characters."** shows
+**under the control**. → **STOP if the help line is missing.**
+
+**W2d.2** (required) For a field that is **required by the library** (e.g. the «ext» Card's Title, or the
+adopt_required fixture's Title), open Manage authoring. EXPECT: in the builder rail, that field's label
+carries a **`*`** marker. → **STOP if a library-required field is not marked.**
 
 ## W3 — H5 refuses hiding a required field, and blocks Save
 **W3.1** In the form, set **Title** (required by the library) Widget to **Hidden**; **Save**. EXPECT: a row
