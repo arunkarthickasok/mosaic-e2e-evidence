@@ -81,3 +81,79 @@ Arun-ruled scope: the form first; the client rail application + headed films = C
   working tree, uncommitted (Arun commits). Mosaic one-line message:
   "CP-ADOPT-9: shape_map + authoring entity + resolver (H5) + owned migration + Manage-authoring form;
    Unit 2832/0 Kernel 336/0 Functional 82/0 Vitest 731/1; owned shasums verbatim; dist unchanged"
+
+## SHIP #48 — REGENERATED STATUS at CP-ADOPT-9 CHECKPOINT-5 (2026-10-03)
+
+Parent ship #47 = `33cd40c`. The full CP-ADOPT-8 + CP-ADOPT-9 landing is in the mosaic working tree
+(branch `fix/finding-016-validator`), **uncommitted — Arun commits**. Mosaic git is READ-ONLY to the AI.
+
+### FULL verbatim `git status --short` (37 files)
+```
+ M config/schema/mosaic.schema.yml
+ M js/dist/builder.js
+ M js/dist/frontend-editor.js
+ M js/src/builder/MosaicPuckAdapter.ts
+ M mosaic.install
+ M mosaic.libraries.yml
+ M mosaic.routing.yml
+ M mosaic.services.yml
+ M src/Form/MosaicComponentLibrariesForm.php
+ M src/Plugin/Field/FieldWidget/MosaicLayoutWidget.php
+ M src/Sdc/MosaicPropShapeRegistry.php
+ M src/Sdc/PropShape.php
+ M src/Service/MosaicManifestBuilder.php
+ M tests/src/Kernel/Adopt/SlotDescriptorEmissionTest.php
+ M tests/src/Unit/Controller/ManifestControllerTest.php
+ M tests/src/Unit/Plugin/Field/MosaicLayoutWidgetTest.php
+ M tests/src/Unit/Sdc/PropShapeTest.php
+?? config/install/mosaic.shape_map.yml
+?? config/schema/mosaic.canvas-shapes.json
+?? js/src/builder/__tests__/railApplication.test.ts
+?? js/src/builder/__tests__/shapeMap.test.ts
+?? js/src/builder/shapeMap.ts
+?? src/Entity/MosaicComponentAuthoring.php
+?? src/Entity/MosaicComponentAuthoringInterface.php
+?? src/Form/MosaicComponentAuthoringForm.php
+?? src/Form/MosaicShapeMapForm.php
+?? src/Sdc/MosaicAuthoringResolver.php
+?? src/Sdc/MosaicSchemaRefResolver.php
+?? src/Sdc/MosaicShapeMap.php
+?? tests/modules/adopt_fixture/components/adopt_required/
+?? tests/modules/adopt_fixture/components/adopt_shaped/
+?? tests/modules/adopt_fixture/schema.json
+?? tests/src/Functional/Adopt/ComponentAuthoringFormTest.php
+?? tests/src/Functional/Adopt/ShapeMapFormTest.php
+?? tests/src/Kernel/Adopt/AuthoringResolverTest.php
+?? tests/src/Kernel/Adopt/CanvasShapesTest.php
+?? tests/src/Kernel/Adopt/ShapeMapTest.php
+```
+**Count: 37** (17 modified + 20 untracked).
+
+### check-ignore + exclusions
+- `git check-ignore js/node_modules` → **ignored** (build deps, never committed). ✓
+- `git check-ignore js/dist/builder.js` → **NOT ignored = TRACKED**: the built bundles (`js/dist/*`) ARE
+  committed — they are the shipped library (F-065 cache-bust via `mosaic.libraries.yml` versions). ✓
+- No other exclusions: `tests/modules/adopt_fixture/` is a committed test module; `config/install/` and
+  `config/schema/` are committed config.
+
+### SdcComponentPlugin.php line
+`src/Plugin/MosaicComponent/SdcComponentPlugin.php` is **UNMODIFIED** — the historical CP-SDC-PROPS hold is
+NOT in this tree. This landing touches no SDC plugin internals; the authoring layer sits above the manifest
+build (`MosaicManifestBuilder`), not the component plugin.
+
+### Single-quoted commit message (covers ADOPT-8 + ADOPT-9)
+```
+'CP-ADOPT-8 + CP-ADOPT-9: Canvas-dialect shape resolver + site authoring config — json-schema-definitions resolver + bundled shapes (ADOPT-8); shape_map + per-component mosaic_component_authoring entity (overrides-only) + ONE H5 precedence resolver (SDC>entity>profile>shape-map>heuristic) + owned migration (mosaic_update_10004) + Manage-authoring form + rail applies the overrides (label/hidden) for owned and adopted (ADOPT-9 P1-P3); Unit 2832/0 Kernel 336/0 Functional 82/0 Vitest 736/1; owned shasums verbatim; dist 1.0.81'
+```
+
+### Gates at CHECKPOINT-5 (FULL)
+Unit **2832/0** · Kernel **336/0** (3 skip; no PHP delta this pass) · Functional FULL **82/0** (859 assert,
+2 skip) · Vitest **736/1** (B-101; +5 railApplication) · phpcs **0 err** · phpstan **0 new** · typecheck
+clean · owned **REGION 14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 VERBATIM** · dist **1.0.80 → 1.0.81**
+(builder + frontend-editor rebuilt; renderer unchanged).
+
+### Checkpoints (all filed in reports/)
+REPORT-CP-ADOPT-8.md · REPORT-CP-ADOPT-9.md (P0 blueprint) · REPORT-ADOPT9-CP2.md · REPORT-ADOPT9-CP3.md ·
+REPORT-ADOPT9-CP4.md · REPORT-ADOPT9-CP5.md · WALK-CP-ADOPT-9.md. Remaining polish (recorded in CP5 report):
+capability section-gating, slot-rail, previews/patterns/order, help text, and the headed films (Arun's walk,
+config-write).
