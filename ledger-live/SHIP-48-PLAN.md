@@ -198,3 +198,34 @@ ORACLE CHANGE: 0 owned-panel Vitest oracles changed (no owned/fixture component 
 marker/help are no-ops on fixtures); both page shasums VERBATIM.
 Gates: Vitest 752/1 (+6), Unit 2832/0, Kernel 337/0 (no PHP delta), Functional FULL (see paste); owned
 shasums VERBATIM; dist 1.0.84. ARC: 13/14 — one knob (patterns) with a recorded architectural blocker.
+
+## CP-ADOPT-9 CHECKPOINT-9 note (2026-10-03) — image prop + help-from-schema + `replaces` (13/14)
+PHP + JS pass (Arun ruled "Image prop + help + replaces"; patterns-shown DEFERRED → stays 13/14). Drupal 11.4.5.
+IMAGE: MosaicPuckAdapter propsFieldsFromDescriptors new `isAdopted && kind==='media'` branch → our media
+picker ("Card Image", image before the HTML media fill; owned media unchanged). MosaicPropResolver::
+resolveInlineImageSentinel (url→src). MosaicRenderer::resolveInlineImageProps (MEDIA props not in
+prop_types/field_types holding a sentinel; both render sites; owned byte-identical). MosaicPropValidator::
+validateMediaSchemes/validateInlineImageScheme/mediaFileScheme — x-allowed-schemes honoured at SAVE (full
+definition schema, runs before the empty-getPropDefinitions early return → fires for adopted). Fixture
+adopt_shaped image: required src + contentMediaType image/* + x-allowed-schemes [public,https] + default/
+examples + title "Card Image"; thumbnail.src [private] (negative).
+HELP: PropDescriptor::$help (emitted only when non-empty → byte-identical when absent) ← schema description
+(MosaicPropShapeRegistry::describe); form help override wins (MosaicAuthoringResolver, pre-existing); client
+consumes via CP-8 MosaicFieldLabel. ORACLE CHANGE: owned props WITH a schema description now show it as the
+help line (intended UI gain); description-less fixtures byte-identical.
+REPLACES: MosaicAdoptionProfile parses `replaces:` (validated/cached); MosaicComponentGovernance
+replacedSet/replacedBy/isReplaced — replaced id NOT authorable (palette-hidden) but still isAvailable
+(renders); libraries page "Replaced by …" note. Injected into widget + container service. Isolated fixture
+module tests/modules/adopt_replacer/ (replaces adopt_fixture:adopt_widget) — no perturbation of adopt_fixture.
+KNOB COVERAGE: 13/14 (unchanged; CP-9 closed the IMAGE gap + HELP + replaces governance, orthogonal to the
+14 knobs). Patterns-shown remains the one deferred (architectural blocker).
+GATE FULL GREEN (11.4.5): typecheck clean; Vitest 757/1-pre B-101 (+5: 3 image + 2 help; railApplication 26);
+Unit+Kernel 3177/0 (1 warn + 3 skip pre-existing; +8 cells: InlineImageTest 4, ComponentReplacesTest 3,
+MosaicPropResolverTest 1); Functional FULL 82/0 (859 assert, 2 skip — image save+render proven at Kernel,
+not a new BrowserTestBase cell: a React media-pick can't run headless). phpcs src clean (0 err). PHPStan:
+CP-9 files add 0; pre-existing Drupal-11.4 env baseline (80 module-wide: check_markup deprecation +
+DependencySerializationTrait private-prop rule + ReflectionType casts) → backlog B-102. OWNED SHASUMS
+VERBATIM: REGION 14e6cb9c…3954, STYLE b7756795…ca982 4354 10. BUMP-LIBS 1.0.84→1.0.85; dist rebuilt.
+Evidence: reports/REPORT-ADOPT9-CP9.md + WALK (W6-W8) + SHIP-48-PLAN. REDS: B-101 (Vitest). Arun commits the
+mosaic landing. NEW FILES: tests/modules/adopt_replacer/*, tests/src/Kernel/Adopt/{InlineImageTest,
+ComponentReplacesTest}.php.

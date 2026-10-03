@@ -7,6 +7,8 @@ Manage-authoring form → **rail applies the overrides** (CP-5/6). One STOP line
 > **Applied (13/14):** widget kind, hidden, label, slot allowed/repeater, previews, capabilities, default,
 > rail order, open-cell, **required marker**, **help**, **slot preferred**. **Not yet applied (1)** —
 > patterns-shown (architectural blocker — see REPORT-ADOPT9-CP8.md). Steps below exercise only applied knobs.
+>
+> **CHECKPOINT-9 adds (image prop + help-from-schema + `replaces`):** steps W6–W8 below.
 
 ## W0 — run the owned migration (Arun's walk)
 **W0.1** Run **`ddev drush updb`**. EXPECT: update **mosaic_update_10004** runs and logs *"generated N owned
@@ -77,6 +79,33 @@ field is present, examples return). → **STOP if any override remains.**
 rail shows it → **Reset to defaults** → re-open: the rail is **byte-identical** to before. → **STOP if the
 owned rail differs after reset.**
 
-*6 steps. Backing: reports/REPORT-ADOPT9-CP6.md (knob table) + WALK; Vitest railApplication (11), Functional
-ComponentAuthoringFormTest (4), Kernel AuthoringResolverTest (11). The capability/patterns/rail-order/help/
-preferred knobs are NOT exercised here — they are recorded as the remaining follow-up.*
+## W6 — the «ext» Card's IMAGE is a media picker, and the page shows the image (CHECKPOINT-9)
+**W6.1** Open an «ext»-Card node in the **builder**. EXPECT: the Card's inline image field shows **"Card
+Image"** with **OUR media picker** (a "Choose media" button + a greyed EXAMPLE badge for the untouched
+default), NOT raw `src`/`alt`/`width`/`height` text boxes. It sits **before** the HTML media fill in the
+rail. → **STOP if the image field is raw text boxes, or the picker is missing.**
+
+**W6.2** Pick a media item; **Save** the node; view it anonymously. EXPECT: the **chosen image renders** on
+the page (an `<img>` with the picked file's URL + alt). → **STOP if the page shows no image / a broken src.**
+
+**W6.3** (x-allowed-schemes) If the «ext» Card's image declares `x-allowed-schemes` that excludes the
+picked media's file scheme, **Save** EXPECT: a row error naming the offending scheme — *"…image is stored on
+the 'public://' scheme, which this component does not allow…"* — and **nothing is saved**. → **STOP if a
+disallowed-scheme image saves.**
+
+## W7 — help lines come from the schema description (CHECKPOINT-9)
+**W7.1** Select an owned field whose SDC prop declares a `description` (e.g. Columns' **gap**). EXPECT: the
+schema description shows **as the help line under the control**, with **no Manage-authoring override set**.
+Then set a Manage-authoring **Help** override for that field → the override **replaces** the description.
+→ **STOP if no help line appears for a described prop, or the override does not win.**
+
+## W8 — a replaced component is hidden, its replacement offered (CHECKPOINT-9)
+**W8.1** (only when a library ships a `replaces:` profile) Visit **/admin/config/mosaic/component-libraries**.
+EXPECT: the replaced component's row carries **"Replaced by {successor} — not offered in the palette."**
+Open the builder: the replaced component is **absent from the palette**, the successor is **present**. A
+page already built with the replaced component still **renders** unchanged. → **STOP if the replaced
+component still appears in the palette, or an existing page using it breaks.**
+
+*9 steps. Backing: reports/REPORT-ADOPT9-CP9.md (image/help/replaces) + CP6 knob table; Vitest
+railApplication (26), Kernel MosaicPropResolverTest + InlineImageTest + ComponentReplacesTest +
+AuthoringResolverTest, Functional ComponentAuthoringFormTest. Patterns-shown is the one deferred knob.*
