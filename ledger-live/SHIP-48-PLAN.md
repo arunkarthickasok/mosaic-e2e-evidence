@@ -323,3 +323,41 @@ pass, no bundled client code changed, so NO rebuild / NO BUMP-LIBS.
 ### Checkpoints (all filed in reports/)
 REPORT-CP-ADOPT-8.md · REPORT-CP-ADOPT-9.md · REPORT-ADOPT9-CP2…CP10.md · WALK-CP-ADOPT-9.md (final, W0–W10).
 **Arc closed — 14/14 knobs applied.**
+
+## SHIP #48 — REGENERATED STATUS at CP-ADOPT-9R (2026-10-04)
+
+Parent ship #47 = `33cd40c`. The full CP-ADOPT-8 + CP-ADOPT-9 + CP-ADOPT-9R landing is in the mosaic working
+tree (branch `fix/finding-016-validator`), **uncommitted — Arun commits**. Mosaic git READ-ONLY to the AI.
+Drupal core 11.4.5. Walk tally 108.
+
+**Count: 63** (32 modified + 31 untracked). CP-9R delta vs CHECKPOINT-10's 53: + `mosaic.links.task.yml`,
++ `tests/modules/mosaic_reference_library/` (the reference library), + `tests/src/Functional/Adopt/
+InlineImageSaveTest.php`, + `tests/src/Functional/Adopt/AdminMenuTabsTest.php`, + `tests/src/Kernel/Adopt/
+ReferenceLibraryTest.php`, and modifications to `mosaic.links.menu.yml`, `mosaic.libraries.yml` (BUMP-LIBS
+1.0.86), `src/Service/MosaicPropValidator.php`, `src/Form/MosaicShapeMapForm.php`, `js/src/builder/propFills.ts`,
+`js/src/builder/fields/MosaicFillField.tsx`, `js/src/builder/MosaicPuckAdapter.ts`, the dist bundles, and the
+adopt_shaped fixture + the InlineImageTest / propFills / MosaicFillField tests.
+
+### check-ignore + exclusions
+`git check-ignore js/node_modules` → ignored. `js/dist/*` → TRACKED (shipped bundles, F-065 cache-bust via
+`mosaic.libraries.yml` versions). `tests/modules/mosaic_reference_library/` + `tests/modules/adopt_*` are
+committed test modules. No new ignore rule.
+
+### SdcComponentPlugin.php line
+`src/Plugin/MosaicComponent/SdcComponentPlugin.php` is **UNMODIFIED** (git diff --quiet clean).
+
+### Single-quoted commit message (covers ADOPT-8 + ADOPT-9 + ADOPT-9R)
+```
+'CP-ADOPT-8 + CP-ADOPT-9 + CP-ADOPT-9R: Canvas-dialect shapes + site-configurable authoring + the adoption rider — json-schema-definitions resolver + bundled canvas-shapes (8); shape_map + mosaic_component_authoring entity + ONE H5 resolver + Manage-authoring form + rail applies 14/14 knobs incl. patterns at the library level (9); adopted inline-image media picker; component replaces governance; WC#108 x-allowed-schemes validates the RESOLVED src URL (file URL generator), so a public:// media pick saves + renders (9R); WC#107 titled rows + help-from-description + "+ Add content" when an object image prop exists + rail=form order; WC#106 Mosaic admin menu group + tabs + Field-types reset; mosaic_reference_library — the guide worked example, every shape, 100% Ready; owned FE render byte-identical 14e6cb9c/b7756795, libs 1.0.86'
+```
+
+### Gates at CP-ADOPT-9R (FULL, Drupal 11.4.5)
+Unit+Kernel **3181/0** (1 warn + 3 skip pre-existing) · Functional FULL **87/0** (932 assert, 2 skip) · Vitest **761/1** (B-101) ·
+phpcs **0 err** · phpstan **0 new** (79 pre-existing 11.4 baseline B-102) · typecheck clean · owned **REGION
+14e6cb9c…3954 + STYLE b7756795…ca982 4354 10 VERBATIM** · dist **1.0.85 → 1.0.86** (builder + frontend-editor
+rebuilt; renderer unchanged).
+
+### Checkpoints (all filed in reports/)
+REPORT-CP-ADOPT-8.md · REPORT-ADOPT9-CP2…CP10.md · **REPORT-ADOPT9R.md** · WALK-CP-ADOPT-9.md (final, W0–W11) ·
+LIBRARY-AUTHOR-GUIDE.md (reference library = worked example). HEADED per-component lifecycle films + the «ext»
+end oracle (W11) are Arun's walk.

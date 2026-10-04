@@ -15,26 +15,35 @@ authoring entities"*; **mosaic_update_10006** (patterns migration) runs and logs
 patterns_shown from 0 authoring entities"* (zero expected). Nothing in the builder or on any rendered page
 changes. → **STOP if updb errors, or any rendered node's Mosaic output changes.**
 
-## W1 — Field types (site-wide shape → widget)
-**W1.1** Visit **/admin/config/mosaic/field-types**. Change **select → radios**; **Save**. EXPECT: it saves;
-on reload Select shows **radios** + a **Reset**, and no incompatible widget is ever offered (Toggle offers
-Checkbox, never media). → **STOP if the save errors or an incompatible widget appears.**
+## W1 — Field types (site-wide shape → widget), reached from the Mosaic menu
+**W1.1** Go to **Configuration › Mosaic › Field types** (**/admin/config/mosaic/field-types**). EXPECT the
+**Mosaic** group lists **Field types · Component Libraries · Reports**, and the Field-types page shows **tabs**
+to **Component libraries** and **Reports** (CP-ADOPT-9R WC#106). Change **Select → Radios**; **Save**. EXPECT:
+it saves; on reload Select shows **Radios**, and no incompatible widget is ever offered (Toggle offers
+Checkbox, never media). Click **Reset to defaults** → *"Field type widgets reset to defaults."* and Select is
+back to its shipped default. → **STOP if the tabs/menu are missing, the save errors, an incompatible widget
+appears, or Reset does not restore defaults.**
 
-## W2 — Manage authoring on the «ext» Card: widget kind + relabel + hide → rail follows
-**W2.1** Visit **/admin/config/mosaic/component-libraries**; click **"Manage authoring →"** for the «ext»
-**Card**. EXPECT: the form + the banner *"Stylable is unavailable because «ext» owns this component's look."*
-→ **STOP if the link is missing or the form 403/404s.**
+## W2 — Manage authoring on the Reference Card: widget kind + relabel + hide → rail follows
+The engine is walked against the reference library (**Reference Card**, provider `mosaic_reference_library`);
+the «ext» library is the single end oracle (W11). Reference Card's real fields: **Preheading, Heading, Card
+Image, Media, Media accent, Variant, Featured, Column span, Badge count, Call to action, Tags**.
+
+**W2.1** Visit **/admin/config/mosaic/component-libraries**; turn the reference library **ON**; click
+**"Manage authoring →"** for **Reference Card**. EXPECT: the fields table lists the real fields above, each
+row carrying its **Help** text from the schema description (e.g. Card Image → *"Image displayed at the top of
+the card."*). → **STOP if the link is missing, the form 403/404s, or a row is untitled.**
 
 **W2.2** Make these edits, then **Save configuration**:
-- **Media** field Widget → **Image fill**.
-- **Summary** field Widget → **Plain text**, and its Label → `Teaser text`.
-- A NON-required secondary field Widget → **Hidden**.
+- **Media** field Widget → **Plain text**, and its Label → `Teaser text`.
+- A NON-required field (e.g. **Preheading**) Widget → **Hidden**.
 EXPECT: *"Authoring configuration saved."* → **STOP if the save errors.**
 
-**W2.3** Open an «ext»-Card node in the **builder** (or the **front-end edit dialog**). EXPECT, with **no
-cache clear**: **Media** now shows the **image-fill row ("+ Add image")**, **Summary** is a **one-line text
-field labelled "Teaser text"**, and the hidden field is **gone from the rail**. → **STOP if any of the three
-is not reflected.**
+**W2.3** Open a Reference-Card node in the **builder**. EXPECT, with **no cache clear**: **Card Image** shows
+**our media picker** labelled "Card Image" with its help line; **Media** is a **one-line text field labelled
+"Teaser text"**; **Preheading** is **gone from the rail**; and the **Media** / **Media accent** HTML fill
+rows read **"+ Add content"** (NOT "+ Add image" — Reference Card owns an object image prop, WC#107).
+→ **STOP if any of these is not reflected.**
 
 ## W2b — capabilities: untick Bindable → the Data section drops
 **W2b.1** In Manage authoring for the «ext» Card, for a bindable field (e.g. Summary) **untick Bindable**;
@@ -88,10 +97,12 @@ rail. → **STOP if the image field is raw text boxes, or the picker is missing.
 **W6.2** Pick a media item; **Save** the node; view it anonymously. EXPECT: the **chosen image renders** on
 the page (an `<img>` with the picked file's URL + alt). → **STOP if the page shows no image / a broken src.**
 
-**W6.3** (x-allowed-schemes) If the «ext» Card's image declares `x-allowed-schemes` that excludes the
-picked media's file scheme, **Save** EXPECT: a row error naming the offending scheme — *"…image is stored on
-the 'public://' scheme, which this component does not allow…"* — and **nothing is saved**. → **STOP if a
-disallowed-scheme image saves.**
+**W6.3** (x-allowed-schemes — CP-ADOPT-9R WC#108) A NORMAL media pick on an image whose `x-allowed-schemes`
+includes the site's scheme (**http/https**) **SAVES** — the validator checks the RESOLVED served URL, not the
+stored `public://` scheme (the CP-9 bug that refused a legitimate pick is gone). Only a TRUE violation (the
+served URL's scheme is not allowed) is refused, with an author-grade message — *"The image chosen for … is
+served over 'http', which this component does not allow…"*. → **STOP if a normal media pick is refused, or a
+true violation saves.**
 
 ## W7 — help lines come from the schema description (CHECKPOINT-9)
 **W7.1** Select an owned field whose SDC prop declares a `description` (e.g. Columns' **gap**). EXPECT: the
@@ -126,7 +137,17 @@ rail shows it → **Reset to defaults** → re-open: the rail is **byte-identica
 front-end render is unchanged (REGION/STYLE shasums verbatim). → **STOP if the owned rail or render differs
 after reset.**
 
-*11 steps. Backing: reports/REPORT-ADOPT9-CP10.md (patterns 14/14) + CP9 (image/help/replaces) + CP6 knob
-table; Vitest railApplication (26) + MosaicPatternsPanel (2); Kernel PatternsTest + AuthoringResolverTest +
-MosaicPropResolverTest + InlineImageTest + ComponentReplacesTest; Functional LibraryPatternsFormTest (403/200
-+ round-trip) + ComponentAuthoringFormTest. **Arc closed — 14/14.***
+## W11 — the «ext» library as the end ACCEPTANCE ORACLE (walked once)
+**W11.1** With the reference-library walk (W1–W10) green, install the real «ext» (non-Mosaic) library and
+repeat the key steps against its real Card (its own Preheading/Image/Media/Media-accent equivalents): grade
+it on the Component libraries page; author its image via the media picker and save (WC#108); confirm help +
+"+ Add content" + titled rows; hide one of its patterns and see the palette follow. EXPECT parity with the
+reference library. → **STOP on ANY divergence — that divergence is the acceptance finding.**
+
+*11 steps + the W11 oracle. Backing: reports/REPORT-ADOPT9R.md (WC#105–#108 + reference library) +
+REPORT-ADOPT9-CP10.md (patterns 14/14) + CP9 (image/help/replaces) + CP6 knob table. Automated cells: Vitest
+railApplication (26) + MosaicPatternsPanel (2) + propFills (hasObjectImage) + MosaicFillField (WC#107); Kernel
+ReferenceLibraryTest (100% Ready + zero-untitled + rail=form order) + PatternsTest + AuthoringResolverTest +
+MosaicPropResolverTest + InlineImageTest + ComponentReplacesTest; Functional InlineImageSaveTest (WC#108
+node-form save) + AdminMenuTabsTest (WC#106) + LibraryPatternsFormTest + ComponentAuthoringFormTest. The
+HEADED per-component lifecycle films are Arun's walk (the end oracle). **Arc closed — 14/14.***

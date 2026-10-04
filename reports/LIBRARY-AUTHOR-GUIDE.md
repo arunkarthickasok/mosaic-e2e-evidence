@@ -3,7 +3,13 @@
 Mosaic can adopt any Single-Directory-Component (SDC) library and let authors place, configure, and
 compose its components on the page — with graceful defaults when the library says nothing. The more a
 library describes itself, the richer the authoring experience. This page is the contract, from most to
-least automatic. (No specific library is named here; «library» stands in for yours.)
+least automatic.
+
+> **Worked example.** The reference library `tests/modules/mosaic_reference_library` is this guide's
+> executable example — a NON-Mosaic SDC library exercising every shape and profile key below, graded
+> **100% Ready** (`ReferenceLibraryTest`). Each snippet here is drawn from its real components
+> (`ref_card`, `ref_accordion`, `ref_accordion_item`, `ref_plain`, `ref_shadow`, `ref_canvas`,
+> `ref_legacy`) and its `mosaic_reference_library.mosaic-adopt.yml` profile. Read it alongside this page.
 
 ## 1. SDC slot metadata — the first source of truth
 Mosaic reads each component's `*.component.yml` directly. For every **slot** it honours:
@@ -36,40 +42,35 @@ module** (ship it in the library's own module, or in a thin helper module). Ever
 SDC metadata above always wins, the profile fills the gaps, heuristics are the floor.
 
 ```yaml
-# «provider».mosaic-adopt.yml
+# mosaic_reference_library.mosaic-adopt.yml — the reference library's real profile.
 global_libraries:
-  - «provider»/base            # attached whenever any of the library's components is used
-preview_defaults: true         # the library's examples are PREVIEWS, not saved content (see §4)
+  - mosaic_reference_library/base   # attached whenever any of the library's components is used
+preview_defaults: true              # the library's examples are PREVIEWS, not saved content (see §4)
 containers:
-  accordion:   { item_slot: items, item_type: accordionitem }
-  tabgroup:    { item_slot: tabs,  item_type: tab, panel_slot: tabpanels, panel_type: tabpanel }
-items:                         # components that are items (roles), not top-level components
-  - accordionitem
-  - tab
-repeaters:                     # a slot that takes one child type, with cardinality
-  accordion.items: { child: accordionitem, min: 1, max: null }
-  tabgroup.tabs:   { child: tab,           min: 1, max: 10 }
-requiresParent:                # an item must live inside its container(s)
-  accordionitem: accordion
-  tab:           tabgroup
-preferred:                     # the child a slot SUGGESTS first (a soft default, not a lock)
-  card.body: text
+  ref_accordion: { item_slot: items, item_type: ref_accordion_item }
+items:                              # components that are items (roles), not top-level components
+  - ref_accordion_item
+repeaters:                          # a slot that takes one child type, with cardinality
+  ref_accordion.items: { child: ref_accordion_item, min: 1, max: null }
+requiresParent:                     # an item must live inside its container(s)
+  ref_accordion_item: ref_accordion
+preferred:                          # the child a slot SUGGESTS first (a soft default, not a lock)
+  ref_card.body: ref_plain
 thumbnails:
-  card: assets/card.png
-patterns:                      # curated component trees the palette inserts as a unit (see §6)
+  ref_card: assets/ref-card.png
+replaces:                           # a successor that supersedes an older component (CP-ADOPT-9)
+  ref_card:
+    - mosaic_reference_library:ref_legacy
+patterns:                           # curated component trees the palette inserts as a unit (see §6)
   - id: card_row
     label: 'Card row'
     tree:
-      type: mosaic_columns     # OWNED components are allowed in a pattern tree
+      type: mosaic_columns          # OWNED components are allowed in a pattern tree
       props: { columns: 3, gap: md }
-      slot_rules:              # per-INSTANCE rail: each column shows "+ Add card"
-        column_1: { child: card, min: 0, max: null }
-        column_2: { child: card, min: 0, max: null }
-        column_3: { child: card, min: 0, max: null }
       slots:
-        column_1: [{ type: card, props: { heading: 'Card one' } }]
-        column_2: [{ type: card, props: { heading: 'Card two' } }]
-        column_3: [{ type: card, props: { heading: 'Card three' } }]
+        column_1: [{ type: ref_card, props: { heading: 'Card one' } }]
+        column_2: [{ type: ref_card, props: { heading: 'Card two' } }]
+        column_3: [{ type: ref_card, props: { heading: 'Card three' } }]
 ```
 
 Component ids in the profile are **local** (no provider prefix) — Mosaic qualifies them. An id the
