@@ -11,6 +11,14 @@ least automatic.
 > (`ref_card`, `ref_accordion`, `ref_accordion_item`, `ref_plain`, `ref_shadow`, `ref_canvas`,
 > `ref_legacy`) and its `mosaic_reference_library.mosaic-adopt.yml` profile. Read it alongside this page.
 
+## 0. Name your module anything EXCEPT `mosaic` / `mosaic_*`
+Mosaic reserves the provider names `mosaic` and `mosaic_*` for its OWN owned components. A library whose
+module machine name starts with `mosaic_` is read as owned, not adopted — it skips the adoption pipeline
+(qualified SDC ids, the foreign-boundary render, grading-as-adopted) and will fail to render required props.
+Name your module after your library (`acme_cards`, `olivero_blocks`), never `mosaic_*`.
+*(Oracle-rehearsal finding A1, 2026-10-07: the reference fixture was mis-named `mosaic_reference_library` and
+hit exactly this — the rename to a non-`mosaic_*` name is the fix.)*
+
 ## 1. SDC slot metadata — the first source of truth
 Mosaic reads each component's `*.component.yml` directly. For every **slot** it honours:
 
