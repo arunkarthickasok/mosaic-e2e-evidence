@@ -52,7 +52,22 @@ enum prop from its schema default when unset (or pass it as `#variant`). Isolate
 - Stray/broken nodes from diagnosis deleted (the no-variant 500 nodes). No Manage-authoring overrides saved.
 - "never uninstall" honoured — no module uninstalled.
 
+## A2 — FIXED (ship #50 batch)
+`MosaicRenderer::buildAdoptedComponentElement` now seeds every unset enum prop with its H4 default (schema
+`default` → `examples[0]` → first enum value) via `enumDefault()`, so the render never hands the SDC an "".
+Cells: Kernel `ReferenceLibraryTest::testUnsetEnumSeededAtRender` (#variant seeded 'default'); Functional
+`ReferenceCardRenderTest::testRefCardRendersWithUnsetEnum`. **Headed film:** `films/cp-adopt-9r-a2/
+a2-unset-enum-render.png` (headed=true, HTTP 200, `.ref-card--default`, no enumeration error). Gate (full):
+Kernel+Unit **3183/0**, Functional **89/0**, Vitest 761/1-pre, tsc clean, phpcs 0, phpstan 0-new/79, shasums
+verbatim, served==built. The reference-library "ref_card page render, enum UNSET" row is now **PASS**.
+
 ## Status
-Ship #49 (A1) is a **GREEN** candidate (full TIGHT GATE + film). The two-table rehearsal CONTINUES: A2 is the
-next rider; the full W0–W9 + A–J headed films + the «ext» re-run follow. No finding needs a ruling (A1 fixed,
-A2 is a clear rider).
+Ships #49 (A1) + #50/A2 are **GREEN** candidates (full TIGHT GATE + films). The two-table rehearsal CONTINUES:
+the ref_card page journeys are unblocked; the full W0–W9 + A–J headed films + the «ext» A–J re-run are the
+ongoing machine rehearsal (films per step, appended to the #50 batch). Both tables NOT yet fully green → no
+ceremony. No finding needs a ruling (A1 + A2 are clear fixes).
+
+## Dev state (updated)
+M1 test nodes left for Arun's walk: **nid 1006** (ref_card, variant set) + **nid 1007** (ref_card, variant
+UNSET — the A2 case, renders via the H4 seed). Reference library + its library ON. Nothing uninstalled; no
+overrides saved; diagnosis nodes deleted.
