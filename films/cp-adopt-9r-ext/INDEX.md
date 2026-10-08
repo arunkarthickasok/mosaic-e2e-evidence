@@ -13,7 +13,7 @@ Only the rendered node + the anonymous page are filmed (visual components, no ma
 |---|---|---|
 | D-ext-accordion-render.png | D — Slots + items | The «ext» accordion node (node/1003) rendering its items — a real adopted component with a populated slot |
 | E-prop-render.png | E — Bind prop (Card title ← page title) | node/1010: the «ext» card's heading is **identical to the page title** (Context `entity.label` binding; the stored placeholder never shows) |
-| E-slot-render.png | E — Bind slot (Accordion items ← View) | node/1011: the «ext» accordion lists the View's rows ("CPVE1 Article 1/2"); the static seed is hidden (see finding **E1** re: the owned child type) |
+| E-slot-render.png | E — Bind slot (Accordion items ← View) | node/1012: the «ext» accordion lists the View's rows as **«ext» Cards** ("CPVE1 Article 1/2"), child = the adopted «ext» Card, `title→heading` (no workaround — E1 fixed in ship #51); static seed hidden |
 | H-ext-fallback.png | H — Library OFF → fallback | Logged out, «ext» OFF: the components are replaced by a safe fallback that **keeps all authored content** (no crash); byte-identical on return is the shasum (report) |
 | J-ext-anon.png | J — Anonymous render | Anonymous visitor on node/1003: the «ext» accordion rendered, logged out, **0 console errors** |
 

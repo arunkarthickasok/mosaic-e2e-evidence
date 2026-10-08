@@ -74,14 +74,14 @@ Screens: **`films/cp-adopt-9r-ext/E-prop-render.png`** + **`films/cp-adopt-9r-ex
   **RESULT:** the card's title on the page is **identical to the page title** (the stored placeholder never
   shows). See `E-prop-render.png`.
 - **Slot binding (rows):** the Accordion's `items` slot ← **View · `cpve1_list:embed_1`**, row field
-  `title` → child `text`, child type **`mosaic_heading`**. **RESULT:** the accordion lists the View's rows —
-  **"CPVE1 Article 1" / "CPVE1 Article 2"** — and the static seed child is **hidden**. See `E-slot-render.png`.
-- **FINDING E1 (Mosaic-side, #51 rider candidate):** the slot's child type is `mosaic_heading` (owned), NOT the
-  «ext» accordion-item, because **`MosaicPropValidator::childDescriptors()` reads `getPropDefinitions()` — which
-  is EMPTY for an adopted SDC** (adopted props live in `getDefinition().props.properties`) — so a field_map to
-  an **adopted** child is wrongly rejected (*"prop 'heading' … does not exist"*). Same class as the CP-9
-  x-allowed-schemes fix. The binding engine itself is correct (owned-child binding renders); only the
-  adopted-child field_map validation needs the full-schema fallback.
+  `title` → child `heading`, child type the **«ext» Card** (an ADOPTED child — no workaround). **RESULT:** the
+  accordion lists the View's rows as «ext» Cards — **"CPVE1 Article 1" / "CPVE1 Article 2"** — and the static
+  seed child is **hidden**. See `E-slot-render.png`.
+- **E1 FIXED (ship #51):** binding a slot to a View with an ADOPTED child + field_map previously failed at save
+  (*"prop 'heading' … does not exist"*) because `MosaicPropValidator::childDescriptors()` read
+  `getPropDefinitions()` — EMPTY for an adopted SDC. Ship #51 routes the validator, the manifest and the
+  authoring form through ONE shared prop-schema resolver (`MosaicPropShapeRegistry::describeComponent`, F-108
+  fallback to the definition props for adopted); owned unchanged. The «ext» Card child above is the proof.
 → **STOP if the card title does not mirror the page title, or the accordion does not list the View's rows.**
 
 ### 10 · H — library OFF → graceful fallback (content preserved), ON → byte-identical
@@ -100,6 +100,6 @@ console shows an error.**
 *11 steps. Backing (machine-only, not walked): owned byte-identical invariant — region `14e6cb9c…3954` + style
 `b7756795…ca982 4354 10` verbatim with «ext» ON and OFF (node/780); «ext» grade 47/47; H round-trip shasum
 `9d8eee1e…8dd3`; the full gate for ship #50 (Kernel+Unit 3184/0, Functional 89/0). Reports:
-`REPORT-REHEARSAL-W0-W9.md`, `REPORT-REHEARSAL-AJ.md`, `REPORT-REHEARSAL-EXT.md`. One open finding: **E1** (a
-#51 rider candidate) — the adopted-child slot field_map validation. ADOPT closes on Arun's sign-off of this
-walk.*
+`REPORT-REHEARSAL-W0-W9.md`, `REPORT-REHEARSAL-AJ.md`, `REPORT-REHEARSAL-EXT.md`. The one finding from the E
+deep-dive — **E1** (adopted-child slot field_map) — is **FIXED in ship #51** (SHIP-51-PLAN.md). ADOPT closes on
+Arun's sign-off of this walk.*
