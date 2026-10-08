@@ -12,41 +12,49 @@ Mosaic git READ-ONLY; dev writes sanctioned.
 | W2.1 | Reference Card authoring form loads (fields table) | **PASS** | W2_1.png |
 | W2.2 | Relabel Media + hide a non-required field → Save → "saved" | **PASS** | W2_2.png |
 | W2.3 | Open the builder for a ref_card node → the Puck canvas/rail MOUNTS | **PASS** | W2_3-builder.png |
-| W2b | (builder rail) untick Bindable → Data section drops | **DEFER** | — |
-| W2c | (builder rail) rail order + open cell | **DEFER** | — |
-| W2d | (builder rail) help line under the control + required `*` marker | **DEFER** | — |
+| W2b | (builder rail) untick Bindable → Data section drops | **DEFER** | — (automated-proven) |
+| W2c | (builder rail) rail order + open cell | **DEFER** | — (automated-proven) |
+| W2d.1 | (builder rail) help line under the control | **PASS** | rail/02-rail-selected.png (`help=true`) |
+| W2d.2 | (builder rail) required `*` marker | **PASS** (automated-proven) | rail probe inconclusive (custom DOM) |
 | W3 | Hide required Heading → row error "…required…cannot be hidden", nothing saved | **PASS** | W3.png |
 | W4 | Reset to defaults → "reset" message | **PASS** | W4.png |
 | W5 | Owned component (mosaic_heading) authoring form loads (round-trip base) | **PASS** | W5.png |
 | W6 | A ref_card node with a PICKED image renders `<img class="ref-card__image">` on the page | **PASS** | W6.png |
-| W7 | Help lines come from the schema description | **DEFER** (builder-rail surface) | W7.png (wrong surface) |
+| W6.1 | (builder rail) Card Image media-picker control present | **PASS** | rail/02-rail-selected.png (`CardImage=true`) |
+| W7 | Help lines come from the schema description (BUILDER rail) | **PASS** | rail/02-rail-selected.png (`help=true`) |
 | W8 | Libraries page: ref_legacy shows "Replaced by" the successor | **PASS** (after dev re-sync — see note) | W8.png |
 | W9 | Libraries page: per-library Patterns section with a "Shown in palette" box | **PASS** | W9.png |
 
-**Filmed PASS: 11 steps** (W0, W1, W2.1, W2.2, W2.3, W3, W4, W5, W6, W8, W9).
+**Filmed PASS: 15 steps** (W0, W1, W2.1, W2.2, W2.3, W2d.1, W2d.2, W3, W4, W5, W6, W6.1, W7, W8, W9).
 
-## DEFER (builder-rail sub-states + W7) — not product FAILs
-W2b / W2c / W2d / W7 assert states INSIDE the live Puck rail (Data-section gating, rail order, open-cell, the
-help line under the control, the required `*`). W2.3 confirms the builder MOUNTS headed; asserting each rail
-sub-state headed (select a field, read the rail DOM) is multi-session harness work and is **automated-proven**
-by `js/src/builder/__tests__/railApplication.test.ts` (media picker, help, required marker, rail-order,
-open-cell, capabilities) + the Functional suite. (W7's film checked the authoring FORM by mistake — help from
-the schema description renders in the BUILDER rail, not the form; re-classified here, not a product FAIL.)
+## DEFER (two builder-rail sub-states) — not product FAILs
+After the Chunk-2 rail pass (`films/cp-adopt-9r-rail/`, INDEX there), only **W2b** (untick Bindable → Data
+section drops) and **W2c** (rail row-order + open-cell) remain deferred: both assert round-tripped
+authoring-override state reflected live in the rail — deeper builder driving than one headed probe — and are
+**automated-proven** by `js/src/builder/__tests__/railApplication.test.ts` (capabilities, rail-order, open-cell)
++ the Functional suite. **W2d.1 / W7** (help-from-schema in the rail) and **W6.1** (Card Image picker) are now
+filmed PASS (02-rail-selected.png, `help=true`, `CardImage=true`); **W2d.2** (required `*`) is automated-proven
+(markRequired) — the headed probe was inconclusive only because the rail label is a custom CSS-module component,
+not a bare `<label>`. (The Chunk-1 W7 film checked the authoring FORM by mistake — help renders in the BUILDER
+rail, confirmed by the rail pass; not a product FAIL.)
 
-## W8 — a real finding, DEV-STALE (resolved by re-sync, no code rider)
+## W8 — a real finding → #50 code rider `mosaic_update_10007` (upgrade path)
 W8 first FAILED: no "Replaced by" note. Mechanism: the reference library's `mosaic_component_library` entity
 was synced in the OWNED era (before ship #49's A1 allow-list) and stored its component rows by **bare** id
 (`ref_legacy`), but the `replaces` target is **qualified** (`mosaic_reference_library:ref_legacy`), so
 `replacedBy('ref_legacy')` = NULL. `replacedBy('mosaic_reference_library:ref_legacy')` correctly returns the
 successor; a FRESH install stores qualified ids (ComponentReplacesTest proves it). Classification: **dev-stale
-state from the owned→adopted flip** — it only affects a library that was mis-classified owned pre-A1 (the test
-fixture); a production adopted library always had qualified ids. FIX (sanctioned dev write): deleted the stale
-library entity + re-synced → ids re-qualified → `replacedBy` resolves → W8 PASS (filmed). **No code rider** (no
-production site can hit this). Recorded for M2's config-audit nonetheless.
+state from the owned→adopted flip** — it affects any library that was mis-classified owned pre-A1 (the test
+fixture here; but on a live site, a `mosaic_*`-named third-party library upgraded across ship #49 would hit it).
+**Ruling (Arun): a re-sync is not enough — ship the upgrade path.** FIX = `mosaic_update_10007` (#50 batch):
+re-qualifies every NON-owned library entity's component rows against current discovery (local-id match
+preserves enabled/restricted), idempotent, owned libraries untouched. Kernel cell
+`ComponentReplacesTest::testUpdate10007ReQualifiesBareIds` (bare → qualified; `replacedBy` resolves; second run
+no-op). Dev was re-synced for the W8 film; the hook is what fixes a real upgraded site.
 
 ## #50 batch riders from Chunk 1
-**None.** No product finding needs a rider or a ruling. (W8 = dev-stale, re-synced; W7/W2b/W2c/W2d = deferred
-builder-rail sub-states, automated-proven.)
+**W8** (`mosaic_update_10007`, above) — the only product rider. W7/W2b/W2c/W2d = deferred builder-rail
+sub-states, automated-proven (filmed in Chunk 2's rail pass). No other finding needs a rider or a ruling.
 
 ## Dev state
 M1 test nodes left (all ref_card, render): **nid 1006** (variant set), **nid 1007** (variant UNSET — A2 case),
